@@ -1,0 +1,44 @@
+{
+  "name": "lamb-status",
+  "version": "0.0.1",
+  "description": "Serverless Status Pages",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ks888/lamb-status.git"
+  },
+  "scripts": {
+    "cloudformation:create": "cloudformation/bin/stack.sh create",
+    "cloudformation:update": "cloudformation/bin/stack.sh update",
+    "cloudformation:delete": "cloudformation/bin/stack.sh delete",
+    "save-cloudformation": "babel-node bin/save-cloudformation-config.js",
+    "flip-lambdas-to-4.3": "node bin/run-babel.js ./flip-lambdas-to-4.3",
+    "gen-api-key": "babel-node bin/gen-api-key.js",
+    "setup-apex": "node bin/run-babel.js ./setup-apex",
+    "compile-lambda": "rimraf build/apex/functions && webpack --config deploy/apex/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
+    "deploy-lambda": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex deploy",
+    "deploy-backend": "npm run compile-lambda && npm run deploy-lambda",
+    "build-frontend": "cd packages/frontend && npm run build-prod",
+    "upload-script": "node bin/run-babel.js ./upload-script",
+    "deploy-frontend": "npm run build-frontend && npm run upload-script",
+    "deploy": "npm run deploy-backend && npm run deploy-frontend && npm run get-client-js-url",
+    "start": "cd packages/frontend && npm start",
+    "test-local": "mocha --compilers js:./babel-register -g local",
+    "test-remote": "mocha --compilers js:./babel-register -g remote",
+    "test": "mocha --compilers js:./babel-register",
+    "post-url": "babel-node bin/post-url.js http://jimpick.com/",
+    "logs": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex logs -f",
+    "get-client-js-url": "node bin/run-babel.js ./get-client-js-url",
+    "clean": "rimraf build && rimraf deploy/state && lerna run clean",
+    "dist-clean": "lerna run dist-clean && rimraf node_modules",
+    "install-all": "npm install && lerna bootstrap && linklocal"
+  },
+  "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.13.2"
+  }
+}
