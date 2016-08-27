@@ -7,12 +7,16 @@
     "url": "https://github.com/ks888/lamb-status.git"
   },
   "scripts": {
+    "install-all": "npm install && lerna bootstrap",
     "cloudformation:create": "cloudformation/bin/stack.sh create",
     "cloudformation:update": "cloudformation/bin/stack.sh update",
     "cloudformation:delete": "cloudformation/bin/stack.sh delete",
-    "save-cloudformation": "babel-node bin/save-cloudformation-config.js",
-    "flip-lambdas-to-4.3": "node bin/run-babel.js ./flip-lambdas-to-4.3",
-    "gen-api-key": "babel-node bin/gen-api-key.js",
+    "lambda:build": "cd packages/lambda && npm run build",
+    "lambda:deploy": "cd packages/lambda && npm run deploy",
+    "frontend:build": "",
+    "frontend:deploy": "",
+    "build": "npm run lambda:build && npm run frontend:build",
+    "deploy": "npm run lambda:deploy && npm run frontend:deploy && npm run get-client-js-url",
     "setup-apex": "node bin/run-babel.js ./setup-apex",
     "compile-lambda": "rimraf build/apex/functions && webpack --config deploy/apex/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
     "deploy-lambda": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex deploy",
@@ -20,7 +24,6 @@
     "build-frontend": "cd packages/frontend && npm run build-prod",
     "upload-script": "node bin/run-babel.js ./upload-script",
     "deploy-frontend": "npm run build-frontend && npm run upload-script",
-    "deploy": "npm run deploy-backend && npm run deploy-frontend && npm run get-client-js-url",
     "start": "cd packages/frontend && npm start",
     "test-local": "mocha --compilers js:./babel-register -g local",
     "test-remote": "mocha --compilers js:./babel-register -g remote",
@@ -29,8 +32,7 @@
     "logs": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex logs -f",
     "get-client-js-url": "node bin/run-babel.js ./get-client-js-url",
     "clean": "rimraf build && rimraf deploy/state && lerna run clean",
-    "dist-clean": "lerna run dist-clean && rimraf node_modules",
-    "install-all": "npm install && lerna bootstrap && linklocal"
+    "dist-clean": "lerna run dist-clean && rimraf node_modules"
   },
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
   "license": "MIT",
@@ -39,6 +41,8 @@
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
-    "babel-preset-es2015": "^6.13.2"
+    "babel-preset-es2015": "^6.13.2",
+    "lerna": "^1.1.3",
+    "rimraf": "^2.5.4"
   }
 }

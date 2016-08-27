@@ -1,0 +1,4 @@
+.DS_STORE
+*.log
+node_modules
+build
