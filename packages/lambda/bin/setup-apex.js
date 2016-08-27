@@ -45,8 +45,9 @@ getStackOutput().then((stackOutputs) => {
     OutputValue: lambdaRoleArn
   } = stackOutputs[0]
 
+  const { CLOUDFORMATION: stackName } = process.env
   const apexProjectTemplate = {
-    name: 'StatusPage',
+    name: stackName,
     description: 'Lambda Functions for LambStatus',
     memory: 128,
     timeout: 30,
