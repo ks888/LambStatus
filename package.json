@@ -37,12 +37,10 @@
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^2.0.0"
-  },
-  "devDependencies": {
     "babel-cli": "^6.11.4",
     "babel-preset-es2015": "^6.13.2",
     "lerna": "^1.1.3",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "dotenv": "^2.0.0"
   }
 }

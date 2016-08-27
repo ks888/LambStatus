@@ -2,7 +2,8 @@
 
 set -e
 
-. $(dirname $0)/../utils/config.sh
+. $(dirname $0)/../../utils/config.sh
+CONFIG_JS="$(dirname $0)/../../utils/config.js"
 
 create_stack() {
   put_stack create-stack
@@ -14,9 +15,9 @@ update_stack() {
 
 put_stack() {
   ACTION=$1
-  REGION=$(config "AWS_REGION")
-  STACK_NAME=$(config "CLOUDFORMATION")
-  ORIGIN=$(config "STATUS_PAGE_URL")
+  REGION=$(config "AWS_REGION" "${CONFIG_JS}")
+  STACK_NAME=$(config "CLOUDFORMATION" "${CONFIG_JS}")
+  ORIGIN=$(config "STATUS_PAGE_URL" "${CONFIG_JS}")
   TEMPLATE_FILE="$(dirname $0)/../lamb-status.json"
 
   aws cloudformation ${ACTION} \
@@ -29,8 +30,8 @@ put_stack() {
 }
 
 delete_stack() {
-  REGION=$(config "AWS_REGION")
-  STACK_NAME=$(config "CLOUDFORMATION")
+  REGION=$(config "AWS_REGION" "${CONFIG_JS}")
+  STACK_NAME=$(config "CLOUDFORMATION" "${CONFIG_JS}")
 
   aws cloudformation delete-stack \
       --region $REGION \

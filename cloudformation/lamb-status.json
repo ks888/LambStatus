@@ -111,6 +111,17 @@
           "ZipFile": "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
         },
         "Description": "GetComponents",
+        "FunctionName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "AWS::StackName"
+              },
+              "-GetComponents"
+            ]
+          ]
+        },
         "Handler": "lib/index.handler",
         "MemorySize": 128,
         "Role": {
