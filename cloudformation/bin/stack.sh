@@ -18,6 +18,9 @@ put_stack() {
   REGION=$(config "AWS_REGION" "${CONFIG_JS}")
   STACK_NAME=$(config "CLOUDFORMATION" "${CONFIG_JS}")
   ORIGIN=$(config "STATUS_PAGE_URL" "${CONFIG_JS}")
+  if [ "${ORIGIN}" == "" ]; then
+    ORIGIN='*'
+  fi
   TEMPLATE_FILE="$(dirname $0)/../lamb-status.json"
 
   aws cloudformation ${ACTION} \

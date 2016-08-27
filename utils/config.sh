@@ -4,8 +4,5 @@ config() {
   CONFIG_JS=$2
 
   value=$(babel-node ${CONFIG_JS} ${KEY})
-  if [ "${KEY}" == "ORIGIN" -a "${value}" == "" ]; then
-    value='*'
-  fi
   echo ${value}
 }
