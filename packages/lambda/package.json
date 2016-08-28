@@ -8,8 +8,8 @@
   },
   "scripts": {
     "lint": "eslint src",
-    "build": "rimraf build && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
-    "deploy": "export AWS_REGION=$(. $(dirname $0)/../../utils/config.sh; config \"AWS_REGION\" \"$(dirname $0)/../../utils/config.js\") && cd build && apex deploy"
+    "build": "rimraf build && babel-node ./bin/fetch-aws-ids.js && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
+    "deploy": "export AWS_REGION=$(. $(dirname $0)/../../utils/config.sh; config \"AWS_REGION\") && cd build && apex deploy"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,10 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.11.6",
     "babel-runtime": "^6.11.6",
+    "json-loader": "^0.5.4",
     "rimraf": "^2.5.4",
     "string-replace-webpack-plugin": "0.0.3",
+    "verror": "^1.8.1",
     "webpack": "^1.13.2"
   },
   "devDependencies": {

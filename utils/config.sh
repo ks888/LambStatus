@@ -1,8 +1,7 @@
 
 config() {
   KEY=$1
-  CONFIG_JS=$2
+  CONFIG_JS="$(dirname "${BASH_SOURCE:-$0}")/config.js"
 
-  value=$(babel-node ${CONFIG_JS} ${KEY})
-  echo ${value}
+  babel-node ${CONFIG_JS} ${KEY}
 }

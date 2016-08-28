@@ -1,8 +1,13 @@
 import path from 'path'
 import dotenv from 'dotenv'
 import StringReplacePlugin from 'string-replace-webpack-plugin'
+import { DefinePlugin } from 'webpack'
 
-dotenv.config({path: '../../.env'})
+dotenv.config({path: `${__dirname}/../../../.env`})
+
+const defines = {
+  'process.env.AWS_REGION': `'${process.env.AWS_REGION}'`,
+}
 
 export default {
   entry: {
@@ -49,5 +54,6 @@ export default {
   },
   plugins: [
     new StringReplacePlugin(),
+    new DefinePlugin(defines),
   ]
 }

@@ -4,62 +4,30 @@ import dotenv from 'dotenv'
 import mkdirp from 'mkdirp'
 import AWS from 'aws-sdk'
 
-dotenv.config({path: '../../.env'})
+dotenv.config({path: `${__dirname}/../../../.env`})
 
-function describeStack ({ cloudFormation, stackName }) {
-  return new Promise((resolve, reject) => {
-    const params = {
-      StackName: stackName
-    }
-    cloudFormation.describeStacks(params, (error, data) => {
-      if (error) {
-        return reject(error)
-      }
-      if (!data) {
-        return reject(new Error('describeStacks returned no data'))
-      }
-      const { Stacks: stacks } = data
-      if (!stacks || stacks.length !== 1) {
-        return reject(new Error('describeStacks unexpected number of stacks'))
-      }
-      const stack = stacks[0]
-      resolve(stack)
-    })
-  })
+let awsResourceIDs = require('../build/aws_resource_ids.json')
+const lambdaRoleArnKey = awsResourceIDs[1].OutputKey
+const lambdaRoleArn = awsResourceIDs[1].OutputValue
+if (lambdaRoleArnKey != 'LambdaRoleArn') {
+  console.log('Error: aws resource file is unexpected format (key name is ' + lambdaRoleArnKey + ')')
+  process.exit(1)
 }
 
-async function getStackOutput() {
-  try {
-    const { CLOUDFORMATION: stackName, REGION: region } = process.env
-    const cloudFormation = new AWS.CloudFormation({ region })
-    const stack = await describeStack({ cloudFormation, stackName })
-    return stack.Outputs
-  } catch (error) {
-    console.error(error, error.stack)
-  }
+const { CLOUDFORMATION: stackName } = process.env
+const apexProjectTemplate = {
+  name: stackName,
+  description: 'Lambda Functions for LambStatus',
+  memory: 128,
+  timeout: 30,
+  runtime: 'nodejs4.3',
+  shim: false,
+  role: lambdaRoleArn,
+  nameTemplate: '{{.Project.Name}}-{{.Function.Name}}',
+  handler: 'index.handler'
 }
-
-getStackOutput().then((stackOutputs) => {
-  const {
-    OutputKey: lambdaRoleArnKey,
-    OutputValue: lambdaRoleArn
-  } = stackOutputs[0]
-
-  const { CLOUDFORMATION: stackName } = process.env
-  const apexProjectTemplate = {
-    name: stackName,
-    description: 'Lambda Functions for LambStatus',
-    memory: 128,
-    timeout: 30,
-    runtime: 'nodejs4.3',
-    shim: false,
-    role: lambdaRoleArn,
-    nameTemplate: '{{.Project.Name}}-{{.Function.Name}}',
-    handler: 'index.handler'
-  }
-  const json = JSON.stringify(apexProjectTemplate, null, 2)
-  const buildDir = path.normalize(`${__dirname}/../build`)
-  mkdirp.sync(buildDir)
-  fs.writeFileSync(`${buildDir}/project.json`, json)
-  console.log('project.json created')
-})
+const json = JSON.stringify(apexProjectTemplate, null, 2)
+const buildDir = path.normalize(`${__dirname}/../build`)
+mkdirp.sync(buildDir)
+fs.writeFileSync(`${buildDir}/project.json`, json)
+console.log('project.json created')

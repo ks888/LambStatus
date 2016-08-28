@@ -453,6 +453,11 @@
         ]
       },
       "Description": "URL of S3 bucket for status page hosting"
+    },
+    "ServiceComponentTable": {
+      "Value": {
+        "Ref": "ServiceComponentTable"
+      }
     }
   }
 }

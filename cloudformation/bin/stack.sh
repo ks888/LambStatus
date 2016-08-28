@@ -3,7 +3,6 @@
 set -e
 
 . $(dirname $0)/../../utils/config.sh
-CONFIG_JS="$(dirname $0)/../../utils/config.js"
 
 create_stack() {
   put_stack create-stack
@@ -15,9 +14,9 @@ update_stack() {
 
 put_stack() {
   ACTION=$1
-  REGION=$(config "AWS_REGION" "${CONFIG_JS}")
-  STACK_NAME=$(config "CLOUDFORMATION" "${CONFIG_JS}")
-  ORIGIN=$(config "STATUS_PAGE_URL" "${CONFIG_JS}")
+  REGION="$(config "AWS_REGION")"
+  STACK_NAME="$(config "CLOUDFORMATION")"
+  ORIGIN="$(config "STATUS_PAGE_URL")"
   if [ "${ORIGIN}" == "" ]; then
     ORIGIN='*'
   fi
@@ -33,8 +32,8 @@ put_stack() {
 }
 
 delete_stack() {
-  REGION=$(config "AWS_REGION" "${CONFIG_JS}")
-  STACK_NAME=$(config "CLOUDFORMATION" "${CONFIG_JS}")
+  REGION=$(config "AWS_REGION")
+  STACK_NAME=$(config "CLOUDFORMATION")
 
   aws cloudformation delete-stack \
       --region $REGION \
