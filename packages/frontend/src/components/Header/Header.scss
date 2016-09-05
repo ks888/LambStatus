@@ -1,4 +1,21 @@
-.activeRoute {
-  font-weight: bold;
-  text-decoration: underline;
+@import "../../styles/core";
+
+.appBar {
+  height: $appbar-height;
+  padding: 0 0.5rem;
+}
+
+.title {
+  text-transform: none;
+  font-size: 3.0rem;
+}
+
+.navi {
+  text-align: right;
+  flex-grow: 1;
+}
+
+.naviButton {
+  text-transform: none;
+  font-size: 2.0rem;
 }

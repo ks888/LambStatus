@@ -1,4 +1,5 @@
 import webpack from 'webpack'
+import path from 'path'
 import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
@@ -215,6 +216,7 @@ webpackConfig.module.loaders.push({
 // Style Configuration
 // ------------------------------------
 webpackConfig.sassLoader = {
+  data: '@import "' + path.resolve(paths.client(), 'theme/_theme.scss') + '";',
   includePaths: paths.client('styles')
 }
 

@@ -1,0 +1,15 @@
+@import "../../styles/core";
+
+.layout {
+  top: $appbar-height;
+  position: fixed;
+  padding-bottom: $appbar-height;
+}
+
+.mainNavi {
+}
+
+.mainContent {
+  padding: 1.8rem;
+  overflow-y: auto;
+}
