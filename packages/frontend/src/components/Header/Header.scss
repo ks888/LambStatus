@@ -7,7 +7,7 @@
 
 .title {
   text-transform: none;
-  font-size: 3.0rem;
+  font-size: 2.0 * $font-size;
 }
 
 .navi {
@@ -17,5 +17,5 @@
 
 .naviButton {
   text-transform: none;
-  font-size: 2.0rem;
+  font-size: $font-size-big;
 }
