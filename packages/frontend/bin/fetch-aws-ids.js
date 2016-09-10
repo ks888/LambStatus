@@ -77,15 +77,15 @@ const getApiInfo = async () => {
   }
 }
 
-getApiInfo().then(async ({ apiKey, invocationURL }) => {
+getApiInfo().then(({ apiKey, invocationURL }) => {
   let apiInfo = {
     'ApiKey': apiKey,
     'InvocationURL': invocationURL
   }
   return JSON.stringify(apiInfo, null, 2)
 }).then((json) => {
-  const buildDir = path.normalize(`${__dirname}/../build`)
-  fs.writeFileSync(`${buildDir}/api.json`, json)
+  const configDir = path.normalize(`${__dirname}/../config`)
+  fs.writeFileSync(`${configDir}/api.json`, json)
   console.log('api.json created')
 }).catch((error) => {
   console.error(error, error.stack)

@@ -3,4 +3,4 @@
 node_modules
 dist
 coverage
-build/api.json
+config/api.json
