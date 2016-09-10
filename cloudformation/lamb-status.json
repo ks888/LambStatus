@@ -178,6 +178,7 @@
       },
       "DependsOn": [
         "RestApi",
+        "ApiKey",
         "ComponentsApiResource",
         "GetComponentsApiMethod",
         "OptionsComponentsApiMethod"
@@ -191,6 +192,21 @@
           "Ref": "AWS::StackName"
         }
       }
+    },
+    "ApiKey": {
+      "Type": "AWS::ApiGateway::ApiKey",
+      "Properties": {
+        "Description": "API Key for Status Page",
+        "Enabled": "true",
+        "Name": "StatusPage",
+        "StageKeys": [{
+          "RestApiId": { "Ref": "RestApi" },
+          "StageName": "prod"
+        }]
+      },
+      "DependsOn": [
+        "RestApi"
+      ]
     },
     "ComponentsApiResource": {
       "Type": "AWS::ApiGateway::Resource",
@@ -218,6 +234,7 @@
         },
         "HttpMethod": "GET",
         "AuthorizationType": "NONE",
+        "ApiKeyRequired": true,
         "Integration": {
           "Type": "AWS",
           "IntegrationHttpMethod": "POST",
@@ -305,6 +322,7 @@
         },
         "HttpMethod": "OPTIONS",
         "AuthorizationType": "NONE",
+        "ApiKeyRequired": true,
         "Integration": {
           "Type": "MOCK",
           "RequestTemplates": {
@@ -457,6 +475,29 @@
     "ServiceComponentTable": {
       "Value": {
         "Ref": "ServiceComponentTable"
+      }
+    },
+    "ApiKeyID": {
+      "Value": {
+        "Ref" : "ApiKey"
+      }
+    },
+    "InvocationURL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "RestApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".amazonaws.com/prod/"
+          ]
+        ]
       }
     }
   }
