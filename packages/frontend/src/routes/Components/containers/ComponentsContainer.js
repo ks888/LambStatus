@@ -11,13 +11,16 @@ class Components extends React.Component {
     const { serviceComponents, isFetching } = this.props
     const componentItems = serviceComponents.map((component) => {
       return (
-        <div key={component.ID} className='mdl-cell mdl-cell--12-col mdl-grid'>
-          <div className='mdl-cell mdl-cell--12-col'>
-            <p>{component.name}</p>
-            <p>{component.status}</p>
-            <p>{component.description}</p>
-          </div>
-        </div>
+        <li key={component.ID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+          <span className='mdl-list__item-primary-content'>
+            <i className='material-icons mdl-list__item-avatar'>web</i>
+            <span>{component.name}</span>
+            <span className='mdl-list__item-sub-title'>{component.description}</span>
+          </span>
+          <span className='mdl-list__item-secondary-content'>
+            {component.status}
+          </span>
+        </li>
       )
     })
 
@@ -25,7 +28,9 @@ class Components extends React.Component {
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Components</h4>
       </div>
-      {componentItems}
+      <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+        {componentItems}
+      </ul>
     </div>)
   }
 }
