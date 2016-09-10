@@ -9,7 +9,7 @@ export const Components = (props) => {
     <div style={{ opacity: isFetching ? 0.5 : 1 }}>
       {components.length > 0 &&
         <List className={classes.list} selectable ripple>
-          <ListItem className={classes.list} caption={components} selectable onClick={() => { console.log('listitem') }}/>
+          <ListItem className={classes.list} caption={components} selectable onClick={() => { console.log('listitem') }} />
         </List>
       }
     </div>

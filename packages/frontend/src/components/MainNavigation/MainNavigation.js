@@ -1,5 +1,5 @@
 import React from 'react'
-import classnames from 'classnames';
+import classnames from 'classnames'
 import { List, ListItem } from 'react-toolbox'
 import classes from './MainNavigation.scss'
 
@@ -10,22 +10,22 @@ const components = {
   },
   components: {
     name: 'Components',
-    path: '/components/autocomplete',
-  },
+    path: '/components/autocomplete'
+  }
 }
 
 export const MainNavigation = ({}, { router }) => {
   const drawerItems = Object.keys(components).map((key) => {
-      const isActive = router.isActive(components[key].path);
-      return (
-        <ListItem
-          key={key}
-          caption={components[key].name}
-          className={classnames(classes.listItem, { [classes.active]: isActive })}
-          selectable
-          onClick={() => { console.log(components[key].path) }}
-        />
-      )
+    const isActive = router.isActive(components[key].path)
+    return (
+      <ListItem
+        key={key}
+        caption={components[key].name}
+        className={classnames(classes.listItem, { [classes.active]: isActive })}
+        selectable
+        onClick={() => { console.log(components[key].path) }}
+      />
+    )
   })
 
   return (<aside className={classes.aside}>
@@ -37,6 +37,6 @@ export const MainNavigation = ({}, { router }) => {
 
 MainNavigation.contextTypes = {
   router: React.PropTypes.object.isRequired
-};
+}
 
 export default MainNavigation

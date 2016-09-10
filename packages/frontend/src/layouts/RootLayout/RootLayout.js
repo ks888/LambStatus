@@ -5,8 +5,8 @@ import classes from './RootLayout.scss'
 
 export const RootLayout = (props) => (
   <div className={classes.root}>
-    <Header/>
-    <MainLayout/>
+    <Header />
+    <MainLayout />
   </div>
 )
 

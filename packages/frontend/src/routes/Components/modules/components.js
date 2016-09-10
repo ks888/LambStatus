@@ -7,14 +7,14 @@ export const RECEIVE_COMPONENTS = 'RECEIVE_COMPONENTS'
 // Actions
 // ------------------------------------
 
-export function requestComponents() {
+export function requestComponents () {
   return {
     type: REQUEST_COMPONENTS,
     payload: value
   }
 }
 
-export function receiveComponents(json) {
+export function receiveComponents (json) {
   return {
     type: RECEIVE_COMPONENTS,
     components: []
@@ -24,7 +24,7 @@ export function receiveComponents(json) {
 export const fetchComponents = () => {
   return (dispatch) => {
     dispatch(requestComponents())
-    return fetch(`https://dummy`)
+    return fetch('https://dummy')
       .then(response => response.json())
       .then(json => dispatch(receiveComponents(json)))
   }
@@ -39,13 +39,13 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 
-function requestComponentsHandler(state = { }, action) {
+function requestComponentsHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: true
   })
 }
 
-function receiveComponentsHandler(state = { }, action) {
+function receiveComponentsHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: false,
     components: action.components
