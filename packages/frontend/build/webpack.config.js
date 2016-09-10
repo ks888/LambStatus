@@ -146,7 +146,6 @@ const BASE_CSS_LOADER = 'css?sourceMap&-minimize'
 // Add any packge names here whose styles need to be treated as CSS modules.
 // These paths will be combined into a single regex.
 const PATHS_TO_TREAT_AS_CSS_MODULES = [
-  'react-toolbox',
 ]
 
 // If config has CSS modules enabled, treat this project's styles as CSS modules.
