@@ -3,35 +3,33 @@
 // ------------------------------------
 export const REQUEST_COMPONENTS = 'REQUEST_COMPONENTS'
 export const RECEIVE_COMPONENTS = 'RECEIVE_COMPONENTS'
+
 // ------------------------------------
 // Actions
 // ------------------------------------
 
 export function requestComponents () {
   return {
-    type: REQUEST_COMPONENTS,
-    payload: value
+    type: REQUEST_COMPONENTS
   }
 }
 
 export function receiveComponents (json) {
   return {
     type: RECEIVE_COMPONENTS,
-    components: []
+    serviceComponents: json
   }
 }
 
-export const fetchComponents = () => {
-  return (dispatch) => {
-    dispatch(requestComponents())
-    return fetch('https://dummy')
-      .then(response => response.json())
-      .then(json => dispatch(receiveComponents(json)))
-  }
+export const fetchComponents = (dispatch) => {
+  dispatch(requestComponents())
+  return fetch('')
+    .then(response => response.json())
+    .then(json => dispatch(receiveComponents(json)))
 }
 
 export const actions = {
-  fetchComponents,
+  requestComponents,
   receiveComponents
 }
 
@@ -48,7 +46,7 @@ function requestComponentsHandler (state = { }, action) {
 function receiveComponentsHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: false,
-    components: action.components
+    serviceComponents: action.serviceComponents
   })
 }
 
@@ -61,8 +59,10 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 
-export default function componentsReducer (state, action) {
+export default function componentsReducer (state = {
+  isFetching: false,
+  serviceComponents: []
+}, action) {
   const handler = ACTION_HANDLERS[action.type]
-
   return handler ? handler(state, action) : state
 }

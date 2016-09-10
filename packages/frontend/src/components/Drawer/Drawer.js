@@ -1,25 +1,25 @@
 import React from 'react'
 import classnames from 'classnames'
 import classes from './Drawer.scss'
+import { Link } from 'react-router'
 
 const components = {
   dashboard: {
     name: 'Dashboard',
-    path: '/components/app_bar'
+    path: '/'
   },
   components: {
     name: 'Components',
-    path: '/components/autocomplete'
+    path: '/components'
   }
 }
 
 export const Drawer = ({}, { router }) => {
   const drawerItems = Object.keys(components).map((key) => {
-    // const isActive = router.isActive(components[key].path)
     return (
-      <a className='mdl-navigation__link' href='' onClick={() => { console.log(components[key].path) }}>
+      <Link key={key} to={components[key].path} className='mdl-navigation__link' activeClassName={classes.active}>
         { components[key].name }
-      </a>
+      </Link>
     )
   })
 

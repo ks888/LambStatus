@@ -215,7 +215,6 @@ webpackConfig.module.loaders.push({
 // Style Configuration
 // ------------------------------------
 webpackConfig.sassLoader = {
-  data: '@import "' + path.resolve(paths.client(), 'theme/_theme.scss') + '";',
   includePaths: paths.client('styles')
 }
 

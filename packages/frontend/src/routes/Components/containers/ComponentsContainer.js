@@ -1,33 +1,53 @@
+import React from 'react'
 import { connect } from 'react-redux'
 import { fetchComponents } from '../modules/components'
 
-import Components from 'components/Components'
+class Components extends React.Component {
+  componentDidMount () {
+    this.props.dispatch(fetchComponents)
+  }
 
-Components.componentDidMount = () => {
-  this.props.dispatch(fetchComponents)
-}
-
-Components.componentWillReceiveProps = () => {
-  this.props.dispatch(fetchComponents)
-}
-
-const mapStateToProps = (state) => ({
-  isFetching: state.isFetching,
-  components: state.components || []
-})
-
-/*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:
-
-    import { createSelector } from 'reselect'
-    const counter = (state) => state.counter
-    const tripleCount = createSelector(counter, (count) => count * 3)
-    const mapStateToProps = (state) => ({
-      counter: tripleCount(state)
+  render () {
+    const { serviceComponents, isFetching } = this.props
+    const componentItems = serviceComponents.map((component) => {
+      return (
+        <div key={component.ID} className='mdl-cell mdl-cell--12-col mdl-grid'>
+          <div className='mdl-cell mdl-cell--12-col'>
+            <p>{component.name}</p>
+            <p>{component.status}</p>
+            <p>{component.description}</p>
+          </div>
+        </div>
+      )
     })
 
-    Selectors can compute derived data, allowing Redux to store the minimal possible state.
-    Selectors are efficient. A selector is not recomputed unless one of its arguments change.
-    Selectors are composable. They can be used as input to other selectors.
-    https://github.com/reactjs/reselect    */
+    return (<div className='mdl-grid' style={{ opacity: isFetching ? 0.5 : 1 }}>
+      <div className='mdl-cell mdl-cell--12-col'>
+        <h4>Components</h4>
+      </div>
+      {componentItems}
+    </div>)
+  }
+}
+
+Components.propTypes = {
+  serviceComponents: React.PropTypes.array.isRequired,
+  isFetching: React.PropTypes.bool.isRequired,
+  dispatch: React.PropTypes.func.isRequired
+}
+
+const mapStateToProps = (state) => {
+  let serviceComponents
+  console.log(state.components.serviceComponents)
+  if (Array.isArray(state.components.serviceComponents)) {
+    serviceComponents = []
+  } else {
+    serviceComponents = JSON.parse(state.components.serviceComponents)
+  }
+  return {
+    isFetching: state.components.isFetching || false,
+    serviceComponents: serviceComponents
+  }
+}
 
 export default connect(mapStateToProps)(Components)
