@@ -17,7 +17,7 @@ const components = {
 export const Drawer = ({}, { router }) => {
   const drawerItems = Object.keys(components).map((key) => {
     return (
-      <Link key={key} to={components[key].path} className='mdl-navigation__link' activeClassName={classes.active}>
+      <Link key={key} to={components[key].path} className='mdl-navigation__link' activeClassName={classes.active} onlyActiveOnIndex>
         { components[key].name }
       </Link>
     )
