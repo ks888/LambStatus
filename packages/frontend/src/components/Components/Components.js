@@ -1,17 +1,17 @@
 import React from 'react'
-import { List, ListItem } from 'react-toolbox'
-import classes from './Components.scss'
 
 export const Components = (props) => {
   const { components, isFetching } = props
-  return (<div>
-    <h3>Components</h3>
-    <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-      {components.length > 0 &&
-        <List className={classes.list} selectable ripple>
-          <ListItem className={classes.list} caption={components} selectable onClick={() => { console.log('listitem') }} />
-        </List>
-      }
+  const componentItems = Object.keys(components).map((key) => {
+    return (
+      <div className='mdl-cell mdl-cell--12-col'>Content</div>
+    )
+  })
+
+  return (<div style={{ opacity: isFetching ? 0.5 : 1 }}>
+    Components
+    <div className='mdl-grid'>
+      {componentItems}
     </div>
   </div>)
 }
