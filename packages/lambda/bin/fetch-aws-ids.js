@@ -28,7 +28,7 @@ function describeStack ({ cloudFormation, stackName }) {
   })
 }
 
-async function getStackOutput() {
+async function getStackOutput () {
   try {
     const { CLOUDFORMATION: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
@@ -36,6 +36,7 @@ async function getStackOutput() {
     return stack.Outputs
   } catch (error) {
     console.error(error, error.stack)
+    throw error
   }
 }
 
