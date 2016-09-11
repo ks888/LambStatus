@@ -25,8 +25,14 @@ class Components extends React.Component {
     })
 
     return (<div className='mdl-grid' style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--12-col'>
+      <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
         <h4>Components</h4>
+      </div>
+      <div className='mdl-cell mdl-cell--2-col mdl-cell--middle'>
+        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'>
+          <i className='material-icons'>add</i>
+          Component
+        </button>
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
