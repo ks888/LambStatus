@@ -19,7 +19,8 @@
     "__COVERAGE__" : false,
     "__BASENAME__" : false,
     "__API_URL__"  : '',
-    "__API_KEY__"  : ''
+    "__API_KEY__"  : '',
+    "dialogPolyfill"  : {}
   },
   "rules": {
     "semi" : [2, "never"],

@@ -1,11 +1,30 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { fetchComponents } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 
 class Components extends React.Component {
+  constructor () {
+    super()
+    this.state = { showDialog: false }
+  }
+
   componentDidMount () {
     this.props.dispatch(fetchComponents)
+  }
+
+  componentDidUpdate () {
+    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog)
+    if (dialog) {
+      console.log(dialog)
+      dialogPolyfill.registerDialog(dialog)
+      dialog.showModal()
+    }
+  }
+
+  handleAddComponent () {
+    this.setState({ showDialog: true })
   }
 
   render () {
@@ -25,12 +44,17 @@ class Components extends React.Component {
       )
     })
 
+    let dialog
+    if (this.state.showDialog) {
+      dialog = <ComponentDialog ref='componentDialog' />
+    }
+
     return (<div className='mdl-grid' style={{ opacity: isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>
       <div className='mdl-cell mdl-cell--2-col mdl-cell--middle'>
-        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'>
+        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent' onClick={this.handleAddComponent.bind(this)}>
           <i className='material-icons'>add</i>
           Component
         </button>
@@ -38,7 +62,7 @@ class Components extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
-      <ComponentDialog />
+      {dialog}
     </div>)
   }
 }
