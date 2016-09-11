@@ -24,6 +24,12 @@ class Components extends React.Component {
         dialogPolyfill.registerDialog(dialog)
       }
       dialog.showModal()
+
+      // workaround https://github.com/GoogleChrome/dialog-polyfill/issues/105
+      let overlay = document.querySelector('._dialog_overlay')
+      if (overlay) {
+        overlay.parentNode.removeChild(overlay)
+      }
     }
   }
 

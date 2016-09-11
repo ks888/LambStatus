@@ -11,8 +11,8 @@ class ComponentDialog extends React.Component {
         Comopnent Name
       </div>
       <div className='mdl-dialog__actions'>
-        <button type='button' className='mdl-button' onClick={this.props.onCompleted}>Add</button>
-        <button type='button' className='mdl-button close' onClick={this.props.onCanceled}>Cancel</button>
+        <button type='button' className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent' onClick={this.props.onCompleted}>Add</button>
+        <button type='button' className='mdl-button mdl-js-button mdl-button--raised' onClick={this.props.onCanceled}>Cancel</button>
       </div>
     </dialog>)
   }
