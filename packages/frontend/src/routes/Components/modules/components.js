@@ -23,8 +23,9 @@ export function receiveComponents (json) {
 
 export const fetchComponents = (dispatch) => {
   dispatch(requestComponents())
-  return fetch('')
-    .then(response => response.json())
+  return fetch(__API_URL__ + 'components', {
+    headers: { 'x-api-key': __API_KEY__ }
+  }).then(response => response.json())
     .then(json => dispatch(receiveComponents(json)))
 }
 

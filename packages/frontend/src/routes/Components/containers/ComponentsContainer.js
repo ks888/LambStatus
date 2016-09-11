@@ -43,7 +43,6 @@ Components.propTypes = {
 
 const mapStateToProps = (state) => {
   let serviceComponents
-  console.log(state.components.serviceComponents)
   if (Array.isArray(state.components.serviceComponents)) {
     serviceComponents = []
   } else {

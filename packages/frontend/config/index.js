@@ -117,6 +117,13 @@ config.utils_paths = {
   dist   : base.bind(null, config.dir_dist)
 }
 
+// ------------------------------------
+// API
+// ------------------------------------
+import apiInfo from './api.json'
+config.globals['__API_URL__'] = JSON.stringify(apiInfo.InvocationURL)
+config.globals['__API_KEY__'] = JSON.stringify(apiInfo.ApiKey)
+
 // ========================================================
 // Environment Configuration
 // ========================================================

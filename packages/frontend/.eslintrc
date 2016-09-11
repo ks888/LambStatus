@@ -17,7 +17,9 @@
     "__PROD__"     : false,
     "__DEBUG__"    : false,
     "__COVERAGE__" : false,
-    "__BASENAME__" : false
+    "__BASENAME__" : false,
+    "__API_URL__"  : '',
+    "__API_KEY__"  : ''
   },
   "rules": {
     "semi" : [2, "never"],

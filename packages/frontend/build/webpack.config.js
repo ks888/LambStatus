@@ -1,5 +1,4 @@
 import webpack from 'webpack'
-import path from 'path'
 import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
