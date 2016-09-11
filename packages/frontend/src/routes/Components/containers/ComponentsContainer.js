@@ -8,6 +8,9 @@ class Components extends React.Component {
   constructor () {
     super()
     this.state = { showDialog: false }
+    this.handleShowDialog = this.handleShowDialog.bind(this)
+    this.handleAddComponent = this.handleAddComponent.bind(this)
+    this.handleCancelDialog = this.handleCancelDialog.bind(this)
   }
 
   componentDidMount () {
@@ -17,14 +20,25 @@ class Components extends React.Component {
   componentDidUpdate () {
     let dialog = ReactDOM.findDOMNode(this.refs.componentDialog)
     if (dialog) {
-      console.log(dialog)
-      dialogPolyfill.registerDialog(dialog)
+      if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog)
+      }
       dialog.showModal()
     }
   }
 
-  handleAddComponent () {
+  handleShowDialog () {
     this.setState({ showDialog: true })
+  }
+
+  handleAddComponent () {
+    this.handleCancelDialog()
+  }
+
+  handleCancelDialog () {
+    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog)
+    dialog.close()
+    this.setState({ showDialog: false })
   }
 
   render () {
@@ -46,7 +60,8 @@ class Components extends React.Component {
 
     let dialog
     if (this.state.showDialog) {
-      dialog = <ComponentDialog ref='componentDialog' />
+      dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAddComponent}
+        onCanceled={this.handleCancelDialog} />
     }
 
     return (<div className='mdl-grid' style={{ opacity: isFetching ? 0.5 : 1 }}>
@@ -54,7 +69,8 @@ class Components extends React.Component {
         <h4>Components</h4>
       </div>
       <div className='mdl-cell mdl-cell--2-col mdl-cell--middle'>
-        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent' onClick={this.handleAddComponent.bind(this)}>
+        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'
+          onClick={this.handleShowDialog}>
           <i className='material-icons'>add</i>
           Component
         </button>

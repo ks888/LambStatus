@@ -11,10 +11,25 @@ class ComponentDialog extends React.Component {
         Comopnent Name
       </div>
       <div className='mdl-dialog__actions'>
-        <button type='button' className='mdl-button'>Add</button>
+        <button type='button' className='mdl-button' onClick={this.props.onCompleted}>Add</button>
+        <button type='button' className='mdl-button close' onClick={this.props.onCanceled}>Cancel</button>
       </div>
     </dialog>)
   }
+}
+
+ComponentDialog.propTypes = {
+  id: React.PropTypes.string,
+  name: React.PropTypes.string,
+  description: React.PropTypes.string,
+  onCompleted: React.PropTypes.func.isRequired,
+  onCanceled: React.PropTypes.func.isRequired
+}
+
+ComponentDialog.defaultProps = {
+  id: '',
+  name: '',
+  description: ''
 }
 
 export default ComponentDialog

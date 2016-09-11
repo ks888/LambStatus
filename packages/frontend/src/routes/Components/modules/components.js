@@ -27,6 +27,9 @@ export const fetchComponents = (dispatch) => {
     headers: { 'x-api-key': __API_KEY__ }
   }).then(response => response.json())
     .then(json => dispatch(receiveComponents(json)))
+    .catch(error => {
+      console.error(error, error.stack)
+    })
 }
 
 export const actions = {
