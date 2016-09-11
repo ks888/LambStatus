@@ -2,6 +2,7 @@ import webpack from 'webpack'
 import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import config from '../config'
 import _debug from 'debug'
 
@@ -57,7 +58,11 @@ webpackConfig.plugins = [
     minify: {
       collapseWhitespace: true
     }
-  })
+  }),
+  new CopyWebpackPlugin([
+    { from: 'node_modules/dialog-polyfill/dialog-polyfill.css' },
+    { from: 'node_modules/dialog-polyfill/dialog-polyfill.js' }
+  ])
 ]
 
 if (__DEV__) {

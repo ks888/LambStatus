@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { fetchComponents } from '../modules/components'
+import ComponentDialog from 'components/ComponentDialog'
 
 class Components extends React.Component {
   componentDidMount () {
@@ -37,6 +38,7 @@ class Components extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
+      <ComponentDialog />
     </div>)
   }
 }
