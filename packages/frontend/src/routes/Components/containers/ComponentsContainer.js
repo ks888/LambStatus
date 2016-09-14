@@ -14,6 +14,9 @@ class Components extends React.Component {
   }
 
   componentDidMount () {
+    let jsElem = ReactDOM.findDOMNode(this.refs.add_component_button)
+    componentHandler.upgradeElement(jsElem)
+
     this.props.dispatch(fetchComponents)
   }
 
@@ -76,7 +79,7 @@ class Components extends React.Component {
       </div>
       <div className='mdl-cell mdl-cell--2-col mdl-cell--middle'>
         <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'
-          onClick={this.handleShowDialog}>
+          onClick={this.handleShowDialog} ref='add_component_button'>
           <i className='material-icons'>add</i>
           Component
         </button>
