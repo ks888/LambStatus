@@ -20,7 +20,8 @@
     "__BASENAME__" : false,
     "__API_URL__"  : '',
     "__API_KEY__"  : '',
-    "dialogPolyfill"  : {}
+    "dialogPolyfill"   : {},
+    "componentHandler" : {},
   },
   "rules": {
     "semi" : [2, "never"],
