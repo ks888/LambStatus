@@ -24,12 +24,12 @@ class ComponentDialog extends React.Component {
       </h2>
       <div className='mdl-dialog__content'>
         <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
-          classes.dialog)} ref='textfield_name'>
+          classes.textfield)} ref='textfield_name'>
           <input className='mdl-textfield__input' type='text' id='name' />
           <label className='mdl-textfield__label' htmlFor='name'>Name</label>
         </div>
         <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
-          classes.dialog)} ref='textfield_desc'>
+          classes.textfield)} ref='textfield_desc'>
           <textarea className='mdl-textfield__input' type='text' rows='2' id='desc' />
           <label className='mdl-textfield__label' htmlFor='desc'>Description</label>
         </div>
