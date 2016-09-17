@@ -4,3 +4,5 @@ node_modules
 dist
 coverage
 config/api.json
+.travis.yml
+tests
