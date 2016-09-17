@@ -54,7 +54,7 @@ export const putComponent = (name, description, status) => {
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
 
   return new Promise((resolve, reject) => {
-    const idLength = 8
+    const idLength = 12
     let id = generateID(idLength)
     const params = {
       Key: {
