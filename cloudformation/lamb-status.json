@@ -110,7 +110,7 @@
         "Code": {
           "ZipFile": "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
         },
-        "Description": "GetComponents",
+        "Description": "Get a list of components",
         "FunctionName": {
           "Fn::Join": [
             "",
@@ -162,6 +162,69 @@
                 "Ref": "RestApi"
               },
               "/*/GET/components"
+            ]
+          ]
+        }
+      }
+    },
+    "PostComponentsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        },
+        "Description": "Create a new component",
+        "FunctionName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "AWS::StackName"
+              },
+              "-PostComponents"
+            ]
+          ]
+        },
+        "Handler": "lib/index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 30
+      }
+    },
+    "PostComponentsLambdaInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostComponentsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "RestApi"
+              },
+              "/*/POST/components"
             ]
           ]
         }
@@ -311,6 +374,94 @@
         ]
       }
     },
+    "PostComponentsApiMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ResourceId": {
+          "Ref": "ComponentsApiResource"
+        },
+        "HttpMethod": "POST",
+        "AuthorizationType": "NONE",
+        "ApiKeyRequired": true,
+        "Integration": {
+          "Type": "AWS",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PostComponentsLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "StatusCode": "400",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              },
+              "SelectionPattern": ".*Error.*"
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          },
+          {
+            "StatusCode": "400",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          }
+        ]
+      }
+    },
     "OptionsComponentsApiMethod": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -333,7 +484,7 @@
               "StatusCode": "200",
               "ResponseParameters": {
                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'",
-                "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,OPTIONS'",
                 "method.response.header.Access-Control-Allow-Origin": {
                   "Fn::Join": [
                     "",
