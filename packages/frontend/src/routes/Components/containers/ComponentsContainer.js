@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { fetchComponents } from '../modules/components'
+import { fetchComponents, postComponent, updateComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 
 class Components extends React.Component {
@@ -40,7 +40,12 @@ class Components extends React.Component {
     this.setState({ showDialog: true })
   }
 
-  handleAddComponent () {
+  handleAddComponent (id, name, description) {
+    if (id) {
+      this.props.dispatch(updateComponent(id, name, description))
+    } else {
+      this.props.dispatch(postComponent(name, description))
+    }
     this.handleCancelDialog()
   }
 
@@ -54,7 +59,7 @@ class Components extends React.Component {
     const { serviceComponents, isFetching } = this.props
     const componentItems = serviceComponents.map((component) => {
       return (
-        <li key={component.ID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+        <li key={component.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
           <span className='mdl-list__item-primary-content'>
             <i className='material-icons mdl-list__item-avatar'>web</i>
             <span>{component.name}</span>
@@ -93,21 +98,20 @@ class Components extends React.Component {
 }
 
 Components.propTypes = {
-  serviceComponents: React.PropTypes.array.isRequired,
-  isFetching: React.PropTypes.bool.isRequired,
-  dispatch: React.PropTypes.func.isRequired
+  serviceComponents: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired
+  }).isRequired).isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  dispatch: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
-  let serviceComponents
-  if (Array.isArray(state.components.serviceComponents)) {
-    serviceComponents = []
-  } else {
-    serviceComponents = JSON.parse(state.components.serviceComponents)
-  }
   return {
-    isFetching: state.components.isFetching || false,
-    serviceComponents: serviceComponents
+    isFetching: state.components.isFetching,
+    serviceComponents: state.components.serviceComponents
   }
 }
 

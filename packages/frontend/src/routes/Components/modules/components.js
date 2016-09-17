@@ -1,62 +1,125 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const REQUEST_COMPONENTS = 'REQUEST_COMPONENTS'
-export const RECEIVE_COMPONENTS = 'RECEIVE_COMPONENTS'
+export const LOAD = 'LOAD'
+export const LIST_COMPONENTS = 'LIST_COMPONENTS'
+export const ADD_COMPONENT = 'ADD_COMPONENT'
+export const EDIT_COMPONENT = 'EDIT_COMPONENT_SUCCESS'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export function requestComponents () {
+export function load () {
   return {
-    type: REQUEST_COMPONENTS
+    type: LOAD
   }
 }
 
-export function receiveComponents (json) {
+export function listComponents (json) {
   return {
-    type: RECEIVE_COMPONENTS,
+    type: LIST_COMPONENTS,
     serviceComponents: json
   }
 }
 
+export function addComponent (json) {
+  return {
+    type: ADD_COMPONENT,
+    serviceComponent: json
+  }
+}
+
+export function editComponent (json) {
+  return {
+    type: EDIT_COMPONENT,
+    serviceComponent: json
+  }
+}
+
 export const fetchComponents = (dispatch) => {
-  dispatch(requestComponents())
+  dispatch(load())
   return fetch(__API_URL__ + 'components', {
     headers: { 'x-api-key': __API_KEY__ }
   }).then(response => response.json())
-    .then(json => dispatch(receiveComponents(json)))
+    .then(json => dispatch(listComponents(json)))
     .catch(error => {
       console.error(error, error.stack)
     })
 }
 
+export const postComponent = (name, description) => {
+  return dispatch => {
+    dispatch(load())
+    return fetch(__API_URL__ + 'component', {
+      headers: { 'x-api-key': __API_KEY__ }
+    }).then(response => response.json())
+      .then(json => dispatch(addComponent(json)))
+      .catch(error => {
+        console.error(error, error.stack)
+      })
+  }
+}
+
+export const updateComponent = (id, name, description) => {}
+
 export const actions = {
-  requestComponents,
-  receiveComponents
+  load,
+  listComponents,
+  addComponent,
+  editComponent
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 
-function requestComponentsHandler (state = { }, action) {
+function loadHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: true
   })
 }
 
-function receiveComponentsHandler (state = { }, action) {
+function listComponentsHandler (state = { }, action) {
+  let components = JSON.parse(action.serviceComponents).map((component) => {
+    return {
+      id: component.ID,
+      name: component.name,
+      description: component.description,
+      status: component.status
+    }
+  })
   return Object.assign({}, state, {
     isFetching: false,
-    serviceComponents: action.serviceComponents
+    serviceComponents: components
   })
 }
 
+function addComponentHandler (state = { }, action) {
+  let component = JSON.parse(action.serviceComponent)
+  return Object.assign({}, state, {
+    isFetching: false,
+    serviceComponents: [
+      ...state.serviceComponents,
+      {
+        id: component.ID,
+        name: component.name,
+        description: component.description,
+        status: component.status
+      }
+    ]
+  })
+}
+
+function editComponentHandler (state = { }, action) {
+  return state
+}
+
 const ACTION_HANDLERS = {
-  [REQUEST_COMPONENTS]: requestComponentsHandler,
-  [RECEIVE_COMPONENTS]: receiveComponentsHandler
+  [LOAD]: loadHandler,
+  [LIST_COMPONENTS]: listComponentsHandler,
+  [ADD_COMPONENT]: addComponentHandler,
+  [EDIT_COMPONENT]: editComponentHandler
 }
 
 // ------------------------------------
