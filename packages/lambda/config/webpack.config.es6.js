@@ -14,6 +14,10 @@ export default {
     ['GetComponents']: [
       'babel-polyfill',
       './src/getComponents/index.js'
+    ],
+    ['PostComponents']: [
+      'babel-polyfill',
+      './src/postComponents/index.js'
     ]
   },
   output: {
