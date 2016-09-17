@@ -5,6 +5,7 @@ import { fetchComponents, postComponent, updateComponent } from '../modules/comp
 import ComponentDialog from 'components/ComponentDialog'
 import classnames from 'classnames'
 import classes from './ComponentsContainer.scss'
+import { getColor } from 'utils/colors'
 
 class Components extends React.Component {
   constructor () {
@@ -64,15 +65,27 @@ class Components extends React.Component {
   render () {
     const { serviceComponents, isFetching } = this.props
     const componentItems = serviceComponents.map((component) => {
+      let statusColor = getColor(component.status)
       return (
         <li key={component.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
           <span className='mdl-list__item-primary-content'>
-            <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}>web</i>
+            <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')} style={{color: statusColor}}>web</i>
             <span>{component.name}</span>
             <span className='mdl-list__item-sub-title'>{component.description}</span>
           </span>
           <span className='mdl-list__item-secondary-content'>
-            {component.status}
+            <div className='mdl-grid'>
+              <div className='mdl-cell mdl-cell--6-col'>
+                <button className='mdl-button mdl-js-button'>
+                  Edit
+                </button>
+              </div>
+              <div className='mdl-cell mdl-cell--6-col'>
+                <button className='mdl-button mdl-js-button'>
+                  Delete
+                </button>
+              </div>
+            </div>
           </span>
         </li>
       )
@@ -84,11 +97,11 @@ class Components extends React.Component {
         onCanceled={this.handleCancelDialog} />
     }
 
-    return (<div className='mdl-grid' style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
+    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
+      <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>
-      <div className='mdl-cell mdl-cell--2-col mdl-cell--middle'>
+      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
         <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'
           onClick={this.handleShowDialog} ref='add_component_button'>
           <i className='material-icons'>add</i>
