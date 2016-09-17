@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import WError from 'verror'
 import { ServiceComponentTable } from './const'
 
-export default function() {
+export default function () {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB({ region })
 
@@ -11,8 +11,8 @@ export default function() {
       TableName: ServiceComponentTable,
       ProjectionExpression: 'ID, description, #nm, #st',
       ExpressionAttributeNames: {
-        "#nm": "name",
-        "#st": "status",
+        '#nm': 'name',
+        '#st': 'status'
       }
     }
     awsDynamoDb.scan(params, (err, scanResult) => {
@@ -36,10 +36,10 @@ export default function() {
           }
         } = component
         components.push({
-          "ID": compID,
-          "name": compName,
-          "status": compStatus,
-          "description": compDesc,
+          ID: compID,
+          name: compName,
+          status: compStatus,
+          description: compDesc
         })
       })
 

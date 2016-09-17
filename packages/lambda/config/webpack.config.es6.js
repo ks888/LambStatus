@@ -1,4 +1,3 @@
-import path from 'path'
 import dotenv from 'dotenv'
 import StringReplacePlugin from 'string-replace-webpack-plugin'
 import { DefinePlugin } from 'webpack'
@@ -6,27 +5,27 @@ import { DefinePlugin } from 'webpack'
 dotenv.config({path: `${__dirname}/../../../.env`})
 
 const defines = {
-  'process.env.AWS_REGION': `'${process.env.AWS_REGION}'`,
+  'process.env.AWS_REGION': `'${process.env.AWS_REGION}'`
 }
 
 export default {
   entry: {
-    ['GetComponents']: [
+    GetComponents: [
       'babel-polyfill',
       './src/getComponents/index.js'
     ],
-    ['PostComponents']: [
+    PostComponents: [
       'babel-polyfill',
       './src/postComponents/index.js'
     ]
   },
   output: {
-    path: "./build/functions",
-    library: "[name]",
-    libraryTarget: "commonjs2",
-    filename: "[name]/index.js"
+    path: './build/functions',
+    library: '[name]',
+    libraryTarget: 'commonjs2',
+    filename: '[name]/index.js'
   },
-  target: "node",
+  target: 'node',
   externals: { 'aws-sdk': 'commonjs aws-sdk' },
   module: {
     loaders: [
@@ -48,8 +47,8 @@ export default {
         loader: StringReplacePlugin.replace({ // from the 'string-replace-webpack-plugin'
           replacements: [{
             pattern: /\(\{define:typeof define!="undefined"\?define:function\(deps, factory\)\{module\.exports = factory\(\);\}\}\)\./ig,
-            replacement: function(match, p1, offset, string) {
-              return false;
+            replacement: function (match, p1, offset, string) {
+              return false
             }
           }]
         })
@@ -58,6 +57,6 @@ export default {
   },
   plugins: [
     new StringReplacePlugin(),
-    new DefinePlugin(defines),
+    new DefinePlugin(defines)
   ]
 }
