@@ -473,7 +473,7 @@
         },
         "HttpMethod": "OPTIONS",
         "AuthorizationType": "NONE",
-        "ApiKeyRequired": true,
+        "ApiKeyRequired": false,
         "Integration": {
           "Type": "MOCK",
           "RequestTemplates": {

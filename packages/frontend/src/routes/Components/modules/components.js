@@ -56,8 +56,10 @@ export const postComponent = (name, description, status) => {
       description: description,
       status: status
     }
-    return fetch(__API_URL__ + 'component', {
-      headers: { method: 'POST', body: JSON.stringify(body), 'x-api-key': __API_KEY__ }
+    return fetch(__API_URL__ + 'components', {
+      headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
+      method: 'POST',
+      body: JSON.stringify(body)
     }).then(response => response.json())
       .then(json => dispatch(addComponent(json)))
       .catch(error => {

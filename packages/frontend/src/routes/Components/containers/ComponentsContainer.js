@@ -26,12 +26,16 @@ class Components extends React.Component {
       if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog)
       }
-      dialog.showModal()
+      try {
+        dialog.showModal()
 
-      // workaround https://github.com/GoogleChrome/dialog-polyfill/issues/105
-      let overlay = document.querySelector('._dialog_overlay')
-      if (overlay) {
-        overlay.parentNode.removeChild(overlay)
+        // workaround https://github.com/GoogleChrome/dialog-polyfill/issues/105
+        let overlay = document.querySelector('._dialog_overlay')
+        if (overlay) {
+          overlay.parentNode.removeChild(overlay)
+        }
+      } catch (ex) {
+        console.warn('Failed to show dialog')
       }
     }
   }
