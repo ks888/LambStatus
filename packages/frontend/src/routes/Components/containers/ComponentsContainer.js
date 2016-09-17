@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { fetchComponents, postComponent, updateComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
+import classnames from 'classnames'
+import classes from './ComponentsContainer.scss'
 
 class Components extends React.Component {
   constructor () {
@@ -65,7 +67,7 @@ class Components extends React.Component {
       return (
         <li key={component.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
           <span className='mdl-list__item-primary-content'>
-            <i className='material-icons mdl-list__item-avatar'>web</i>
+            <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}>web</i>
             <span>{component.name}</span>
             <span className='mdl-list__item-sub-title'>{component.description}</span>
           </span>
