@@ -1,16 +1,12 @@
 
 import awsIDs from '../../build/aws_resource_ids.json'
-export const [
-  {
-    OutputKey: ServiceComponentTableKey,
-    OutputValue: ServiceComponentTable
-  },
-  {
-    OutputKey: LambdaRoleArnKey,
-    OutputValue: LambdaRoleArn
-  },
-  {
-    OutputKey: S3BucketURLKey,
-    OutputValue: S3BucketURL
+
+export let ServiceComponentTable
+
+awsIDs.forEach((awsID) => {
+  switch (awsID.OutputKey) {
+    case 'ServiceComponentTable':
+      ServiceComponentTable = awsID.OutputValue
+      break
   }
-] = awsIDs
+})
