@@ -51,8 +51,11 @@ export const fetchComponents = (dispatch) => {
 export const postComponent = (name, description) => {
   return dispatch => {
     dispatch(load())
+    let form = new FormData()
+    form.append('name', name)
+    form.append('description', description)
     return fetch(__API_URL__ + 'component', {
-      headers: { 'x-api-key': __API_KEY__ }
+      headers: { method: 'POST', body: form, 'x-api-key': __API_KEY__ }
     }).then(response => response.json())
       .then(json => dispatch(addComponent(json)))
       .catch(error => {
