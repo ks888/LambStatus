@@ -40,11 +40,11 @@ class Components extends React.Component {
     this.setState({ showDialog: true })
   }
 
-  handleAddComponent (id, name, description) {
+  handleAddComponent (id, name, description, status) {
     if (id) {
-      this.props.dispatch(updateComponent(id, name, description))
+      this.props.dispatch(updateComponent(id, name, description, status))
     } else {
-      this.props.dispatch(postComponent(name, description))
+      this.props.dispatch(postComponent(name, description, status))
     }
     this.handleCancelDialog()
   }

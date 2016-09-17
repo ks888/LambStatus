@@ -9,7 +9,8 @@ class ComponentDialog extends React.Component {
     this.state = {
       id: '',
       name: '',
-      description: ''
+      description: '',
+      status: 'Operational'
     }
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleChangeDescription = this.handleChangeDescription.bind(this)
@@ -37,7 +38,7 @@ class ComponentDialog extends React.Component {
   }
 
   handleClickAddButton (e) {
-    this.props.onCompleted(this.state.id, this.state.name, this.state.description)
+    this.props.onCompleted(this.state.id, this.state.name, this.state.description, this.state.status)
   }
 
   render () {
