@@ -1,17 +1,13 @@
 
-import getComponents from '../utils/dynamoDB'
+import { putComponent } from '../utils/dynamoDB'
 
 export async function handler (event, context, callback) {
-  console.log('postComponents called')
-  return
   try {
-    let comps = await getComponents()
-    callback(null, JSON.stringify(comps, null, 2))
+    let newComp = await putComponent(event.name, event.description, event.status)
+    callback(null, JSON.stringify(newComp.Attributes))
   } catch (error) {
-    console.log('getComponents error', error)
+    console.log('postComponents error', error)
     console.log(error.stack)
-    callback(JSON.stringify({
-      error: 'Exception occurred'
-    }))
+    callback('Failed to create a new component')
   }
 }

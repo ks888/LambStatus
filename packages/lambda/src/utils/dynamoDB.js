@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk'
 import WError from 'verror'
 import { ServiceComponentTable } from './const'
+import generateID from './generateID'
 
-export default function () {
+export const getComponents = () => {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB({ region })
 
@@ -44,6 +45,39 @@ export default function () {
       })
 
       resolve(components)
+    })
+  })
+}
+
+export const putComponent = (name, description, status) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const idLength = 8
+    let id = generateID(idLength)
+    const params = {
+      Key: {
+        ID: id
+      },
+      UpdateExpression: 'set #n = :n, description = :d, #s = :s',
+      ExpressionAttributeNames: {
+        '#n': 'name',
+        '#s': 'status'
+      },
+      ExpressionAttributeValues: {
+        ':n': name,
+        ':d': description,
+        ':s': status
+      },
+      TableName: ServiceComponentTable,
+      ReturnValues: 'ALL_NEW'
+    }
+    awsDynamoDb.update(params, (err, data) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+      resolve(data)
     })
   })
 }
