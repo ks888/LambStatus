@@ -2,15 +2,20 @@ import path from 'path'
 import fs from 'fs'
 import dotenv from 'dotenv'
 import mkdirp from 'mkdirp'
-import AWS from 'aws-sdk'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
 let awsResourceIDs = require('../build/aws_resource_ids.json')
-const lambdaRoleArnKey = awsResourceIDs[1].OutputKey
-const lambdaRoleArn = awsResourceIDs[1].OutputValue
-if (lambdaRoleArnKey != 'LambdaRoleArn') {
-  console.log('Error: aws resource file is unexpected format (key name is ' + lambdaRoleArnKey + ')')
+
+let lambdaRoleArn
+awsResourceIDs.some((resourceID) => {
+  if (resourceID.OutputKey === 'LambdaRoleArn') {
+    lambdaRoleArn = resourceID.OutputValue
+    return true
+  }
+})
+if (lambdaRoleArn === undefined) {
+  console.log('Error: aws_resource_ids.json does not have LambdaRoleArn entry.')
   process.exit(1)
 }
 
