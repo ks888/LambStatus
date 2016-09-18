@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import classes from './ComponentDialog.scss'
 import Button from 'components/Button'
+import TextField from 'components/TextField'
 
 class ComponentDialog extends React.Component {
   constructor (props) {
@@ -18,22 +18,12 @@ class ComponentDialog extends React.Component {
     this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
   }
 
-  componentDidMount () {
-    let jsElems = [
-      ReactDOM.findDOMNode(this.refs.textfield_name),
-      ReactDOM.findDOMNode(this.refs.textfield_desc)
-    ]
-    jsElems.forEach((jsElem) => {
-      componentHandler.upgradeElement(jsElem)
-    })
+  handleChangeName (value) {
+    this.setState({name: value})
   }
 
-  handleChangeName (e) {
-    this.setState({name: e.target.value})
-  }
-
-  handleChangeDescription (e) {
-    this.setState({description: e.target.value})
+  handleChangeDescription (value) {
+    this.setState({description: value})
   }
 
   handleClickDoneButton (e) {
@@ -46,18 +36,8 @@ class ComponentDialog extends React.Component {
         {this.props.actionName} Component
       </h2>
       <div className='mdl-dialog__content'>
-        <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
-          classes.textfield)} ref='textfield_name'>
-          <input className='mdl-textfield__input' type='text' id='name'
-            value={this.state.name} onChange={this.handleChangeName} />
-          <label className='mdl-textfield__label' htmlFor='name'>Name</label>
-        </div>
-        <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
-          classes.textfield)} ref='textfield_desc'>
-          <textarea className='mdl-textfield__input' type='text' rows='2' id='desc'
-            value={this.state.description} onChange={this.handleChangeDescription} />
-          <label className='mdl-textfield__label' htmlFor='desc'>Description</label>
-        </div>
+        <TextField label='Name' text={this.state.name} rows='1' onChange={this.handleChangeName} />
+        <TextField label='Description' text={this.state.description} rows='2' onChange={this.handleChangeDescription} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
