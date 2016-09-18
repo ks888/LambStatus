@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import classes from './ComponentDialog.scss'
@@ -7,14 +7,14 @@ class ComponentDialog extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: '',
-      name: '',
-      description: '',
-      status: 'Operational'
+      id: props.component.id,
+      name: props.component.name,
+      description: props.component.description,
+      status: props.component.status
     }
     this.handleChangeName = this.handleChangeName.bind(this)
     this.handleChangeDescription = this.handleChangeDescription.bind(this)
-    this.handleClickAddButton = this.handleClickAddButton.bind(this)
+    this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
   }
 
   componentDidMount () {
@@ -37,14 +37,14 @@ class ComponentDialog extends React.Component {
     this.setState({description: e.target.value})
   }
 
-  handleClickAddButton (e) {
+  handleClickDoneButton (e) {
     this.props.onCompleted(this.state.id, this.state.name, this.state.description, this.state.status)
   }
 
   render () {
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        Add Component
+        {this.props.actionName} Component
       </h2>
       <div className='mdl-dialog__content'>
         <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
@@ -62,7 +62,9 @@ class ComponentDialog extends React.Component {
       </div>
       <div className='mdl-dialog__actions'>
         <button type='button' className='mdl-button mdl-js-button mdl-button--raised
-          mdl-button--accent' onClick={this.handleClickAddButton} ref='button_complete'>Add</button>
+          mdl-button--accent' onClick={this.handleClickDoneButton} ref='button_complete'>
+          {this.props.actionName}
+        </button>
         <button type='button' className='mdl-button mdl-js-button mdl-button--raised'
           onClick={this.props.onCanceled} ref='button_cancel'>Cancel</button>
       </div>
@@ -71,8 +73,15 @@ class ComponentDialog extends React.Component {
 }
 
 ComponentDialog.propTypes = {
-  onCompleted: React.PropTypes.func.isRequired,
-  onCanceled: React.PropTypes.func.isRequired
+  onCompleted: PropTypes.func.isRequired,
+  onCanceled: PropTypes.func.isRequired,
+  component: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired
+  }).isRequired,
+  actionName: PropTypes.string.isRequired
 }
 
 export default ComponentDialog
