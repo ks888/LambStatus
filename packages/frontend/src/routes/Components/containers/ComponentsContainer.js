@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
+import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './ComponentsContainer.scss'
 import { getColor } from 'utils/colors'
@@ -28,9 +29,6 @@ class Components extends React.Component {
   }
 
   componentDidMount () {
-    let jsElem = ReactDOM.findDOMNode(this.refs.add_component_button)
-    componentHandler.upgradeElement(jsElem)
-
     this.props.dispatch(fetchComponents)
   }
 
@@ -92,16 +90,12 @@ class Components extends React.Component {
         <span className='mdl-list__item-secondary-content'>
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
-              <button className={classnames(classes.editButton, 'mdl-button', 'mdl-js-button')}
-                onClick={() => this.handleShowDialog(dialogType.edit, component)}>
-                Edit
-              </button>
+              <Button plain name='Edit'
+                onClick={() => this.handleShowDialog(dialogType.edit, component)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
-              <button className={classnames(classes.deleteButton, 'mdl-button', 'mdl-js-button')}
-                onClick={() => this.handleShowDialog(dialogType.delete, component)}>
-                Delete
-              </button>
+              <Button plain name='Delete'
+                onClick={() => this.handleShowDialog(dialogType.delete, component)} />
             </div>
           </div>
         </span>
@@ -144,17 +138,17 @@ class Components extends React.Component {
     const { serviceComponents, isFetching } = this.props
     const componentItems = serviceComponents.map(this.renderListItem)
     const dialog = this.renderDialog()
+    const textInButton = (<div>
+      <i className='material-icons'>add</i>
+      Component
+    </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
-        <button className='mdl-button mdl-js-button mdl-button--raised mdl-button--accent'
-          onClick={() => this.handleShowDialog(dialogType.add)} ref='add_component_button'>
-          <i className='material-icons'>add</i>
-          Component
-        </button>
+        <Button onClick={() => this.handleShowDialog(dialogType.add)} name={textInButton} class='mdl-button--accent' />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}

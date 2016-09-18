@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import classes from './ComponentDialog.scss'
+import Button from 'components/Button'
 
 class ComponentDialog extends React.Component {
   constructor (props) {
@@ -20,9 +21,7 @@ class ComponentDialog extends React.Component {
   componentDidMount () {
     let jsElems = [
       ReactDOM.findDOMNode(this.refs.textfield_name),
-      ReactDOM.findDOMNode(this.refs.textfield_desc),
-      ReactDOM.findDOMNode(this.refs.button_complete),
-      ReactDOM.findDOMNode(this.refs.button_cancel)
+      ReactDOM.findDOMNode(this.refs.textfield_desc)
     ]
     jsElems.forEach((jsElem) => {
       componentHandler.upgradeElement(jsElem)
@@ -61,12 +60,8 @@ class ComponentDialog extends React.Component {
         </div>
       </div>
       <div className='mdl-dialog__actions'>
-        <button type='button' className='mdl-button mdl-js-button mdl-button--raised
-          mdl-button--accent' onClick={this.handleClickDoneButton} ref='button_complete'>
-          {this.props.actionName}
-        </button>
-        <button type='button' className='mdl-button mdl-js-button mdl-button--raised'
-          onClick={this.props.onCanceled} ref='button_cancel'>Cancel</button>
+        <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
+        <Button onClick={this.props.onCanceled} name='Cancel' />
       </div>
     </dialog>)
   }
