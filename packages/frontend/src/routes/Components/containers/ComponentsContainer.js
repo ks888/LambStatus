@@ -45,7 +45,7 @@ class Components extends React.Component {
         // workaround https://github.com/GoogleChrome/dialog-polyfill/issues/105
         let overlay = document.querySelector('._dialog_overlay')
         if (overlay) {
-          overlay.parentNode.removeChild(overlay)
+          overlay.style = null
         }
       } catch (ex) {
         console.warn('Failed to show dialog (the dialog may be already shown)')
