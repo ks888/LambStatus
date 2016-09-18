@@ -27,6 +27,7 @@ class Components extends React.Component {
     this.handleEdit = this.handleEdit.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
     this.renderListItem = this.renderListItem.bind(this)
+    this.renderDialog = this.renderDialog.bind(this)
   }
 
   componentDidMount () {
