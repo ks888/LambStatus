@@ -4,7 +4,8 @@
 export const LOAD = 'LOAD'
 export const LIST_COMPONENTS = 'LIST_COMPONENTS'
 export const ADD_COMPONENT = 'ADD_COMPONENT'
-export const EDIT_COMPONENT = 'EDIT_COMPONENT_SUCCESS'
+export const EDIT_COMPONENT = 'EDIT_COMPONENT'
+export const REMOVE_COMPONENT = 'REMOVE_COMPONENT'
 
 // ------------------------------------
 // Actions
@@ -34,6 +35,13 @@ export function editComponent (json) {
   return {
     type: EDIT_COMPONENT,
     serviceComponent: json
+  }
+}
+
+export function removeComponent (id) {
+  return {
+    type: REMOVE_COMPONENT,
+    serviceComponentId: id
   }
 }
 
@@ -88,11 +96,25 @@ export const updateComponent = (id, name, description, status) => {
   }
 }
 
+export const deleteComponent = (id, name, description, status) => {
+  return dispatch => {
+    dispatch(load())
+    return fetch(__API_URL__ + 'components/' + id, {
+      headers: { 'X-api-key': __API_KEY__ },
+      method: 'DELETE'
+    }).then(response => dispatch(removeComponent(id)))
+      .catch(error => {
+        console.error(error, error.stack)
+      })
+  }
+}
+
 export const actions = {
   load,
   listComponents,
   addComponent,
-  editComponent
+  editComponent,
+  removeComponent
 }
 
 // ------------------------------------
@@ -152,11 +174,23 @@ function editComponentHandler (state = { }, action) {
   })
 }
 
+function removeComponentHandler (state = { }, action) {
+  let serviceComponents = state.serviceComponents.filter((component) => {
+    return component.id !== action.serviceComponentId
+  })
+
+  return Object.assign({}, state, {
+    isFetching: false,
+    serviceComponents: serviceComponents
+  })
+}
+
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_COMPONENT]: addComponentHandler,
-  [EDIT_COMPONENT]: editComponentHandler
+  [EDIT_COMPONENT]: editComponentHandler,
+  [REMOVE_COMPONENT]: removeComponentHandler
 }
 
 // ------------------------------------
