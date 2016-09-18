@@ -68,7 +68,25 @@ export const postComponent = (name, description, status) => {
   }
 }
 
-export const updateComponent = (id, name, description, status) => {}
+export const updateComponent = (id, name, description, status) => {
+  return dispatch => {
+    dispatch(load())
+    let body = {
+      name: name,
+      description: description,
+      status: status
+    }
+    return fetch(__API_URL__ + 'components/' + id, {
+      headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }).then(response => response.json())
+      .then(json => dispatch(editComponent(json)))
+      .catch(error => {
+        console.error(error, error.stack)
+      })
+  }
+}
 
 export const actions = {
   load,

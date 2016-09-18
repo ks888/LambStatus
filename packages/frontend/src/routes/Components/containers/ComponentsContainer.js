@@ -70,7 +70,7 @@ class Components extends React.Component {
   }
 
   handleEdit (id, name, description, status) {
-    // this.props.dispatch(updateComponent(id, name, description, status))
+    this.props.dispatch(updateComponent(id, name, description, status))
     this.handleHideDialog()
   }
 
