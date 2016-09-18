@@ -1,4 +1,3 @@
-
 import { getComponents } from '../utils/dynamoDB'
 
 export async function handler (event, context, callback) {
