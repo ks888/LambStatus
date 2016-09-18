@@ -137,7 +137,19 @@ function addComponentHandler (state = { }, action) {
 }
 
 function editComponentHandler (state = { }, action) {
-  return state
+  let editedComponent = JSON.parse(action.serviceComponent)
+  state.serviceComponents.forEach((component) => {
+    if (component.id === editedComponent.ID) {
+      component.name = editedComponent.name
+      component.description = editedComponent.description
+      component.status = editedComponent.status
+    }
+  })
+
+  return Object.assign({}, state, {
+    isFetching: false,
+    serviceComponents: state.serviceComponents
+  })
 }
 
 const ACTION_HANDLERS = {
