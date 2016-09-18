@@ -49,13 +49,15 @@ export const getComponents = () => {
   })
 }
 
-export const putComponent = (name, description, status) => {
+export const updateComponent = (id, name, description, status) => {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+  const idLength = 12
 
   return new Promise((resolve, reject) => {
-    const idLength = 12
-    let id = generateID(idLength)
+    if (!id) {
+      id = generateID(idLength)
+    }
     const params = {
       Key: {
         ID: id

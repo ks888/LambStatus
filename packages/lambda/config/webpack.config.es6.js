@@ -17,6 +17,10 @@ export default {
     PostComponents: [
       'babel-polyfill',
       './src/postComponents/index.js'
+    ],
+    PatchComponents: [
+      'babel-polyfill',
+      './src/patchComponents/index.js'
     ]
   },
   output: {
