@@ -21,6 +21,10 @@ export default {
     PatchComponents: [
       'babel-polyfill',
       './src/patchComponents/index.js'
+    ],
+    DeleteComponents: [
+      'babel-polyfill',
+      './src/deleteComponents/index.js'
     ]
   },
   output: {

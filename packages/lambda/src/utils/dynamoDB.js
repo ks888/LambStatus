@@ -83,3 +83,24 @@ export const updateComponent = (id, name, description, status) => {
     })
   })
 }
+
+export const deleteComponent = (id) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      Key: {
+        ID: id
+      },
+      TableName: ServiceComponentTable,
+      ReturnValues: 'NONE'
+    }
+    awsDynamoDb.delete(params, (err, data) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+      resolve(data)
+    })
+  })
+}

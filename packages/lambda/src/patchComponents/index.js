@@ -8,6 +8,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log('patchComponents error', error)
     console.log(error.stack)
-    callback('Failed to create a new component')
+    callback('Failed to update a component')
   }
 }

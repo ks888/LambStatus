@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { fetchComponents, postComponent, updateComponent } from '../modules/components'
+import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 import classnames from 'classnames'
 import classes from './ComponentsContainer.scss'
@@ -49,7 +49,7 @@ class Components extends React.Component {
           overlay.parentNode.removeChild(overlay)
         }
       } catch (ex) {
-        console.warn('Failed to show dialog')
+        console.warn('Failed to show dialog (the dialog may be already shown)')
       }
     }
   }
@@ -74,7 +74,8 @@ class Components extends React.Component {
     this.handleHideDialog()
   }
 
-  handleDelete (id, name, description, status) {
+  handleDelete (id) {
+    this.props.dispatch(deleteComponent(id))
     this.handleHideDialog()
   }
 
@@ -129,7 +130,9 @@ class Components extends React.Component {
           onCanceled={this.handleHideDialog} component={this.state.component} actionName='Edit' />
         break
       case dialogType.delete:
-        dialog = null
+        // dialog = null
+        dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleDelete}
+          onCanceled={this.handleHideDialog} component={this.state.component} actionName='Delete' />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
