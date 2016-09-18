@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
+import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './ComponentsContainer.scss'
@@ -33,7 +34,7 @@ class Components extends React.Component {
   }
 
   componentDidUpdate () {
-    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog)
+    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
     if (dialog) {
       if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog)
@@ -56,25 +57,25 @@ class Components extends React.Component {
     this.setState({ component: component, dialogType: type })
   }
 
-  handleHideDialog () {
-    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog)
+  handleHideDialog (refs) {
+    let dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
   handleAdd (id, name, description, status) {
     this.props.dispatch(postComponent(name, description, status))
-    this.handleHideDialog()
+    this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleEdit (id, name, description, status) {
     this.props.dispatch(updateComponent(id, name, description, status))
-    this.handleHideDialog()
+    this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleDelete (id) {
     this.props.dispatch(deleteComponent(id))
-    this.handleHideDialog()
+    this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   renderListItem (component) {
@@ -117,16 +118,18 @@ class Components extends React.Component {
           status: 'Operational'
         }
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAdd}
-          onCanceled={this.handleHideDialog} component={component} actionName='Add' />
+          onCanceled={() => { this.handleHideDialog(this.refs.componentDialog) }}
+          component={component} actionName='Add' />
         break
       case dialogType.edit:
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleEdit}
-          onCanceled={this.handleHideDialog} component={this.state.component} actionName='Edit' />
+          onCanceled={() => { this.handleHideDialog(this.refs.componentDialog) }}
+          component={this.state.component} actionName='Edit' />
         break
       case dialogType.delete:
-        // dialog = null
-        dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleDelete}
-          onCanceled={this.handleHideDialog} component={this.state.component} actionName='Delete' />
+        dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
+          onCanceled={() => { this.handleHideDialog(this.refs.foolproofDialog) }}
+          component={this.state.component} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
