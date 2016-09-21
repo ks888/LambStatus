@@ -96,7 +96,7 @@ export const updateComponent = (id, name, description, status) => {
   }
 }
 
-export const deleteComponent = (id, name, description, status) => {
+export const deleteComponent = (id) => {
   return dispatch => {
     dispatch(loadAction())
     return fetch(__API_URL__ + 'components/' + id, {

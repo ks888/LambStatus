@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { fetchIncidents, postIncident, addIncidentUpdate, deleteIncident } from '../modules/incidents'
+import { fetchIncidents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
 // import IncidentDialog from 'components/IncidentDialog'
 import IncidentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'

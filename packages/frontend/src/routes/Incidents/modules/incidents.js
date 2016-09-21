@@ -56,12 +56,14 @@ export const fetchIncidents = (dispatch) => {
     })
 }
 
-export const postIncident = (name, message, status) => {
+export const postIncident = (id, name, message, impact, componentIDs, status) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
       message: message,
+      impact: impact,
+      componentIDs: componentIDs,
       status: status
     }
     return fetch(__API_URL__ + 'incidents', {
@@ -76,12 +78,14 @@ export const postIncident = (name, message, status) => {
   }
 }
 
-export const updateIncident = (id, name, message, status) => {
+export const updateIncident = (id, name, message, impact, componentIDs, status) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
       message: message,
+      impact: impact,
+      componentIDs: componentIDs,
       status: status
     }
     return fetch(__API_URL__ + 'incidents/' + id, {
@@ -96,7 +100,7 @@ export const updateIncident = (id, name, message, status) => {
   }
 }
 
-export const deleteIncident = (id, name, message, status) => {
+export const deleteIncident = (id) => {
   return dispatch => {
     dispatch(loadAction())
     return fetch(__API_URL__ + 'incidents/' + id, {
