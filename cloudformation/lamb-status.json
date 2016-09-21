@@ -94,6 +94,29 @@
                   ]
                 ]
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": "dynamodb:*",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:dynamodb:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":table/",
+                    {
+                      "Ref": "IncidentTable"
+                    }
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -992,6 +1015,27 @@
           "WriteCapacityUnits": "1"
         }
       }
+    },
+    "IncidentTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "ID",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "ID",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "1",
+          "WriteCapacityUnits": "1"
+        }
+      }
     }
   },
   "Outputs": {
@@ -1016,6 +1060,11 @@
     "ServiceComponentTable": {
       "Value": {
         "Ref": "ServiceComponentTable"
+      }
+    },
+    "IncidentTable": {
+      "Value": {
+        "Ref": "IncidentTable"
       }
     },
     "ApiKeyID": {
