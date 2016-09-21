@@ -11,34 +11,34 @@ export const REMOVE_COMPONENT = 'REMOVE_COMPONENT'
 // Actions
 // ------------------------------------
 
-export function load () {
+export function loadAction () {
   return {
     type: LOAD
   }
 }
 
-export function listComponents (json) {
+export function listComponentsAction (json) {
   return {
     type: LIST_COMPONENTS,
     serviceComponents: json
   }
 }
 
-export function addComponent (json) {
+export function addComponentAction (json) {
   return {
     type: ADD_COMPONENT,
     serviceComponent: json
   }
 }
 
-export function editComponent (json) {
+export function editComponentAction (json) {
   return {
     type: EDIT_COMPONENT,
     serviceComponent: json
   }
 }
 
-export function removeComponent (id) {
+export function removeComponentAction (id) {
   return {
     type: REMOVE_COMPONENT,
     serviceComponentId: id
@@ -46,11 +46,11 @@ export function removeComponent (id) {
 }
 
 export const fetchComponents = (dispatch) => {
-  dispatch(load())
+  dispatch(loadAction())
   return fetch(__API_URL__ + 'components', {
     headers: { 'x-api-key': __API_KEY__ }
   }).then(response => response.json())
-    .then(json => dispatch(listComponents(json)))
+    .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
       console.error(error, error.stack)
     })
@@ -58,7 +58,7 @@ export const fetchComponents = (dispatch) => {
 
 export const postComponent = (name, description, status) => {
   return dispatch => {
-    dispatch(load())
+    dispatch(loadAction())
     let body = {
       name: name,
       description: description,
@@ -69,7 +69,7 @@ export const postComponent = (name, description, status) => {
       method: 'POST',
       body: JSON.stringify(body)
     }).then(response => response.json())
-      .then(json => dispatch(addComponent(json)))
+      .then(json => dispatch(addComponentAction(json)))
       .catch(error => {
         console.error(error, error.stack)
       })
@@ -78,7 +78,7 @@ export const postComponent = (name, description, status) => {
 
 export const updateComponent = (id, name, description, status) => {
   return dispatch => {
-    dispatch(load())
+    dispatch(loadAction())
     let body = {
       name: name,
       description: description,
@@ -89,7 +89,7 @@ export const updateComponent = (id, name, description, status) => {
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(response => response.json())
-      .then(json => dispatch(editComponent(json)))
+      .then(json => dispatch(editComponentAction(json)))
       .catch(error => {
         console.error(error, error.stack)
       })
@@ -98,11 +98,11 @@ export const updateComponent = (id, name, description, status) => {
 
 export const deleteComponent = (id, name, description, status) => {
   return dispatch => {
-    dispatch(load())
+    dispatch(loadAction())
     return fetch(__API_URL__ + 'components/' + id, {
       headers: { 'X-api-key': __API_KEY__ },
       method: 'DELETE'
-    }).then(response => dispatch(removeComponent(id)))
+    }).then(response => dispatch(removeComponentAction(id)))
       .catch(error => {
         console.error(error, error.stack)
       })
@@ -110,11 +110,11 @@ export const deleteComponent = (id, name, description, status) => {
 }
 
 export const actions = {
-  load,
-  listComponents,
-  addComponent,
-  editComponent,
-  removeComponent
+  loadAction,
+  listComponentsAction,
+  addComponentAction,
+  editComponentAction,
+  removeComponentAction
 }
 
 // ------------------------------------

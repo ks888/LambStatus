@@ -2,6 +2,7 @@
 import RootLayout from '../layouts/RootLayout/RootLayout'
 import Home from './Home'
 import ComponentsRoute from './Components'
+import IncidentsRoute from './Incidents'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -11,7 +12,8 @@ export const createRoutes = (store) => ({
   component: RootLayout,
   indexRoute: Home,
   childRoutes: [
-    ComponentsRoute(store)
+    ComponentsRoute(store),
+    IncidentsRoute(store)
   ]
 })
 

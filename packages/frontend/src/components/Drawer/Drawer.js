@@ -8,6 +8,10 @@ const components = {
     name: 'Dashboard',
     path: '/'
   },
+  incidents: {
+    name: 'Incidents',
+    path: '/incidents'
+  },
   components: {
     name: 'Components',
     path: '/components'
