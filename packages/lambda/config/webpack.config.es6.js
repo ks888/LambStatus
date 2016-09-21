@@ -25,6 +25,10 @@ export default {
     DeleteComponents: [
       'babel-polyfill',
       './src/deleteComponents/index.js'
+    ],
+    GetIncidents: [
+      'babel-polyfill',
+      './src/getIncidents/index.js'
     ]
   },
   output: {

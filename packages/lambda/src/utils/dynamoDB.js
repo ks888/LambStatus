@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk'
 import WError from 'verror'
-import { ServiceComponentTable } from './const'
+import { ServiceComponentTable, IncidentTable } from './const'
 import generateID from './generateID'
 
 export const getComponents = () => {
@@ -101,6 +101,32 @@ export const deleteComponent = (id) => {
         return reject(new WError(err, 'DynamoDB'))
       }
       resolve(data)
+    })
+  })
+}
+
+export const getIncidents = () => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: IncidentTable,
+      ProjectionExpression: 'ID, #nm, impact, updated_at',
+      ExpressionAttributeNames: {
+        '#nm': 'name'
+      }
+    }
+    awsDynamoDb.scan(params, (err, scanResult) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+      let incidents = []
+      scanResult.Items.forEach((incident) => {
+        incidents.push(incident)
+      })
+
+      resolve(incidents)
     })
   })
 }
