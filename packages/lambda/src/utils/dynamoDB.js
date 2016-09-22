@@ -121,9 +121,29 @@ export const getIncidents = () => {
       if (err) {
         return reject(new WError(err, 'DynamoDB'))
       }
+
       let incidents = []
       scanResult.Items.forEach((incident) => {
-        incidents.push(incident)
+        const {
+          ID: {
+            S: incidentID
+          },
+          name: {
+            S: incidentName
+          },
+          impact: {
+            S: incidentImpact
+          },
+          updated_at: {
+            S: incidentUpdatedAt
+          }
+        } = incident
+        incidents.push({
+          ID: incidentID,
+          name: incidentName,
+          impact: incidentImpact,
+          update_at: incidentUpdatedAt
+        })
       })
 
       resolve(incidents)
