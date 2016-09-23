@@ -142,7 +142,7 @@ export const getIncidents = () => {
           ID: incidentID,
           name: incidentName,
           impact: incidentImpact,
-          update_at: incidentUpdatedAt
+          updated_at: incidentUpdatedAt
         })
       })
 
