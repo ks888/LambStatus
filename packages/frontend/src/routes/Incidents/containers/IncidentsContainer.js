@@ -9,6 +9,7 @@ import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './IncidentsContainer.scss'
 import moment from 'moment-timezone'
+import { getIncidentColor } from 'utils/colors'
 
 const dialogType = {
   none: 0,
@@ -81,14 +82,14 @@ class Incidents extends React.Component {
   }
 
   renderListItem (incident) {
-    let statusColor = '#388e3c'
+    let impactColor = getIncidentColor(incident.impact)
     let bgColor = '#ffffff'
     let updatedAt = moment.tz(incident.updated_at, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     return (
       <li key={incident.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{ color: statusColor, backgroundColor: bgColor }}>check_circle</i>
+            style={{ color: impactColor, backgroundColor: bgColor }}>check_circle</i>
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>updated at {updatedAt}</span>
         </span>

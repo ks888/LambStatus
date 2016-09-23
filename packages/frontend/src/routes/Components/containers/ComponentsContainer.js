@@ -7,7 +7,7 @@ import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './ComponentsContainer.scss'
-import { getColor } from 'utils/colors'
+import { getComponentColor } from 'utils/colors'
 
 const dialogType = {
   none: 0,
