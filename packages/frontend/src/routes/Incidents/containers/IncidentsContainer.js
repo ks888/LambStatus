@@ -81,11 +81,12 @@ class Incidents extends React.Component {
 
   renderListItem (incident) {
     let statusColor = '#388e3c'
+    let bgColor = '#ffffff'
     return (
       <li key={incident.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{color: statusColor}}>check_circle</i>
+            style={{ color: statusColor, 'background-color': bgColor }}>check_circle</i>
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>updated at {incident.updated_at}</span>
         </span>
