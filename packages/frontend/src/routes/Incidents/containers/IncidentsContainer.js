@@ -82,6 +82,7 @@ class Incidents extends React.Component {
   renderListItem (incident) {
     let statusColor = '#388e3c'
     let bgColor = '#ffffff'
+    console.log(incident)
     return (
       <li key={incident.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>

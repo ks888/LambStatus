@@ -136,8 +136,8 @@ function listIncidentsHandler (state = { }, action) {
     return {
       id: incident.ID,
       name: incident.name,
-      status: incident.status,
-      message: incident.message
+      impact: incident.impact,
+      updated_at: incident.updated_at
     }
   })
   return Object.assign({}, state, {
@@ -155,8 +155,8 @@ function addIncidentHandler (state = { }, action) {
       {
         id: incident.ID,
         name: incident.name,
-        status: incident.status,
-        message: incident.message
+        impact: incident.impact,
+        updated_at: incident.updated_at
       }
     ]
   })
@@ -167,8 +167,8 @@ function updateIncidentHandler (state = { }, action) {
   state.incidents.forEach((incident) => {
     if (incident.id === updatedIncident.ID) {
       incident.name = updatedIncident.name
-      incident.status = updatedIncident.status
-      incident.message = updatedIncident.message
+      incident.impact = updatedIncident.impact
+      incident.updated_at = updatedIncident.updated_at
     }
   })
 
