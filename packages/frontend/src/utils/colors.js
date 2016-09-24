@@ -16,9 +16,9 @@ export let getIncidentColor = (impact) => {
     case 'identified':
       return '#c62828'
     case 'monitoring':
-      return '#c62828'
+      return '#ef6c00'
     case 'resolved':
-      return '#388e3c'
+      return '#1976d2'
     default:
       return '#9e9e9e'
   }
