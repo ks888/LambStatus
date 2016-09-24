@@ -80,7 +80,7 @@ class Components extends React.Component {
   }
 
   renderListItem (component) {
-    let statusColor = getColor(component.status)
+    let statusColor = getComponentColor(component.status)
     return (
       <li key={component.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>

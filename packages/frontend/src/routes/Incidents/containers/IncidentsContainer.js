@@ -152,10 +152,10 @@ class Incidents extends React.Component {
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
+      <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
         <h4>Incidents</h4>
       </div>
-      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
+      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--2-col mdl-cell--middle')}>
         <Button onClick={() => this.handleShowDialog(dialogType.add)} name={textInButton} class='mdl-button--accent' />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
