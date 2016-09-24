@@ -89,7 +89,7 @@ class Incidents extends React.Component {
       <li key={incident.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{ color: impactColor, backgroundColor: bgColor }}>check_circle</i>
+            style={{ color: impactColor, backgroundColor: bgColor }}>brightness_1</i>
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>updated at {updatedAt}</span>
         </span>
