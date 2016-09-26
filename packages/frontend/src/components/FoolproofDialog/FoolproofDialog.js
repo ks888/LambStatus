@@ -10,7 +10,7 @@ class FoolproofDialog extends React.Component {
   }
 
   handleClickDeleteButton () {
-    this.props.onCompleted(this.props.component.id)
+    this.props.onCompleted(this.props.component.componentID)
   }
 
   render () {
@@ -33,7 +33,7 @@ FoolproofDialog.propTypes = {
   onCompleted: PropTypes.func.isRequired,
   onCanceled: PropTypes.func.isRequired,
   component: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    componentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired

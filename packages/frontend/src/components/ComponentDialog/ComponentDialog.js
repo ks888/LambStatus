@@ -8,7 +8,7 @@ class ComponentDialog extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: props.component.id,
+      componentID: props.component.componentID,
       name: props.component.name,
       description: props.component.description,
       status: props.component.status
@@ -27,7 +27,7 @@ class ComponentDialog extends React.Component {
   }
 
   handleClickDoneButton (e) {
-    this.props.onCompleted(this.state.id, this.state.name, this.state.description, this.state.status)
+    this.props.onCompleted(this.state.componentID, this.state.name, this.state.description, this.state.status)
   }
 
   render () {
@@ -36,8 +36,8 @@ class ComponentDialog extends React.Component {
         {this.props.actionName} Component
       </h2>
       <div className='mdl-dialog__content'>
-        <TextField label='Name' text={this.state.name} rows='1' onChange={this.handleChangeName} />
-        <TextField label='Description' text={this.state.description} rows='2' onChange={this.handleChangeDescription} />
+        <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
+        <TextField label='Description' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
@@ -51,7 +51,7 @@ ComponentDialog.propTypes = {
   onCompleted: PropTypes.func.isRequired,
   onCanceled: PropTypes.func.isRequired,
   component: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    componentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired

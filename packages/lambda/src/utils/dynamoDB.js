@@ -10,7 +10,7 @@ export const getComponents = () => {
   return new Promise((resolve, reject) => {
     const params = {
       TableName: ServiceComponentTable,
-      ProjectionExpression: 'ID, description, #nm, #st',
+      ProjectionExpression: 'componentID, description, #nm, #st',
       ExpressionAttributeNames: {
         '#nm': 'name',
         '#st': 'status'
@@ -23,7 +23,7 @@ export const getComponents = () => {
       let components = []
       scanResult.Items.forEach((component) => {
         const {
-          ID: {
+          componentID: {
             S: compID
           },
           name: {
@@ -37,7 +37,7 @@ export const getComponents = () => {
           }
         } = component
         components.push({
-          ID: compID,
+          componentID: compID,
           name: compName,
           status: compStatus,
           description: compDesc
@@ -60,7 +60,7 @@ export const updateComponent = (id, name, description, status) => {
     }
     const params = {
       Key: {
-        ID: id
+        componentID: id
       },
       UpdateExpression: 'set #n = :n, description = :d, #s = :s',
       ExpressionAttributeNames: {
@@ -91,7 +91,7 @@ export const deleteComponent = (id) => {
   return new Promise((resolve, reject) => {
     const params = {
       Key: {
-        ID: id
+        componentID: id
       },
       TableName: ServiceComponentTable,
       ReturnValues: 'NONE'

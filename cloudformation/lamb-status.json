@@ -1225,13 +1225,13 @@
       "Properties": {
         "AttributeDefinitions": [
           {
-            "AttributeName": "ID",
+            "AttributeName": "componentID",
             "AttributeType": "S"
           }
         ],
         "KeySchema": [
           {
-            "AttributeName": "ID",
+            "AttributeName": "componentID",
             "KeyType": "HASH"
           }
         ],

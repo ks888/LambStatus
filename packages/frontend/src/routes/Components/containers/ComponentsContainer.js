@@ -64,25 +64,25 @@ class Components extends React.Component {
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
-  handleAdd (id, name, description, status) {
+  handleAdd (componentID, name, description, status) {
     this.props.dispatch(postComponent(name, description, status))
     this.handleHideDialog(this.refs.componentDialog)
   }
 
-  handleEdit (id, name, description, status) {
-    this.props.dispatch(updateComponent(id, name, description, status))
+  handleEdit (componentID, name, description, status) {
+    this.props.dispatch(updateComponent(componentID, name, description, status))
     this.handleHideDialog(this.refs.componentDialog)
   }
 
-  handleDelete (id) {
-    this.props.dispatch(deleteComponent(id))
+  handleDelete (componentID) {
+    this.props.dispatch(deleteComponent(componentID))
     this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   renderListItem (component) {
     let statusColor = getComponentColor(component.status)
     return (
-      <li key={component.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+      <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
             style={{color: statusColor}}>web</i>
@@ -113,7 +113,7 @@ class Components extends React.Component {
         break
       case dialogType.add:
         let component = {
-          id: '',
+          componentID: '',
           name: '',
           description: '',
           status: 'Operational'
@@ -164,7 +164,7 @@ class Components extends React.Component {
 
 Components.propTypes = {
   serviceComponents: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    componentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired

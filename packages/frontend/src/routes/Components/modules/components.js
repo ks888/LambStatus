@@ -38,10 +38,10 @@ export function editComponentAction (json) {
   }
 }
 
-export function removeComponentAction (id) {
+export function removeComponentAction (componentID) {
   return {
     type: REMOVE_COMPONENT,
-    serviceComponentId: id
+    componentID: componentID
   }
 }
 
@@ -76,7 +76,7 @@ export const postComponent = (name, description, status) => {
   }
 }
 
-export const updateComponent = (id, name, description, status) => {
+export const updateComponent = (componentID, name, description, status) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
@@ -84,7 +84,7 @@ export const updateComponent = (id, name, description, status) => {
       description: description,
       status: status
     }
-    return fetch(__API_URL__ + 'components/' + id, {
+    return fetch(__API_URL__ + 'components/' + componentID, {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
@@ -96,13 +96,13 @@ export const updateComponent = (id, name, description, status) => {
   }
 }
 
-export const deleteComponent = (id) => {
+export const deleteComponent = (componentID) => {
   return dispatch => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'components/' + id, {
+    return fetch(__API_URL__ + 'components/' + componentID, {
       headers: { 'X-api-key': __API_KEY__ },
       method: 'DELETE'
-    }).then(response => dispatch(removeComponentAction(id)))
+    }).then(response => dispatch(removeComponentAction(componentID)))
       .catch(error => {
         console.error(error, error.stack)
       })
@@ -130,7 +130,7 @@ function loadHandler (state = { }, action) {
 function listComponentsHandler (state = { }, action) {
   let components = JSON.parse(action.serviceComponents).map((component) => {
     return {
-      id: component.ID,
+      componentID: component.componentID,
       name: component.name,
       description: component.description,
       status: component.status
@@ -149,7 +149,7 @@ function addComponentHandler (state = { }, action) {
     serviceComponents: [
       ...state.serviceComponents,
       {
-        id: component.ID,
+        componentID: component.componentID,
         name: component.name,
         description: component.description,
         status: component.status
@@ -161,7 +161,7 @@ function addComponentHandler (state = { }, action) {
 function editComponentHandler (state = { }, action) {
   let editedComponent = JSON.parse(action.serviceComponent)
   state.serviceComponents.forEach((component) => {
-    if (component.id === editedComponent.ID) {
+    if (component.componentID === editedComponent.componentID) {
       component.name = editedComponent.name
       component.description = editedComponent.description
       component.status = editedComponent.status
@@ -176,7 +176,7 @@ function editComponentHandler (state = { }, action) {
 
 function removeComponentHandler (state = { }, action) {
   let serviceComponents = state.serviceComponents.filter((component) => {
-    return component.id !== action.serviceComponentId
+    return component.componentID !== action.componentID
   })
 
   return Object.assign({}, state, {
