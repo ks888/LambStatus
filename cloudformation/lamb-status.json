@@ -1246,13 +1246,13 @@
       "Properties": {
         "AttributeDefinitions": [
           {
-            "AttributeName": "ID",
+            "AttributeName": "incidentID",
             "AttributeType": "S"
           }
         ],
         "KeySchema": [
           {
-            "AttributeName": "ID",
+            "AttributeName": "incidentID",
             "KeyType": "HASH"
           }
         ],

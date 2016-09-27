@@ -112,9 +112,10 @@ export const getIncidents = () => {
   return new Promise((resolve, reject) => {
     const params = {
       TableName: IncidentTable,
-      ProjectionExpression: 'ID, #nm, impact, updated_at',
+      ProjectionExpression: 'incidentID, #nm, #st, updatedAt',
       ExpressionAttributeNames: {
-        '#nm': 'name'
+        '#nm': 'name',
+        '#st': 'status'
       }
     }
     awsDynamoDb.scan(params, (err, scanResult) => {
@@ -125,24 +126,24 @@ export const getIncidents = () => {
       let incidents = []
       scanResult.Items.forEach((incident) => {
         const {
-          ID: {
+          incidentID: {
             S: incidentID
           },
           name: {
             S: incidentName
           },
-          impact: {
-            S: incidentImpact
+          status: {
+            S: incidentStatus
           },
-          updated_at: {
+          updatedAt: {
             S: incidentUpdatedAt
           }
         } = incident
         incidents.push({
-          ID: incidentID,
+          incidentID: incidentID,
           name: incidentName,
-          impact: incidentImpact,
-          updated_at: incidentUpdatedAt
+          status: incidentStatus,
+          updatedAt: incidentUpdatedAt
         })
       })
 
