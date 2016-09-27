@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import classes from './IncidentDialog.scss'
 import Button from 'components/Button'
+import RadioButton from 'components/RadioButton'
 import TextField from 'components/TextField'
 
 class IncidentDialog extends React.Component {
@@ -19,7 +20,7 @@ class IncidentDialog extends React.Component {
     this.handleChangeComponentStatus = this.handleChangeComponentStatus.bind(this)
     this.handleChangeIncidentStatus = this.handleChangeIncidentStatus.bind(this)
     this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
-    this.renderIncidentStatusItem = this.renderIncidentStatusItem.bind(this)
+    this.renderIncidentStatuses = this.renderIncidentStatuses.bind(this)
   }
 
   handleChangeName (value) {
@@ -39,26 +40,24 @@ class IncidentDialog extends React.Component {
       this.state.componentIDs, this.state.incidentStatus, this.state.message)
   }
 
-  renderIncidentStatusItem (status) {
-    return (
-      <label className='mdl-radio mdl-js-radio mdl-js-ripple-effect' htmlFor={status}>
-        <input type='radio' id={status} className='mdl-radio__button' name='incidentStatus'
-          value={status} checked onChange={this.handleChangeIncidentStatus} />
-        <span className='mdl-radio__label'>{status}</span>
-      </label>
-    )
+  renderIncidentStatuses () {
+    const incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
+    return incidentStatuses.map((status) => {
+      return (
+        <RadioButton onChange={this.handleChangeIncidentStatus} label={status} />
+      )
+    })
   }
 
   render () {
-    const incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
-    const incidentStatusComponents = incidentStatuses.map(this.renderIncidentStatusItem)
+    const incidentStatuses = this.renderIncidentStatuses()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
         {this.props.actionName} Incident
       </h2>
       <div className='mdl-dialog__content'>
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
-        {incidentStatusComponents}
+        {incidentStatuses}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
