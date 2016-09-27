@@ -66,30 +66,30 @@ class Incidents extends React.Component {
     this.setState({ incident: null, dialogType: dialogType.none })
   }
 
-  handleAdd (id, name, message, impact, componentIDs, status) {
-    this.props.dispatch(postIncident(id, name, message, impact, componentIDs, status))
+  handleAdd (incidentID, name, message, incidentStatus, componentIDs, componentStatus) {
+    this.props.dispatch(postIncident(incidentID, name, message, incidentStatus, componentIDs, componentStatus))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
-  handleUpdate (id, name, message, impact, componentIDs, status) {
-    this.props.dispatch(updateIncident(id, name, message, impact, componentIDs, status))
+  handleUpdate (incidentID, name, message, incidentStatus, componentIDs, componentStatus) {
+    this.props.dispatch(updateIncident(incidentID, name, message, incidentStatus, componentIDs, componentStatus))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
-  handleDelete (id) {
-    this.props.dispatch(deleteIncident(id))
+  handleDelete (incidentID) {
+    this.props.dispatch(deleteIncident(incidentID))
     this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   renderListItem (incident) {
-    let impactColor = getIncidentColor(incident.impact)
+    let statusColor = getIncidentColor(incident.status)
     let bgColor = '#ffffff'
-    let updatedAt = moment.tz(incident.updated_at, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+    let updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     return (
-      <li key={incident.id} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+      <li key={incident.incidentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{ color: impactColor, backgroundColor: bgColor }}>brightness_1</i>
+            style={{ color: statusColor, backgroundColor: bgColor }}>brightness_1</i>
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>updated at {updatedAt}</span>
         </span>
@@ -117,10 +117,10 @@ class Incidents extends React.Component {
         break
       case dialogType.add:
         let incident = {
-          id: '',
+          incidentID: '',
           name: '',
-          impact: '',
-          updated_at: ''
+          status: '',
+          updatedAt: ''
         }
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
           onCanceled={() => { this.handleHideDialog(this.refs.incidentDialog) }}
@@ -168,10 +168,10 @@ class Incidents extends React.Component {
 
 Incidents.propTypes = {
   incidents: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    impact: PropTypes.string.isRequired,
-    updated_at: PropTypes.string.isRequired
+    status: PropTypes.string.isRequired,
+    updatedAt: PropTypes.string.isRequired
   }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired

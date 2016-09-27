@@ -38,10 +38,10 @@ export function updateIncidentAction (json) {
   }
 }
 
-export function removeIncidentAction (id) {
+export function removeIncidentAction (incidentID) {
   return {
     type: REMOVE_INCIDENT,
-    incidentId: id
+    incidentID: incidentID
   }
 }
 
@@ -56,15 +56,15 @@ export const fetchIncidents = (dispatch) => {
     })
 }
 
-export const postIncident = (id, name, message, impact, componentIDs, status) => {
+export const postIncident = (incidentID, name, message, incidentStatus, componentIDs, componentStatus) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
       message: message,
-      impact: impact,
+      incidentStatus: incidentStatus,
       componentIDs: componentIDs,
-      status: status
+      componentStatus: componentStatus
     }
     return fetch(__API_URL__ + 'incidents', {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
@@ -78,17 +78,17 @@ export const postIncident = (id, name, message, impact, componentIDs, status) =>
   }
 }
 
-export const updateIncident = (id, name, message, impact, componentIDs, status) => {
+export const updateIncident = (incidentID, name, message, incidentStatus, componentIDs, componentStatus) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
       message: message,
-      impact: impact,
+      incidentStatus: incidentStatus,
       componentIDs: componentIDs,
-      status: status
+      componentStatus: componentStatus
     }
-    return fetch(__API_URL__ + 'incidents/' + id, {
+    return fetch(__API_URL__ + 'incidents/' + incidentID, {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
@@ -100,13 +100,13 @@ export const updateIncident = (id, name, message, impact, componentIDs, status) 
   }
 }
 
-export const deleteIncident = (id) => {
+export const deleteIncident = (incidentID) => {
   return dispatch => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + id, {
+    return fetch(__API_URL__ + 'incidents/' + incidentID, {
       headers: { 'X-api-key': __API_KEY__ },
       method: 'DELETE'
-    }).then(response => dispatch(removeIncidentAction(id)))
+    }).then(response => dispatch(removeIncidentAction(incidentID)))
       .catch(error => {
         console.error(error, error.stack)
       })
@@ -134,10 +134,10 @@ function loadHandler (state = { }, action) {
 function listIncidentsHandler (state = { }, action) {
   let incidents = JSON.parse(action.incidents).map((incident) => {
     return {
-      id: incident.ID,
+      incidentID: incident.incidentID,
       name: incident.name,
-      impact: incident.impact,
-      updated_at: incident.updated_at
+      status: incident.status,
+      updatedAt: incident.updatedAt
     }
   })
   return Object.assign({}, state, {
@@ -153,10 +153,10 @@ function addIncidentHandler (state = { }, action) {
     incidents: [
       ...state.incidents,
       {
-        id: incident.ID,
+        incidentID: incident.incidentID,
         name: incident.name,
-        impact: incident.impact,
-        updated_at: incident.updated_at
+        status: incident.status,
+        updatedAt: incident.updatedAt
       }
     ]
   })
@@ -165,10 +165,10 @@ function addIncidentHandler (state = { }, action) {
 function updateIncidentHandler (state = { }, action) {
   let updatedIncident = JSON.parse(action.incident)
   state.incidents.forEach((incident) => {
-    if (incident.id === updatedIncident.ID) {
+    if (incident.incidentID === updatedIncident.incidentID) {
       incident.name = updatedIncident.name
-      incident.impact = updatedIncident.impact
-      incident.updated_at = updatedIncident.updated_at
+      incident.status = updatedIncident.status
+      incident.updatedAt = updatedIncident.updatedAt
     }
   })
 
@@ -180,7 +180,7 @@ function updateIncidentHandler (state = { }, action) {
 
 function removeIncidentHandler (state = { }, action) {
   let incidents = state.incidents.filter((incident) => {
-    return incident.id !== action.incidentId
+    return incident.incidentID !== action.incidentID
   })
 
   return Object.assign({}, state, {
