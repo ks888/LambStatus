@@ -2,8 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
 import { fetchIncidents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
-// import IncidentDialog from 'components/IncidentDialog'
-import IncidentDialog from 'components/ComponentDialog'
+import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import classnames from 'classnames'
@@ -119,8 +118,10 @@ class Incidents extends React.Component {
         let incident = {
           incidentID: '',
           name: '',
-          status: '',
-          updatedAt: ''
+          componentStatus: '',
+          componentIDs: [],
+          incidentStatus: '',
+          message: ''
         }
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
           onCanceled={() => { this.handleHideDialog(this.refs.incidentDialog) }}
