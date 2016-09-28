@@ -4,6 +4,7 @@ import classes from './IncidentDialog.scss'
 import Button from 'components/Button'
 import RadioButton from 'components/RadioButton'
 import TextField from 'components/TextField'
+import DropdownList from 'components/DropdownList'
 
 class IncidentDialog extends React.Component {
   constructor (props) {
@@ -54,16 +55,8 @@ class IncidentDialog extends React.Component {
     })
   }
 
-  renderComponentStatuses () {
-    const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
-    return componentStatuses.map((status) => {
-      return (
-        <RadioButton onChange={this.handleChangeComponentStatus} label={status} />
-      )
-    })
-  }
-
   render () {
+    const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
     const incidentStatuses = this.renderIncidentStatuses()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
@@ -73,6 +66,7 @@ class IncidentDialog extends React.Component {
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
         <TextField label='Message' text={this.state.message} rows={3} onChange={this.handleChangeMessage} />
+        <DropdownList onChange={this.handleChangeComponentStatus} list={componentStatuses} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
