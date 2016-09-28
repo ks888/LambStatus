@@ -21,6 +21,7 @@ class IncidentDialog extends React.Component {
     this.handleChangeIncidentStatus = this.handleChangeIncidentStatus.bind(this)
     this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
     this.renderIncidentStatuses = this.renderIncidentStatuses.bind(this)
+    this.handleChangeMessage = this.handleChangeMessage.bind(this)
   }
 
   handleChangeName (value) {
@@ -33,6 +34,10 @@ class IncidentDialog extends React.Component {
 
   handleChangeIncidentStatus (value) {
     this.setState({incidentStatus: value})
+  }
+
+  handleChangeMessage (value) {
+    this.setState({message: value})
   }
 
   handleClickDoneButton (e) {
@@ -49,6 +54,15 @@ class IncidentDialog extends React.Component {
     })
   }
 
+  renderComponentStatuses () {
+    const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+    return componentStatuses.map((status) => {
+      return (
+        <RadioButton onChange={this.handleChangeComponentStatus} label={status} />
+      )
+    })
+  }
+
   render () {
     const incidentStatuses = this.renderIncidentStatuses()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
@@ -58,6 +72,7 @@ class IncidentDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
+        <TextField label='Message' text={this.state.message} rows={3} onChange={this.handleChangeMessage} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
