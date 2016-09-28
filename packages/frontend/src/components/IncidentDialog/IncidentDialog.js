@@ -13,7 +13,6 @@ class IncidentDialog extends React.Component {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
       componentStatus: props.incident.componentStatus,
-      componentIDs: props.incident.componentIDs,
       incidentStatus: props.incident.incidentStatus,
       message: props.incident.message
     }
@@ -57,11 +56,11 @@ class IncidentDialog extends React.Component {
 
   renderComponentStatuses () {
     const statuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
-    const doms = this.props.incident.componentIDs.map((componentID) => {
+    const doms = this.props.incident.components.map((component) => {
       return (
         <li className='mdl-list__item'>
           <span className='mdl-list__item-primary-content'>
-            {componentID}
+            {component.name}
           </span>
           <span className='mdl-list__item-secondary-action'>
             <DropdownList onChange={this.handleChangeComponentStatus} list={statuses} />
@@ -104,9 +103,10 @@ IncidentDialog.propTypes = {
     incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     componentStatus: PropTypes.string.isRequired,
-    componentIDs: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
+    components: PropTypes.arrayOf(PropTypes.shape({
+      componentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    }).isRequired).isRequired,
     incidentStatus: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired
   }).isRequired,

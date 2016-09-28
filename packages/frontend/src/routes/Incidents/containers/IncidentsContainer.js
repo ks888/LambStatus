@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { fetchIncidents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
+import { fetchIncidents, fetchComponents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
 import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -33,6 +33,7 @@ class Incidents extends React.Component {
 
   componentDidMount () {
     this.props.dispatch(fetchIncidents)
+    this.props.dispatch(fetchComponents)
   }
 
   componentDidUpdate () {
@@ -119,7 +120,7 @@ class Incidents extends React.Component {
           incidentID: '',
           name: '',
           componentStatus: '',
-          componentIDs: [],
+          components: this.props.serviceComponents,
           incidentStatus: '',
           message: ''
         }
@@ -174,6 +175,10 @@ Incidents.propTypes = {
     status: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired
   }).isRequired).isRequired,
+  serviceComponents: PropTypes.arrayOf(PropTypes.shape({
+    componentID: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired
 }
@@ -181,7 +186,8 @@ Incidents.propTypes = {
 const mapStateToProps = (state) => {
   return {
     isFetching: state.incidents.isFetching,
-    incidents: state.incidents.incidents
+    incidents: state.incidents.incidents,
+    serviceComponents: state.incidents.components
   }
 }
 

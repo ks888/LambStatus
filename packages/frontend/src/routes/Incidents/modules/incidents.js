@@ -3,6 +3,7 @@
 // ------------------------------------
 export const LOAD = 'LOAD'
 export const LIST_INCIDENTS = 'LIST_INCIDENTS'
+export const LIST_COMPONENTS = 'LIST_COMPONENTS'
 export const ADD_INCIDENT = 'ADD_INCIDENT'
 export const UPDATE_INCIDENT = 'UPDATE_INCIDENT'
 export const REMOVE_INCIDENT = 'REMOVE_INCIDENT'
@@ -21,6 +22,13 @@ export function listIncidentsAction (json) {
   return {
     type: LIST_INCIDENTS,
     incidents: json
+  }
+}
+
+export function listComponentsAction (json) {
+  return {
+    type: LIST_COMPONENTS,
+    components: json
   }
 }
 
@@ -51,6 +59,17 @@ export const fetchIncidents = (dispatch) => {
     headers: { 'x-api-key': __API_KEY__ }
   }).then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
+    .catch(error => {
+      console.error(error, error.stack)
+    })
+}
+
+export const fetchComponents = (dispatch) => {
+  dispatch(loadAction())
+  return fetch(__API_URL__ + 'components', {
+    headers: { 'x-api-key': __API_KEY__ }
+  }).then(response => response.json())
+    .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
       console.error(error, error.stack)
     })
@@ -116,6 +135,7 @@ export const deleteIncident = (incidentID) => {
 export const actions = {
   loadAction,
   listIncidentsAction,
+  listComponentsAction,
   addIncidentAction,
   updateIncidentAction,
   removeIncidentAction
@@ -143,6 +163,18 @@ function listIncidentsHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: false,
     incidents: incidents
+  })
+}
+
+function listComponentsHandler (state = { }, action) {
+  let components = JSON.parse(action.components).map((component) => {
+    return {
+      componentID: component.componentID,
+      name: component.name
+    }
+  })
+  return Object.assign({}, state, {
+    components: components
   })
 }
 
@@ -192,6 +224,7 @@ function removeIncidentHandler (state = { }, action) {
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
   [LIST_INCIDENTS]: listIncidentsHandler,
+  [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [UPDATE_INCIDENT]: updateIncidentHandler,
   [REMOVE_INCIDENT]: removeIncidentHandler
