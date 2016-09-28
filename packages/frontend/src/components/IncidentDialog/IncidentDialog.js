@@ -55,9 +55,30 @@ class IncidentDialog extends React.Component {
     })
   }
 
+  renderComponentStatuses () {
+    const statuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+    const doms = this.props.incident.componentIDs.map((componentID) => {
+      return (
+        <li className='mdl-list__item'>
+          <span className='mdl-list__item-primary-content'>
+            {componentID}
+          </span>
+          <span className='mdl-list__item-secondary-action'>
+            <DropdownList onChange={this.handleChangeComponentStatus} list={statuses} />
+          </span>
+        </li>
+      )
+    })
+    return (
+      <ul className='mdl-list'>
+        {doms}
+      </ul>
+    )
+  }
+
   render () {
-    const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
     const incidentStatuses = this.renderIncidentStatuses()
+    const componentStatuses = this.renderComponentStatuses()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
         {this.props.actionName} Incident
@@ -66,7 +87,7 @@ class IncidentDialog extends React.Component {
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
         <TextField label='Message' text={this.state.message} rows={3} onChange={this.handleChangeMessage} />
-        <DropdownList onChange={this.handleChangeComponentStatus} list={componentStatuses} />
+        {componentStatuses}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
