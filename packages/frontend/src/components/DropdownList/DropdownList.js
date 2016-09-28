@@ -23,7 +23,7 @@ class DropdownList extends React.Component {
       return (<option>{status}</option>)
     })
     return (
-      <div className='mdl-textfield mdl-js-textfield' ref='dropdown'>
+      <div className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown)} ref='dropdown'>
         <select className='mdl-textfield__input'>
           {statusDOMs}
         </select>
