@@ -20,8 +20,8 @@ class RadioButton extends React.Component {
 
   render () {
     return (
-      <label className='mdl-radio mdl-js-radio mdl-js-ripple-effect' htmlFor={this.props.label}
-        key={this.props.label} ref='radiobutton'>
+      <label className={classnames(classes.label, 'mdl-radio', 'mdl-js-radio', 'mdl-js-ripple-effect')}
+        htmlFor={this.props.label} key={this.props.label} ref='radiobutton'>
         <input type='radio' id={this.props.label} className='mdl-radio__button' name='incidentStatus'
           value={this.props.label} onChange={this.handleChange} />
         <span className='mdl-radio__label'>{this.props.label}</span>
