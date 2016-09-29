@@ -47,11 +47,21 @@ class IncidentDialog extends React.Component {
 
   renderIncidentStatuses () {
     const incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
-    return incidentStatuses.map((status) => {
+    const statusDOMs = incidentStatuses.map((status) => {
       return (
         <RadioButton onChange={this.handleChangeIncidentStatus} label={status} />
       )
     })
+    return (
+      <div>
+        <label className={classes.label} htmlFor='statuses'>
+          Incident Status
+        </label>
+        <div id='statuses'>
+          {statusDOMs}
+        </div>
+      </div>
+    )
   }
 
   renderComponentStatuses () {
@@ -85,7 +95,7 @@ class IncidentDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
-        <TextField label='Message' text={this.state.message} rows={3} onChange={this.handleChangeMessage} />
+        <TextField label='Message' text={this.state.message} rows={2} onChange={this.handleChangeMessage} />
         {componentStatuses}
       </div>
       <div className='mdl-dialog__actions'>

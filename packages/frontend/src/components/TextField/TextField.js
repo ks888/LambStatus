@@ -29,10 +29,10 @@ class TextField extends React.Component {
     }
 
     return (
-      <div className={classnames('mdl-textfield', 'mdl-js-textfield', 'mdl-textfield--floating-label',
+      <div className={classnames('mdl-textfield', 'mdl-js-textfield',
         classes.textfield)} ref='textfield'>
+        <label className={classes.label} htmlFor='textfield'>{this.props.label}</label>
         {textfield}
-        <label className='mdl-textfield__label' htmlFor='textfield'>{this.props.label}</label>
       </div>
     )
   }
