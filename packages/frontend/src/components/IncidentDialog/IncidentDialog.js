@@ -49,7 +49,7 @@ class IncidentDialog extends React.Component {
     const incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
     const statusDOMs = incidentStatuses.map((status) => {
       return (
-        <RadioButton onChange={this.handleChangeIncidentStatus} label={status} />
+        <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status} />
       )
     })
     return (
@@ -68,7 +68,7 @@ class IncidentDialog extends React.Component {
     const statuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
     const components = this.props.incident.components.map((component) => {
       return (
-        <div id='components' className={classnames('mdl-grid', classes.components)}>
+        <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>
             {component.name}
           </span>
