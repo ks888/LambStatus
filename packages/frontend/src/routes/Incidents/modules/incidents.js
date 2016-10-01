@@ -236,7 +236,8 @@ const ACTION_HANDLERS = {
 
 export default function incidentsReducer (state = {
   isFetching: false,
-  incidents: []
+  incidents: [],
+  components: []
 }, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
