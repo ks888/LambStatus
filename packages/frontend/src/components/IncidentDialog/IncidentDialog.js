@@ -66,22 +66,23 @@ class IncidentDialog extends React.Component {
 
   renderComponentStatuses () {
     const statuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
-    const doms = this.props.incident.components.map((component) => {
+    const components = this.props.incident.components.map((component) => {
       return (
-        <li className='mdl-list__item'>
-          <span className='mdl-list__item-primary-content'>
+        <div id='components' className={classnames('mdl-grid', classes.components)}>
+          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>
             {component.name}
           </span>
-          <span className='mdl-list__item-secondary-action'>
+          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
             <DropdownList onChange={this.handleChangeComponentStatus} list={statuses} />
           </span>
-        </li>
+        </div>
       )
     })
     return (
-      <ul className='mdl-list'>
-        {doms}
-      </ul>
+      <div>
+        <label className={classes.label} htmlFor='components'>Component Status</label>
+        {components}
+      </div>
     )
   }
 
