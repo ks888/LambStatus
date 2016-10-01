@@ -1,3 +1,5 @@
+import { checkStatus } from 'utils/fetch'
+
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -57,10 +59,17 @@ export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
   return fetch(__API_URL__ + 'incidents', {
     headers: { 'x-api-key': __API_KEY__ }
-  }).then(response => response.json())
+  }).then(checkStatus)
+    .then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
     .catch(error => {
-      console.error(error, error.stack)
+      console.error(error)
+      try {
+        error.response.text()
+          .then(body => console.error(body))
+      } catch (error) {
+        console.error(error)
+      }
     })
 }
 
@@ -78,6 +87,13 @@ export const fetchComponents = (dispatch) => {
 export const postIncident = (incidentID, name, incidentStatus, message, components) => {
   return dispatch => {
     dispatch(loadAction())
+    // only a status attribute is allowed to update.
+    components = components.map((component) => {
+      return {
+        componentID: component.componentID,
+        status: component.status
+      }
+    })
     let body = {
       name: name,
       incidentStatus: incidentStatus,
