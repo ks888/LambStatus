@@ -57,7 +57,7 @@ class IncidentDialog extends React.Component {
         <label className={classes.label} htmlFor='statuses'>
           Incident Status
         </label>
-        <div id='statuses'>
+        <div className={classes.incident_status} id='statuses'>
           {statusDOMs}
         </div>
       </div>
