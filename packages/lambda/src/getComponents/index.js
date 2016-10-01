@@ -7,6 +7,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log('getComponents error', error)
     console.log(error.stack)
-    callback('Failed to get components list')
+    callback('Error: failed to get components list')
   }
 }

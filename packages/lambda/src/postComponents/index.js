@@ -7,6 +7,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log('postComponents error', error)
     console.log(error.stack)
-    callback('Failed to create a new component')
+    callback('Error: failed to create a new component')
   }
 }

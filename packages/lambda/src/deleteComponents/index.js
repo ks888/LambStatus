@@ -6,6 +6,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log('deleteComponents error', error)
     console.log(error.stack)
-    callback('Failed to delete a component')
+    callback('Error: failed to delete a component')
   }
 }
