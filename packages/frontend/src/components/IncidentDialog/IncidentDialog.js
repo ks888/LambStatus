@@ -12,7 +12,7 @@ class IncidentDialog extends React.Component {
     this.state = {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
-      componentStatus: props.incident.componentStatus,
+      components: props.incident.components,
       incidentStatus: props.incident.incidentStatus,
       message: props.incident.message
     }
@@ -29,7 +29,7 @@ class IncidentDialog extends React.Component {
   }
 
   handleChangeComponentStatus (value) {
-    this.setState({componentStatus: value})
+    this.setState({components: value})
   }
 
   handleChangeIncidentStatus (value) {
@@ -41,8 +41,8 @@ class IncidentDialog extends React.Component {
   }
 
   handleClickDoneButton (e) {
-    this.props.onCompleted(this.state.incidentID, this.state.name, this.state.componentStatus,
-      this.state.componentIDs, this.state.incidentStatus, this.state.message)
+    this.props.onCompleted(this.state.incidentID, this.state.name, this.state.incidentStatus,
+      this.state.message, this.state.components)
   }
 
   renderIncidentStatuses () {
@@ -113,10 +113,10 @@ IncidentDialog.propTypes = {
   incident: PropTypes.shape({
     incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    componentStatus: PropTypes.string.isRequired,
     components: PropTypes.arrayOf(PropTypes.shape({
       componentID: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     incidentStatus: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired

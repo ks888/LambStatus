@@ -75,15 +75,14 @@ export const fetchComponents = (dispatch) => {
     })
 }
 
-export const postIncident = (incidentID, name, message, incidentStatus, componentIDs, componentStatus) => {
+export const postIncident = (incidentID, name, incidentStatus, message, components) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
-      message: message,
       incidentStatus: incidentStatus,
-      componentIDs: componentIDs,
-      componentStatus: componentStatus
+      message: message,
+      components: components
     }
     return fetch(__API_URL__ + 'incidents', {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
@@ -97,15 +96,14 @@ export const postIncident = (incidentID, name, message, incidentStatus, componen
   }
 }
 
-export const updateIncident = (incidentID, name, message, incidentStatus, componentIDs, componentStatus) => {
+export const updateIncident = (incidentID, name, incidentStatus, message, components) => {
   return dispatch => {
     dispatch(loadAction())
     let body = {
       name: name,
-      message: message,
       incidentStatus: incidentStatus,
-      componentIDs: componentIDs,
-      componentStatus: componentStatus
+      message: message,
+      components: components
     }
     return fetch(__API_URL__ + 'incidents/' + incidentID, {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
@@ -170,7 +168,8 @@ function listComponentsHandler (state = { }, action) {
   let components = JSON.parse(action.components).map((component) => {
     return {
       componentID: component.componentID,
-      name: component.name
+      name: component.name,
+      status: component.status
     }
   })
   return Object.assign({}, state, {

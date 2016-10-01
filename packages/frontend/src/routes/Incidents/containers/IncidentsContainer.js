@@ -66,13 +66,13 @@ class Incidents extends React.Component {
     this.setState({ incident: null, dialogType: dialogType.none })
   }
 
-  handleAdd (incidentID, name, message, incidentStatus, componentIDs, componentStatus) {
-    this.props.dispatch(postIncident(incidentID, name, message, incidentStatus, componentIDs, componentStatus))
+  handleAdd (incidentID, name, incidentStatus, message, components) {
+    this.props.dispatch(postIncident(incidentID, name, incidentStatus, message, components))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
-  handleUpdate (incidentID, name, message, incidentStatus, componentIDs, componentStatus) {
-    this.props.dispatch(updateIncident(incidentID, name, message, incidentStatus, componentIDs, componentStatus))
+  handleUpdate (incidentID, name, incidentStatus, message, components) {
+    this.props.dispatch(updateIncident(incidentID, name, incidentStatus, message, components))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
@@ -119,7 +119,6 @@ class Incidents extends React.Component {
         let incident = {
           incidentID: '',
           name: '',
-          componentStatus: '',
           components: this.props.serviceComponents,
           incidentStatus: '',
           message: ''
@@ -177,7 +176,8 @@ Incidents.propTypes = {
   }).isRequired).isRequired,
   serviceComponents: PropTypes.arrayOf(PropTypes.shape({
     componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired
   }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired
