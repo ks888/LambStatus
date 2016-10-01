@@ -117,6 +117,29 @@
                   ]
                 ]
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": "dynamodb:*",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:dynamodb:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":table/",
+                    {
+                      "Ref": "IncidentUpdateTable"
+                    }
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -442,6 +465,69 @@
         }
       }
     },
+    "PostIncidentsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        },
+        "Description": "Create a new incident",
+        "FunctionName": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "AWS::StackName"
+              },
+              "-PostIncidents"
+            ]
+          ]
+        },
+        "Handler": "lib/index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs4.3",
+        "Timeout": 30
+      }
+    },
+    "PostIncidentsLambdaInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostIncidentsLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:aws:execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "RestApi"
+              },
+              "/*/POST/incidents"
+            ]
+          ]
+        }
+      }
+    },
     "ApiDeployment": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
@@ -464,7 +550,8 @@
         "OptionsComponentApiMethod",
         "IncidentsApiResource",
         "GetIncidentsApiMethod",
-        "OptionsIncidentsApiMethod"
+        "OptionsIncidentsApiMethod",
+        "PostIncidentsApiMethod"
       ]
     },
     "RestApi": {
@@ -1100,6 +1187,94 @@
         ]
       }
     },
+    "PostIncidentsApiMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ResourceId": {
+          "Ref": "IncidentsApiResource"
+        },
+        "HttpMethod": "POST",
+        "AuthorizationType": "NONE",
+        "ApiKeyRequired": true,
+        "Integration": {
+          "Type": "AWS",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PostIncidentsLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "StatusCode": "400",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              },
+              "SelectionPattern": ".*Error.*"
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          },
+          {
+            "StatusCode": "400",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          }
+        ]
+      }
+    },
     "OptionsIncidentsApiMethod": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -1261,6 +1436,35 @@
           "WriteCapacityUnits": "1"
         }
       }
+    },
+    "IncidentUpdateTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "incidentID",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "incidentUpdateID",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "incidentID",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "incidentUpdateID",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "1",
+          "WriteCapacityUnits": "1"
+        }
+      }
     }
   },
   "Outputs": {
@@ -1290,6 +1494,11 @@
     "IncidentTable": {
       "Value": {
         "Ref": "IncidentTable"
+      }
+    },
+    "IncidentUpdateTable": {
+      "Value": {
+        "Ref": "IncidentUpdateTable"
       }
     },
     "ApiKeyID": {
