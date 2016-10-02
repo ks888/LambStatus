@@ -19,11 +19,22 @@ class RadioButton extends React.Component {
   }
 
   render () {
+    let inputProps = {
+      type: 'radio',
+      id: this.props.label,
+      className: 'mdl-radio__button',
+      name: 'incidentStatus',
+      value: this.props.label,
+      onChange: this.handleChange
+    }
+    if (this.props.checked) {
+      inputProps.checked = true
+    }
+    let input = React.createElement('input', inputProps)
     return (
       <label className={classnames(classes.label, 'mdl-radio', 'mdl-js-radio', 'mdl-js-ripple-effect')}
         htmlFor={this.props.label} key={this.props.label} ref='radiobutton'>
-        <input type='radio' id={this.props.label} className='mdl-radio__button' name='incidentStatus'
-          value={this.props.label} onChange={this.handleChange} />
+        {input}
         <span className='mdl-radio__label'>{this.props.label}</span>
       </label>
     )
@@ -32,7 +43,10 @@ class RadioButton extends React.Component {
 
 RadioButton.propTypes = {
   onChange: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
+  checked: PropTypes.bool
 }
+
+RadioButton.defaultProps = { checked: false }
 
 export default RadioButton
