@@ -19,8 +19,12 @@ class DropdownList extends React.Component {
   }
 
   render () {
-    const statusDOMs = this.props.list.map((status) => {
-      return (<option key={status}>{status}</option>)
+    const statusDOMs = this.props.list.map((elem) => {
+      if (this.props.initialValue === elem) {
+        return (<option key={elem} selected>{elem}</option>)
+      } else {
+        return (<option key={elem}>{elem}</option>)
+      }
     })
     return (
       <span className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown)} ref='dropdown'>
@@ -34,7 +38,8 @@ class DropdownList extends React.Component {
 
 DropdownList.propTypes = {
   onChange: PropTypes.func.isRequired,
-  list: PropTypes.array.isRequired
+  list: PropTypes.array.isRequired,
+  initialValue: PropTypes.string.isRequired
 }
 
 export default DropdownList

@@ -82,7 +82,7 @@ class IncidentDialog extends React.Component {
           </span>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
             <DropdownList onChange={(newStatus) => {this.handleChangeComponentStatus(component.componentID, newStatus)}}
-              list={statuses} />
+              list={statuses} initialValue={component.status} />
           </span>
         </div>
       )
