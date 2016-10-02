@@ -1,3 +1,5 @@
+export let componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+
 export let getComponentColor = (status) => {
   switch (status) {
     case 'Operational':
@@ -8,6 +10,8 @@ export let getComponentColor = (status) => {
       return '#9e9e9e'
   }
 }
+
+export let incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
 
 export let getIncidentColor = (impact) => {
   switch (impact) {

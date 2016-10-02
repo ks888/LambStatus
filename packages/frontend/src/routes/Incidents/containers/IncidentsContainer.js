@@ -8,7 +8,7 @@ import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './IncidentsContainer.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor } from 'utils/colors'
+import { getIncidentColor } from 'utils/status'
 
 const dialogType = {
   none: 0,

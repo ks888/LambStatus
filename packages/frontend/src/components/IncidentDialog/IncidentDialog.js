@@ -5,6 +5,7 @@ import Button from 'components/Button'
 import RadioButton from 'components/RadioButton'
 import TextField from 'components/TextField'
 import DropdownList from 'components/DropdownList'
+import { componentStatuses, incidentStatuses } from 'utils/status'
 
 class IncidentDialog extends React.Component {
   constructor (props) {
@@ -54,7 +55,6 @@ class IncidentDialog extends React.Component {
   }
 
   renderIncidentStatuses () {
-    const incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
     const statusDOMs = incidentStatuses.map((status) => {
       let checked = status === 'investigating'
       return (
@@ -74,7 +74,6 @@ class IncidentDialog extends React.Component {
   }
 
   renderComponentStatuses () {
-    const statuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
     const components = this.props.incident.components.map((component) => {
       return (
         <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
@@ -83,7 +82,7 @@ class IncidentDialog extends React.Component {
           </span>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
             <DropdownList onChange={(newStatus) => {this.handleChangeComponentStatus(component.componentID, newStatus)}}
-              list={statuses} initialValue={component.status} />
+              list={componentStatuses} initialValue={component.status} />
           </span>
         </div>
       )
