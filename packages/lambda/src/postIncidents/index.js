@@ -17,7 +17,8 @@ export async function handler (event, context, callback) {
         }
       })
 
-      removeUpdatingFlag(incident.incidentID)
+      removeUpdatingFlag(incident.Attributes.incidentID)
+      delete incident.Attributes.updating
       break
     } catch (error) {
       console.log('failed to add Incident: ', error)
@@ -30,5 +31,5 @@ export async function handler (event, context, callback) {
     callback('Error: failed to add Incident')
   }
 
-  callback(null, JSON.stringify(incident))
+  callback(null, JSON.stringify(incident.Attributes))
 }

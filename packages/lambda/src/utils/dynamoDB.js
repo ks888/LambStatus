@@ -258,6 +258,12 @@ export const updateIncidentUpdate = (incidentID, incidentStatus, message, update
         incidentID: incidentID,
         incidentUpdateID: incidentUpdateID
       },
+      UpdateExpression: 'set incidentStatus = :i, updatedAt = :u, message = :m',
+      ExpressionAttributeValues: {
+        ':i': incidentStatus,
+        ':u': updatedAt,
+        ':m': message
+      },
       TableName: IncidentUpdateTable,
       ReturnValues: 'ALL_NEW'
     }
