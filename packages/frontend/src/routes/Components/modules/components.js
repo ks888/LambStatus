@@ -1,11 +1,12 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const LOAD = 'LOAD'
-export const LIST_COMPONENTS = 'LIST_COMPONENTS'
-export const ADD_COMPONENT = 'ADD_COMPONENT'
-export const EDIT_COMPONENT = 'EDIT_COMPONENT'
-export const REMOVE_COMPONENT = 'REMOVE_COMPONENT'
+const ACTION_NAME_PREFIX = 'COMPONENTS_'
+export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
+export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
+export const ADD_COMPONENT = ACTION_NAME_PREFIX + 'ADD_COMPONENT'
+export const EDIT_COMPONENT = ACTION_NAME_PREFIX + 'EDIT_COMPONENT'
+export const REMOVE_COMPONENT = ACTION_NAME_PREFIX + 'REMOVE_COMPONENT'
 
 // ------------------------------------
 // Actions

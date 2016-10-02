@@ -3,12 +3,13 @@ import { checkStatus } from 'utils/fetch'
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const LOAD = 'LOAD'
-export const LIST_INCIDENTS = 'LIST_INCIDENTS'
-export const LIST_COMPONENTS = 'LIST_COMPONENTS'
-export const ADD_INCIDENT = 'ADD_INCIDENT'
-export const UPDATE_INCIDENT = 'UPDATE_INCIDENT'
-export const REMOVE_INCIDENT = 'REMOVE_INCIDENT'
+const ACTION_NAME_PREFIX = 'INCIDENTS_'
+export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
+export const LIST_INCIDENTS = ACTION_NAME_PREFIX + 'LIST_INCIDENTS'
+export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
+export const ADD_INCIDENT = ACTION_NAME_PREFIX + 'ADD_INCIDENT'
+export const UPDATE_INCIDENT = ACTION_NAME_PREFIX + 'UPDATE_INCIDENT'
+export const REMOVE_INCIDENT = ACTION_NAME_PREFIX + 'REMOVE_INCIDENT'
 
 // ------------------------------------
 // Actions
