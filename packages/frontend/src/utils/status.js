@@ -4,6 +4,10 @@ export let getComponentColor = (status) => {
   switch (status) {
     case 'Operational':
       return '#388e3c'
+    case 'Under Maintenance':
+      return '#0288d1'
+    case 'Degraded Performance':
+      return '#ffa000'
     case 'Outage':
       return '#c62828'
     default:
