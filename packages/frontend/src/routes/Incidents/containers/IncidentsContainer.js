@@ -52,10 +52,30 @@ class Incidents extends React.Component {
     this.setState({ incident: incident, dialogType: type })
   }
 
+  handleShowAddDialog = () => {
+    return () => this.handleShowDialog(dialogType.add)
+  }
+
+  handleShowEditDialog = (incident) => {
+    return () => this.handleShowDialog(dialogType.edit, incident)
+  }
+
+  handleShowDeleteDialog = (incident) => {
+    return () => this.handleShowDialog(dialogType.delete, incident)
+  }
+
   handleHideDialog = (refs) => {
     let dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
     this.setState({ incident: null, dialogType: dialogType.none })
+  }
+
+  handleHideIncidentDialog = () => {
+    return () => this.handleHideDialog(this.refs.incidentDialog)
+  }
+
+  handleHideFoolproofDialog = () => {
+    return () => this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   handleAdd = (incidentID, name, incidentStatus, message, components) => {
@@ -89,11 +109,11 @@ class Incidents extends React.Component {
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Edit'
-                onClick={() => this.handleShowDialog(dialogType.edit, incident)} />
+                onClick={this.handleShowEditDialog(incident)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Delete'
-                onClick={() => this.handleShowDialog(dialogType.delete, incident)} />
+                onClick={this.handleShowDeleteDialog(incident)} />
             </div>
           </div>
         </span>
@@ -115,17 +135,17 @@ class Incidents extends React.Component {
           message: ''
         }
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
-          onCanceled={() => { this.handleHideDialog(this.refs.incidentDialog) }}
+          onCanceled={this.handleHideIncidentDialog()}
           incident={incident} actionName='Add' />
         break
       case dialogType.update:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleUpdate}
-          onCanceled={() => { this.handleHideDialog(this.refs.incidentDialog) }}
+          onCanceled={this.handleHideIncidentDialog()}
           incident={this.state.incident} actionName='Update' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={() => { this.handleHideDialog(this.refs.foolproofDialog) }}
+          onCanceled={this.handleHideFoolproofDialog()}
           incident={this.state.incident} />
         break
       default:
@@ -148,7 +168,7 @@ class Incidents extends React.Component {
         <h4>Incidents</h4>
       </div>
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--2-col mdl-cell--middle')}>
-        <Button onClick={() => this.handleShowDialog(dialogType.add)} name={textInButton} class='mdl-button--accent' />
+        <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {incidentItems}

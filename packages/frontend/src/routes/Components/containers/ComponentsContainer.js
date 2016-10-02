@@ -50,10 +50,30 @@ class Components extends React.Component {
     this.setState({ component: component, dialogType: type })
   }
 
+  handleShowAddDialog = () => {
+    return () => this.handleShowDialog(dialogType.add)
+  }
+
+  handleShowEditDialog = (component) => {
+    return () => this.handleShowDialog(dialogType.edit, component)
+  }
+
+  handleShowDeleteDialog = (component) => {
+    return () => this.handleShowDialog(dialogType.delete, component)
+  }
+
   handleHideDialog = (refs) => {
     let dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
     this.setState({ component: null, dialogType: dialogType.none })
+  }
+
+  handleHideComponentDialog = () => {
+    return () => this.handleHideDialog(this.refs.componentDialog)
+  }
+
+  handleHideFoolproofDialog = () => {
+    return () => this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   handleAdd = (componentID, name, description, status) => {
@@ -85,11 +105,11 @@ class Components extends React.Component {
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Edit'
-                onClick={() => this.handleShowDialog(dialogType.edit, component)} />
+                onClick={this.handleShowEditDialog(component)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Delete'
-                onClick={() => this.handleShowDialog(dialogType.delete, component)} />
+                onClick={this.handleShowDeleteDialog(component)} />
             </div>
           </div>
         </span>
@@ -111,17 +131,17 @@ class Components extends React.Component {
           status: 'Operational'
         }
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAdd}
-          onCanceled={() => { this.handleHideDialog(this.refs.componentDialog) }}
+          onCanceled={this.handleHideComponentDialog()}
           component={component} actionName='Add' />
         break
       case dialogType.edit:
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleEdit}
-          onCanceled={() => { this.handleHideDialog(this.refs.componentDialog) }}
+          onCanceled={this.handleHideComponentDialog()}
           component={this.state.component} actionName='Edit' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={() => { this.handleHideDialog(this.refs.foolproofDialog) }}
+          onCanceled={this.handleHideFoolproofDialog()}
           component={this.state.component} />
         break
       default:
@@ -144,7 +164,7 @@ class Components extends React.Component {
         <h4>Components</h4>
       </div>
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
-        <Button onClick={() => this.handleShowDialog(dialogType.add)} name={textInButton} class='mdl-button--accent' />
+        <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
