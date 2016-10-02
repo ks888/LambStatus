@@ -28,8 +28,16 @@ class IncidentDialog extends React.Component {
     this.setState({name: value})
   }
 
-  handleChangeComponentStatus (value) {
-    this.setState({components: value})
+  handleChangeComponentStatus (componentID, status) {
+    let newComponents = this.state.components.map((component) => {
+      if (component.componentID === componentID) {
+        return Object.assign({}, component, {
+          status: status
+        })
+      }
+      return component
+    })
+    this.setState({components: newComponents})
   }
 
   handleChangeIncidentStatus (value) {
@@ -73,7 +81,8 @@ class IncidentDialog extends React.Component {
             {component.name}
           </span>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
-            <DropdownList onChange={this.handleChangeComponentStatus} list={statuses} />
+            <DropdownList onChange={(newStatus) => {this.handleChangeComponentStatus(component.componentID, newStatus)}}
+              list={statuses} />
           </span>
         </div>
       )
