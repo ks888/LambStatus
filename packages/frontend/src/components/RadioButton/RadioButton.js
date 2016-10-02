@@ -6,6 +6,10 @@ import classes from './RadioButton.scss'
 class RadioButton extends React.Component {
   constructor (props) {
     super(props)
+    // workaround for https://github.com/facebook/react/issues/6779
+    this.state = {
+      value: ''
+    }
     this.handleChange = this.handleChange.bind(this)
   }
 

@@ -14,7 +14,7 @@ class IncidentDialog extends React.Component {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
       components: props.incident.components,
-      incidentStatus: props.incident.incidentStatus,
+      incidentStatus: props.incident.incidentStatus || 'investigating',
       message: props.incident.message
     }
     this.handleChangeName = this.handleChangeName.bind(this)
@@ -56,7 +56,7 @@ class IncidentDialog extends React.Component {
 
   renderIncidentStatuses () {
     const statusDOMs = incidentStatuses.map((status) => {
-      let checked = status === 'investigating'
+      let checked = status === this.state.incidentStatus
       return (
         <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status} checked={checked} />
       )
@@ -127,7 +127,7 @@ IncidentDialog.propTypes = {
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    incidentStatus: PropTypes.string.isRequired,
+    incidentStatus: PropTypes.string,
     message: PropTypes.string.isRequired
   }).isRequired,
   actionName: PropTypes.string.isRequired
