@@ -20,15 +20,11 @@ class DropdownList extends React.Component {
 
   render () {
     const statusDOMs = this.props.list.map((elem) => {
-      if (this.props.initialValue === elem) {
-        return (<option key={elem} selected>{elem}</option>)
-      } else {
-        return (<option key={elem}>{elem}</option>)
-      }
+      return (<option key={elem}>{elem}</option>)
     })
     return (
       <span className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown)} ref='dropdown'>
-        <select className='mdl-textfield__input' onChange={this.handleChange}>
+        <select className='mdl-textfield__input' onChange={this.handleChange} defaultValue={this.props.initialValue}>
           {statusDOMs}
         </select>
       </span>
