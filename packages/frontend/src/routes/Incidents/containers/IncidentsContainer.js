@@ -21,14 +21,6 @@ class Incidents extends React.Component {
   constructor () {
     super()
     this.state = { dialogType: dialogType.none, incident: null }
-
-    this.handleShowDialog = this.handleShowDialog.bind(this)
-    this.handleHideDialog = this.handleHideDialog.bind(this)
-    this.handleAdd = this.handleAdd.bind(this)
-    this.handleUpdate = this.handleUpdate.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
-    this.renderListItem = this.renderListItem.bind(this)
-    this.renderDialog = this.renderDialog.bind(this)
   }
 
   componentDidMount () {
@@ -56,32 +48,32 @@ class Incidents extends React.Component {
     }
   }
 
-  handleShowDialog (type, incident) {
+  handleShowDialog = (type, incident) => {
     this.setState({ incident: incident, dialogType: type })
   }
 
-  handleHideDialog (refs) {
+  handleHideDialog = (refs) => {
     let dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
     this.setState({ incident: null, dialogType: dialogType.none })
   }
 
-  handleAdd (incidentID, name, incidentStatus, message, components) {
+  handleAdd = (incidentID, name, incidentStatus, message, components) => {
     this.props.dispatch(postIncident(incidentID, name, incidentStatus, message, components))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
-  handleUpdate (incidentID, name, incidentStatus, message, components) {
+  handleUpdate = (incidentID, name, incidentStatus, message, components) => {
     this.props.dispatch(updateIncident(incidentID, name, incidentStatus, message, components))
     this.handleHideDialog(this.refs.incidentDialog)
   }
 
-  handleDelete (incidentID) {
+  handleDelete = (incidentID) => {
     this.props.dispatch(deleteIncident(incidentID))
     this.handleHideDialog(this.refs.foolproofDialog)
   }
 
-  renderListItem (incident) {
+  renderListItem = (incident) => {
     let statusColor = getIncidentColor(incident.status)
     let bgColor = '#ffffff'
     let updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
@@ -109,7 +101,7 @@ class Incidents extends React.Component {
     )
   }
 
-  renderDialog () {
+  renderDialog = () => {
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
@@ -120,7 +112,6 @@ class Incidents extends React.Component {
           incidentID: '',
           name: '',
           components: this.props.serviceComponents,
-          incidentStatus: '',
           message: ''
         }
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}

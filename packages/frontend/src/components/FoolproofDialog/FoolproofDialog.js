@@ -4,12 +4,7 @@ import classes from './FoolproofDialog.scss'
 import Button from 'components/Button'
 
 class FoolproofDialog extends React.Component {
-  constructor (props) {
-    super(props)
-    this.handleClickDeleteButton = this.handleClickDeleteButton.bind(this)
-  }
-
-  handleClickDeleteButton () {
+  handleClickDeleteButton = () => {
     this.props.onCompleted(this.props.component.componentID)
   }
 

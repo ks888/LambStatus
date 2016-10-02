@@ -13,20 +13,17 @@ class ComponentDialog extends React.Component {
       description: props.component.description,
       status: props.component.status
     }
-    this.handleChangeName = this.handleChangeName.bind(this)
-    this.handleChangeDescription = this.handleChangeDescription.bind(this)
-    this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
   }
 
-  handleChangeName (value) {
+  handleChangeName = (value) => {
     this.setState({name: value})
   }
 
-  handleChangeDescription (value) {
+  handleChangeDescription = (value) => {
     this.setState({description: value})
   }
 
-  handleClickDoneButton (e) {
+  handleClickDoneButton = (e) => {
     this.props.onCompleted(this.state.componentID, this.state.name, this.state.description, this.state.status)
   }
 

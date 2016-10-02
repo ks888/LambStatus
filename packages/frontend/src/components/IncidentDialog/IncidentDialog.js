@@ -17,19 +17,13 @@ class IncidentDialog extends React.Component {
       incidentStatus: props.incident.incidentStatus || 'investigating',
       message: props.incident.message
     }
-    this.handleChangeName = this.handleChangeName.bind(this)
-    this.handleChangeComponentStatus = this.handleChangeComponentStatus.bind(this)
-    this.handleChangeIncidentStatus = this.handleChangeIncidentStatus.bind(this)
-    this.handleClickDoneButton = this.handleClickDoneButton.bind(this)
-    this.renderIncidentStatuses = this.renderIncidentStatuses.bind(this)
-    this.handleChangeMessage = this.handleChangeMessage.bind(this)
   }
 
-  handleChangeName (value) {
+  handleChangeName = (value) => {
     this.setState({name: value})
   }
 
-  handleChangeComponentStatus (componentID, status) {
+  handleChangeComponentStatus = (componentID, status) => {
     let newComponents = this.state.components.map((component) => {
       if (component.componentID === componentID) {
         return Object.assign({}, component, {
@@ -41,20 +35,20 @@ class IncidentDialog extends React.Component {
     this.setState({components: newComponents})
   }
 
-  handleChangeIncidentStatus (value) {
+  handleChangeIncidentStatus = (value) => {
     this.setState({incidentStatus: value})
   }
 
-  handleChangeMessage (value) {
+  handleChangeMessage = (value) => {
     this.setState({message: value})
   }
 
-  handleClickDoneButton (e) {
+  handleClickDoneButton = (e) => {
     this.props.onCompleted(this.state.incidentID, this.state.name, this.state.incidentStatus,
       this.state.message, this.state.components)
   }
 
-  renderIncidentStatuses () {
+  renderIncidentStatuses = () => {
     const statusDOMs = incidentStatuses.map((status) => {
       let checked = status === this.state.incidentStatus
       return (
@@ -73,7 +67,7 @@ class IncidentDialog extends React.Component {
     )
   }
 
-  renderComponentStatuses () {
+  renderComponentStatuses = () => {
     const components = this.props.incident.components.map((component) => {
       return (
         <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>

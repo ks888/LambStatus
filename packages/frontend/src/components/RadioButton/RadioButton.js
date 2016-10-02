@@ -10,7 +10,6 @@ class RadioButton extends React.Component {
     this.state = {
       value: ''
     }
-    this.handleChange = this.handleChange.bind(this)
   }
 
   componentDidMount () {
@@ -18,7 +17,7 @@ class RadioButton extends React.Component {
     componentHandler.upgradeElement(jsElem)
   }
 
-  handleChange (e) {
+  handleChange = (e) => {
     this.props.onChange(e.target.value)
   }
 

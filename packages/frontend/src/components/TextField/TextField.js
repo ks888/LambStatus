@@ -4,17 +4,12 @@ import classnames from 'classnames'
 import classes from './TextField.scss'
 
 class TextField extends React.Component {
-  constructor (props) {
-    super(props)
-    this.handleChange = this.handleChange.bind(this)
-  }
-
   componentDidMount () {
     let jsElem = ReactDOM.findDOMNode(this.refs.textfield)
     componentHandler.upgradeElement(jsElem)
   }
 
-  handleChange (e) {
+  handleChange = (e) => {
     this.props.onChange(e.target.value)
   }
 

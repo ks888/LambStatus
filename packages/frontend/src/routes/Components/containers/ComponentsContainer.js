@@ -20,14 +20,6 @@ class Components extends React.Component {
   constructor () {
     super()
     this.state = { dialogType: dialogType.none, selectedComponent: null }
-
-    this.handleShowDialog = this.handleShowDialog.bind(this)
-    this.handleHideDialog = this.handleHideDialog.bind(this)
-    this.handleAdd = this.handleAdd.bind(this)
-    this.handleEdit = this.handleEdit.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
-    this.renderListItem = this.renderListItem.bind(this)
-    this.renderDialog = this.renderDialog.bind(this)
   }
 
   componentDidMount () {
@@ -54,32 +46,32 @@ class Components extends React.Component {
     }
   }
 
-  handleShowDialog (type, component) {
+  handleShowDialog = (type, component) => {
     this.setState({ component: component, dialogType: type })
   }
 
-  handleHideDialog (refs) {
+  handleHideDialog = (refs) => {
     let dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
-  handleAdd (componentID, name, description, status) {
+  handleAdd = (componentID, name, description, status) => {
     this.props.dispatch(postComponent(name, description, status))
     this.handleHideDialog(this.refs.componentDialog)
   }
 
-  handleEdit (componentID, name, description, status) {
+  handleEdit = (componentID, name, description, status) => {
     this.props.dispatch(updateComponent(componentID, name, description, status))
     this.handleHideDialog(this.refs.componentDialog)
   }
 
-  handleDelete (componentID) {
+  handleDelete = (componentID) => {
     this.props.dispatch(deleteComponent(componentID))
     this.handleHideDialog(this.refs.foolproofDialog)
   }
 
-  renderListItem (component) {
+  renderListItem = (component) => {
     let statusColor = getComponentColor(component.status)
     return (
       <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
@@ -105,7 +97,7 @@ class Components extends React.Component {
     )
   }
 
-  renderDialog () {
+  renderDialog = () => {
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
