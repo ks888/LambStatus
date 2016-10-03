@@ -4,21 +4,13 @@ import classnames from 'classnames'
 import classes from './RadioButton.scss'
 
 class RadioButton extends React.Component {
-  constructor (props) {
-    super(props)
-    // workaround for https://github.com/facebook/react/issues/6779
-    this.state = {
-      value: ''
-    }
-  }
-
   componentDidMount () {
     let jsElem = ReactDOM.findDOMNode(this.refs.radiobutton)
     componentHandler.upgradeElement(jsElem)
   }
 
   handleChange = (e) => {
-    this.props.onChange(e.target.value)
+    this.props.onChange(e.target.id)
   }
 
   render () {
@@ -27,11 +19,10 @@ class RadioButton extends React.Component {
       id: this.props.label,
       className: 'mdl-radio__button',
       name: 'incidentStatus',
-      value: this.props.label,
       onChange: this.handleChange
     }
     if (this.props.checked) {
-      inputProps.checked = true
+      inputProps.defaultChecked = true
     }
     let input = React.createElement('input', inputProps)
     return (
