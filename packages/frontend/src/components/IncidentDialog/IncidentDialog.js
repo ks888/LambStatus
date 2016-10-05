@@ -13,7 +13,7 @@ class IncidentDialog extends React.Component {
     this.state = {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
-      components: props.incident.components,
+      components: props.components,
       incidentStatus: props.incident.incidentStatus || 'investigating',
       message: props.incident.message
     }
@@ -70,7 +70,7 @@ class IncidentDialog extends React.Component {
   }
 
   renderComponentStatuses = () => {
-    const components = this.props.incident.components.map((component) => {
+    const components = this.props.components.map((component) => {
       return (
         <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>
@@ -118,14 +118,14 @@ IncidentDialog.propTypes = {
   incident: PropTypes.shape({
     incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    components: PropTypes.arrayOf(PropTypes.shape({
-      componentID: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired
-    }).isRequired).isRequired,
     incidentStatus: PropTypes.string,
     message: PropTypes.string.isRequired
   }).isRequired,
+  components: PropTypes.arrayOf(PropTypes.shape({
+    componentID: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired
+  }).isRequired).isRequired,
   actionName: PropTypes.string.isRequired
 }
 

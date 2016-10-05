@@ -53,7 +53,12 @@ class Incidents extends React.Component {
   }
 
   handleShowAddDialog = () => {
-    return () => this.handleShowDialog(dialogType.add)
+    let defaultIncident = {
+      incidentID: '',
+      name: '',
+      message: ''
+    }
+    return () => this.handleShowDialog(dialogType.add, defaultIncident)
   }
 
   handleShowEditDialog = (incident) => {
@@ -128,20 +133,18 @@ class Incidents extends React.Component {
         dialog = null
         break
       case dialogType.add:
-        let incident = {
-          incidentID: '',
-          name: '',
-          components: this.props.serviceComponents,
-          message: ''
-        }
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
           onCanceled={this.handleHideIncidentDialog()}
-          incident={incident} actionName='Add' />
+          incident={this.state.incident}
+          components={this.props.serviceComponents}
+          actionName='Add' />
         break
       case dialogType.update:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleUpdate}
           onCanceled={this.handleHideIncidentDialog()}
-          incident={this.state.incident} actionName='Update' />
+          incident={this.state.incident}
+          components={this.props.serviceComponents}
+          actionName='Update' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
