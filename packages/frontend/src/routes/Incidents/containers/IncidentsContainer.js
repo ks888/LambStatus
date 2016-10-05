@@ -57,7 +57,7 @@ class Incidents extends React.Component {
   }
 
   handleShowEditDialog = (incident) => {
-    return () => this.handleShowDialog(dialogType.edit, incident)
+    return () => this.handleShowDialog(dialogType.update, incident)
   }
 
   handleShowDeleteDialog = (incident) => {
