@@ -6,6 +6,7 @@ import { checkStatus } from 'utils/fetch'
 const ACTION_NAME_PREFIX = 'INCIDENTS_'
 export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
 export const LIST_INCIDENTS = ACTION_NAME_PREFIX + 'LIST_INCIDENTS'
+export const LIST_INCIDENT_UPDATES = ACTION_NAME_PREFIX + 'LIST_INCIDENT_UPDATES'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export const ADD_INCIDENT = ACTION_NAME_PREFIX + 'ADD_INCIDENT'
 export const UPDATE_INCIDENT = ACTION_NAME_PREFIX + 'UPDATE_INCIDENT'
@@ -25,6 +26,14 @@ export function listIncidentsAction (json) {
   return {
     type: LIST_INCIDENTS,
     incidents: json
+  }
+}
+
+export function listIncidentUpdatesAction (json, incidentID) {
+  return {
+    type: LIST_INCIDENT_UPDATES,
+    incidentUpdates: json,
+    incidentID: incidentID
   }
 }
 
@@ -72,6 +81,26 @@ export const fetchIncidents = (dispatch) => {
         console.error(error)
       }
     })
+}
+
+export const fetchIncidentUpdates = (incidentID) => {
+  return (dispatch) => {
+    dispatch(loadAction())
+    return fetch(__API_URL__ + 'incidents/' + incidentID, {
+      headers: { 'x-api-key': __API_KEY__ }
+    }).then(checkStatus)
+      .then(response => response.json())
+      .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
+      .catch(error => {
+        console.error(error)
+        try {
+          error.response.text()
+            .then(body => console.error(body))
+        } catch (error) {
+          console.error(error)
+        }
+      })
+  }
 }
 
 export const fetchComponents = (dispatch) => {
@@ -150,6 +179,7 @@ export const deleteIncident = (incidentID) => {
 export const actions = {
   loadAction,
   listIncidentsAction,
+  listIncidentUpdatesAction,
   listComponentsAction,
   addIncidentAction,
   updateIncidentAction,
@@ -178,6 +208,27 @@ function listIncidentsHandler (state = { }, action) {
   return Object.assign({}, state, {
     isFetching: false,
     incidents: incidents
+  })
+}
+
+function listIncidentUpdatesHandler (state = { }, action) {
+  let incidentUpdates = JSON.parse(action.incidentUpdates).map((incidentUpdate) => {
+    return {
+      incidentStatus: incidentUpdate.incidentStatus,
+      message: incidentUpdate.message,
+      updatedAt: incidentUpdate.updatedAt
+    }
+  })
+
+  state.incidents.forEach((incident) => {
+    if (incident.incidentID === action.incidentID) {
+      incident.incidentUpdates = incidentUpdates
+    }
+  })
+
+  return Object.assign({}, state, {
+    isFetching: false,
+    incidents: state.incidents
   })
 }
 
@@ -240,6 +291,7 @@ function removeIncidentHandler (state = { }, action) {
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
   [LIST_INCIDENTS]: listIncidentsHandler,
+  [LIST_INCIDENT_UPDATES]: listIncidentUpdatesHandler,
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [UPDATE_INCIDENT]: updateIncidentHandler,

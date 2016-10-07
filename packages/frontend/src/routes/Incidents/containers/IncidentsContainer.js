@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { connect } from 'react-redux'
-import { fetchIncidents, fetchComponents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
+import { fetchIncidents, fetchIncidentUpdates, fetchComponents, postIncident, updateIncident, deleteIncident } from '../modules/incidents'
 import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -62,6 +62,7 @@ class Incidents extends React.Component {
   }
 
   handleShowUpdateDialog = (incident) => {
+    this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
     return () => this.handleShowDialog(dialogType.update, incident)
   }
 
