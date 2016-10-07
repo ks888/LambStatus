@@ -61,7 +61,7 @@ class Incidents extends React.Component {
     return () => this.handleShowDialog(dialogType.add, defaultIncident)
   }
 
-  handleShowEditDialog = (incident) => {
+  handleShowUpdateDialog = (incident) => {
     return () => this.handleShowDialog(dialogType.update, incident)
   }
 
@@ -113,8 +113,8 @@ class Incidents extends React.Component {
         <span className='mdl-list__item-secondary-content'>
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(incident)} />
+              <Button plain name='Update'
+                onClick={this.handleShowUpdateDialog(incident)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Delete'
@@ -186,7 +186,12 @@ Incidents.propTypes = {
     incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    updatedAt: PropTypes.string.isRequired
+    updatedAt: PropTypes.string.isRequired,
+    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+      incidentStatus: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired
+    }).isRequired)
   }).isRequired).isRequired,
   serviceComponents: PropTypes.arrayOf(PropTypes.shape({
     componentID: PropTypes.string.isRequired,
