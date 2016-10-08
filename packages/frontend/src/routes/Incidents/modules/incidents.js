@@ -86,7 +86,7 @@ export const fetchIncidents = (dispatch) => {
 export const fetchIncidentUpdates = (incidentID) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + incidentID, {
+    return fetch(__API_URL__ + 'incidents/' + incidentID + '/incidentupdates', {
       headers: { 'x-api-key': __API_KEY__ }
     }).then(checkStatus)
       .then(response => response.json())
