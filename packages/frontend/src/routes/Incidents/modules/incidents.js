@@ -155,8 +155,9 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
-    }).then(response => response.json())
-      .then(json => dispatch(updateIncident(json)))
+    }).then(checkStatus)
+      .then(response => response.json())
+      .then(json => dispatch(updateIncidentAction(json)))
       .catch(error => {
         console.error(error, error.stack)
       })
