@@ -22,6 +22,10 @@ export default {
       'babel-polyfill',
       './src/patchComponents/index.js'
     ],
+    PatchIncidents: [
+      'babel-polyfill',
+      './src/patchIncidents/index.js'
+    ],
     DeleteComponents: [
       'babel-polyfill',
       './src/deleteComponents/index.js'
