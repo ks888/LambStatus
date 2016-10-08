@@ -614,7 +614,11 @@
         "IncidentsApiResource",
         "GetIncidentsApiMethod",
         "OptionsIncidentsApiMethod",
-        "PostIncidentsApiMethod"
+        "PostIncidentsApiMethod",
+        "IncidentApiResource",
+        "IncidentUpdatesApiResource",
+        "GetIncidentUpdatesApiMethod",
+        "OptionsIncidentUpdatesApiMethod"
       ]
     },
     "RestApi": {
@@ -1346,6 +1350,181 @@
         },
         "ResourceId": {
           "Ref": "IncidentsApiResource"
+        },
+        "HttpMethod": "OPTIONS",
+        "AuthorizationType": "NONE",
+        "ApiKeyRequired": false,
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{ \"statusCode\": 200 }"
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          }
+        ]
+      }
+    },
+    "IncidentApiResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ParentId": {
+          "Ref": "IncidentsApiResource"
+        },
+        "PathPart": "{incidentid}"
+      }
+    },
+    "IncidentUpdatesApiResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ParentId": {
+          "Ref": "IncidentApiResource"
+        },
+        "PathPart": "incidentupdates"
+      }
+    },
+    "GetIncidentUpdatesApiMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ResourceId": {
+          "Ref": "IncidentUpdatesApiResource"
+        },
+        "HttpMethod": "GET",
+        "AuthorizationType": "NONE",
+        "ApiKeyRequired": true,
+        "Integration": {
+          "Type": "AWS",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "WHEN_NO_TEMPLATES",
+          "RequestTemplates": {
+            "application/json": {"Fn::Join":["",[
+              "{","\n",
+              "    \"params\":{","\n",
+              "        #foreach($param in $input.params().path.keySet())","\n",
+              "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end","\n",
+              "        #end","\n",
+              "    }","\n",
+              "}"
+            ]]}
+          },
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:aws:apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GetIncidentUpdatesLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              }
+            },
+            {
+              "StatusCode": "400",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "'",
+                      {
+                        "Ref": "Origin"
+                      },
+                      "'"
+                    ]
+                  ]
+                }
+              },
+              "SelectionPattern": ".*Error.*"
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          },
+          {
+            "StatusCode": "400",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true
+            }
+          }
+        ]
+      }
+    },
+    "OptionsIncidentUpdatesApiMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi"
+        },
+        "ResourceId": {
+          "Ref": "IncidentUpdatesApiResource"
         },
         "HttpMethod": "OPTIONS",
         "AuthorizationType": "NONE",
