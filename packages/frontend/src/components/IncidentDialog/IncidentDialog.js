@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
+import moment from 'moment-timezone'
 import classes from './IncidentDialog.scss'
 import Button from 'components/Button'
 import RadioButton from 'components/RadioButton'
@@ -14,8 +15,8 @@ class IncidentDialog extends React.Component {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
       components: props.components,
-      incidentStatus: props.incident.incidentStatus || 'investigating',
-      message: props.incident.message
+      incidentStatus: props.incident.status || 'investigating',
+      message: ''
     }
   }
 
@@ -91,9 +92,39 @@ class IncidentDialog extends React.Component {
     )
   }
 
+  renderIncidentUpdateItem = (incidentUpdate) => {
+    let updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+    return (
+      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
+        <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
+          <span>{incidentUpdate.incidentStatus} - updated at {updatedAt}</span>
+          <span className='mdl-list__item-sub-title'>{incidentUpdate.message}</span>
+        </span>
+      </li>
+    )
+  }
+
+  renderIncidentUpdates = () => {
+    if (!this.props.incident.incidentUpdates) {
+      return
+    }
+    const updates = this.props.incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+    return (
+      <div>
+        <h4>
+          Previous Updates
+        </h4>
+        <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+          {updates}
+        </ul>
+      </div>
+    )
+  }
+
   render () {
     const incidentStatuses = this.renderIncidentStatuses()
     const componentStatuses = this.renderComponentStatuses()
+    const incidentUpdates = this.renderIncidentUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
         {this.props.actionName} Incident
@@ -103,6 +134,7 @@ class IncidentDialog extends React.Component {
         {incidentStatuses}
         <TextField label='Message' text={this.state.message} rows={2} onChange={this.handleChangeMessage} />
         {componentStatuses}
+        {incidentUpdates}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
@@ -118,8 +150,13 @@ IncidentDialog.propTypes = {
   incident: PropTypes.shape({
     incidentID: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    incidentStatus: PropTypes.string,
-    message: PropTypes.string.isRequired
+    status: PropTypes.string,
+    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+      incidentUpdateID: PropTypes.string.isRequired,
+      incidentStatus: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired
+    }).isRequired)
   }).isRequired,
   components: PropTypes.arrayOf(PropTypes.shape({
     componentID: PropTypes.string.isRequired,

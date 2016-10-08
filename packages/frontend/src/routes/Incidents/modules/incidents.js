@@ -214,6 +214,7 @@ function listIncidentsHandler (state = { }, action) {
 function listIncidentUpdatesHandler (state = { }, action) {
   let incidentUpdates = JSON.parse(action.incidentUpdates).map((incidentUpdate) => {
     return {
+      incidentUpdateID: incidentUpdate.incidentUpdateID,
       incidentStatus: incidentUpdate.incidentStatus,
       message: incidentUpdate.message,
       updatedAt: incidentUpdate.updatedAt

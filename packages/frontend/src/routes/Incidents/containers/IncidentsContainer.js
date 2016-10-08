@@ -193,6 +193,7 @@ Incidents.propTypes = {
     status: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired,
     incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+      incidentUpdateID: PropTypes.string.isRequired,
       incidentStatus: PropTypes.string.isRequired,
       message: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired
