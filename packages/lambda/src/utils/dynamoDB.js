@@ -187,6 +187,40 @@ export const getIncidents = () => {
   })
 }
 
+export const getIncidentUpdates = (incidentID) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: IncidentUpdateTable,
+      KeyConditionExpression: 'incidentID = :hkey',
+      ExpressionAttributeValues: {
+        ':hkey': incidentID
+      },
+      ProjectionExpression: 'incidentID, incidentUpdateID, message, incidentStatus, updatedAt'
+    }
+    awsDynamoDb.query(params, (err, queryResult) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+
+      let incidentUpdates = []
+      queryResult.Items.forEach((incidentUpdate) => {
+        incidentUpdates.push({
+          incidentID: incidentUpdate.incidentID,
+          incidentUpdateID: incidentUpdate.incidentUpdateID,
+          message: incidentUpdate.message,
+          incidentStatus: incidentUpdate.incidentStatus,
+          updatedAt: incidentUpdate.updatedAt
+        })
+      })
+
+      resolve(incidentUpdates)
+    })
+  })
+}
+
 export const updateIncident = (id, name, status, updatedAt) => {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })

@@ -30,6 +30,10 @@ export default {
       'babel-polyfill',
       './src/getIncidents/index.js'
     ],
+    GetIncidentUpdates: [
+      'babel-polyfill',
+      './src/getIncidentUpdates/index.js'
+    ],
     PostIncidents: [
       'babel-polyfill',
       './src/postIncidents/index.js'
