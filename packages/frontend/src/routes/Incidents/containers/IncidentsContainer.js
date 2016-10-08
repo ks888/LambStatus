@@ -53,17 +53,21 @@ class Incidents extends React.Component {
   }
 
   handleShowAddDialog = () => {
-    let defaultIncident = {
-      incidentID: '',
-      name: '',
-      message: ''
+    return () => {
+      let defaultIncident = {
+        incidentID: '',
+        name: '',
+        message: ''
+      }
+      this.handleShowDialog(dialogType.add, defaultIncident)
     }
-    return () => this.handleShowDialog(dialogType.add, defaultIncident)
   }
 
   handleShowUpdateDialog = (incident) => {
-    this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
-    return () => this.handleShowDialog(dialogType.update, incident)
+    return () => {
+      this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
+      this.handleShowDialog(dialogType.update, incident)
+    }
   }
 
   handleShowDeleteDialog = (incident) => {
