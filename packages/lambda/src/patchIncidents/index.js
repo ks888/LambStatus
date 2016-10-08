@@ -1,7 +1,7 @@
 import { updateIncident, updateIncidentUpdate, updateComponentStatus, removeUpdatingFlag } from '../utils/dynamoDB'
 
 export async function handler (event, context, callback) {
-  const incidentID = event.params.incidentID
+  const incidentID = event.params.incidentid
   const updatedAt = new Date().toISOString()
   const numRetries = 5
   let i, incidentUpdate
