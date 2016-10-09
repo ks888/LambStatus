@@ -206,6 +206,11 @@ function listIncidentsHandler (state = { }, action) {
       updatedAt: incident.updatedAt
     }
   })
+
+  incidents.sort((a, b) => {
+    return a.updatedAt < b.updatedAt
+  })
+
   return Object.assign({}, state, {
     isFetching: false,
     incidents: incidents
@@ -220,6 +225,10 @@ function listIncidentUpdatesHandler (state = { }, action) {
       message: incidentUpdate.message,
       updatedAt: incidentUpdate.updatedAt
     }
+  })
+
+  incidentUpdates.sort((a, b) => {
+    return a.updatedAt < b.updatedAt
   })
 
   state.incidents.forEach((incident) => {
