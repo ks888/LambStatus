@@ -170,7 +170,8 @@ export const deleteIncident = (incidentID) => {
     return fetch(__API_URL__ + 'incidents/' + incidentID, {
       headers: { 'X-api-key': __API_KEY__ },
       method: 'DELETE'
-    }).then(response => dispatch(removeIncidentAction(incidentID)))
+    }).then(checkStatus)
+      .then(response => dispatch(removeIncidentAction(incidentID)))
       .catch(error => {
         console.error(error, error.stack)
       })

@@ -331,19 +331,27 @@ export const deleteIncident = (id) => {
   })
 }
 
-export const deleteIncidentUpdates = (id) => {
+export const deleteIncidentUpdates = (incidentID, incidentUpdates) => {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+  let requests = incidentUpdates.map((incidentUpdate) => {
+    return {
+      DeleteRequest: {
+        Key: {
+          incidentID: incidentID,
+          incidentUpdateID: incidentUpdate.incidentUpdateID
+        }
+      }
+    }
+  })
 
   return new Promise((resolve, reject) => {
     const params = {
-      Key: {
-        incidentID: id
-      },
-      TableName: IncidentUpdateTable,
-      ReturnValues: 'NONE'
+      RequestItems: {
+        [IncidentUpdateTable]: requests
+      }
     }
-    awsDynamoDb.delete(params, (err, data) => {
+    awsDynamoDb.batchWrite(params, (err, data) => {
       if (err) {
         return reject(new WError(err, 'DynamoDB'))
       }
