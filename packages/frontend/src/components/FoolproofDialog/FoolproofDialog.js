@@ -5,13 +5,13 @@ import Button from 'components/Button'
 
 class FoolproofDialog extends React.Component {
   handleClickDeleteButton = () => {
-    this.props.onCompleted(this.props.component.componentID)
+    this.props.onCompleted(this.props.ID)
   }
 
   render () {
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        Delete {this.props.component.name}
+        Delete {this.props.name}
       </h2>
       <div className='mdl-dialog__content'>
         This operation can not be undone.
@@ -27,12 +27,8 @@ class FoolproofDialog extends React.Component {
 FoolproofDialog.propTypes = {
   onCompleted: PropTypes.func.isRequired,
   onCanceled: PropTypes.func.isRequired,
-  component: PropTypes.shape({
-    componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired
-  }).isRequired
+  name: PropTypes.string.isRequired,
+  ID: PropTypes.string.isRequired
 }
 
 export default FoolproofDialog

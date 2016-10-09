@@ -309,3 +309,45 @@ export const updateIncidentUpdate = (incidentID, incidentStatus, message, update
     })
   })
 }
+
+export const deleteIncident = (id) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      Key: {
+        incidentID: id
+      },
+      TableName: IncidentTable,
+      ReturnValues: 'NONE'
+    }
+    awsDynamoDb.delete(params, (err, data) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+      resolve(data)
+    })
+  })
+}
+
+export const deleteIncidentUpdates = (id) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      Key: {
+        incidentID: id
+      },
+      TableName: IncidentUpdateTable,
+      ReturnValues: 'NONE'
+    }
+    awsDynamoDb.delete(params, (err, data) => {
+      if (err) {
+        return reject(new WError(err, 'DynamoDB'))
+      }
+      resolve(data)
+    })
+  })
+}

@@ -30,6 +30,10 @@ export default {
       'babel-polyfill',
       './src/deleteComponents/index.js'
     ],
+    DeleteIncidents: [
+      'babel-polyfill',
+      './src/deleteIncidents/index.js'
+    ],
     GetIncidents: [
       'babel-polyfill',
       './src/getIncidents/index.js'

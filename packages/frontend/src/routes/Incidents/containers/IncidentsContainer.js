@@ -154,7 +154,7 @@ class Incidents extends React.Component {
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
           onCanceled={this.handleHideFoolproofDialog()}
-          incident={this.state.incident} />
+          name={this.state.incident.name} ID={this.state.incident.incidentID} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
