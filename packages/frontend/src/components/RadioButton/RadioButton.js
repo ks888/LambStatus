@@ -5,8 +5,12 @@ import classes from './RadioButton.scss'
 
 class RadioButton extends React.Component {
   componentDidMount () {
-    let jsElem = ReactDOM.findDOMNode(this.refs.radiobutton)
-    componentHandler.upgradeElement(jsElem)
+    let inputNode = ReactDOM.findDOMNode(this.refs.radiobutton_input)
+    if (this.props.checked) {
+      inputNode.click()
+    }
+    let radioButtonNode = ReactDOM.findDOMNode(this.refs.radiobutton)
+    componentHandler.upgradeElement(radioButtonNode)
   }
 
   handleChange = (e) => {
@@ -19,10 +23,8 @@ class RadioButton extends React.Component {
       id: this.props.label,
       className: 'mdl-radio__button',
       name: 'incidentStatus',
-      onChange: this.handleChange
-    }
-    if (this.props.checked) {
-      inputProps.defaultChecked = true
+      onChange: this.handleChange,
+      ref: 'radiobutton_input'
     }
     let input = React.createElement('input', inputProps)
     return (
