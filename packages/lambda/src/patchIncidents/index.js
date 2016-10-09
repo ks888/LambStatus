@@ -4,11 +4,11 @@ export async function handler (event, context, callback) {
   const incidentID = event.params.incidentid
   const updatedAt = new Date().toISOString()
   const numRetries = 5
-  let i, incident, incidentUpdate, components
+  let i, incident, components
   for (i = 0; i < numRetries; i++) {
     try {
       incident = await updateIncident(incidentID, event.body.name, event.body.incidentStatus, updatedAt)
-      incidentUpdate = await updateIncidentUpdate(incidentID, event.body.incidentStatus,
+      await updateIncidentUpdate(incidentID, event.body.incidentStatus,
         event.body.message, updatedAt)
 
       components = await Promise.all(event.body.components.map(async function(component) {

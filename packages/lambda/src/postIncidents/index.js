@@ -9,7 +9,7 @@ export async function handler (event, context, callback) {
       incident = await updateIncident(null, event.name, event.incidentStatus, updatedAt)
       await updateIncidentUpdate(incident.Attributes.incidentID, event.incidentStatus, event.message, updatedAt)
 
-      components = await Promise.all(event.body.components.map(async function(component) {
+      components = await Promise.all(event.components.map(async function(component) {
         try {
           let newComponent = await updateComponentStatus(component.componentID, component.status)
           return newComponent.Attributes
