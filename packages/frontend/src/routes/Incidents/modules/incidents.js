@@ -47,14 +47,14 @@ export function listComponentsAction (json) {
 export function addIncidentAction (json) {
   return {
     type: ADD_INCIDENT,
-    incident: json
+    response: json
   }
 }
 
 export function updateIncidentAction (json) {
   return {
     type: UPDATE_INCIDENT,
-    incident: json
+    response: json
   }
 }
 
@@ -258,9 +258,13 @@ function listComponentsHandler (state = { }, action) {
 }
 
 function addIncidentHandler (state = { }, action) {
-  let incident = JSON.parse(action.incident)
+  let {
+    incident: incident, components: components
+  } = JSON.parse(action.response)
+
   return Object.assign({}, state, {
     isFetching: false,
+    components: components,
     incidents: [
       ...state.incidents,
       {
@@ -274,17 +278,21 @@ function addIncidentHandler (state = { }, action) {
 }
 
 function updateIncidentHandler (state = { }, action) {
-  let resp = JSON.parse(action.incident)
+  let {
+    incident: updatedIncident, components: components
+  } = JSON.parse(action.response)
+
   state.incidents.forEach((incident) => {
-    if (incident.incidentID === resp.incident.incidentID) {
-      incident.name = resp.incident.name
-      incident.status = resp.incident.status
-      incident.updatedAt = resp.incident.updatedAt
+    if (incident.incidentID === updatedIncident.incidentID) {
+      incident.name = updatedIncident.name
+      incident.status = updatedIncident.status
+      incident.updatedAt = updatedIncident.updatedAt
     }
   })
 
   return Object.assign({}, state, {
     isFetching: false,
+    components: components,
     incidents: state.incidents
   })
 }

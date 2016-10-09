@@ -102,13 +102,13 @@ export const updateComponentStatus = (id, status) => {
         ':s': status
       },
       TableName: ServiceComponentTable,
-      ReturnValues: 'NONE'
+      ReturnValues: 'ALL_NEW'
     }
-    awsDynamoDb.update(params, (err) => {
+    awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new WError(err, 'DynamoDB'))
       }
-      resolve()
+      resolve(data)
     })
   })
 }

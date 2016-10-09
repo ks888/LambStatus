@@ -3,19 +3,20 @@ import { updateIncident, updateIncidentUpdate, updateComponentStatus, removeUpda
 export async function handler (event, context, callback) {
   const updatedAt = new Date().toISOString()
   const numRetries = 5
-  let i, incident
+  let i, incident, components
   for (i = 0; i < numRetries; i++) {
     try {
       incident = await updateIncident(null, event.name, event.incidentStatus, updatedAt)
       await updateIncidentUpdate(incident.Attributes.incidentID, event.incidentStatus, event.message, updatedAt)
 
-      event.components.forEach(async function(component) {
+      components = await Promise.all(event.body.components.map(async function(component) {
         try {
-          await updateComponentStatus(component.componentID, component.status)
+          let newComponent = await updateComponentStatus(component.componentID, component.status)
+          return newComponent.Attributes
         } catch (error) {
           throw error
         }
-      })
+      }))
 
       removeUpdatingFlag(incident.Attributes.incidentID)
       delete incident.Attributes.updating
@@ -31,5 +32,9 @@ export async function handler (event, context, callback) {
     callback('Error: failed to add Incident')
   }
 
-  callback(null, JSON.stringify(incident.Attributes))
+  let resp = {
+    incident: incident.Attributes,
+    components: components
+  }
+  callback(null, JSON.stringify(resp))
 }

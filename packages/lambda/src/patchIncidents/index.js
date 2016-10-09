@@ -4,20 +4,21 @@ export async function handler (event, context, callback) {
   const incidentID = event.params.incidentid
   const updatedAt = new Date().toISOString()
   const numRetries = 5
-  let i, incident, incidentUpdate
+  let i, incident, incidentUpdate, components
   for (i = 0; i < numRetries; i++) {
     try {
       incident = await updateIncident(incidentID, event.body.name, event.body.incidentStatus, updatedAt)
       incidentUpdate = await updateIncidentUpdate(incidentID, event.body.incidentStatus,
         event.body.message, updatedAt)
 
-      event.body.components.forEach(async function(component) {
+      components = await Promise.all(event.body.components.map(async function(component) {
         try {
-          await updateComponentStatus(component.componentID, component.status)
+          let newComponent = await updateComponentStatus(component.componentID, component.status)
+          return newComponent.Attributes
         } catch (error) {
           throw error
         }
-      })
+      }))
 
       removeUpdatingFlag(incidentID)
       break
@@ -34,7 +35,7 @@ export async function handler (event, context, callback) {
 
   let resp = {
     incident: incident.Attributes,
-    incidentUpdate: incidentUpdate.Attributes
+    components: components
   }
   callback(null, JSON.stringify(resp))
 }
