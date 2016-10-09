@@ -4,10 +4,10 @@ export async function handler (event, context, callback) {
   const incidentID = event.params.incidentid
   const updatedAt = new Date().toISOString()
   const numRetries = 5
-  let i, incidentUpdate
+  let i, incident, incidentUpdate
   for (i = 0; i < numRetries; i++) {
     try {
-      await updateIncident(incidentID, event.body.name, event.body.incidentStatus, updatedAt)
+      incident = await updateIncident(incidentID, event.body.name, event.body.incidentStatus, updatedAt)
       incidentUpdate = await updateIncidentUpdate(incidentID, event.body.incidentStatus,
         event.body.message, updatedAt)
 
@@ -32,5 +32,9 @@ export async function handler (event, context, callback) {
     callback('Error: failed to update Incident')
   }
 
-  callback(null, JSON.stringify(incidentUpdate.Attributes))
+  let resp = {
+    incident: incident.Attributes,
+    incidentUpdate: incidentUpdate.Attributes
+  }
+  callback(null, JSON.stringify(resp))
 }

@@ -264,12 +264,12 @@ function addIncidentHandler (state = { }, action) {
 }
 
 function updateIncidentHandler (state = { }, action) {
-  let updatedIncident = JSON.parse(action.incident)
+  let resp = JSON.parse(action.incident)
   state.incidents.forEach((incident) => {
-    if (incident.incidentID === updatedIncident.incidentID) {
-      incident.name = updatedIncident.name
-      incident.status = updatedIncident.status
-      incident.updatedAt = updatedIncident.updatedAt
+    if (incident.incidentID === resp.incident.incidentID) {
+      incident.name = resp.incident.name
+      incident.status = resp.incident.status
+      incident.updatedAt = resp.incident.updatedAt
     }
   })
 
