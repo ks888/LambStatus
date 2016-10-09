@@ -134,7 +134,8 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
-    }).then(response => response.json())
+    }).then(checkStatus)
+      .then(response => response.json())
       .then(json => dispatch(addIncidentAction(json)))
       .catch(error => {
         console.error(error, error.stack)

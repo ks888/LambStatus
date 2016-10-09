@@ -9,5 +9,10 @@
   text-align: right;
 }
 
-.icon {
+.incident_item {
+  height: auto;
+}
+
+.incident_item_content {
+  display: flex !important;
 }

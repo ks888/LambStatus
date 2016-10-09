@@ -95,7 +95,8 @@ class IncidentDialog extends React.Component {
   renderIncidentUpdateItem = (incidentUpdate) => {
     let updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     return (
-      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
+      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item',
+        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
         <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
           <span>{incidentUpdate.incidentStatus} - updated at {updatedAt}</span>
           <span className='mdl-list__item-sub-title'>{incidentUpdate.message}</span>

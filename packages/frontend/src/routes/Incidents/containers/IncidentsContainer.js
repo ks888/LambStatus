@@ -109,12 +109,17 @@ class Incidents extends React.Component {
     let bgColor = '#ffffff'
     let updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     return (
-      <li key={incident.incidentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
-        <span className='mdl-list__item-primary-content'>
+      <li key={incident.incidentID} className={classnames('mdl-list__item',
+        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_item)}>
+        <span className={classnames('mdl-list__item-primary-content', classes.incident_item_content)}>
           <i className='material-icons mdl-list__item-avatar'
             style={{ color: statusColor, backgroundColor: bgColor }}>brightness_1</i>
-          <span>{incident.name}</span>
-          <span className='mdl-list__item-sub-title'>updated at {updatedAt}</span>
+          <div>
+            <span>{incident.name}</span>
+            <span className='mdl-list__item-sub-title'>
+              updated at {updatedAt}
+            </span>
+          </div>
         </span>
         <span className='mdl-list__item-secondary-content'>
           <div className='mdl-grid'>
