@@ -10,9 +10,9 @@ class FoolproofDialog extends React.Component {
 
   render () {
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
-      <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        Delete {this.props.name}
-      </h2>
+      <h4 className={classnames('mdl-dialog__title', classes.title)}>
+        Delete <i>{this.props.name}</i> ?
+      </h4>
       <div className='mdl-dialog__content'>
         This operation can not be undone.
       </div>
