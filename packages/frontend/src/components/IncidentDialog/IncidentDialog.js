@@ -15,7 +15,7 @@ class IncidentDialog extends React.Component {
       incidentID: props.incident.incidentID,
       name: props.incident.name,
       components: props.components,
-      incidentStatus: props.incident.status || 'investigating',
+      incidentStatus: props.incident.status || incidentStatuses[0],
       message: ''
     }
   }

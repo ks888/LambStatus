@@ -15,17 +15,17 @@ export let getComponentColor = (status) => {
   }
 }
 
-export let incidentStatuses = ['investigating', 'identified', 'monitoring', 'resolved']
+export let incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
 
 export let getIncidentColor = (impact) => {
   switch (impact) {
-    case 'investigating':
+    case 'Investigating':
       return '#c62828'
-    case 'identified':
+    case 'Identified':
       return '#ffa000'
-    case 'monitoring':
+    case 'Monitoring':
       return '#0288d1'
-    case 'resolved':
+    case 'Resolved':
       return '#388e3c'
     default:
       return '#9e9e9e'
