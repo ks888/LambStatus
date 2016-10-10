@@ -6,7 +6,7 @@ import ComponentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import classnames from 'classnames'
-import classes from './ComponentsContainer.scss'
+import classes from './Components.scss'
 import { getComponentColor } from 'utils/status'
 
 const dialogType = {

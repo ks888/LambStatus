@@ -7,7 +7,7 @@ import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import classnames from 'classnames'
-import classes from './IncidentsContainer.scss'
+import classes from './Incidents.scss'
 import moment from 'moment-timezone'
 import { getIncidentColor } from 'utils/status'
 

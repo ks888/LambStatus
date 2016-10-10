@@ -9,7 +9,7 @@ export default (store) => ({
     require.ensure([], (require) => {
       /*  Webpack - use require callback to define
           dependencies for bundling   */
-      const components = require('./containers/IncidentsContainer').default
+      const components = require('./components/Incidents').default
       const reducer = require('./modules/incidents').default
 
       injectReducer(store, { key: 'incidents', reducer })
