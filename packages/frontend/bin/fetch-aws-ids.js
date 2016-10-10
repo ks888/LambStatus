@@ -77,16 +77,33 @@ const getApiInfo = async () => {
   }
 }
 
-getApiInfo().then(({ apiKey, invocationURL }) => {
-  let apiInfo = {
-    'ApiKey': apiKey,
-    'InvocationURL': invocationURL
+const getBucketInfo = async () => {
+  try {
+    const { CLOUDFORMATION: stackName, AWS_REGION: region } = process.env
+    const cloudFormation = new AWS.CloudFormation({ region })
+    const stack = await describeStack({ cloudFormation, stackName })
+
+    const s3BucketURL = findOutputKey(stack.Outputs, 'S3BucketURL')
+    const s3BucketName = findOutputKey(stack.Outputs, 'S3BucketName')
+    return { s3BucketURL, s3BucketName }
+  } catch (error) {
+    console.error(error, error.stack)
+    throw error
   }
-  return JSON.stringify(apiInfo, null, 2)
+}
+
+Promise.all([getApiInfo(), getBucketInfo()]).then(([{ apiKey, invocationURL }, { s3BucketURL, s3BucketName }]) => {
+  let cfOutput = {
+    'ApiKey': apiKey,
+    'InvocationURL': invocationURL,
+    'S3BucketURL': s3BucketURL,
+    'S3BucketName': s3BucketName
+  }
+  return JSON.stringify(cfOutput, null, 2)
 }).then((json) => {
   const configDir = path.normalize(`${__dirname}/../config`)
-  fs.writeFileSync(`${configDir}/api.json`, json)
-  console.log('api.json created')
+  fs.writeFileSync(`${configDir}/cloudformation-output.json`, json)
+  console.log('cloudformation-output.json created')
 }).catch((error) => {
   console.error(error, error.stack)
 })

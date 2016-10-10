@@ -120,9 +120,9 @@ config.utils_paths = {
 // ------------------------------------
 // API
 // ------------------------------------
-import apiInfo from './api.json'
-config.globals['__API_URL__'] = JSON.stringify(apiInfo.InvocationURL)
-config.globals['__API_KEY__'] = JSON.stringify(apiInfo.ApiKey)
+import output from './cloudformation-output.json'
+config.globals['__API_URL__'] = JSON.stringify(output.InvocationURL)
+config.globals['__API_KEY__'] = JSON.stringify(output.ApiKey)
 
 // ========================================================
 // Environment Configuration

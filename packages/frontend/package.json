@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "better-npm-run build",
+    "build:dev": "better-npm-run build:dev",
     "lint": "eslint src tests server",
     "lint:fix": "npm run lint -- --fix",
     "start": "better-npm-run start",
@@ -18,13 +19,25 @@
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
-    "deploy:dev": "better-npm-run deploy:dev",
-    "deploy:prod": "better-npm-run deploy:prod",
     "codecov": "cat coverage/*/lcov.info | codecov"
   },
   "betterScripts": {
     "build": {
-      "command": "babel-node bin/compile",
+      "command": "babel-node bin/fetch-aws-ids.js && babel-node bin/compile",
+      "env": {
+        "NODE_ENV": "production",
+        "DEBUG": "app:*"
+      }
+    },
+    "build:dev": {
+      "command": "babel-node bin/fetch-aws-ids.js && babel-node bin/compile",
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "app:*"
+      }
+    },
+    "start": {
+      "command": "babel-node bin/server",
       "env": {
         "DEBUG": "app:*"
       }
@@ -37,28 +50,9 @@
       }
     },
     "deploy": {
-      "command": "npm run clean && npm run build",
-      "env": {
-        "DEBUG": "app:*"
-      }
-    },
-    "deploy:dev": {
-      "command": "npm run deploy",
-      "env": {
-        "NODE_ENV": "development",
-        "DEBUG": "app:*"
-      }
-    },
-    "deploy:prod": {
-      "command": "npm run deploy",
+      "command": "babel-node bin/upload-dist",
       "env": {
         "NODE_ENV": "production",
-        "DEBUG": "app:*"
-      }
-    },
-    "start": {
-      "command": "babel-node bin/server",
-      "env": {
         "DEBUG": "app:*"
       }
     },

@@ -986,6 +986,9 @@ Outputs:
         - "WebsiteS3"
         - "WebsiteURL"
     Description: "URL of S3 bucket for status page hosting"
+  S3BucketName:
+    Value:
+      Ref: "WebsiteS3"
   ServiceComponentTable:
     Value:
       Ref: "ServiceComponentTable"

@@ -3,6 +3,6 @@
 node_modules
 dist
 coverage
-config/api.json
+config/*.json
 .travis.yml
 tests
