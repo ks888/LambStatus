@@ -20,7 +20,7 @@ put_stack() {
   if [ "${ORIGIN}" == "" ]; then
     ORIGIN='*'
   fi
-  TEMPLATE_FILE="$(dirname $0)/../lamb-status.json"
+  TEMPLATE_FILE="$(dirname $0)/../lamb-status.yml"
 
   aws cloudformation ${ACTION} \
       --region ${REGION} \
