@@ -39,49 +39,20 @@ Resources:
             Resource: "arn:aws:logs:*:*:*"
           - Effect: "Allow"
             Action: "s3:*"
-            Resource:
-              Fn::Join:
-                - ""
-                -
-                  - "arn:aws:s3:::"
-                  - Ref: "WebsiteS3"
-                  - "/*"
+            Resource: !Sub |-
+              arn:aws:s3:::${WebsiteS3}/*
           - Effect: "Allow"
             Action: "dynamodb:*"
-            Resource:
-              Fn::Join:
-                - ""
-                -
-                  - "arn:aws:dynamodb:"
-                  - Ref: "AWS::Region"
-                  - ":"
-                  - Ref: "AWS::AccountId"
-                  - ":table/"
-                  - Ref: "ServiceComponentTable"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceComponentTable}
           - Effect: "Allow"
             Action: "dynamodb:*"
-            Resource:
-              Fn::Join:
-                - ""
-                -
-                  - "arn:aws:dynamodb:"
-                  - Ref: "AWS::Region"
-                  - ":"
-                  - Ref: "AWS::AccountId"
-                  - ":table/"
-                  - Ref: "IncidentTable"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentTable}
           - Effect: "Allow"
             Action: "dynamodb:*"
-            Resource:
-              Fn::Join:
-                - ""
-                -
-                  - "arn:aws:dynamodb:"
-                  - Ref: "AWS::Region"
-                  - ":"
-                  - Ref: "AWS::AccountId"
-                  - ":table/"
-                  - Ref: "IncidentUpdateTable"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentUpdateTable}
       Roles:
         - Ref: "LambdaRole"
   GetComponentsLambdaFunction:
@@ -90,12 +61,8 @@ Resources:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Get a list of components"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-GetComponents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetComponents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -113,29 +80,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/GET/components"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/components
   PostComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Create a new component"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-PostComponents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PostComponents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -153,29 +107,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/POST/components"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/components
   PatchComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Update an existing component"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-PatchComponents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchComponents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -193,29 +134,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/PATCH/components/{componentid}"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/components/{componentid}
   DeleteComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Delete an existing component"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-DeleteComponents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-DeleteComponents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -233,29 +161,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/DELETE/components/{componentid}"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/components/{componentid}
   GetIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Get a list of incidents"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-GetIncidents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetIncidents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -273,29 +188,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/GET/incidents"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents
   PostIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Create a new incident"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-PostIncidents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PostIncidents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -313,29 +215,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/POST/incidents"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/incidents
   PatchIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Update an existing incident"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-PatchIncidents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchIncidents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -353,29 +242,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/PATCH/incidents/{incidentid}"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/incidents/{incidentid}
   DeleteIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Delete an incident"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-DeleteIncidents"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-DeleteIncidents
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -393,29 +269,16 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/DELETE/incidents/{incidentid}"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/incidents/{incidentid}
   GetIncidentUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
       Description: "Get incident updates"
-      FunctionName:
-        Fn::Join:
-          - ""
-          -
-            - Ref: "AWS::StackName"
-            - "-GetIncidentUpdates"
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetIncidentUpdates
       Handler: "lib/index.handler"
       MemorySize: 128
       Role:
@@ -433,17 +296,8 @@ Resources:
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn:
-        Fn::Join:
-          - ""
-          -
-            - "arn:aws:execute-api:"
-            - Ref: "AWS::Region"
-            - ":"
-            - Ref: "AWS::AccountId"
-            - ":"
-            - Ref: "RestApi"
-            - "/*/GET/incidents/{incidentid}/incidentupdates"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
@@ -522,36 +376,21 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "GetComponentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetComponentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -573,36 +412,21 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "PostComponentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostComponentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -630,13 +454,8 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -658,55 +477,31 @@ Resources:
         IntegrationHttpMethod: "POST"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
         RequestTemplates:
-          application/json:
-            Fn::Join:
-              - ""
-              -
-                - "{"
-                - "\n"
-                - "    \"body\":$input.json('$'),"
-                - "\n"
-                - "    \"params\":{"
-                - "\n"
-                - "        #foreach($param in $input.params().path.keySet())"
-                - "\n"
-                - "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end"
-                - "\n"
-                - "        #end"
-                - "\n"
-                - "    }"
-                - "\n"
-                - "}"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "PatchComponentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())"
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchComponentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -730,53 +525,30 @@ Resources:
         IntegrationHttpMethod: "POST"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
         RequestTemplates:
-          application/json:
-            Fn::Join:
-              - ""
-              -
-                - "{"
-                - "\n"
-                - "    \"params\":{"
-                - "\n"
-                - "        #foreach($param in $input.params().path.keySet())"
-                - "\n"
-                - "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end"
-                - "\n"
-                - "        #end"
-                - "\n"
-                - "    }"
-                - "\n"
-                - "}"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "DeleteComponentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())"
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteComponentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "204"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "204"
@@ -804,13 +576,8 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -840,36 +607,21 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "GetIncidentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetIncidentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -891,36 +643,21 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "PostIncidentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostIncidentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -948,13 +685,8 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -984,55 +716,31 @@ Resources:
         IntegrationHttpMethod: "POST"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
         RequestTemplates:
-          application/json:
-            Fn::Join:
-              - ""
-              -
-                - "{"
-                - "\n"
-                - "    \"body\":$input.json('$'),"
-                - "\n"
-                - "    \"params\":{"
-                - "\n"
-                - "        #foreach($param in $input.params().path.keySet())"
-                - "\n"
-                - "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end"
-                - "\n"
-                - "        #end"
-                - "\n"
-                - "    }"
-                - "\n"
-                - "}"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "PatchIncidentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())"
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchIncidentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -1056,53 +764,30 @@ Resources:
         IntegrationHttpMethod: "POST"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
         RequestTemplates:
-          application/json:
-            Fn::Join:
-              - ""
-              -
-                - "{"
-                - "\n"
-                - "    \"params\":{"
-                - "\n"
-                - "        #foreach($param in $input.params().path.keySet())"
-                - "\n"
-                - "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end"
-                - "\n"
-                - "        #end"
-                - "\n"
-                - "    }"
-                - "\n"
-                - "}"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "DeleteIncidentsLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())"
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteIncidentsLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "204"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "204"
@@ -1130,13 +815,8 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -1166,53 +846,30 @@ Resources:
         IntegrationHttpMethod: "POST"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
         RequestTemplates:
-          application/json:
-            Fn::Join:
-              - ""
-              -
-                - "{"
-                - "\n"
-                - "    \"params\":{"
-                - "\n"
-                - "        #foreach($param in $input.params().path.keySet())"
-                - "\n"
-                - "        \"$param\": \"$util.escapeJavaScript($input.params().path.get($param))\" #if($foreach.hasNext),#end"
-                - "\n"
-                - "        #end"
-                - "\n"
-                - "    }"
-                - "\n"
-                - "}"
-        Uri:
-          Fn::Join:
-            - ""
-            -
-              - "arn:aws:apigateway:"
-              - Ref: "AWS::Region"
-              - ":lambda:path/2015-03-31/functions/"
-              - Fn::GetAtt:
-                  - "GetIncidentUpdatesLambdaFunction"
-                  - "Arn"
-              - "/invocations"
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())"
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetIncidentUpdatesLambdaFunction"
+                - "Arn"
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -1240,13 +897,8 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin:
-                Fn::Join:
-                  - ""
-                  -
-                    - "'"
-                    - Ref: "Origin"
-                    - "'"
+              method.response.header.Access-Control-Allow-Origin: !Sub |-
+                '${Origin}'
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -1273,24 +925,14 @@ Resources:
                 Fn::GetAtt:
                   - "LambdaRole"
                   - "Arn"
-            Resource:
-              - Fn::Join:
-                  - ""
-                  -
-                    - "arn:aws:s3:::"
-                    - Ref: "WebsiteS3"
-                    - "/*"
+            Resource: !Sub |-
+              arn:aws:s3:::${WebsiteS3}/*
           - Effect: "Allow"
             Action:
               - "s3:GetObject"
             Principal: "*"
             Resource:
-              - Fn::Join:
-                  - ""
-                  -
-                    - "arn:aws:s3:::"
-                    - Ref: "WebsiteS3"
-                    - "/*"
+              arn:aws:s3:::${WebsiteS3}/*
   ServiceComponentTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
@@ -1357,12 +999,5 @@ Outputs:
     Value:
       Ref: "ApiKey"
   InvocationURL:
-    Value:
-      Fn::Join:
-        - ""
-        -
-          - "https://"
-          - Ref: "RestApi"
-          - ".execute-api."
-          - Ref: "AWS::Region"
-          - ".amazonaws.com/prod/"
+    Value: !Sub |-
+      https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
