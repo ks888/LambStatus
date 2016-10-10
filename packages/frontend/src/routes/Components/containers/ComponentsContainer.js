@@ -142,7 +142,7 @@ class Components extends React.Component {
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
           onCanceled={this.handleHideFoolproofDialog()}
-          name={this.state.component.name} ID={this.state.component.incidentID} />
+          name={this.state.component.name} ID={this.state.component.componentID} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
