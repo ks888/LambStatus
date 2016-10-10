@@ -931,7 +931,7 @@ Resources:
             Action:
               - "s3:GetObject"
             Principal: "*"
-            Resource:
+            Resource: !Sub |-
               arn:aws:s3:::${WebsiteS3}/*
   ServiceComponentTable:
     Type: "AWS::DynamoDB::Table"
