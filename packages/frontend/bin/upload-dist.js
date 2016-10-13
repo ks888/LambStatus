@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 import AWS from 'aws-sdk'
+import mime from 'mime'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
@@ -15,10 +16,12 @@ const uploadFile = (filename, filepath) => {
   const { REGION: region } = process.env
   const awsS3 = new AWS.S3({ region })
   return new Promise((resolve, reject) => {
+    const contentType = mime.lookup(filename)
     const params = {
       Bucket: bucketName,
       Body: fs.readFileSync(filepath),
-      Key: filename
+      Key: filename,
+      ContentType: contentType
     }
     awsS3.putObject(params, (err, result) => {
       if (err) {
