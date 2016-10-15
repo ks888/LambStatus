@@ -1,5 +1,7 @@
 import webpackConfig from '../build/webpack.config'
-import config from '../config'
+import configGen from '../config'
+
+let config = configGen()
 
 config.utils_paths.entry_point = config.utils_paths.client('status-page.js')
 
@@ -7,6 +9,6 @@ config.utils_paths.entry_point = config.utils_paths.client('status-page.js')
 delete config.globals['__API_URL__']
 delete config.globals['__API_KEY__']
 
-config.utils_paths.dist = config.utils_paths.dist('status-page')
+config.utils_paths.dist = config.utils_paths.dist.bind(null, 'status-page')
 
 export default webpackConfig(config)

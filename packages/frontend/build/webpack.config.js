@@ -41,7 +41,7 @@ export default function (config) {
   // ------------------------------------
   webpackConfig.output = {
     filename: `[name].[${config.compiler_hash_type}].js`,
-    path: paths.dist,
+    path: paths.dist(),
     publicPath: config.compiler_public_path
   }
 
