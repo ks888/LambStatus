@@ -1,11 +1,9 @@
-import config from '../config'
-import server from '../server/main'
-import _debug from 'debug'
+import app from '../server/main'
+import { adminConfig, webpackAdminConfig } from '../build/webpack.admin.config'
+import { statusPageConfig, webpackStatusPageConfig } from '../build/webpack.status-page.config'
 
-const debug = _debug('app:bin:server')
-const port = config.server_port
-const host = config.server_host
+let adminApp = app(adminConfig, webpackAdminConfig)
+let statusPageApp = app(statusPageConfig, webpackStatusPageConfig)
 
-server.listen(port)
-debug(`Server is now running at http://${host}:${port}.`)
-debug(`Server accessible via localhost:${port} if you are using the project defaults.`)
+adminApp.listen()
+statusPageApp.listen()

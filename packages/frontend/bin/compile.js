@@ -2,8 +2,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import _debug from 'debug'
 import webpackCompiler from '../build/webpack-compiler'
-import webpackAdminConfig from '../build/webpack.admin.config'
-import webpackStatusPageConfig from '../build/webpack.status-page.config'
+import { webpackAdminConfig } from '../build/webpack.admin.config'
+import { webpackStatusPageConfig } from '../build/webpack.status-page.config'
 
 const debug = _debug('app:bin:compile')
 
