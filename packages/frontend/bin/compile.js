@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import _debug from 'debug'
 import webpackCompiler from '../build/webpack-compiler'
-import { webpackAdminConfig } from '../build/webpack.admin.config'
+import { webpackAdminPageConfig } from '../build/webpack.admin-page.config'
 import { webpackStatusPageConfig } from '../build/webpack.status-page.config'
 
 const debug = _debug('app:bin:compile')
@@ -23,7 +23,7 @@ async function run (webpackConfig) {
 
 ;(async function () {
   try {
-    await run(webpackAdminConfig)
+    await run(webpackAdminPageConfig)
     await run(webpackStatusPageConfig)
   } catch (e) {
     debug('Compiler encountered an error.', e)

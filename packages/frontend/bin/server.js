@@ -1,8 +1,8 @@
 import app from '../server/main'
-import { adminConfig, webpackAdminConfig } from '../build/webpack.admin.config'
+import { adminPageConfig, webpackAdminPageConfig } from '../build/webpack.admin-page.config'
 import { statusPageConfig, webpackStatusPageConfig } from '../build/webpack.status-page.config'
 
-let adminApp = app(adminConfig, webpackAdminConfig)
+let adminApp = app(adminPageConfig, webpackAdminPageConfig)
 let statusPageApp = app(statusPageConfig, webpackStatusPageConfig)
 
 adminApp.listen()
