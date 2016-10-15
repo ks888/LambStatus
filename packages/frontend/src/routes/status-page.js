@@ -1,5 +1,5 @@
 // We only need to import the modules necessary for initial render
-import RootLayout from '../layouts/RootLayout/RootLayout'
+import StatusPageLayout from '../layouts/StatusPageLayout/StatusPageLayout'
 import StatusesRoute from './Statuses'
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -7,7 +7,7 @@ import StatusesRoute from './Statuses'
 
 export const createRoutes = (store) => ({
   path: '/',
-  component: RootLayout,
+  component: StatusPageLayout,
   indexRoute: StatusesRoute
 })
 

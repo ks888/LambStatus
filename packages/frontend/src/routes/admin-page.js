@@ -1,5 +1,5 @@
 // We only need to import the modules necessary for initial render
-import RootLayout from '../layouts/RootLayout/RootLayout'
+import AdminPageLayout from '../layouts/AdminPageLayout/AdminPageLayout'
 import ComponentsRoute from './Components'
 import IncidentsRoute from './Incidents'
 
@@ -8,7 +8,7 @@ import IncidentsRoute from './Incidents'
 
 export const createRoutes = (store) => ({
   path: '/',
-  component: RootLayout,
+  component: AdminPageLayout,
   childRoutes: [
     ComponentsRoute(store),
     IncidentsRoute(store)
