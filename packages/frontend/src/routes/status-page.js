@@ -1,7 +1,6 @@
 // We only need to import the modules necessary for initial render
 import RootLayout from '../layouts/RootLayout/RootLayout'
-import ComponentsRoute from './Components'
-import IncidentsRoute from './Incidents'
+import StatusesRoute from './Statuses'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -9,10 +8,7 @@ import IncidentsRoute from './Incidents'
 export const createRoutes = (store) => ({
   path: '/',
   component: RootLayout,
-  childRoutes: [
-    ComponentsRoute(store),
-    IncidentsRoute(store)
-  ]
+  indexRoute: StatusesRoute
 })
 
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically
