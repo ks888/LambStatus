@@ -83,21 +83,29 @@ const getBucketInfo = async () => {
     const cloudFormation = new AWS.CloudFormation({ region })
     const stack = await describeStack({ cloudFormation, stackName })
 
-    const s3BucketURL = findOutputKey(stack.Outputs, 'S3BucketURL')
-    const s3BucketName = findOutputKey(stack.Outputs, 'S3BucketName')
-    return { s3BucketURL, s3BucketName }
+    const adminPageS3BucketURL = findOutputKey(stack.Outputs, 'AdminPageS3BucketURL')
+    const adminPageS3BucketName = findOutputKey(stack.Outputs, 'AdminPageS3BucketName')
+
+    const statusPageS3BucketURL = findOutputKey(stack.Outputs, 'StatusPageS3BucketURL')
+    const statusPageS3BucketName = findOutputKey(stack.Outputs, 'StatusPageS3BucketName')
+    return { adminPageS3BucketURL, adminPageS3BucketName, statusPageS3BucketURL, statusPageS3BucketName }
   } catch (error) {
     console.error(error, error.stack)
     throw error
   }
 }
 
-Promise.all([getApiInfo(), getBucketInfo()]).then(([{ apiKey, invocationURL }, { s3BucketURL, s3BucketName }]) => {
+Promise.all([getApiInfo(), getBucketInfo()]).then(([
+  { apiKey, invocationURL },
+  { adminPageS3BucketURL, adminPageS3BucketName, statusPageS3BucketURL, statusPageS3BucketName }
+]) => {
   let cfOutput = {
     'ApiKey': apiKey,
     'InvocationURL': invocationURL,
-    'S3BucketURL': s3BucketURL,
-    'S3BucketName': s3BucketName
+    'AdminPageS3BucketURL': adminPageS3BucketURL,
+    'AdminPageS3BucketName': adminPageS3BucketName,
+    'StatusPageS3BucketURL': statusPageS3BucketURL,
+    'StatusPageS3BucketName': statusPageS3BucketName
   }
   return JSON.stringify(cfOutput, null, 2)
 }).then((json) => {

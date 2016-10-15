@@ -38,10 +38,6 @@ Resources:
             Effect: "Allow"
             Resource: "arn:aws:logs:*:*:*"
           - Effect: "Allow"
-            Action: "s3:*"
-            Resource: !Sub |-
-              arn:aws:s3:::${WebsiteS3}/*
-          - Effect: "Allow"
             Action: "dynamodb:*"
             Resource: !Sub |-
               arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceComponentTable}
@@ -905,16 +901,16 @@ Resources:
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
-  WebsiteS3:
+  StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
       WebsiteConfiguration:
         IndexDocument: "index.html"
-  WebsiteS3BucketPolicy:
+  StatusPageS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
       Bucket:
-        Ref: "WebsiteS3"
+        Ref: "StatusPageS3"
       PolicyDocument:
         Statement:
           - Effect: "Allow"
@@ -922,7 +918,25 @@ Resources:
               - "s3:GetObject"
             Principal: "*"
             Resource: !Sub |-
-              arn:aws:s3:::${WebsiteS3}/*
+              arn:aws:s3:::${StatusPageS3}/*
+  AdminPageS3:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+  AdminPageS3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket:
+        Ref: "AdminPageS3"
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+            Principal: "*"
+            Resource: !Sub |-
+              arn:aws:s3:::${AdminPageS3}/*
   ServiceComponentTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
@@ -970,15 +984,24 @@ Outputs:
         - "LambdaRole"
         - "Arn"
     Description: "ARN for LambdaRole"
-  S3BucketURL:
+  AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:
-        - "WebsiteS3"
+        - "AdminPageS3"
         - "WebsiteURL"
-    Description: "URL of S3 bucket for status page hosting"
-  S3BucketName:
+    Description: "URL of S3 bucket for hosting admin page"
+  AdminPageS3BucketName:
     Value:
-      Ref: "WebsiteS3"
+      Ref: "AdminPageS3"
+  StatusPageS3BucketURL:
+    Value:
+      Fn::GetAtt:
+        - "StatusPageS3"
+        - "WebsiteURL"
+    Description: "URL of S3 bucket for hosting status page"
+  StatusPageS3BucketName:
+    Value:
+      Ref: "StatusPageS3"
   ServiceComponentTable:
     Value:
       Ref: "ServiceComponentTable"

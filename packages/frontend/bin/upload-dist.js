@@ -6,11 +6,11 @@ import mime from 'mime'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
-const distDir = path.normalize(`${__dirname}/../dist`)
+const distDir = path.normalize(`${__dirname}/../dist/admin`)
 const files = fs.readdirSync(distDir, 'utf8')
 
 import output from '../config/cloudformation-output.json'
-const bucketName = output.S3BucketName
+const bucketName = output.AdminPageS3BucketName
 
 const uploadFile = (filename, filepath) => {
   const { REGION: region } = process.env
