@@ -919,16 +919,6 @@ Resources:
         Statement:
           - Effect: "Allow"
             Action:
-              - "s3:*"
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - "LambdaRole"
-                  - "Arn"
-            Resource: !Sub |-
-              arn:aws:s3:::${WebsiteS3}/*
-          - Effect: "Allow"
-            Action:
               - "s3:GetObject"
             Principal: "*"
             Resource: !Sub |-
