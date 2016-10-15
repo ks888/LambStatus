@@ -17,7 +17,7 @@ const browserHistory = useRouterHistory(createBrowserHistory)({
 // Store and History Instantiation
 // ========================================================
 // Create redux store and sync with react-router-redux. We have installed the
-// react-router-redux reducer under the routerKey "router" in src/routes/index.js,
+// react-router-redux reducer under the routerKey "router" in src/routes/x.js,
 // so we need to provide a custom `selectLocationState` to inform
 // react-router-redux of its location.
 const initialState = window.___INITIAL_STATE__
@@ -41,7 +41,7 @@ if (__DEBUG__) {
 const MOUNT_NODE = document.getElementById('root')
 
 let render = () => {
-  const routes = require('./routes/index').default(store)
+  const routes = require('./routes/status-page').default(store)
 
   ReactDOM.render(
     <AppContainer
@@ -74,7 +74,7 @@ if (__DEV__) {
     }
 
     // Setup hot module replacement
-    module.hot.accept('./routes/index', () => {
+    module.hot.accept('./routes/status-page', () => {
       setTimeout(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE)
         render()
