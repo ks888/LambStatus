@@ -155,6 +155,7 @@ function listComponentsHandler (state = { }, action) {
     return {
       componentID: component.componentID,
       name: component.name,
+      description: component.description,
       status: component.status
     }
   })

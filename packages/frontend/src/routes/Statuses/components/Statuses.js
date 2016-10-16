@@ -5,7 +5,7 @@ import Button from 'components/Button'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor } from 'utils/status'
+import { getIncidentColor, getComponentColor } from 'utils/status'
 
 class Statuses extends React.Component {
   componentDidMount () {
@@ -13,34 +13,17 @@ class Statuses extends React.Component {
     this.props.dispatch(fetchComponents)
   }
 
-  renderListItem = (incident) => {
-    let statusColor = getIncidentColor(incident.status)
-    let bgColor = '#ffffff'
-    let updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+
+  renderComponentItem = (component) => {
+    let statusColor = getComponentColor(component.status)
     return (
-      <li key={incident.incidentID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.incident_item_content)}>
-          <i className='material-icons mdl-list__item-avatar'
-            style={{ color: statusColor, backgroundColor: bgColor }}>brightness_1</i>
-          <div>
-            <span>{incident.name}</span>
-            <span className='mdl-list__item-sub-title'>
-              updated at {updatedAt}
-            </span>
-          </div>
+      <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+        <span className='mdl-list__item-primary-content'>
+          <span>{component.name}</span>
+          <span className='mdl-list__item-sub-title'>{component.description}</span>
         </span>
-        <span className='mdl-list__item-secondary-content'>
-          <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Update'
-                onClick={this.handleShowUpdateDialog(incident)} />
-            </div>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(incident)} />
-            </div>
-          </div>
+        <span className='mdl-list__item-secondary-content' style={{color: statusColor}}>
+          {component.status}
         </span>
       </li>
     )
@@ -48,13 +31,15 @@ class Statuses extends React.Component {
 
   render () {
     const { incidents, serviceComponents, isFetching } = this.props
+    const componentItems = serviceComponents.map(this.renderComponentItem)
     // const incidentItems = incidents.map(this.renderListItem)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
+      <div className='mdl-cell mdl-cell--12-col'>
         <h4>Service Name</h4>
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+        {componentItems}
       </ul>
     </div>)
   }

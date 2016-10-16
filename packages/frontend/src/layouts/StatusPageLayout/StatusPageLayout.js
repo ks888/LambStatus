@@ -3,9 +3,8 @@ import classnames from 'classnames'
 import classes from './StatusPageLayout.scss'
 
 export const StatusPageLayout = ({ children }) => (
-  <div className={classnames(classes.root, 'mdl-layout', 'mdl-js-layout',
-    'mdl-layout--fixed-drawer', 'mdl-layout--fixed-header')}>
-    <main className='mdl-layout__content'>
+  <div className={classnames(classes.root, 'mdl-layout', 'mdl-js-layout')}>
+    <main className={classnames(classes.main, 'mdl-layout__content')}>
       {children}
     </main>
   </div>
