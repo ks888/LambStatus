@@ -1,6 +1,7 @@
 import webpackConfig from '../build/webpack.config'
 import configGen from '../config'
 
+process.env.PORT = 3000
 export let adminPageConfig = configGen()
 
 adminPageConfig.utils_paths.entry_point = adminPageConfig.utils_paths.client('admin-page.js')
