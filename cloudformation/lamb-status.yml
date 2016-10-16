@@ -368,7 +368,7 @@ Resources:
         Ref: "ComponentsApiResource"
       HttpMethod: "GET"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -599,7 +599,7 @@ Resources:
         Ref: "IncidentsApiResource"
       HttpMethod: "GET"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -836,7 +836,7 @@ Resources:
         Ref: "IncidentUpdatesApiResource"
       HttpMethod: "GET"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
