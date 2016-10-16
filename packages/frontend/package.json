@@ -14,6 +14,8 @@
     "lint": "eslint src tests server",
     "lint:fix": "npm run lint -- --fix",
     "start": "better-npm-run start",
+    "start:admin": "npm run start -- admin",
+    "start:status": "npm run start -- status",
     "dev": "better-npm-run dev",
     "dev:no-debug": "npm run dev -- --no_debug",
     "test": "better-npm-run test",
