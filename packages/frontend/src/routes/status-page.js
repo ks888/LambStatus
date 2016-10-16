@@ -8,7 +8,7 @@ import StatusesRoute from './Statuses'
 export const createRoutes = (store) => ({
   path: '/',
   component: StatusPageLayout,
-  indexRoute: StatusesRoute
+  indexRoute: StatusesRoute(store)
 })
 
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically

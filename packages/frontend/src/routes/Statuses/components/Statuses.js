@@ -84,9 +84,9 @@ Statuses.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    isFetching: state.incidents.isFetching,
-    incidents: state.incidents.incidents,
-    serviceComponents: state.incidents.components
+    isFetching: state.statuses.isFetching,
+    incidents: state.statuses.incidents,
+    serviceComponents: state.statuses.components
   }
 }
 
