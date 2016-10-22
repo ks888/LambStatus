@@ -51,16 +51,19 @@ class Statuses extends React.Component {
       incidentItems = <div>No incidents reported</div>
     } else {
       incidentItems = incidents.map((incident) =>
-        <div>
+        <div key={incident.incidentID}>
           {incident.name}, {incident.status}
         </div>
       )
     }
     return (
-      <li key={date} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
-        <span className='mdl-list__item-primary-content'>
-          <span>{date}</span>
-          <span className='mdl-list__item-sub-title'>{incidentItems}</span>
+      <li key={date} className={classnames('mdl-list__item',
+        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_item)}>
+        <span className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}>
+          <div className={classnames(classes.border)}>{date}</div>
+          <span className='mdl-list__item-sub-title'>
+            {incidentItems}
+          </span>
         </span>
       </li>
     )
