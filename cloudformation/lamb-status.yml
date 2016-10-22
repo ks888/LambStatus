@@ -477,7 +477,7 @@ Resources:
             {
               "body":$input.json('$'),
               "params":{
-                #foreach($param in $input.params().path.keySet())"
+                #foreach($param in $input.params().path.keySet())
                 "$param": "$util.escapeJavaScript($input.params().path.get($param))"
                 #if($foreach.hasNext),#end
                 #end
@@ -524,7 +524,7 @@ Resources:
           application/json: !Sub |-
             {
               "params":{
-                #foreach($param in $input.params().path.keySet())"
+                #foreach($param in $input.params().path.keySet())
                 "$param": "$util.escapeJavaScript($input.params().path.get($param))"
                 #if($foreach.hasNext),#end
                 #end
@@ -716,7 +716,7 @@ Resources:
             {
               "body":$input.json('$'),
               "params":{
-                #foreach($param in $input.params().path.keySet())"
+                #foreach($param in $input.params().path.keySet())
                 "$param": "$util.escapeJavaScript($input.params().path.get($param))"
                 #if($foreach.hasNext),#end
                 #end
@@ -763,7 +763,7 @@ Resources:
           application/json: !Sub |-
             {
               "params":{
-                #foreach($param in $input.params().path.keySet())"
+                #foreach($param in $input.params().path.keySet())
                 "$param": "$util.escapeJavaScript($input.params().path.get($param))"
                 #if($foreach.hasNext),#end
                 #end
@@ -845,7 +845,7 @@ Resources:
           application/json: !Sub |-
             {
               "params":{
-                #foreach($param in $input.params().path.keySet())"
+                #foreach($param in $input.params().path.keySet())
                 "$param": "$util.escapeJavaScript($input.params().path.get($param))"
                 #if($foreach.hasNext),#end
                 #end
