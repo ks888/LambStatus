@@ -13,7 +13,6 @@ class Statuses extends React.Component {
     this.props.dispatch(fetchComponents)
   }
 
-
   renderComponentItem = (component) => {
     let statusColor = getComponentColor(component.status)
     return (
@@ -29,21 +28,71 @@ class Statuses extends React.Component {
     )
   }
 
+  renderIncidentItem = (incident) => {
+    let statusColor = getIncidentColor(incident.status)
+    return (
+      <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+        <span className='mdl-list__item-primary-content'>
+          <span>{component.name}</span>
+          <span className='mdl-list__item-sub-title'>{component.description}</span>
+        </span>
+        <span className='mdl-list__item-secondary-content' style={{color: statusColor}}>
+          {component.status}
+        </span>
+      </li>
+    )
+  }
+
+  renderIncidentsItem = (date, incidents) => {
+    let statusColor = getIncidentColor(incident.status)
+    return (
+      <li key={date} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+        <span className='mdl-list__item-primary-content'>
+          <span>{date}</span>
+          <span className='mdl-list__item-sub-title'>{incidents}</span>
+        </span>
+      </li>
+    )
+  }
+
   render () {
     const { incidents, serviceComponents, isFetching } = this.props
     const componentItems = serviceComponents.map(this.renderComponentItem)
-    // const incidentItems = incidents.map(this.renderListItem)
+    const numDays = 14
+    const dateFormat = 'MMM DD, YYYY'
+    const dates = [...Array(numDays).keys()].reduce((obj, index) => {
+      const date = moment().subtract(index, 'days').format(dateFormat)
+      obj[date] = []
+      return obj
+    }, {})
+    incidents.map((incident) => {
+      updatedDates = new Set()
+      incident.incidentUpdates.map((incidentUpdate) => {
+        const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format(dateFormat)
+        updatedDates.add(updatedAt)
+      })
+      updatedDates.forEach((updatedDate) => {
+        dates[updatedDate] = incident
+      })
+    })
+    incidents = Object.keys(dates).map((date) =>
+      this.renderIncidentsItem(date, dates[date])
+    )
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--12-col'>
-        <h4>
-          <span className={classes.title_service}>Service</span>
-          <span className={classes.title_status}>Status</span>
-        </h4>
-      </div>
+      <h4>
+        <span className={classes.title_service}>Service</span>
+        <span className={classes.title_status}>Status</span>
+      </h4>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
+      <div className='mdl-cell mdl-cell--12-col'>
+        <h4>Incidents</h4>
+      </div>
+      <div className='mdl-cell mdl-cell--12-col mdl-list'>
+        {incidentsInDates}
+      </div>
     </div>)
   }
 }
