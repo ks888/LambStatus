@@ -5,8 +5,7 @@ import { checkStatus } from 'utils/fetch'
 // ------------------------------------
 const ACTION_NAME_PREFIX = 'STATUSES_'
 export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
-export const LIST_INCIDENTS = ACTION_NAME_PREFIX + 'LIST_INCIDENTS'
-export const LIST_INCIDENT_UPDATES = ACTION_NAME_PREFIX + 'LIST_INCIDENT_UPDATES'
+export const LIST_INCIDENT = ACTION_NAME_PREFIX + 'LIST_INCIDENT'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 
 // ------------------------------------
@@ -19,18 +18,10 @@ export function loadAction () {
   }
 }
 
-export function listIncidentsAction (json) {
+export function listIncidentAction (incident) {
   return {
-    type: LIST_INCIDENTS,
-    incidents: json
-  }
-}
-
-export function listIncidentUpdatesAction (json, incidentID) {
-  return {
-    type: LIST_INCIDENT_UPDATES,
-    incidentUpdates: json,
-    incidentID: incidentID
+    type: LIST_INCIDENT,
+    incident: incident
   }
 }
 
@@ -46,8 +37,11 @@ export const fetchIncidents = (dispatch) => {
   return fetch(__API_URL__ + 'incidents')
     .then(checkStatus)
     .then(response => response.json())
-    .then(json => dispatch(listIncidentsAction(json)))
-    .catch(error => {
+    .then(json => {
+      JSON.parse(json).forEach((incident) =>
+        dispatch(fetchIncidentUpdates(incident))
+      )
+    }).catch(error => {
       console.error(error)
       try {
         error.response.text()
@@ -58,14 +52,16 @@ export const fetchIncidents = (dispatch) => {
     })
 }
 
-export const fetchIncidentUpdates = (incidentID) => {
+export const fetchIncidentUpdates = (incident) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + incidentID + '/incidentupdates')
+    return fetch(__API_URL__ + 'incidents/' + incident.incidentID + '/incidentupdates')
       .then(checkStatus)
       .then(response => response.json())
-      .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
-      .catch(error => {
+      .then(json => {
+        incident.incidentUpdates = JSON.parse(json)
+        dispatch(listIncidentAction(incident))
+      }).catch(error => {
         console.error(error)
         try {
           error.response.text()
@@ -89,8 +85,7 @@ export const fetchComponents = (dispatch) => {
 
 export const actions = {
   loadAction,
-  listIncidentsAction,
-  listIncidentUpdatesAction,
+  listIncidentAction,
   listComponentsAction
 }
 
@@ -104,45 +99,12 @@ function loadHandler (state = { }, action) {
   })
 }
 
-function listIncidentsHandler (state = { }, action) {
-  let incidents = JSON.parse(action.incidents).map((incident) => {
-    return {
-      incidentID: incident.incidentID,
-      name: incident.name,
-      status: incident.status,
-      updatedAt: incident.updatedAt
-    }
-  })
-
-  incidents.sort((a, b) => {
+function listIncidentHandler (state = { }, action) {
+  action.incident.incidentUpdates.sort((a, b) => {
     return a.updatedAt < b.updatedAt
   })
 
-  return Object.assign({}, state, {
-    isFetching: false,
-    incidents: incidents
-  })
-}
-
-function listIncidentUpdatesHandler (state = { }, action) {
-  let incidentUpdates = JSON.parse(action.incidentUpdates).map((incidentUpdate) => {
-    return {
-      incidentUpdateID: incidentUpdate.incidentUpdateID,
-      incidentStatus: incidentUpdate.incidentStatus,
-      message: incidentUpdate.message,
-      updatedAt: incidentUpdate.updatedAt
-    }
-  })
-
-  incidentUpdates.sort((a, b) => {
-    return a.updatedAt < b.updatedAt
-  })
-
-  state.incidents.forEach((incident) => {
-    if (incident.incidentID === action.incidentID) {
-      incident.incidentUpdates = incidentUpdates
-    }
-  })
+  state.incidents.push(action.incident)
 
   return Object.assign({}, state, {
     isFetching: false,
@@ -166,8 +128,7 @@ function listComponentsHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
-  [LIST_INCIDENTS]: listIncidentsHandler,
-  [LIST_INCIDENT_UPDATES]: listIncidentUpdatesHandler,
+  [LIST_INCIDENT]: listIncidentHandler,
   [LIST_COMPONENTS]: listComponentsHandler
 }
 

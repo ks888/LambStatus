@@ -28,6 +28,7 @@ class Statuses extends React.Component {
     )
   }
 
+  /*
   renderIncidentItem = (incident) => {
     let statusColor = getIncidentColor(incident.status)
     return (
@@ -42,14 +43,24 @@ class Statuses extends React.Component {
       </li>
     )
   }
+  */
 
   renderIncidentsItem = (date, incidents) => {
-    let statusColor = getIncidentColor(incident.status)
+    let incidentItems
+    if (incidents.length === 0) {
+      incidentItems = <div>No incidents reported</div>
+    } else {
+      incidentItems = incidents.map((incident) =>
+        <div>
+          {incident.name}, {incident.status}
+        </div>
+      )
+    }
     return (
       <li key={date} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <span>{date}</span>
-          <span className='mdl-list__item-sub-title'>{incidents}</span>
+          <span className='mdl-list__item-sub-title'>{incidentItems}</span>
         </span>
       </li>
     )
@@ -66,16 +77,16 @@ class Statuses extends React.Component {
       return obj
     }, {})
     incidents.map((incident) => {
-      updatedDates = new Set()
+      let updatedDates = new Set()
       incident.incidentUpdates.map((incidentUpdate) => {
         const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format(dateFormat)
         updatedDates.add(updatedAt)
       })
       updatedDates.forEach((updatedDate) => {
-        dates[updatedDate] = incident
+        dates[updatedDate].push(incident)
       })
     })
-    incidents = Object.keys(dates).map((date) =>
+    const incidentItems = Object.keys(dates).map((date) =>
       this.renderIncidentsItem(date, dates[date])
     )
 
@@ -91,7 +102,7 @@ class Statuses extends React.Component {
         <h4>Incidents</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
-        {incidentsInDates}
+        {incidentItems}
       </div>
     </div>)
   }
