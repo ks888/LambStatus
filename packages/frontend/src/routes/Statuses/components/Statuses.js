@@ -36,7 +36,10 @@ class Statuses extends React.Component {
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--12-col'>
-        <h4>Service Name</h4>
+        <h4>
+          <span className={classes.title_service}>Service</span>
+          <span className={classes.title_status}>Status</span>
+        </h4>
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
