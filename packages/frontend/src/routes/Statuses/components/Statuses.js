@@ -55,10 +55,9 @@ class Statuses extends React.Component {
       const incidentItem = (
         <li key={incident.incidentID} className={classnames('mdl-list__item',
           'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
-          <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}>
-            <span style={{color: statusColor}}>
+          <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
+            style={{color: statusColor}}>
               {incident.status} - {incident.name}
-            </span>
           </div>
           {incidentUpdateItems}
         </li>
