@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import { fetchIncidents, fetchComponents } from '../modules/statuses'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
@@ -140,6 +141,11 @@ class Statuses extends React.Component {
       </div>
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
         {dateItems}
+      </div>
+      <div className={classes.history}>
+        <Link to='/history' className={classes.history_link}>
+          <i className={classnames('material-icons', classes.history_link_icon)}>chevron_right</i> Incidents History
+        </Link>
       </div>
     </div>)
   }
