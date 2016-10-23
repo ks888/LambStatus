@@ -48,39 +48,38 @@ class Statuses extends React.Component {
     )
   }
 
+  renderIncidentItems = (date, incidents) => {
+    return incidents.map((incident) => {
+      const statusColor = getIncidentColor(incident.status)
+      const incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+      const incidentItem = (
+        <li key={incident.incidentID} className={classnames('mdl-list__item',
+          'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
+          <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}>
+            <span style={{color: statusColor}}>
+              {incident.status} - {incident.name}
+            </span>
+          </div>
+          {incidentUpdateItems}
+        </li>
+      )
+      return incidentItem
+    })
+  }
+
   renderDateItem = (date, incidents) => {
     let dateItems
     if (incidents.length === 0) {
       dateItems = <div>No incidents reported</div>
     } else {
-      dateItems = incidents.reduce((arr, incident) => {
+      const filteredIncidents = incidents.filter((incident) => {
         const lastUpdatedDate = moment.tz(incident.updatedAt, moment.tz.guess()).format(this.dateFormat)
-        if (date !== lastUpdatedDate) {
-          return arr
-        }
-
-        const statusColor = getIncidentColor(incident.status)
-        const incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
-        const incidentItem = (
-          <li key={incident.incidentID} className={classnames('mdl-list__item',
-            'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
-            <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}>
-              <span style={{color: statusColor}}>
-                {incident.status} - {incident.name}
-              </span>
-            </div>
-            {incidentUpdateItems}
-          </li>
-        )
-        arr.push(incidentItem)
-        return arr
-      }, [])
-
-      if (dateItems.length === 0) {
-        // There was an incident update at that date,
-        // but there was another update later.
+        return date === lastUpdatedDate
+      })
+      if (filteredIncidents.length === 0) {
         return null
       }
+      dateItems = this.renderIncidentItems(date, filteredIncidents)
     }
 
     return (
@@ -98,16 +97,15 @@ class Statuses extends React.Component {
     )
   }
 
-  render () {
-    const { incidents, serviceComponents, isFetching } = this.props
-    const componentItems = serviceComponents.map(this.renderComponentItem)
+  renderDateItems = (incidents) => {
     const numDays = 14
     const dates = [...Array(numDays).keys()].reduce((obj, index) => {
       const date = moment().subtract(index, 'days').format(this.dateFormat)
       obj[date] = []
       return obj
     }, {})
-    incidents.map((incident) => {
+
+    incidents.forEach((incident) => {
       let updatedDates = new Set()
       incident.incidentUpdates.map((incidentUpdate) => {
         const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format(this.dateFormat)
@@ -119,9 +117,16 @@ class Statuses extends React.Component {
         }
       })
     })
-    const dateItems = Object.keys(dates).map((date) =>
+
+    return Object.keys(dates).map((date) =>
       this.renderDateItem(date, dates[date])
     )
+  }
+
+  render () {
+    const { incidents, serviceComponents, isFetching } = this.props
+    const componentItems = serviceComponents.map(this.renderComponentItem)
+    const dateItems = this.renderDateItems(incidents)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
       <h4>
