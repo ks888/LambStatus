@@ -22,3 +22,27 @@
   margin-bottom: 10px;
   border-color: #E0E0E0;
 }
+
+.incident_item {
+  height: auto;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.incident_item_primary {
+  height: auto !important;
+}
+
+.incident_update_item {
+  margin: 10px 0;
+}
+
+.incident_update_item_message {
+  color: rgba(0,0,0,.54);
+}
+
+.incident_update_item_updatedat {
+  margin: 7px 0;
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
+}

@@ -33,6 +33,22 @@ class Statuses extends React.Component {
     )
   }
 
+  renderIncidentUpdateItem = (incidentUpdate) => {
+    const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+
+    return (
+      <div className={classnames(classes.incident_update_item)}>
+        <div>
+          {incidentUpdate.incidentStatus}
+          <span className={classnames(classes.incident_update_item_message)}> - {incidentUpdate.message}</span>
+        </div>
+        <div className={classnames(classes.incident_update_item_updatedat)}>
+          {updatedAt}
+        </div>
+      </div>
+    )
+  }
+
   renderDatesItem = (date, incidents) => {
     let dateItems
     if (incidents.length === 0) {
@@ -45,21 +61,16 @@ class Statuses extends React.Component {
         }
 
         const statusColor = getIncidentColor(incident.status)
-        const updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+        const incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
         const incidentItem = (
           <li key={incident.incidentID} className={classnames('mdl-list__item',
-            'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.date_item)}>
-            <span className={classnames('mdl-list__item-primary-content', classes.date_item_primary)}>
-              <span>
-                <span style={{color: statusColor}}>{incident.status}</span> - {incident.name}
+            'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
+            <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}>
+              <span style={{color: statusColor}}>
+                {incident.status} - {incident.name}
               </span>
-              <span className='mdl-list__item-sub-title'>
-                {updatedAt}
-              </span>
-            </span>
-            <span className='mdl-list__item-secondary-content'>
-              <Button plain name='Detail' />
-            </span>
+            </div>
+            {incidentUpdateItems}
           </li>
         )
         arr.push(incidentItem)
@@ -100,7 +111,9 @@ class Statuses extends React.Component {
         updatedDates.add(updatedAt)
       })
       updatedDates.forEach((updatedDate) => {
-        dates[updatedDate].push(incident)
+        if (dates.hasOwnProperty(updatedDate)) {
+          dates[updatedDate].push(incident)
+        }
       })
     })
     const dateItems = Object.keys(dates).map((date) =>
