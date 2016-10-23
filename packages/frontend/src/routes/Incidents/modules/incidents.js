@@ -233,15 +233,18 @@ function listIncidentUpdatesHandler (state = { }, action) {
     return a.updatedAt < b.updatedAt
   })
 
-  state.incidents.forEach((incident) => {
+  const newIncidents = state.incidents.map((incident) => {
     if (incident.incidentID === action.incidentID) {
-      incident.incidentUpdates = incidentUpdates
+      return Object.assign({}, incident, {
+        incidentUpdates: incidentUpdates
+      })
     }
+    return incident
   })
 
   return Object.assign({}, state, {
     isFetching: false,
-    incidents: state.incidents
+    incidents: newIncidents
   })
 }
 
@@ -283,29 +286,32 @@ function updateIncidentHandler (state = { }, action) {
     incident: updatedIncident, components: components
   } = JSON.parse(action.response)
 
-  state.incidents.forEach((incident) => {
+  const newIncidents = state.incidents.map((incident) => {
     if (incident.incidentID === updatedIncident.incidentID) {
-      incident.name = updatedIncident.name
-      incident.status = updatedIncident.status
-      incident.updatedAt = updatedIncident.updatedAt
+      return Object.assign({}, incident, {
+        name: updatedIncident.name,
+        status: updatedIncident.status,
+        updatedAt: updatedIncident.updatedAt
+      })
     }
+    return incident
   })
 
   return Object.assign({}, state, {
     isFetching: false,
     components: components,
-    incidents: state.incidents
+    incidents: newIncidents
   })
 }
 
 function removeIncidentHandler (state = { }, action) {
-  let incidents = state.incidents.filter((incident) => {
+  let newIncidents = state.incidents.filter((incident) => {
     return incident.incidentID !== action.incidentID
   })
 
   return Object.assign({}, state, {
     isFetching: false,
-    incidents: incidents
+    incidents: newIncidents
   })
 }
 

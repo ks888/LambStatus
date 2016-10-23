@@ -161,17 +161,21 @@ function addComponentHandler (state = { }, action) {
 
 function editComponentHandler (state = { }, action) {
   let editedComponent = JSON.parse(action.serviceComponent)
-  state.serviceComponents.forEach((component) => {
+
+  const newComponents = state.serviceComponents.map((component) => {
     if (component.componentID === editedComponent.componentID) {
-      component.name = editedComponent.name
-      component.description = editedComponent.description
-      component.status = editedComponent.status
+      return Object.assign({}, component, {
+        name: editedComponent.name,
+        description: editedComponent.description,
+        status: editedComponent.status
+      })
     }
+    return component
   })
 
   return Object.assign({}, state, {
     isFetching: false,
-    serviceComponents: state.serviceComponents
+    serviceComponents: newComponents
   })
 }
 
