@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { fetchIncidents, fetchComponents } from '../modules/statuses'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
-import Button from 'components/Button'
 import moment from 'moment-timezone'
 import { getIncidentColor, getComponentColor } from 'utils/status'
 
@@ -37,7 +36,7 @@ class Statuses extends React.Component {
     const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
 
     return (
-      <div className={classnames(classes.incident_update_item)}>
+      <div className={classnames(classes.incident_update_item)} key={incidentUpdate.incidentUpdateID}>
         <div>
           {incidentUpdate.incidentStatus}
           <span className={classnames(classes.incident_update_item_message)}> - {incidentUpdate.message}</span>
@@ -49,14 +48,14 @@ class Statuses extends React.Component {
     )
   }
 
-  renderDatesItem = (date, incidents) => {
+  renderDateItem = (date, incidents) => {
     let dateItems
     if (incidents.length === 0) {
       dateItems = <div>No incidents reported</div>
     } else {
       dateItems = incidents.reduce((arr, incident) => {
-        const incidentDate = moment.tz(incident.updatedAt, moment.tz.guess()).format(this.dateFormat)
-        if (date !== incidentDate) {
+        const lastUpdatedDate = moment.tz(incident.updatedAt, moment.tz.guess()).format(this.dateFormat)
+        if (date !== lastUpdatedDate) {
           return arr
         }
 
@@ -76,19 +75,23 @@ class Statuses extends React.Component {
         arr.push(incidentItem)
         return arr
       }, [])
-      dateItems = (
-        <ul className='mdl-list'>
-          {dateItems}
-        </ul>
-      )
+
+      if (dateItems.length === 0) {
+        // There was an incident update at that date,
+        // but there was another update later.
+        return null
+      }
     }
+
     return (
       <li key={date} className={classnames('mdl-list__item',
         'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.date_item)}>
         <span className={classnames('mdl-list__item-primary-content', classes.date_item_primary)}>
           <div className={classnames(classes.border)}>{date}</div>
           <span className='mdl-list__item-sub-title'>
-            {dateItems}
+            <ul className='mdl-list'>
+              {dateItems}
+            </ul>
           </span>
         </span>
       </li>
@@ -117,7 +120,7 @@ class Statuses extends React.Component {
       })
     })
     const dateItems = Object.keys(dates).map((date) =>
-      this.renderDatesItem(date, dates[date])
+      this.renderDateItem(date, dates[date])
     )
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>

@@ -104,11 +104,9 @@ function listIncidentHandler (state = { }, action) {
     return a.updatedAt < b.updatedAt
   })
 
-  state.incidents.push(action.incident)
-
   return Object.assign({}, state, {
     isFetching: false,
-    incidents: state.incidents
+    incidents: [...state.incidents, action.incident]
   })
 }
 
