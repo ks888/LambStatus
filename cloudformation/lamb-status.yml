@@ -949,7 +949,7 @@ Resources:
           CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
-            ErrorCode: 404
+            ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: "/index.html"
   AdminPageS3:
@@ -1000,7 +1000,7 @@ Resources:
           CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
-            ErrorCode: 404
+            ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: "/index.html"
   ServiceComponentTable:
