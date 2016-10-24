@@ -2,11 +2,12 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { fetchIncidents, fetchComponents } from '../modules/statuses'
 import Title from 'components/Title'
+import IncidentItem from 'components/IncidentItem'
 import ModestLink from 'components/ModestLink'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor, getComponentColor } from 'utils/status'
+import { getComponentColor } from 'utils/status'
 
 class Statuses extends React.Component {
   constructor () {
@@ -34,40 +35,6 @@ class Statuses extends React.Component {
     )
   }
 
-  renderIncidentUpdateItem = (incidentUpdate) => {
-    const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
-
-    return (
-      <div className={classnames(classes.incident_update_item)} key={incidentUpdate.incidentUpdateID}>
-        <div>
-          {incidentUpdate.incidentStatus}
-          <span className={classnames(classes.incident_update_item_message)}> - {incidentUpdate.message}</span>
-        </div>
-        <div className={classnames(classes.incident_update_item_updatedat)}>
-          {updatedAt}
-        </div>
-      </div>
-    )
-  }
-
-  renderIncidentItems = (date, incidents) => {
-    return incidents.map((incident) => {
-      const statusColor = getIncidentColor(incident.status)
-      const incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
-      const incidentItem = (
-        <li key={incident.incidentID} className={classnames('mdl-list__item',
-          'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
-          <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
-            style={{color: statusColor}}>
-              {incident.status} - {incident.name}
-          </div>
-          {incidentUpdateItems}
-        </li>
-      )
-      return incidentItem
-    })
-  }
-
   renderDateItem = (date, incidents) => {
     let dateItems
     if (incidents.length === 0) {
@@ -80,7 +47,9 @@ class Statuses extends React.Component {
       if (filteredIncidents.length === 0) {
         return null
       }
-      dateItems = this.renderIncidentItems(date, filteredIncidents)
+      dateItems = filteredIncidents.map((incident) =>
+        <IncidentItem key={incident.incidentID} incident={incident} showDetailButton={false} />
+      )
     }
 
     return (

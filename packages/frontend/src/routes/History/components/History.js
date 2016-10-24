@@ -1,73 +1,26 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { fetchIncidents, fetchIncidentUpdates } from '../modules/history'
-import Button from 'components/Button'
 import Title from 'components/Title'
 import ModestLink from 'components/ModestLink'
+import IncidentItem from 'components/IncidentItem'
 import classnames from 'classnames'
 import classes from './History.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor } from 'utils/status'
 
 class History extends React.Component {
   componentDidMount () {
     this.props.dispatch(fetchIncidents)
   }
 
-  handleShowDetail = (incident) => {
-    return () => {
-      this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
-    }
-  }
-
-  renderIncidentUpdateItem = (incidentUpdate) => {
-    const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
-
-    return (
-      <div className={classnames(classes.incident_update_item)} key={incidentUpdate.incidentUpdateID}>
-        <div>
-          {incidentUpdate.incidentStatus}
-          <span className={classnames(classes.incident_update_item_message)}> - {incidentUpdate.message}</span>
-        </div>
-        <div className={classnames(classes.incident_update_item_updatedat)}>
-          {updatedAt}
-        </div>
-      </div>
-    )
-  }
-
-  renderIncidentItem = (incident) => {
-    const statusColor = getIncidentColor(incident.status)
-    let incidentUpdateItems
-    if (incident.hasOwnProperty('incidentUpdates')) {
-      incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
-    }
-
-    const updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
-    const incidentItem = (
-      <li key={incident.incidentID}
-        className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
-        <div className={classnames(classes.incident_header)}>
-          <span className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
-            style={{color: statusColor}}>
-            {incident.status} - {incident.name}
-            <span className='mdl-list__item-sub-title'>
-              {updatedAt}
-            </span>
-          </span>
-          <span className='mdl-list__item-secondary-content'>
-            <Button plain name='Detail' onClick={this.handleShowDetail(incident)} />
-          </span>
-        </div>
-        {incidentUpdateItems}
-      </li>
-    )
-    return incidentItem
+  handleShowDetail = (incidentID) => {
+    this.props.dispatch(fetchIncidentUpdates(incidentID))
   }
 
   renderIncidentItems = (month, incidents) => {
     const incidentItems = incidents.map((incident) =>
-      this.renderIncidentItem(incident)
+      <IncidentItem key={incident.incidentID} onDetailClicked={this.handleShowDetail}
+        incident={incident} showDetailButton />
     )
 
     return (
