@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-import WError from 'verror'
+import VError from 'verror'
 import { ServiceComponentTable, IncidentTable, IncidentUpdateTable } from './const'
 import generateID from './generateID'
 
@@ -20,7 +20,7 @@ export const getComponents = () => {
     }
     awsDynamoDb.scan(params, (err, scanResult) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       let components = []
       scanResult.Items.forEach((component) => {
@@ -78,7 +78,7 @@ export const updateComponent = (id, name, description, status) => {
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -106,7 +106,7 @@ export const updateComponentStatus = (id, status) => {
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -127,7 +127,7 @@ export const deleteComponent = (id) => {
     }
     awsDynamoDb.delete(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -155,7 +155,7 @@ export const getIncidents = () => {
     }
     awsDynamoDb.scan(params, (err, scanResult) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
 
       let incidents = []
@@ -202,7 +202,7 @@ export const getIncidentUpdates = (incidentID) => {
     }
     awsDynamoDb.query(params, (err, queryResult) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
 
       let incidentUpdates = []
@@ -249,7 +249,7 @@ export const updateIncident = (id, name, status, updatedAt) => {
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -274,7 +274,7 @@ export const removeUpdatingFlag = (id) => {
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -303,7 +303,7 @@ export const updateIncidentUpdate = (incidentID, incidentStatus, message, update
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -324,7 +324,7 @@ export const deleteIncident = (id) => {
     }
     awsDynamoDb.delete(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
@@ -353,7 +353,7 @@ export const deleteIncidentUpdates = (incidentID, incidentUpdates) => {
     }
     awsDynamoDb.batchWrite(params, (err, data) => {
       if (err) {
-        return reject(new WError(err, 'DynamoDB'))
+        return reject(new VError(err, 'DynamoDB'))
       }
       resolve(data)
     })
