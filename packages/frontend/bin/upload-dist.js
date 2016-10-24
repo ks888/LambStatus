@@ -3,24 +3,19 @@ import path from 'path'
 import dotenv from 'dotenv'
 import AWS from 'aws-sdk'
 import mime from 'mime'
+import output from '../config/cloudformation-output.json'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
-const distDir = path.normalize(`${__dirname}/../dist/admin`)
-const files = fs.readdirSync(distDir, 'utf8')
-
-import output from '../config/cloudformation-output.json'
-const bucketName = output.AdminPageS3BucketName
-
-const uploadFile = (filename, filepath) => {
+const uploadFile = (filepath, bucketName, objectName) => {
   const { REGION: region } = process.env
   const awsS3 = new AWS.S3({ region })
   return new Promise((resolve, reject) => {
-    const contentType = mime.lookup(filename)
+    const contentType = mime.lookup(objectName)
     const params = {
       Bucket: bucketName,
       Body: fs.readFileSync(filepath),
-      Key: filename,
+      Key: objectName,
       ContentType: contentType
     }
     awsS3.putObject(params, (err, result) => {
@@ -33,15 +28,26 @@ const uploadFile = (filename, filepath) => {
   })
 }
 
-Promise.all(files.map(async (filename) => {
-  try {
-    const filepath = path.join(distDir, filename)
-    await uploadFile(filename, filepath)
-  } catch (error) {
-    console.error(error, error.stack)
-    throw error
-  }
-})).catch((err) => {
-  console.error('failed to upload files')
-  console.error(err, err.stack)
-})
+const uploadDirectory = (dir, bucketName) => {
+  const files = fs.readdirSync(dir, 'utf8')
+  Promise.all(files.map(async (filename) => {
+    try {
+      const filepath = path.join(dir, filename)
+      await uploadFile(filepath, bucketName, filename)
+    } catch (error) {
+      console.error(error, error.stack)
+      throw error
+    }
+  })).catch((err) => {
+    console.error('failed to upload files')
+    console.error(err, err.stack)
+  })
+}
+
+const adminPageDir = path.normalize(`${__dirname}/../dist/admin-page`)
+const adminPageBucketName = output.AdminPageS3BucketName
+uploadDirectory(adminPageDir, adminPageBucketName)
+
+const statusPageDir = path.normalize(`${__dirname}/../dist/status-page`)
+const statusPageBucketName = output.StatusPageS3BucketName
+uploadDirectory(statusPageDir, statusPageBucketName)
