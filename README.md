@@ -4,8 +4,8 @@ LambStatus is a low cost and easy to operate status page system, built on AWS La
 
 ## Benefits
 
-* Lower operational cost. Ease your pain about the scaling / availability issues of status page
-* Lower infrastructure cost. AWS Lambda pricing fits the traffic type of status page: mostly small traffic and occasionally huge traffic.
+* Lower operational cost. Serverless architecture eases your pain caused by the scaling / availability issues of status page
+* Lower infrastructure cost. AWS Lambda pricing fits the traffic type of status page well: mostly small traffic and occasionally huge traffic.
 * Modern status page design, inspired by [StatusPage](https://www.statuspage.io/)
 
 ## Features
