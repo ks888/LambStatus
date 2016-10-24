@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { fetchIncidents, fetchIncidentUpdates } from '../modules/history'
+import Button from 'components/Button'
 import Title from 'components/Title'
 import ModestLink from 'components/ModestLink'
 import classnames from 'classnames'
@@ -31,17 +32,27 @@ class History extends React.Component {
 
   renderIncidentItem = (incident) => {
     const statusColor = getIncidentColor(incident.status)
+    let incidentUpdateItems
+    if (incident.hasOwnProperty('incidentUpdates')) {
+      incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+    }
+
     const updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     const incidentItem = (
-      <li key={incident.incidentID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
-        <div className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
-          style={{color: statusColor}}>
+      <li key={incident.incidentID} className={classnames('mdl-shadow--4dp', classes.incident_item)}>
+        <div className={classnames('mdl-list__item', 'mdl-list__item--two-line', classes.incident_header)}>
+          <span className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
+            style={{color: statusColor}}>
             {incident.status} - {incident.name}
+            <span className='mdl-list__item-sub-title'>
+              {updatedAt}
+            </span>
+          </span>
+          <span className='mdl-list__item-secondary-content'>
+            <Button plain name='Detail' />
+          </span>
         </div>
-        <span className='mdl-list__item-sub-title'>
-          {updatedAt}
-        </span>
+        {incidentUpdateItems}
       </li>
     )
     return incidentItem
