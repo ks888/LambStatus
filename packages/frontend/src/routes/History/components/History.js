@@ -14,6 +14,12 @@ class History extends React.Component {
     this.props.dispatch(fetchIncidents)
   }
 
+  handleShowDetail = (incident) => {
+    return () => {
+      this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
+    }
+  }
+
   renderIncidentUpdateItem = (incidentUpdate) => {
     const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
 
@@ -39,8 +45,9 @@ class History extends React.Component {
 
     const updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     const incidentItem = (
-      <li key={incident.incidentID} className={classnames('mdl-shadow--4dp', classes.incident_item)}>
-        <div className={classnames('mdl-list__item', 'mdl-list__item--two-line', classes.incident_header)}>
+      <li key={incident.incidentID}
+        className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.incident_item)}>
+        <div className={classnames(classes.incident_header)}>
           <span className={classnames('mdl-list__item-primary-content', classes.incident_item_primary)}
             style={{color: statusColor}}>
             {incident.status} - {incident.name}
@@ -49,7 +56,7 @@ class History extends React.Component {
             </span>
           </span>
           <span className='mdl-list__item-secondary-content'>
-            <Button plain name='Detail' />
+            <Button plain name='Detail' onClick={this.handleShowDetail(incident)} />
           </span>
         </div>
         {incidentUpdateItems}

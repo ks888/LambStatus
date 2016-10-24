@@ -18,7 +18,7 @@
 .incident_item {
   height: auto;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .incident_item_primary {
@@ -28,4 +28,21 @@
 
 .incident_header {
   height: auto !important;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.incident_update_item {
+  margin: 10px 0;
+}
+
+.incident_update_item_message {
+  color: rgba(0,0,0,.54);
+}
+
+.incident_update_item_updatedat {
+  margin: 7px 0;
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
 }
