@@ -919,6 +919,39 @@ Resources:
             Principal: "*"
             Resource: !Sub |-
               arn:aws:s3:::${StatusPageS3}/*
+  StatusPageDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              Fn::GetAtt:
+                - "StatusPageS3"
+                - "DomainName"
+            Id:
+              Ref: "StatusPageS3"
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        Enabled: "true"
+        Comment: "Distribution for status page of LambStatus"
+        DefaultRootObject: "index.html"
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          TargetOriginId:
+            Ref: "StatusPageS3"
+          ForwardedValues:
+            QueryString: "false"
+            Cookies:
+              Forward: "none"
+          ViewerProtocolPolicy: "allow-all"
+        PriceClass: "PriceClass_200"
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: "true"
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
   AdminPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
@@ -937,6 +970,39 @@ Resources:
             Principal: "*"
             Resource: !Sub |-
               arn:aws:s3:::${AdminPageS3}/*
+  AdminPageDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName:
+              Fn::GetAtt:
+                - "AdminPageS3"
+                - "DomainName"
+            Id:
+              Ref: "AdminPageS3"
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        Enabled: "true"
+        Comment: "Distribution for admin page of LambStatus"
+        DefaultRootObject: "index.html"
+        DefaultCacheBehavior:
+          DefaultTTL: 0
+          TargetOriginId:
+            Ref: "AdminPageS3"
+          ForwardedValues:
+            QueryString: "false"
+            Cookies:
+              Forward: "none"
+          ViewerProtocolPolicy: "allow-all"
+        PriceClass: "PriceClass_200"
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: "true"
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
   ServiceComponentTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
@@ -993,6 +1059,11 @@ Outputs:
   AdminPageS3BucketName:
     Value:
       Ref: "AdminPageS3"
+  AdminPageCloudFrontURL:
+    Value:
+      Fn::GetAtt:
+        - "AdminPageDistribution"
+        - "DomainName"
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -1002,6 +1073,11 @@ Outputs:
   StatusPageS3BucketName:
     Value:
       Ref: "StatusPageS3"
+  StatusPageCloudFrontURL:
+    Value:
+      Fn::GetAtt:
+        - "StatusPageDistribution"
+        - "DomainName"
   ServiceComponentTable:
     Value:
       Ref: "ServiceComponentTable"
