@@ -1,6 +1,7 @@
 // We only need to import the modules necessary for initial render
 import StatusPageLayout from '../layouts/StatusPageLayout/StatusPageLayout'
 import StatusesRoute from './Statuses'
+import HistoryRoute from './History'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -8,7 +9,10 @@ import StatusesRoute from './Statuses'
 export const createRoutes = (store) => ({
   path: '/',
   component: StatusPageLayout,
-  indexRoute: StatusesRoute(store)
+  indexRoute: StatusesRoute(store),
+  childRoutes: [
+    HistoryRoute(store)
+  ]
 })
 
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically
