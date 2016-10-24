@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
 import { fetchIncidents, fetchIncidentUpdates } from '../modules/history'
+import Title from 'components/Title'
+import ModestLink from 'components/ModestLink'
 import classnames from 'classnames'
 import classes from './History.scss'
 import moment from 'moment-timezone'
@@ -88,16 +89,14 @@ class History extends React.Component {
     const incidentsByMonth = this.renderIncidentsByMonth(incidents)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <h4>
-        <span className={classes.title_service}>Service</span>
-        <span className={classes.title_status}>Status</span>
-      </h4>
+      <Title service_name='Service' />
       <div className='mdl-cell mdl-cell--12-col'>
-        <h4>Incidents</h4>
+        <h4>Incident History</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
         {incidentsByMonth}
       </div>
+      <ModestLink link='/' text='Current Incidents' />
     </div>)
   }
 }

@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router'
 import { fetchIncidents, fetchComponents } from '../modules/statuses'
+import Title from 'components/Title'
+import ModestLink from 'components/ModestLink'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
 import moment from 'moment-timezone'
@@ -129,10 +130,7 @@ class Statuses extends React.Component {
     const dateItems = this.renderDateItems(incidents)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <h4>
-        <span className={classes.title_service}>Service</span>
-        <span className={classes.title_status}>Status</span>
-      </h4>
+      <Title service_name='Service' />
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
@@ -142,11 +140,7 @@ class Statuses extends React.Component {
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
         {dateItems}
       </div>
-      <div className={classes.history}>
-        <Link to='/history' className={classes.history_link}>
-          <i className={classnames('material-icons', classes.history_link_icon)}>chevron_right</i> Incidents History
-        </Link>
-      </div>
+      <ModestLink link='/history' text='Incident History' />
     </div>)
   }
 }
