@@ -123,7 +123,8 @@ export const deleteComponent = (id) => {
         componentID: id
       },
       TableName: ServiceComponentTable,
-      ReturnValues: 'NONE'
+      ReturnValues: 'NONE',
+      ConditionExpression: 'attribute_exists(componentID)'
     }
     awsDynamoDb.delete(params, (err, data) => {
       if (err) {
