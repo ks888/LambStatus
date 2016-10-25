@@ -1,4 +1,3 @@
-
 import awsIDs from '../../build/aws_resource_ids.json'
 
 export let ServiceComponentTable
@@ -18,3 +17,6 @@ awsIDs.forEach((awsID) => {
       break
   }
 })
+
+export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
