@@ -12,13 +12,7 @@ export async function handler (event, context, callback) {
       throw new ValidationError('invalid description parameter')
     }
 
-    const validStatus = componentStatuses.reduce((prev, status) => {
-      if (prev || event.status === status) {
-        return true
-      }
-      return false
-    }, false)
-    if (!validStatus) {
+    if (componentStatuses.indexOf(event.status) < 0) {
       throw new ValidationError('invalid status parameter')
     }
 
