@@ -5,3 +5,11 @@ export class ValidationError extends Error {
     this.message = message
   }
 }
+
+export class NotFoundError extends Error {
+  constructor (message) {
+    super()
+    this.name = 'NotFoundError'
+    this.message = message
+  }
+}

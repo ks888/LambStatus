@@ -2,6 +2,7 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable, IncidentTable, IncidentUpdateTable } from './const'
 import generateID from './generateID'
+import { NotFoundError } from './errors'
 
 const idLength = 12
 
@@ -204,6 +205,10 @@ export const getIncidentUpdates = (incidentID) => {
     awsDynamoDb.query(params, (err, queryResult) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
+      }
+
+      if (queryResult.Items.length === 0) {
+        return reject(new NotFoundError('no matched item'))
       }
 
       let incidentUpdates = []
