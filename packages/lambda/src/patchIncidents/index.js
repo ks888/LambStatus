@@ -53,6 +53,7 @@ export async function handler (event, context, callback) {
       }))
 
       await removeUpdatingFlag(incidentID)
+      delete incident.Attributes.updating
       break
     } catch (error) {
       console.log(error.message)
