@@ -2,12 +2,16 @@ import { deleteIncident, getIncidentUpdates, deleteIncidentUpdates } from '../ut
 
 export async function handler (event, context, callback) {
   try {
-    let incidentUpdates = await getIncidentUpdates(event.params.incidentid)
+    const incidentUpdates = await getIncidentUpdates(event.params.incidentid)
     await deleteIncident(event.params.incidentid)
     await deleteIncidentUpdates(event.params.incidentid, incidentUpdates)
   } catch (error) {
-    console.log('deleteIncidents error', error)
+    console.log(error.message)
     console.log(error.stack)
+    if (error.name === 'NotFoundError') {
+      callback('Error: an item not found')
+      return
+    }
     callback('Error: failed to delete an incident')
   }
 }
