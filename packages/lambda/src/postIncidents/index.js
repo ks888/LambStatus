@@ -50,7 +50,7 @@ export async function handler (event, context, callback) {
         return newComponent.Attributes
       }))
 
-      removeUpdatingFlag(incident.Attributes.incidentID)
+      await removeUpdatingFlag(incident.Attributes.incidentID)
       delete incident.Attributes.updating
       break
     } catch (error) {
