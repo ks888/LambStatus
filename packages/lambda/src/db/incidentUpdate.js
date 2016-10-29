@@ -26,18 +26,7 @@ export const getIncidentUpdates = (incidentID) => {
         return reject(new NotFoundError('no matched item'))
       }
 
-      let incidentUpdates = []
-      queryResult.Items.forEach((incidentUpdate) => {
-        incidentUpdates.push({
-          incidentID: incidentUpdate.incidentID,
-          incidentUpdateID: incidentUpdate.incidentUpdateID,
-          message: incidentUpdate.message,
-          incidentStatus: incidentUpdate.incidentStatus,
-          updatedAt: incidentUpdate.updatedAt
-        })
-      })
-
-      resolve(incidentUpdates)
+      resolve(queryResult.Items)
     })
   })
 }

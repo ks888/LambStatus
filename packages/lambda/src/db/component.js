@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 export const getComponents = () => {
   const { AWS_REGION: region } = process.env
@@ -44,6 +45,37 @@ export const getComponents = () => {
       })
 
       resolve(components)
+    })
+  })
+}
+
+export const getComponent = (componentID) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: ServiceComponentTable,
+      KeyConditionExpression: 'componentID = :hkey',
+      ExpressionAttributeValues: {
+        ':hkey': componentID
+      },
+      ProjectionExpression: 'componentID, description, #nm, #st',
+      ExpressionAttributeNames: {
+        '#nm': 'name',
+        '#st': 'status'
+      }
+    }
+    awsDynamoDb.query(params, (err, queryResult) => {
+      if (err) {
+        return reject(new VError(err, 'DynamoDB'))
+      }
+
+      if (queryResult.Items.length === 0) {
+        return reject(new NotFoundError('no matched item'))
+      }
+
+      resolve(queryResult.Items)
     })
   })
 }
@@ -117,8 +149,7 @@ export const deleteComponent = (id) => {
         componentID: id
       },
       TableName: ServiceComponentTable,
-      ReturnValues: 'NONE',
-      ConditionExpression: 'attribute_exists(componentID)'
+      ReturnValues: 'NONE'
     }
     awsDynamoDb.delete(params, (err, data) => {
       if (err) {

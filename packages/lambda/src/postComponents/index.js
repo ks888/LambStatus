@@ -8,10 +8,12 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    if (error.name === 'ParameterError') {
-      callback('Error: ' + error.message)
-    } else {
-      callback('Error: failed to create a new component')
+    switch (error.name) {
+      case 'ParameterError':
+        callback('Error: ' + error.message)
+        break
+      default:
+        callback('Error: failed to create a new component')
     }
   }
 }

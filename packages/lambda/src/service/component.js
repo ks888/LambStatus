@@ -1,4 +1,4 @@
-import { getComponents, updateComponent, deleteComponent } from 'db/component'
+import { getComponents, getComponent, updateComponent, deleteComponent } from 'db/component'
 import generateID from 'utils/generateID'
 import { componentStatuses } from 'utils/const'
 import { ParameterError } from 'utils/errors'
@@ -8,12 +8,7 @@ export default class ComponentService {
     return await getComponents()
   }
 
-  async createComponent (name, description, status) {
-    const componentID = generateID()
-    return await this.updateComponent(componentID, name, description, status)
-  }
-
-  async updateComponent (componentID, name, description, status) {
+  validate (componentID, name, description, status) {
     if (componentID === undefined || componentID === '') {
       throw new ParameterError('invalid componentID parameter')
     }
@@ -29,6 +24,19 @@ export default class ComponentService {
     if (componentStatuses.indexOf(status) < 0) {
       throw new ParameterError('invalid status parameter')
     }
+  }
+
+  async createComponent (name, description, status) {
+    const componentID = generateID()
+    this.validate(componentID, name, description, status)
+
+    const comp = await updateComponent(componentID, name, description, status)
+    return comp.Attributes
+  }
+
+  async updateComponent (componentID, name, description, status) {
+    this.validate(componentID, name, description, status)
+    await getComponent(componentID)  // existence check
 
     const comp = await updateComponent(componentID, name, description, status)
     return comp.Attributes
@@ -38,6 +46,8 @@ export default class ComponentService {
     if (componentID === undefined || componentID === '') {
       throw new ParameterError('invalid componentID parameter')
     }
+
+    await getComponent(componentID)  // existence check
     await deleteComponent(componentID)
   }
 }

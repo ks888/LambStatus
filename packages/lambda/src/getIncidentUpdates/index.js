@@ -8,10 +8,15 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    if (error.name === 'NotFoundError') {
-      callback('Error: an item not found')
-      return
+    switch (error.name) {
+      case 'ParameterError':
+        callback('Error: ' + error.message)
+        break
+      case 'NotFoundError':
+        callback('Error: an item not found')
+        break
+      default:
+        callback('Error: failed to get incident updates list')
     }
-    callback('Error: failed to get incident updates list')
   }
 }

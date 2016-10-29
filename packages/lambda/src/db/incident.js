@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
 import { IncidentTable } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 export const getIncidents = () => {
   const { AWS_REGION: region } = process.env
@@ -51,6 +52,37 @@ export const getIncidents = () => {
       })
 
       resolve(incidents)
+    })
+  })
+}
+
+export const getIncident = (incidentID) => {
+  const { AWS_REGION: region } = process.env
+  const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: IncidentTable,
+      KeyConditionExpression: 'incidentID = :hkey',
+      ExpressionAttributeValues: {
+        ':hkey': incidentID
+      },
+      ProjectionExpression: 'incidentID, #nm, #st, updatedAt',
+      ExpressionAttributeNames: {
+        '#nm': 'name',
+        '#st': 'status'
+      }
+    }
+    awsDynamoDb.query(params, (err, queryResult) => {
+      if (err) {
+        return reject(new VError(err, 'DynamoDB'))
+      }
+
+      if (queryResult.Items.length === 0) {
+        return reject(new NotFoundError('no matched item'))
+      }
+
+      resolve(queryResult.Items)
     })
   })
 }

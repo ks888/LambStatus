@@ -1,5 +1,5 @@
-import { getIncidents, updateIncident, deleteIncident } from 'db/incident'
-import { updateComponentStatus } from 'db/component'
+import { getIncidents, getIncident, updateIncident, deleteIncident } from 'db/incident'
+import { getComponent, updateComponentStatus } from 'db/component'
 import { getIncidentUpdates, updateIncidentUpdate, deleteIncidentUpdates } from 'db/incidentUpdate'
 import generateID from 'utils/generateID'
 import { componentStatuses, incidentStatuses } from 'utils/const'
@@ -18,12 +18,7 @@ export default class IncidentService {
     return await getIncidentUpdates(incidentID)
   }
 
-  async createIncident (name, incidentStatus, message, components) {
-    const incidentID = generateID()
-    return await this.updateIncident(incidentID, name, incidentStatus, message, components)
-  }
-
-  async updateIncident (incidentID, name, incidentStatus, message, components) {
+  validate (incidentID, name, incidentStatus, message, components) {
     if (incidentID === undefined || incidentID === '') {
       throw new ParameterError('invalid incidentID parameter')
     }
@@ -54,7 +49,9 @@ export default class IncidentService {
         throw new ParameterError('invalid component status parameter')
       }
     }
+  }
 
+  async updateIncidentWithRetry (incidentID, name, incidentStatus, message, components) {
     const updatedAt = new Date().toISOString()
     const numRetries = 5
     let i, updatedIncident, updatedComponents
@@ -88,10 +85,36 @@ export default class IncidentService {
     }
   }
 
+  async createIncident (name, incidentStatus, message, components) {
+    const incidentID = generateID()
+    this.validate(incidentID, name, incidentStatus, message, components)
+
+    // existence check
+    for (let i = 0; i < components.length; i++) {
+      await getComponent(components[i].componentID)
+    }
+
+    return await this.updateIncidentWithRetry(incidentID, name, incidentStatus, message, components)
+  }
+
+  async updateIncident (incidentID, name, incidentStatus, message, components) {
+    this.validate(incidentID, name, incidentStatus, message, components)
+
+    // existence check
+    await getIncident(incidentID)
+    for (let i = 0; i < components.length; i++) {
+      await getComponent(components[i].componentID)
+    }
+
+    return await this.updateIncidentWithRetry(incidentID, name, incidentStatus, message, components)
+  }
+
   async deleteIncident (incidentID) {
     if (incidentID === undefined || incidentID === '') {
       throw new ParameterError('invalid incidentID parameter')
     }
+
+    await getIncident(incidentID)  // existence check
 
     const incidentUpdates = await getIncidentUpdates(incidentID)
     await deleteIncident(incidentID)

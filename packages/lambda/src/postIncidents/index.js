@@ -3,16 +3,19 @@ import IncidentService from 'service/incident'
 export async function handler (event, context, callback) {
   const service = new IncidentService()
   try {
-    const incident = await service.createIncident(event.body.name, event.body.incidentStatus,
-      event.body.message, event.body.components)
+    console.log(event.body)
+    const incident = await service.createIncident(event.name, event.incidentStatus,
+      event.message, event.components)
     callback(null, JSON.stringify(incident))
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    if (error.name === 'ParameterError') {
-      callback('Error: ' + error.message)
-    } else {
-      callback('Error: ' + error.message)
+    switch (error.name) {
+      case 'ParameterError':
+        callback('Error: ' + error.message)
+        break
+      default:
+        callback('Error: failed to create a new incident')
     }
   }
 }
