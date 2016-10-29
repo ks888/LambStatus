@@ -11,6 +11,7 @@ export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export const ADD_INCIDENT = ACTION_NAME_PREFIX + 'ADD_INCIDENT'
 export const UPDATE_INCIDENT = ACTION_NAME_PREFIX + 'UPDATE_INCIDENT'
 export const REMOVE_INCIDENT = ACTION_NAME_PREFIX + 'REMOVE_INCIDENT'
+export const SHOW_MESSAGE = ACTION_NAME_PREFIX + 'SHOW_MESSAGE'
 
 // ------------------------------------
 // Actions
@@ -65,6 +66,13 @@ export function removeIncidentAction (incidentID) {
   }
 }
 
+export function showMessageAction (message) {
+  return {
+    type: SHOW_MESSAGE,
+    message: message
+  }
+}
+
 export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
   return fetch(__API_URL__ + 'incidents', {
@@ -73,12 +81,11 @@ export const fetchIncidents = (dispatch) => {
     .then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
     .catch(error => {
-      console.error(error)
-      try {
-        error.response.text()
-          .then(body => console.error(body))
-      } catch (error) {
-        console.error(error)
+      console.error(error.message)
+      console.error(error.stack)
+      if (error.name === 'HTTPError') {
+        dispatch(showMessageAction(error.message))
+        return
       }
     })
 }
@@ -92,12 +99,11 @@ export const fetchIncidentUpdates = (incidentID) => {
       .then(response => response.json())
       .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
       .catch(error => {
-        console.error(error)
-        try {
-          error.response.text()
-            .then(body => console.error(body))
-        } catch (error) {
-          console.error(error)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
         }
       })
   }
@@ -107,10 +113,16 @@ export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
   return fetch(__API_URL__ + 'components', {
     headers: { 'x-api-key': __API_KEY__ }
-  }).then(response => response.json())
+  }).then(checkStatus)
+    .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
-      console.error(error, error.stack)
+      console.error(error.message)
+      console.error(error.stack)
+      if (error.name === 'HTTPError') {
+        dispatch(showMessageAction(error.message))
+        return
+      }
     })
 }
 
@@ -138,7 +150,12 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
       .then(response => response.json())
       .then(json => dispatch(addIncidentAction(json)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -160,7 +177,12 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       .then(response => response.json())
       .then(json => dispatch(updateIncidentAction(json)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -174,7 +196,12 @@ export const deleteIncident = (incidentID) => {
     }).then(checkStatus)
       .then(response => dispatch(removeIncidentAction(incidentID)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -186,7 +213,8 @@ export const actions = {
   listComponentsAction,
   addIncidentAction,
   updateIncidentAction,
-  removeIncidentAction
+  removeIncidentAction,
+  showMessageAction
 }
 
 // ------------------------------------
@@ -195,7 +223,8 @@ export const actions = {
 
 function loadHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: true
+    isFetching: true,
+    message: ''
   })
 }
 
@@ -315,6 +344,13 @@ function removeIncidentHandler (state = { }, action) {
   })
 }
 
+function showMessageHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    isFetching: false,
+    message: action.message
+  })
+}
+
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
   [LIST_INCIDENTS]: listIncidentsHandler,
@@ -322,7 +358,8 @@ const ACTION_HANDLERS = {
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [UPDATE_INCIDENT]: updateIncidentHandler,
-  [REMOVE_INCIDENT]: removeIncidentHandler
+  [REMOVE_INCIDENT]: removeIncidentHandler,
+  [SHOW_MESSAGE]: showMessageHandler
 }
 
 // ------------------------------------

@@ -6,6 +6,7 @@ import { fetchIncidents, fetchIncidentUpdates, fetchComponents, postIncident,
 import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
+import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Incidents.scss'
 import moment from 'moment-timezone'
@@ -179,9 +180,10 @@ class Incidents extends React.Component {
   }
 
   render () {
-    const { incidents, isFetching } = this.props
+    const { incidents, isFetching, message } = this.props
     const incidentItems = incidents.map(this.renderListItem)
     const dialog = this.renderDialog()
+    let snackbar = <Snackbar message={message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Incident
@@ -198,6 +200,7 @@ class Incidents extends React.Component {
         {incidentItems}
       </ul>
       {dialog}
+      {snackbar}
     </div>)
   }
 }
@@ -221,14 +224,16 @@ Incidents.propTypes = {
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  message: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
     isFetching: state.incidents.isFetching,
     incidents: state.incidents.incidents,
-    serviceComponents: state.incidents.components
+    serviceComponents: state.incidents.components,
+    message: state.incidents.message
   }
 }
 
