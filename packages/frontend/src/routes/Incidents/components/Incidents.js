@@ -183,7 +183,7 @@ class Incidents extends React.Component {
     const { incidents, isFetching, message } = this.props
     const incidentItems = incidents.map(this.renderListItem)
     const dialog = this.renderDialog()
-    let snackbar = <Snackbar message={message} />
+    const snackbar = <Snackbar message={message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Incident

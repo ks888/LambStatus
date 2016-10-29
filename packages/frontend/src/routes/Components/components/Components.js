@@ -5,6 +5,7 @@ import { fetchComponents, postComponent, updateComponent, deleteComponent } from
 import ComponentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
+import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Components.scss'
 import { getComponentColor } from 'utils/status'
@@ -151,9 +152,10 @@ class Components extends React.Component {
   }
 
   render () {
-    const { serviceComponents, isFetching } = this.props
+    const { serviceComponents, isFetching, message } = this.props
     const componentItems = serviceComponents.map(this.renderListItem)
     const dialog = this.renderDialog()
+    const snackbar = <Snackbar message={message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Component
@@ -170,6 +172,7 @@ class Components extends React.Component {
         {componentItems}
       </ul>
       {dialog}
+      {snackbar}
     </div>)
   }
 }
@@ -182,13 +185,15 @@ Components.propTypes = {
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  message: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
     isFetching: state.components.isFetching,
-    serviceComponents: state.components.serviceComponents
+    serviceComponents: state.components.serviceComponents,
+    message: state.incidents.message
   }
 }
 

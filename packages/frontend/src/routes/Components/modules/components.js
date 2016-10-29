@@ -1,3 +1,5 @@
+import { checkStatus } from 'utils/fetch'
+
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -7,6 +9,7 @@ export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export const ADD_COMPONENT = ACTION_NAME_PREFIX + 'ADD_COMPONENT'
 export const EDIT_COMPONENT = ACTION_NAME_PREFIX + 'EDIT_COMPONENT'
 export const REMOVE_COMPONENT = ACTION_NAME_PREFIX + 'REMOVE_COMPONENT'
+export const SHOW_MESSAGE = ACTION_NAME_PREFIX + 'SHOW_MESSAGE'
 
 // ------------------------------------
 // Actions
@@ -46,14 +49,27 @@ export function removeComponentAction (componentID) {
   }
 }
 
+export function showMessageAction (message) {
+  return {
+    type: SHOW_MESSAGE,
+    message: message
+  }
+}
+
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
   return fetch(__API_URL__ + 'components', {
     headers: { 'x-api-key': __API_KEY__ }
-  }).then(response => response.json())
+  }).then(checkStatus)
+    .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
-      console.error(error, error.stack)
+      console.error(error.message)
+      console.error(error.stack)
+      if (error.name === 'HTTPError') {
+        dispatch(showMessageAction(error.message))
+        return
+      }
     })
 }
 
@@ -69,10 +85,16 @@ export const postComponent = (name, description, status) => {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
-    }).then(response => response.json())
+    }).then(checkStatus)
+      .then(response => response.json())
       .then(json => dispatch(addComponentAction(json)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -89,10 +111,16 @@ export const updateComponent = (componentID, name, description, status) => {
       headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
-    }).then(response => response.json())
+    }).then(checkStatus)
+      .then(response => response.json())
       .then(json => dispatch(editComponentAction(json)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -103,9 +131,15 @@ export const deleteComponent = (componentID) => {
     return fetch(__API_URL__ + 'components/' + componentID, {
       headers: { 'X-api-key': __API_KEY__ },
       method: 'DELETE'
-    }).then(response => dispatch(removeComponentAction(componentID)))
+    }).then(checkStatus)
+      .then(response => dispatch(removeComponentAction(componentID)))
       .catch(error => {
-        console.error(error, error.stack)
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
       })
   }
 }
@@ -115,7 +149,8 @@ export const actions = {
   listComponentsAction,
   addComponentAction,
   editComponentAction,
-  removeComponentAction
+  removeComponentAction,
+  showMessageAction
 }
 
 // ------------------------------------
@@ -124,7 +159,8 @@ export const actions = {
 
 function loadHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: true
+    isFetching: true,
+    message: ''
   })
 }
 
@@ -190,12 +226,20 @@ function removeComponentHandler (state = { }, action) {
   })
 }
 
+function showMessageHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    isFetching: false,
+    message: action.message
+  })
+}
+
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_COMPONENT]: addComponentHandler,
   [EDIT_COMPONENT]: editComponentHandler,
-  [REMOVE_COMPONENT]: removeComponentHandler
+  [REMOVE_COMPONENT]: removeComponentHandler,
+  [SHOW_MESSAGE]: showMessageHandler
 }
 
 // ------------------------------------
