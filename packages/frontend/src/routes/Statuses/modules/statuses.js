@@ -42,13 +42,8 @@ export const fetchIncidents = (dispatch) => {
         dispatch(fetchIncidentUpdates(incident))
       )
     }).catch(error => {
-      console.error(error)
-      try {
-        error.response.text()
-          .then(body => console.error(body))
-      } catch (error) {
-        console.error(error)
-      }
+      console.error(error.message)
+      console.error(error.stack)
     })
 }
 
@@ -62,13 +57,8 @@ export const fetchIncidentUpdates = (incident) => {
         incident.incidentUpdates = JSON.parse(json)
         dispatch(listIncidentAction(incident))
       }).catch(error => {
-        console.error(error)
-        try {
-          error.response.text()
-            .then(body => console.error(body))
-        } catch (error) {
-          console.error(error)
-        }
+        console.error(error.message)
+        console.error(error.stack)
       })
   }
 }
@@ -76,10 +66,12 @@ export const fetchIncidentUpdates = (incident) => {
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
   return fetch(__API_URL__ + 'components')
+    .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
-      console.error(error, error.stack)
+      console.error(error.message)
+      console.error(error.stack)
     })
 }
 

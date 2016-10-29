@@ -40,13 +40,8 @@ export const fetchIncidents = (dispatch) => {
     .then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
     .catch(error => {
-      console.error(error)
-      try {
-        error.response.text()
-          .then(body => console.error(body))
-      } catch (error) {
-        console.error(error)
-      }
+      console.error(error.message)
+      console.error(error.stack)
     })
 }
 
@@ -58,13 +53,8 @@ export const fetchIncidentUpdates = (incidentID) => {
       .then(response => response.json())
       .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
       .catch(error => {
-        console.error(error)
-        try {
-          error.response.text()
-            .then(body => console.error(body))
-        } catch (error) {
-          console.error(error)
-        }
+        console.error(error.message)
+        console.error(error.stack)
       })
   }
 }
