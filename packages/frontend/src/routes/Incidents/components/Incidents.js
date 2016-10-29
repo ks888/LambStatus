@@ -29,6 +29,16 @@ class Incidents extends React.Component {
     this.props.dispatch(fetchComponents)
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (this.state.incident !== null) {
+      nextProps.incidents.forEach((incident) => {
+        if (incident.incidentID === this.state.incident.incidentID) {
+          this.setState({ incident: incident })
+        }
+      })
+    }
+  }
+
   componentDidUpdate () {
     let dialog = ReactDOM.findDOMNode(this.refs.incidentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
     if (dialog) {
