@@ -1,8 +1,9 @@
-import { getIncidentUpdates } from '../utils/dynamoDB'
+import IncidentService from 'service/incident'
 
 export async function handler (event, context, callback) {
+  const service = new IncidentService()
   try {
-    let incidentUpdates = await getIncidentUpdates(event.params.incidentid)
+    let incidentUpdates = await service.getIncidentUpdates(event.params.incidentid)
     callback(null, JSON.stringify(incidentUpdates))
   } catch (error) {
     console.log(error.message)

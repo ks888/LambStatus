@@ -1,10 +1,9 @@
-import { deleteIncident, getIncidentUpdates, deleteIncidentUpdates } from '../utils/dynamoDB'
+import IncidentService from 'service/incident'
 
 export async function handler (event, context, callback) {
+  const service = new IncidentService()
   try {
-    const incidentUpdates = await getIncidentUpdates(event.params.incidentid)
-    await deleteIncident(event.params.incidentid)
-    await deleteIncidentUpdates(event.params.incidentid, incidentUpdates)
+    await service.deleteIncident(event.params.incidentid)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

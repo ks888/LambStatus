@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import path from 'path'
 import StringReplacePlugin from 'string-replace-webpack-plugin'
 import { DefinePlugin } from 'webpack'
 
@@ -86,5 +87,8 @@ export default {
   plugins: [
     new StringReplacePlugin(),
     new DefinePlugin(defines)
-  ]
+  ],
+  resolve: {
+    root: path.resolve(__dirname, '../src')
+  }
 }
