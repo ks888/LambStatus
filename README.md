@@ -2,7 +2,11 @@
 
 LambStatus is a low cost and easy to operate status page system, built on AWS Lambda.
 
+Here is the status page demo:
+
 ![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo1.png)
+
+And the admin page looks like this:
 
 ![AdminPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/AdminPageDemo1.png)
 
