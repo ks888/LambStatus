@@ -193,7 +193,7 @@ const mapStateToProps = (state) => {
   return {
     isFetching: state.components.isFetching,
     serviceComponents: state.components.serviceComponents,
-    message: state.incidents.message
+    message: state.components.message
   }
 }
 
