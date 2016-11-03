@@ -3,7 +3,6 @@ import path from 'path'
 import _debug from 'debug'
 import { argv } from 'yargs'
 import ip from 'ip'
-import output from './cloudformation-output.json'
 
 const localip = ip.address()
 const debug = _debug('app:config')
@@ -118,12 +117,6 @@ export default function () {
     client : base.bind(null, config.dir_client),
     dist   : base.bind(null, config.dir_dist)
   }
-
-  // ------------------------------------
-  // API
-  // ------------------------------------
-  config.globals['__API_URL__'] = JSON.stringify(output.InvocationURL)
-  config.globals['__API_KEY__'] = JSON.stringify(output.ApiKey)
 
   // ========================================================
   // Environment Configuration

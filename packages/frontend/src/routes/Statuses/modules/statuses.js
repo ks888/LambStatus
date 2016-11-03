@@ -34,7 +34,7 @@ export function listComponentsAction (json) {
 
 export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__API_URL__ + 'incidents')
+  return fetch(__LAMBSTATUS_API_URL__ + 'incidents')
     .then(checkStatus)
     .then(response => response.json())
     .then(json => {
@@ -50,7 +50,7 @@ export const fetchIncidents = (dispatch) => {
 export const fetchIncidentUpdates = (incident) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + incident.incidentID + '/incidentupdates')
+    return fetch(__LAMBSTATUS_API_URL__ + 'incidents/' + incident.incidentID + '/incidentupdates')
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
@@ -65,7 +65,7 @@ export const fetchIncidentUpdates = (incident) => {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__API_URL__ + 'components')
+  return fetch(__LAMBSTATUS_API_URL__ + 'components')
     .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))

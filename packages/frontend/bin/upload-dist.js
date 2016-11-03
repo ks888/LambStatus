@@ -3,7 +3,7 @@ import path from 'path'
 import dotenv from 'dotenv'
 import AWS from 'aws-sdk'
 import mime from 'mime'
-import output from '../config/cloudformation-output.json'
+import deployInfo from '../config/deploy-info.json'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
@@ -45,9 +45,9 @@ const uploadDirectory = (dir, bucketName) => {
 }
 
 const adminPageDir = path.normalize(`${__dirname}/../dist/admin-page`)
-const adminPageBucketName = output.AdminPageS3BucketName
+const adminPageBucketName = deployInfo.AdminPageS3BucketName
 uploadDirectory(adminPageDir, adminPageBucketName)
 
 const statusPageDir = path.normalize(`${__dirname}/../dist/status-page`)
-const statusPageBucketName = output.StatusPageS3BucketName
+const statusPageBucketName = deployInfo.StatusPageS3BucketName
 uploadDirectory(statusPageDir, statusPageBucketName)

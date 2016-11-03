@@ -75,8 +75,8 @@ export function showMessageAction (message) {
 
 export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__API_URL__ + 'incidents', {
-    headers: { 'x-api-key': __API_KEY__ }
+  return fetch(__LAMBSTATUS_API_URL__ + 'incidents', {
+    headers: { 'x-api-key': __LAMBSTATUS_API_KEY__ }
   }).then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
@@ -93,8 +93,8 @@ export const fetchIncidents = (dispatch) => {
 export const fetchIncidentUpdates = (incidentID) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + incidentID + '/incidentupdates', {
-      headers: { 'x-api-key': __API_KEY__ }
+    return fetch(__LAMBSTATUS_API_URL__ + 'incidents/' + incidentID + '/incidentupdates', {
+      headers: { 'x-api-key': __LAMBSTATUS_API_KEY__ }
     }).then(checkStatus)
       .then(response => response.json())
       .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
@@ -111,8 +111,8 @@ export const fetchIncidentUpdates = (incidentID) => {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__API_URL__ + 'components', {
-    headers: { 'x-api-key': __API_KEY__ }
+  return fetch(__LAMBSTATUS_API_URL__ + 'components', {
+    headers: { 'x-api-key': __LAMBSTATUS_API_KEY__ }
   }).then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
@@ -142,8 +142,8 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
       message: message,
       components: components
     }
-    return fetch(__API_URL__ + 'incidents', {
-      headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
+    return fetch(__LAMBSTATUS_API_URL__ + 'incidents', {
+      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__, 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -169,8 +169,8 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       message: message,
       components: components
     }
-    return fetch(__API_URL__ + 'incidents/' + incidentID, {
-      headers: { 'X-api-key': __API_KEY__, 'Content-Type': 'application/json' },
+    return fetch(__LAMBSTATUS_API_URL__ + 'incidents/' + incidentID, {
+      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -190,8 +190,8 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
 export const deleteIncident = (incidentID) => {
   return dispatch => {
     dispatch(loadAction())
-    return fetch(__API_URL__ + 'incidents/' + incidentID, {
-      headers: { 'X-api-key': __API_KEY__ },
+    return fetch(__LAMBSTATUS_API_URL__ + 'incidents/' + incidentID, {
+      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__ },
       method: 'DELETE'
     }).then(checkStatus)
       .then(response => dispatch(removeIncidentAction(incidentID)))

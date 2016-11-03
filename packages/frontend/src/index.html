@@ -13,5 +13,21 @@
 </head>
 <body style="height: 100%">
   <div id="root" style="height: 100%"></div>
+  <script>
+    try {
+      x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
+      x.open('GET', 'api-info.json', 1);
+      x.onreadystatechange = function () {
+        if (x.readyState === 4 && x.status === 200) {
+          j = JSON.parse(x.responseText);
+          __LAMBSTATUS_API_URL__ = j.InvocationURL;
+          __LAMBSTATUS_API_KEY__ = j.ApiKey;
+        }
+      };
+      x.send()
+    } catch (e) {
+      window.console && console.log(e);
+    }
+  </script>
 </body>
 </html>

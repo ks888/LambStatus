@@ -95,23 +95,36 @@ const getBucketInfo = async () => {
   }
 }
 
-Promise.all([getApiInfo(), getBucketInfo()]).then(([
-  { apiKey, invocationURL },
-  { adminPageS3BucketURL, adminPageS3BucketName, statusPageS3BucketURL, statusPageS3BucketName }
-]) => {
-  let cfOutput = {
+getApiInfo().then((
+  { apiKey, invocationURL }
+) => {
+  const apiInfo = {
     'ApiKey': apiKey,
-    'InvocationURL': invocationURL,
+    'InvocationURL': invocationURL
+  }
+  return JSON.stringify(apiInfo, null, 2)
+}).then((json) => {
+  const configDir = path.normalize(`${__dirname}/../config`)
+  fs.writeFileSync(`${configDir}/api-info.json`, json)
+  console.log('api-info.json created')
+}).catch((error) => {
+  console.error(error, error.stack)
+})
+
+getBucketInfo().then((
+  { adminPageS3BucketURL, adminPageS3BucketName, statusPageS3BucketURL, statusPageS3BucketName }
+) => {
+  const deployInfo = {
     'AdminPageS3BucketURL': adminPageS3BucketURL,
     'AdminPageS3BucketName': adminPageS3BucketName,
     'StatusPageS3BucketURL': statusPageS3BucketURL,
     'StatusPageS3BucketName': statusPageS3BucketName
   }
-  return JSON.stringify(cfOutput, null, 2)
+  return JSON.stringify(deployInfo, null, 2)
 }).then((json) => {
   const configDir = path.normalize(`${__dirname}/../config`)
-  fs.writeFileSync(`${configDir}/cloudformation-output.json`, json)
-  console.log('cloudformation-output.json created')
+  fs.writeFileSync(`${configDir}/deploy-info.json`, json)
+  console.log('deploy-info.json created')
 }).catch((error) => {
   console.error(error, error.stack)
 })
