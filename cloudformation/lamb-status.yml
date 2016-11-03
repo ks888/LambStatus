@@ -303,7 +303,6 @@ Resources:
       StageName: "prod"
     DependsOn:
       - "RestApi"
-      - "ApiKey"
       - "ComponentsApiResource"
       - "GetComponentsApiMethod"
       - "OptionsComponentsApiMethod"
@@ -334,13 +333,15 @@ Resources:
     Properties:
       Description: "API Key for Status Page"
       Enabled: "true"
-      Name: "StatusPage"
+      Name:
+        Ref: "AWS::StackName"
       StageKeys:
         - RestApiId:
             Ref: "RestApi"
           StageName: "prod"
     DependsOn:
       - "RestApi"
+      - "ApiDeployment"
   ComponentsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -1043,6 +1044,137 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
+  S3HandleFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: WriteS3
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                  - s3:PutObject
+                Resource: arn:aws:s3:::*
+        - PolicyName: WriteCloudWatchLogs
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: ApiGateway
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: arn:aws:apigateway:*:*:*
+  S3PutObjectFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile:
+          Fn::Join:
+            - "\n"
+            - - var response = require('cfn-response');
+              - exports.handler = function(event, context) {
+              - "    console.log('REQUEST RECEIVED:\\n', JSON.stringify(event));"
+              - "    response.send(event, context, response.SUCCESS);"
+              - "};"
+      Description: Put an object into S3.
+      FunctionName: !Sub |-
+        ${AWS::StackName}-S3PutObject
+      Handler: "index.handler"
+      Role:
+        Fn::GetAtt:
+          - S3HandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+    DependsOn:
+      - S3HandleFunctionRole
+  S3SyncObjectsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile:
+          Fn::Join:
+            - "\n"
+            - - var response = require('cfn-response');
+              - exports.handler = function(event, context) {
+              - "    console.log('REQUEST RECEIVED:\\n', JSON.stringify(event));"
+              - "    response.send(event, context, response.SUCCESS);"
+              - "};"
+      Description: Sync S3 objects.
+      FunctionName: !Sub |-
+        ${AWS::StackName}-S3SyncObjects
+      Handler: "index.handler"
+      Role:
+        Fn::GetAtt:
+          - S3HandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+    DependsOn:
+      - S3HandleFunctionRole
+  StatusPageApiInfo:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - S3PutObjectFunction
+          - Arn
+      Bucket:
+        Ref: StatusPageS3
+      Key: api-info.json
+      Body: !Sub |-
+        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}"}
+  AdminPageApiInfo:
+    Type: Custom::S3PutObject
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - S3PutObjectFunction
+          - Arn
+      Bucket:
+        Ref: AdminPageS3
+      Key: api-info.json
+      Body: !Sub |-
+        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}"}
+  StatusPageFrontend:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - S3SyncObjectsFunction
+          - Arn
+      SourceBucket: lambstatus
+      SourceKey: status-page/latest
+      DestinationBucket:
+        Ref: StatusPageS3
+  AdminPageFrontend:
+    Type: Custom::S3SyncObjects
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - S3SyncObjectsFunction
+          - Arn
+      SourceBucket: lambstatus
+      SourceKey: admin-page/latest
+      DestinationBucket:
+        Ref: AdminPageS3
 Outputs:
   LambdaRoleArn:
     Value:

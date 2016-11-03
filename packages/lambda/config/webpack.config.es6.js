@@ -46,6 +46,10 @@ export default {
     PostIncidents: [
       'babel-polyfill',
       './src/postIncidents/index.js'
+    ],
+    S3PutObject: [
+      'babel-polyfill',
+      './src/s3PutObjects/index.js'
     ]
   },
   output: {
