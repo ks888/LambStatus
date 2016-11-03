@@ -21,6 +21,7 @@
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
+    "release": "better-npm-run release",
     "codecov": "cat coverage/*/lcov.info | codecov"
   },
   "betterScripts": {
@@ -62,6 +63,13 @@
       "command": "babel-node ./node_modules/karma/bin/karma start build/karma.conf",
       "env": {
         "NODE_ENV": "test",
+        "DEBUG": "app:*"
+      }
+    },
+    "release": {
+      "command": "babel-node bin/release-dist",
+      "env": {
+        "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     }
