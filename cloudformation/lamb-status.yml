@@ -1184,6 +1184,12 @@ Outputs:
         - "LambdaRole"
         - "Arn"
     Description: "ARN for LambdaRole"
+  LambdaCustomResourceRoleArn:
+    Value:
+      Fn::GetAtt:
+        - S3HandleFunctionRole
+        - Arn
+    Description: ARN for LambdaCustomResourceRole
   AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:

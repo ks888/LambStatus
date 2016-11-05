@@ -20,7 +20,6 @@
     "build": "npm run lambda:build && npm run frontend:build",
     "deploy": "npm run lambda:deploy && npm run frontend:deploy",
     "release": "npm run lambda:release && npm run frontend:release",
-    "setup-apex": "cd packages/lambda && npm run setup-apex",
     "compile-lambda": "rimraf build/apex/functions && webpack --config deploy/apex/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
     "deploy-lambda": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex deploy",
     "deploy-backend": "npm run compile-lambda && npm run deploy-lambda",

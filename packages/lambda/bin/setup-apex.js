@@ -7,15 +7,16 @@ dotenv.config({path: `${__dirname}/../../../.env`})
 
 let awsResourceIDs = require('../build/aws_resource_ids.json')
 
-let lambdaRoleArn
-awsResourceIDs.some((resourceID) => {
+let lambdaRoleArn, lambdaCustomResourceRoleArn
+awsResourceIDs.forEach((resourceID) => {
   if (resourceID.OutputKey === 'LambdaRoleArn') {
     lambdaRoleArn = resourceID.OutputValue
-    return true
+  } else if (resourceID.OutputKey === 'LambdaCustomResourceRoleArn') {
+    lambdaCustomResourceRoleArn = resourceID.OutputValue
   }
 })
-if (lambdaRoleArn === undefined) {
-  console.log('Error: aws_resource_ids.json does not have LambdaRoleArn entry.')
+if (lambdaRoleArn === undefined || lambdaCustomResourceRoleArn === undefined) {
+  console.log('Error: invalid aws_resource_ids.json')
   process.exit(1)
 }
 
@@ -36,3 +37,18 @@ const buildDir = path.normalize(`${__dirname}/../build`)
 mkdirp.sync(buildDir)
 fs.writeFileSync(`${buildDir}/project.json`, json)
 console.log('project.json created')
+
+// some functions need a different role than default one.
+const customResourceFunctionTemplate = {
+  role: lambdaCustomResourceRoleArn
+}
+const functionJSON = JSON.stringify(customResourceFunctionTemplate, null, 2)
+const targetDirs = [
+  buildDir + '/functions/S3PutObject',
+  buildDir + '/functions/S3SyncObjects'
+]
+targetDirs.forEach((dir) => {
+  mkdirp.sync(dir)
+  fs.writeFileSync(`${dir}/function.json`, functionJSON)
+  console.log(`${dir}/function.json created`)
+})
