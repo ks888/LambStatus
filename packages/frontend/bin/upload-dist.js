@@ -6,10 +6,20 @@ import { uploadDirectory } from './utils/s3'
 dotenv.config({path: `${__dirname}/../../../.env`})
 const { REGION: region } = process.env
 
-const adminPageDir = path.normalize(`${__dirname}/../dist/admin-page`)
-const adminPageBucketName = deployInfo.AdminPageS3BucketName
-uploadDirectory(adminPageDir, region, adminPageBucketName)
+const upload = async () => {
+  const adminPageDir = path.normalize(`${__dirname}/../dist/admin-page`)
+  const adminPageBucketName = deployInfo.AdminPageS3BucketName
 
-const statusPageDir = path.normalize(`${__dirname}/../dist/status-page`)
-const statusPageBucketName = deployInfo.StatusPageS3BucketName
-uploadDirectory(statusPageDir, region, statusPageBucketName)
+  const statusPageDir = path.normalize(`${__dirname}/../dist/status-page`)
+  const statusPageBucketName = deployInfo.StatusPageS3BucketName
+
+  try {
+    await uploadDirectory(adminPageDir, region, adminPageBucketName)
+    await uploadDirectory(statusPageDir, region, statusPageBucketName)
+  } catch (error) {
+    console.log(error.message)
+    console.log(error.stack)
+  }
+}
+
+upload()
