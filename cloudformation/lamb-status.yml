@@ -59,7 +59,7 @@ Resources:
       Description: "Get a list of components"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetComponents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -86,7 +86,7 @@ Resources:
       Description: "Create a new component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostComponents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -113,7 +113,7 @@ Resources:
       Description: "Update an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchComponents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -140,7 +140,7 @@ Resources:
       Description: "Delete an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteComponents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -167,7 +167,7 @@ Resources:
       Description: "Get a list of incidents"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -194,7 +194,7 @@ Resources:
       Description: "Create a new incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostIncidents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -221,7 +221,7 @@ Resources:
       Description: "Update an existing incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchIncidents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -248,7 +248,7 @@ Resources:
       Description: "Delete an incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteIncidents
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -275,7 +275,7 @@ Resources:
       Description: "Get incident updates"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidentUpdates
-      Handler: "lib/index.handler"
+      Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -1096,7 +1096,7 @@ Resources:
       Description: Put an object into S3.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3PutObject
-      Handler: "index.handler"
+      Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
           - S3HandleFunctionRole
@@ -1120,7 +1120,7 @@ Resources:
       Description: Sync S3 objects.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3SyncObjects
-      Handler: "index.handler"
+      Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
           - S3HandleFunctionRole

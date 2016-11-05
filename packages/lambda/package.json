@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "eslint src",
     "build": "rimraf build && babel-node ./bin/fetch-aws-ids.js && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
-    "deploy": ". $(dirname $0)/../../.env && cd build && apex deploy"
+    "deploy": ". $(dirname $0)/../../.env && cd build && apex deploy",
+    "release": "babel-node ./bin/release.js"
   },
   "repository": {
     "type": "git",
