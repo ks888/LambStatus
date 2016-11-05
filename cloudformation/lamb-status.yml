@@ -6,6 +6,10 @@ Parameters:
     Description: "Origin URL for CORS"
     Type: "String"
     Default: ""
+  Version:
+    Description: LambStatus version
+    Type: "String"
+    Default: "0.0.1"
 Resources:
   LambdaRole:
     Type: "AWS::IAM::Role"
@@ -58,7 +62,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/GetComponents.zip
+          fn/${Version}/GetComponents.zip
       Description: "Get a list of components"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetComponents
@@ -88,7 +92,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/PostComponents.zip
+          fn/${Version}/PostComponents.zip
       Description: "Create a new component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostComponents
@@ -118,7 +122,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/PatchComponents.zip
+          fn/${Version}/PatchComponents.zip
       Description: "Update an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchComponents
@@ -148,7 +152,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/DeleteComponents.zip
+          fn/${Version}/DeleteComponents.zip
       Description: "Delete an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteComponents
@@ -178,7 +182,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/GetIncidents.zip
+          fn/${Version}/GetIncidents.zip
       Description: "Get a list of incidents"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidents
@@ -208,7 +212,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/PostIncidents.zip
+          fn/${Version}/PostIncidents.zip
       Description: "Create a new incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostIncidents
@@ -238,7 +242,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/PatchIncidents.zip
+          fn/${Version}/PatchIncidents.zip
       Description: "Update an existing incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchIncidents
@@ -268,7 +272,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/DeleteIncidents.zip
+          fn/${Version}/DeleteIncidents.zip
       Description: "Delete an incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteIncidents
@@ -298,7 +302,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/GetIncidentUpdates.zip
+          fn/${Version}/GetIncidentUpdates.zip
       Description: "Get incident updates"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidentUpdates
@@ -1115,7 +1119,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/S3PutObject.zip
+          fn/${Version}/S3PutObject.zip
       Description: Put an object into S3.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3PutObject
@@ -1135,7 +1139,7 @@ Resources:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub |-
-          fn/0.0.1/S3SyncObjects.zip
+          fn/${Version}/S3SyncObjects.zip
       Description: Sync S3 objects.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3SyncObjects
@@ -1180,7 +1184,8 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: status-page/0.0.1
+      SourceKey: !Sub |-
+        status-page/${Version}
       DestinationRegion: !Sub |-
         ${AWS::Region}
       DestinationBucket:
@@ -1193,7 +1198,10 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: admin-page/0.0.1
+      SourceKey: !Sub |-
+        admin-page/${Version}
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
       DestinationBucket:
         Ref: AdminPageS3
 Outputs:
