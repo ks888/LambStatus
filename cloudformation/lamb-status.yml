@@ -1161,7 +1161,9 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: status-page/latest
+      SourceKey: status-page/0.0.1
+      DestinationRegion: !Sub |-
+        ${AWS::Region}
       DestinationBucket:
         Ref: StatusPageS3
   AdminPageFrontend:
@@ -1172,7 +1174,7 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: admin-page/latest
+      SourceKey: admin-page/0.0.1
       DestinationBucket:
         Ref: AdminPageS3
 Outputs:

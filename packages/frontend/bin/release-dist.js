@@ -30,5 +30,3 @@ const statusPagePrefix = 'status-page/' + packageJSON.version + '/'
 
 release(adminPageDir, adminPagePrefix)
 release(statusPageDir, statusPagePrefix)
-
-// Note: if the deployed version is OK, set the version value inside `latest` object

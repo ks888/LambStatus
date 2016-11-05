@@ -50,6 +50,10 @@ export default {
     S3PutObject: [
       'babel-polyfill',
       './src/s3PutObjects/index.js'
+    ],
+    S3SyncObjects: [
+      'babel-polyfill',
+      './src/s3SyncObjects/index.js'
     ]
   },
   output: {

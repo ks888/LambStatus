@@ -3,7 +3,7 @@ import { putObject } from 'utils/s3'
 import AWS from 'aws-sdk'
 
 export async function handler (event, context, callback) {
-  if (event.RequestType !== 'Create') {
+  if (event.RequestType === 'Delete') {
     response.send(event, context, response.SUCCESS)
     return
   }
@@ -22,7 +22,6 @@ export async function handler (event, context, callback) {
       ApiKey: apiKey,
       InvocationURL: InvocationURL
     })
-    console.log(body)
 
     await putObject(Region, params.Bucket, params.Key, body)
   } catch (error) {
