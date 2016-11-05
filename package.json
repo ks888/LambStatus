@@ -11,6 +11,7 @@
     "cloudformation:create": "cloudformation/bin/stack.sh create",
     "cloudformation:update": "cloudformation/bin/stack.sh update",
     "cloudformation:delete": "cloudformation/bin/stack.sh delete",
+    "cloudformation:release": "cloudformation/bin/release.sh",
     "lambda:clean": "cd packages/lambda && npm run clean",
     "lambda:build": "cd packages/lambda && npm run build",
     "lambda:deploy": "cd packages/lambda && npm run deploy",
@@ -39,5 +40,8 @@
     "lerna": "^1.1.3",
     "rimraf": "^2.5.4",
     "dotenv": "^2.0.0"
+  },
+  "devDependencies": {
+    "jq": "^1.7.2"
   }
 }
