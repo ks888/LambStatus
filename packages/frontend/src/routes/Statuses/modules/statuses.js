@@ -5,6 +5,7 @@ import { checkStatus } from 'utils/fetch'
 // ------------------------------------
 const ACTION_NAME_PREFIX = 'STATUSES_'
 export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
+export const FINISH_LOAD = ACTION_NAME_PREFIX + 'FINISH_LOAD'
 export const LIST_INCIDENT = ACTION_NAME_PREFIX + 'LIST_INCIDENT'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 
@@ -15,6 +16,12 @@ export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export function loadAction () {
   return {
     type: LOAD
+  }
+}
+
+export function finishLoadAction () {
+  return {
+    type: FINISH_LOAD
   }
 }
 
@@ -38,9 +45,14 @@ export const fetchIncidents = (dispatch) => {
     .then(checkStatus)
     .then(response => response.json())
     .then(json => {
-      JSON.parse(json).forEach((incident) =>
-        dispatch(fetchIncidentUpdates(incident))
-      )
+      const obj = JSON.parse(json)
+      if (obj.length !== 0) {
+        obj.forEach((incident) =>
+          dispatch(fetchIncidentUpdates(incident))
+        )
+      } else {
+        dispatch(finishLoadAction())
+      }
     }).catch(error => {
       console.error(error.message)
       console.error(error.stack)
@@ -91,6 +103,13 @@ function loadHandler (state = { }, action) {
   })
 }
 
+// finish loading with no data
+function finishLoadHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    isFetching: false
+  })
+}
+
 function listIncidentHandler (state = { }, action) {
   action.incident.incidentUpdates.sort((a, b) => {
     return a.updatedAt < b.updatedAt
@@ -118,6 +137,7 @@ function listComponentsHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LOAD]: loadHandler,
+  [FINISH_LOAD]: finishLoadHandler,
   [LIST_INCIDENT]: listIncidentHandler,
   [LIST_COMPONENTS]: listComponentsHandler
 }
