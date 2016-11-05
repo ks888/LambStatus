@@ -2,7 +2,7 @@
 
 set -e
 
-. $(dirname $0)/../../utils/config.sh
+. $(dirname $0)/../../.env
 
 release_cf_template() {
   TEMPLATE_PATH=$1
@@ -11,5 +11,6 @@ release_cf_template() {
   aws s3 cp "${TEMPLATE_PATH}" "s3://lambstatus/cf-template/${VERSION}/lamb-status.yml"
 }
 
-VERSION=$(cat package.json | jq .version | sed s/\"//g)
+PACKAGE_JSON="$(dirname $0)/../../package.json"
+VERSION=$(cat "${PACKAGE_JSON}" | sed -n 's/.*\"version\": \"\(.*\)\".*/\1/p')
 release_cf_template "./cloudformation/lamb-status.yml" "${VERSION}"

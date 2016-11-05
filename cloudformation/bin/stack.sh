@@ -2,7 +2,7 @@
 
 set -e
 
-. $(dirname $0)/../../utils/config.sh
+. $(dirname $0)/../../.env
 
 create_stack() {
   put_stack create-stack
@@ -14,29 +14,23 @@ update_stack() {
 
 put_stack() {
   ACTION=$1
-  REGION="$(config "AWS_REGION")"
-  STACK_NAME="$(config "CLOUDFORMATION")"
-  ORIGIN="$(config "STATUS_PAGE_URL")"
-  if [ "${ORIGIN}" == "" ]; then
-    ORIGIN='*'
-  fi
   TEMPLATE_FILE="$(dirname $0)/../lamb-status.yml"
+  PACKAGE_JSON="$(dirname $0)/../../package.json"
+  VERSION=$(cat "${PACKAGE_JSON}" | sed -n 's/.*\"version\": \"\(.*\)\".*/\1/p')
 
   aws cloudformation ${ACTION} \
-      --region ${REGION} \
+      --region ${AWS_REGION} \
       --stack-name ${STACK_NAME} \
       --template-body file://${TEMPLATE_FILE} \
       --capabilities CAPABILITY_IAM \
       --parameters \
-        ParameterKey=Origin,ParameterValue=${ORIGIN},UsePreviousValue=false
+        ParameterKey=ServiceName,ParameterValue=${SERVICE_NAME},UsePreviousValue=false \
+        ParameterKey=Version,ParameterValue=${VERSION},UsePreviousValue=false
 }
 
 delete_stack() {
-  REGION=$(config "AWS_REGION")
-  STACK_NAME=$(config "CLOUDFORMATION")
-
   aws cloudformation delete-stack \
-      --region $REGION \
+      --region $AWS_REGION \
       --stack-name $STACK_NAME
 }
 

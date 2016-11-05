@@ -2,12 +2,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "AWS resources for serverless status pages"
 Parameters:
-  Origin:
-    Description: "Origin URL for CORS"
+  ServiceName:
+    Description: Your service name
     Type: "String"
     Default: ""
   Version:
-    Description: LambStatus version
+    Description: The version of LambStatus
     Type: "String"
     Default: "0.0.1"
 Resources:
@@ -422,12 +422,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -458,12 +456,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -491,8 +487,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -533,12 +528,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -580,12 +573,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "204"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "204"
@@ -613,8 +604,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -653,12 +643,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -689,12 +677,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -722,8 +708,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -772,12 +757,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -819,12 +802,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "204"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "204"
@@ -852,8 +833,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -901,12 +881,10 @@ Resources:
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           - StatusCode: "400"
             ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
             SelectionPattern: ".*Error.*"
       MethodResponses:
         - StatusCode: "200"
@@ -934,8 +912,7 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: !Sub |-
-                '${Origin}'
+              method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"
           ResponseParameters:
@@ -965,14 +942,12 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              Fn::GetAtt:
-                - "StatusPageS3"
-                - "DomainName"
+          - DomainName: !Sub |-
+              ${StatusPageS3}.s3-website-${AWS::Region}.amazonaws.com
             Id:
               Ref: "StatusPageS3"
-            S3OriginConfig:
-              OriginAccessIdentity: ""
+            CustomOriginConfig:
+              OriginProtocolPolicy: "http-only"
         Enabled: "true"
         Comment: "Distribution for status page of LambStatus"
         DefaultRootObject: "index.html"
@@ -1016,14 +991,12 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              Fn::GetAtt:
-                - "AdminPageS3"
-                - "DomainName"
+          - DomainName: !Sub |-
+              ${AdminPageS3}.s3-website-${AWS::Region}.amazonaws.com
             Id:
               Ref: "AdminPageS3"
-            S3OriginConfig:
-              OriginAccessIdentity: ""
+            CustomOriginConfig:
+              OriginProtocolPolicy: "http-only"
         Enabled: "true"
         Comment: "Distribution for admin page of LambStatus"
         DefaultRootObject: "index.html"
@@ -1183,7 +1156,7 @@ Resources:
         Ref: StatusPageS3
       Key: api-info.json
       Body: !Sub |-
-        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}"}
+        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1195,7 +1168,7 @@ Resources:
         Ref: AdminPageS3
       Key: api-info.json
       Body: !Sub |-
-        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}"}
+        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
