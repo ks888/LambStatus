@@ -24,9 +24,11 @@ export async function handler (event, context, callback) {
     })
 
     await putObject(Region, params.Bucket, params.Key, body)
+    response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
+    response.send(event, context, response.FAILED, error.message)
   }
 }
 

@@ -25,8 +25,10 @@ export async function handler (event, context, callback) {
       const destKey = obj.Key.replace(SourceKey + '/', '')
       await copyObject(region, SourceBucket, obj.Key, DestinationBucket, destKey)
     }))
+    response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
+    response.send(event, context, response.FAILED, error.message)
   }
 }
