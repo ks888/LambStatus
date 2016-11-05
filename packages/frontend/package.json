@@ -76,7 +76,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davezuko/react-redux-starter-kit.git"
+    "url": "https://github.com/ks888/LambStatus.git"
   },
   "author": "David Zukowski <david@zuko.me> (http://zuko.me)",
   "license": "MIT",
