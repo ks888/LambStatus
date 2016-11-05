@@ -55,7 +55,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/GetComponents.zip
       Description: "Get a list of components"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetComponents
@@ -82,7 +85,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/PostComponents.zip
       Description: "Create a new component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostComponents
@@ -109,7 +115,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/PatchComponents.zip
       Description: "Update an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchComponents
@@ -136,7 +145,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/DeleteComponents.zip
       Description: "Delete an existing component"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteComponents
@@ -163,7 +175,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/GetIncidents.zip
       Description: "Get a list of incidents"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidents
@@ -190,7 +205,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/PostIncidents.zip
       Description: "Create a new incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PostIncidents
@@ -217,7 +235,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/PatchIncidents.zip
       Description: "Update an existing incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchIncidents
@@ -244,7 +265,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/DeleteIncidents.zip
       Description: "Delete an incident"
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteIncidents
@@ -271,7 +295,10 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/GetIncidentUpdates.zip
       Description: "Get incident updates"
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidentUpdates
@@ -1085,14 +1112,10 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile:
-          Fn::Join:
-            - "\n"
-            - - var response = require('cfn-response');
-              - exports.handler = function(event, context) {
-              - "    console.log('REQUEST RECEIVED:\\n', JSON.stringify(event));"
-              - "    response.send(event, context, response.SUCCESS);"
-              - "};"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/S3PutObject.zip
       Description: Put an object into S3.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3PutObject
@@ -1109,14 +1132,10 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        ZipFile:
-          Fn::Join:
-            - "\n"
-            - - var response = require('cfn-response');
-              - exports.handler = function(event, context) {
-              - "    console.log('REQUEST RECEIVED:\\n', JSON.stringify(event));"
-              - "    response.send(event, context, response.SUCCESS);"
-              - "};"
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/0.0.1/S3SyncObjects.zip
       Description: Sync S3 objects.
       FunctionName: !Sub |-
         ${AWS::StackName}-S3SyncObjects
