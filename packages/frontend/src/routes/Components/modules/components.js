@@ -1,4 +1,5 @@
 import { checkStatus } from 'utils/fetch'
+import { apiKey, apiURL } from 'utils/settings'
 
 // ------------------------------------
 // Constants
@@ -58,8 +59,8 @@ export function showMessageAction (message) {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__LAMBSTATUS_API_URL__ + 'components', {
-    headers: { 'x-api-key': __LAMBSTATUS_API_KEY__ }
+  return fetch(apiURL + 'components', {
+    headers: { 'x-api-key': apiKey }
   }).then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
@@ -81,8 +82,8 @@ export const postComponent = (name, description, status) => {
       description: description,
       status: status
     }
-    return fetch(__LAMBSTATUS_API_URL__ + 'components', {
-      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__, 'Content-Type': 'application/json' },
+    return fetch(apiURL + 'components', {
+      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -107,8 +108,8 @@ export const updateComponent = (componentID, name, description, status) => {
       description: description,
       status: status
     }
-    return fetch(__LAMBSTATUS_API_URL__ + 'components/' + componentID, {
-      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__, 'Content-Type': 'application/json' },
+    return fetch(apiURL + 'components/' + componentID, {
+      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -128,8 +129,8 @@ export const updateComponent = (componentID, name, description, status) => {
 export const deleteComponent = (componentID) => {
   return dispatch => {
     dispatch(loadAction())
-    return fetch(__LAMBSTATUS_API_URL__ + 'components/' + componentID, {
-      headers: { 'X-api-key': __LAMBSTATUS_API_KEY__ },
+    return fetch(apiURL + 'components/' + componentID, {
+      headers: { 'X-api-key': apiKey },
       method: 'DELETE'
     }).then(checkStatus)
       .then(response => dispatch(removeComponentAction(componentID)))

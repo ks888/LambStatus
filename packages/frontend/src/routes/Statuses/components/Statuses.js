@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { fetchIncidents, fetchComponents } from '../modules/statuses'
+import { serviceName } from 'utils/settings'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
 import ModestLink from 'components/ModestLink'
@@ -99,7 +100,7 @@ class Statuses extends React.Component {
     const dateItems = this.renderDateItems(incidents)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
-      <Title service_name='Service' />
+      <Title service_name={serviceName} />
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>

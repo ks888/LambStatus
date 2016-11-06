@@ -1154,7 +1154,7 @@ Resources:
           - Arn
       Bucket:
         Ref: StatusPageS3
-      Key: api-info.json
+      Key: settings.json
       Body: !Sub |-
         {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
   AdminPageApiInfo:
@@ -1166,7 +1166,7 @@ Resources:
           - Arn
       Bucket:
         Ref: AdminPageS3
-      Key: api-info.json
+      Key: settings.json
       Body: !Sub |-
         {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
   StatusPageFrontend:

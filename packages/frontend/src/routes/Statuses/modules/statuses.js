@@ -1,4 +1,5 @@
 import { checkStatus } from 'utils/fetch'
+import { apiURL } from 'utils/settings'
 
 // ------------------------------------
 // Constants
@@ -41,7 +42,7 @@ export function listComponentsAction (json) {
 
 export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__LAMBSTATUS_API_URL__ + 'incidents')
+  return fetch(apiURL + 'incidents')
     .then(checkStatus)
     .then(response => response.json())
     .then(json => {
@@ -62,7 +63,7 @@ export const fetchIncidents = (dispatch) => {
 export const fetchIncidentUpdates = (incident) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(__LAMBSTATUS_API_URL__ + 'incidents/' + incident.incidentID + '/incidentupdates')
+    return fetch(apiURL + 'incidents/' + incident.incidentID + '/incidentupdates')
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
@@ -77,7 +78,7 @@ export const fetchIncidentUpdates = (incident) => {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(__LAMBSTATUS_API_URL__ + 'components')
+  return fetch(apiURL + 'components')
     .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))

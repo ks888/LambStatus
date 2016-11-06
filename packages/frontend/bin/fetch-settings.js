@@ -41,6 +41,20 @@ const findOutputKey = (outputs, outputKey) => {
   return outputValue
 }
 
+const findParameterKey = (params, paramKey) => {
+  let paramValue
+  params.forEach((param) => {
+    if (param.ParamKey === paramKey) {
+      paramValue = param.ParamValue
+      return
+    }
+  })
+  if (paramValue === undefined) {
+    throw new Error(paramKey + ' not found')
+  }
+  return paramValue
+}
+
 function getApiKey (apiGateway, apiKeyID) {
   return new Promise((resolve, reject) => {
     const params = {
@@ -59,18 +73,19 @@ function getApiKey (apiGateway, apiKeyID) {
   })
 }
 
-const getApiInfo = async () => {
+const getSettings = async () => {
   try {
-    const { CLOUDFORMATION: stackName, AWS_REGION: region } = process.env
+    const { STACK_NAME: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
     const stack = await describeStack({ cloudFormation, stackName })
 
     const apiKeyID = findOutputKey(stack.Outputs, 'ApiKeyID')
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
+    const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
 
     const apiGateway = new AWS.APIGateway({ region })
     const apiKey = await getApiKey(apiGateway, apiKeyID)
-    return { apiKey, invocationURL }
+    return { apiKey, invocationURL, serviceName }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -95,18 +110,19 @@ const getBucketInfo = async () => {
   }
 }
 
-getApiInfo().then((
-  { apiKey, invocationURL }
+getSettings().then((
+  { apiKey, invocationURL, serviceName }
 ) => {
   const apiInfo = {
-    'ApiKey': apiKey,
-    'InvocationURL': invocationURL
+    ApiKey: apiKey,
+    InvocationURL: invocationURL,
+    ServiceName: serviceName
   }
   return JSON.stringify(apiInfo, null, 2)
 }).then((json) => {
   const configDir = path.normalize(`${__dirname}/../config`)
-  fs.writeFileSync(`${configDir}/api-info.json`, json)
-  console.log('api-info.json created')
+  fs.writeFileSync(`${configDir}/settings.json`, json)
+  console.log('settings.json created')
 }).catch((error) => {
   console.error(error, error.stack)
 })

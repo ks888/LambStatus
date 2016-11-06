@@ -63,7 +63,7 @@ export default function (config) {
     new CopyWebpackPlugin([
       { from: 'node_modules/dialog-polyfill/dialog-polyfill.css' },
       { from: 'node_modules/dialog-polyfill/dialog-polyfill.js' },
-      { from: 'config/api-info.json' }
+      { from: 'config/settings.json' }
     ])
   ]
 

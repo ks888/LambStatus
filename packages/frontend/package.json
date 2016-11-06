@@ -26,14 +26,14 @@
   },
   "betterScripts": {
     "build": {
-      "command": "npm run clean && babel-node bin/fetch-aws-ids.js && babel-node bin/compile",
+      "command": "npm run clean && babel-node bin/fetch-settings.js && babel-node bin/compile",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
     "build:dev": {
-      "command": "babel-node bin/fetch-aws-ids.js && babel-node bin/compile",
+      "command": "babel-node bin/fetch-settings.js && babel-node bin/compile",
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "app:*"
