@@ -4,7 +4,7 @@ import { ServiceComponentTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
 
 export const getComponents = () => {
-  const { AWS_REGION: region } = process.env
+  const region = process.env.AWS_DEFAULT_REGION
   const awsDynamoDb = new AWS.DynamoDB({ region })
 
   return new Promise((resolve, reject) => {
