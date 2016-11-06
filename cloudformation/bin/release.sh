@@ -2,8 +2,6 @@
 
 set -e
 
-. $(dirname $0)/../../.env
-
 release_cf_template() {
   TEMPLATE_PATH=$1
   VERSION=$2
