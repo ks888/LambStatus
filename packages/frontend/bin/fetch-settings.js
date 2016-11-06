@@ -5,7 +5,7 @@ import AWS from 'aws-sdk'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
-function describeStack ({ cloudFormation, stackName }) {
+function describeStack (cloudFormation, stackName) {
   return new Promise((resolve, reject) => {
     const params = {
       StackName: stackName
@@ -44,8 +44,8 @@ const findOutputKey = (outputs, outputKey) => {
 const findParameterKey = (params, paramKey) => {
   let paramValue
   params.forEach((param) => {
-    if (param.ParamKey === paramKey) {
-      paramValue = param.ParamValue
+    if (param.ParameterKey === paramKey) {
+      paramValue = param.ParameterValue
       return
     }
   })
@@ -77,7 +77,7 @@ const getSettings = async () => {
   try {
     const { STACK_NAME: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
-    const stack = await describeStack({ cloudFormation, stackName })
+    const stack = await describeStack(cloudFormation, stackName)
 
     const apiKeyID = findOutputKey(stack.Outputs, 'ApiKeyID')
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
@@ -94,9 +94,9 @@ const getSettings = async () => {
 
 const getBucketInfo = async () => {
   try {
-    const { CLOUDFORMATION: stackName, AWS_REGION: region } = process.env
+    const { STACK_NAME: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
-    const stack = await describeStack({ cloudFormation, stackName })
+    const stack = await describeStack(cloudFormation, stackName)
 
     const adminPageS3BucketURL = findOutputKey(stack.Outputs, 'AdminPageS3BucketURL')
     const adminPageS3BucketName = findOutputKey(stack.Outputs, 'AdminPageS3BucketName')
@@ -143,4 +143,5 @@ getBucketInfo().then((
   console.log('deploy-info.json created')
 }).catch((error) => {
   console.error(error, error.stack)
+  process.exit(1)
 })

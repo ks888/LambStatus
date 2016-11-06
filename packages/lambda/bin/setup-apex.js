@@ -20,7 +20,7 @@ if (lambdaRoleArn === undefined || lambdaCustomResourceRoleArn === undefined) {
   process.exit(1)
 }
 
-const { CLOUDFORMATION: stackName } = process.env
+const { STACK_NAME: stackName } = process.env
 const apexProjectTemplate = {
   name: stackName,
   description: 'Lambda Functions for LambStatus',

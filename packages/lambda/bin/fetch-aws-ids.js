@@ -6,7 +6,7 @@ import AWS from 'aws-sdk'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
-function describeStack ({ cloudFormation, stackName }) {
+function describeStack (cloudFormation, stackName) {
   return new Promise((resolve, reject) => {
     const params = {
       StackName: stackName
@@ -30,9 +30,9 @@ function describeStack ({ cloudFormation, stackName }) {
 
 async function getStackOutput () {
   try {
-    const { CLOUDFORMATION: stackName, AWS_REGION: region } = process.env
+    const { STACK_NAME: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
-    const stack = await describeStack({ cloudFormation, stackName })
+    const stack = await describeStack(cloudFormation, stackName)
     return stack.Outputs
   } catch (error) {
     console.error(error, error.stack)
@@ -49,4 +49,5 @@ getStackOutput().then((output) => {
   console.log('aws_resource_ids.json created')
 }).catch((error) => {
   console.error(error, error.stack)
+  process.exit(1)
 })
