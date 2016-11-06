@@ -34,6 +34,26 @@ Launch your cloudformation stack by clicking the button below:
 
 [![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.0.1/lamb-status.yml)
 
-The stack will be created in 20-25 minutes. It is mainly due to the creation of CloudFront Distribution.
+When a window to create a new CloudFormation stack is opened (like below), click Next.
+
+![CloudFormationWizard1](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard1.png)
+
+Then, enter the name of your service and click Next.
+
+![CloudFormationWizard2](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard2.png)
+
+Click Next again, and check the acknowledgment checkbox and click Create.
+
+![CloudFormationWizard3](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard3.png)
+
+![CloudFormationWizard4](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard4.png)
+
+The stack will be created in 20-25 minutes (it is mainly due to the creation of CloudFront Distribution).
 
 ## Usage
+
+After the stack creation, see the `Outputs` of the stack and access the URL to which `StatusPageCloudFrontURL` specifies. You will get your status page.
+
+![CloudFormationWizard5](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard5.png)
+
+As well, access the URL to which `AdminPageCloudFrontURL` specifies, then your admin page is there.
