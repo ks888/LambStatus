@@ -5,7 +5,7 @@ Parameters:
   ServiceName:
     Description: Your service name
     Type: "String"
-    Default: ""
+    Default: "MyService"
   Version:
     Description: The version of LambStatus
     Type: "String"
