@@ -14,13 +14,15 @@ export async function handler (event, context, callback) {
   const {
     ApiKeyID,
     InvocationURL,
-    Region
+    Region,
+    ServiceName
   } = JSON.parse(params.Body)
   try {
     const apiKey = await getApiKey(Region, ApiKeyID)
     const body = JSON.stringify({
       ApiKey: apiKey,
-      InvocationURL: InvocationURL
+      InvocationURL,
+      ServiceName
     })
 
     await putObject(Region, params.Bucket, params.Key, body)
