@@ -1,5 +1,5 @@
 import { checkStatus } from 'utils/fetch'
-import { apiKey, apiURL } from 'utils/settings'
+import { apiURL } from 'utils/settings'
 
 // ------------------------------------
 // Constants
@@ -76,9 +76,8 @@ export function showMessageAction (message) {
 
 export const fetchIncidents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(apiURL + 'incidents', {
-    headers: { 'x-api-key': apiKey }
-  }).then(checkStatus)
+  return fetch(apiURL + 'incidents')
+    .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listIncidentsAction(json)))
     .catch(error => {
@@ -94,9 +93,8 @@ export const fetchIncidents = (dispatch) => {
 export const fetchIncidentUpdates = (incidentID) => {
   return (dispatch) => {
     dispatch(loadAction())
-    return fetch(apiURL + 'incidents/' + incidentID + '/incidentupdates', {
-      headers: { 'x-api-key': apiKey }
-    }).then(checkStatus)
+    return fetch(apiURL + 'incidents/' + incidentID + '/incidentupdates')
+      .then(checkStatus)
       .then(response => response.json())
       .then(json => dispatch(listIncidentUpdatesAction(json, incidentID)))
       .catch(error => {
@@ -112,9 +110,8 @@ export const fetchIncidentUpdates = (incidentID) => {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(apiURL + 'components', {
-    headers: { 'x-api-key': apiKey }
-  }).then(checkStatus)
+  return fetch(apiURL + 'components')
+    .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
@@ -144,7 +141,7 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
       components: components
     }
     return fetch(apiURL + 'incidents', {
-      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -171,7 +168,7 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       components: components
     }
     return fetch(apiURL + 'incidents/' + incidentID, {
-      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -192,7 +189,6 @@ export const deleteIncident = (incidentID) => {
   return dispatch => {
     dispatch(loadAction())
     return fetch(apiURL + 'incidents/' + incidentID, {
-      headers: { 'X-api-key': apiKey },
       method: 'DELETE'
     }).then(checkStatus)
       .then(response => dispatch(removeIncidentAction(incidentID)))

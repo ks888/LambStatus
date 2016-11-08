@@ -11,11 +11,14 @@ const stopIfObjectsExist = true
 const release = async (dir, prefix) => {
   try {
     const objectKeys = await listObjects(region, releaseBucketName, prefix)
-    if (stopIfObjectsExist && objectKeys.length !== 0) {
-      throw new Error('objects already exist under ' + prefix)
+    if (objectKeys.length !== 0) {
+      if (stopIfObjectsExist) {
+        throw new Error('objects already exist under ' + prefix)
+      }
+      await deleteObjects(region, releaseBucketName, objectKeys)
     }
-    await deleteObjects(region, releaseBucketName, objectKeys)
     await uploadDirectory(dir, region, releaseBucketName, prefix)
+    await deleteObjects(region, releaseBucketName, [{ Key: prefix + 'settings.json' }])
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

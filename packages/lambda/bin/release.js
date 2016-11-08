@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 import { putObject, listObjects } from '../src/utils/s3'
 import packageJSON from '../package.json'
 
-const stopIfObjectsExist = false
+const stopIfObjectsExist = true
 
 const regions = [
   'us-east-1',

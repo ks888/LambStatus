@@ -368,20 +368,6 @@ Resources:
       Description: "API for page status"
       Name:
         Ref: "AWS::StackName"
-  ApiKey:
-    Type: "AWS::ApiGateway::ApiKey"
-    Properties:
-      Description: "API Key for Status Page"
-      Enabled: "true"
-      Name:
-        Ref: "AWS::StackName"
-      StageKeys:
-        - RestApiId:
-            Ref: "RestApi"
-          StageName: "prod"
-    DependsOn:
-      - "RestApi"
-      - "ApiDeployment"
   ComponentsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -443,7 +429,7 @@ Resources:
         Ref: "ComponentsApiResource"
       HttpMethod: "POST"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -503,7 +489,7 @@ Resources:
         Ref: "ComponentApiResource"
       HttpMethod: "PATCH"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -549,7 +535,7 @@ Resources:
         Ref: "ComponentApiResource"
       HttpMethod: "DELETE"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -664,7 +650,7 @@ Resources:
         Ref: "IncidentsApiResource"
       HttpMethod: "POST"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -732,7 +718,7 @@ Resources:
         Ref: "IncidentApiResource"
       HttpMethod: "PATCH"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -778,7 +764,7 @@ Resources:
         Ref: "IncidentApiResource"
       HttpMethod: "DELETE"
       AuthorizationType: "NONE"
-      ApiKeyRequired: true
+      ApiKeyRequired: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -1096,13 +1082,6 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: arn:aws:logs:*:*:*
-        - PolicyName: ApiGateway
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - apigateway:*
-                Resource: arn:aws:apigateway:*:*:*
   S3PutObjectFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -1152,11 +1131,13 @@ Resources:
         Fn::GetAtt:
           - S3PutObjectFunction
           - Arn
+      Region: !Sub |-
+        ${AWS::Region}
       Bucket:
         Ref: StatusPageS3
       Key: settings.json
       Body: !Sub |-
-        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}"}
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1164,11 +1145,13 @@ Resources:
         Fn::GetAtt:
           - S3PutObjectFunction
           - Arn
+      Region: !Sub |-
+        ${AWS::Region}
       Bucket:
         Ref: AdminPageS3
       Key: settings.json
       Body: !Sub |-
-        {"ApiKeyID": "${ApiKey}", "InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "Region": "${AWS::Region}", "ServiceName": "${ServiceName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
@@ -1238,9 +1221,6 @@ Outputs:
       Fn::GetAtt:
         - "StatusPageDistribution"
         - "DomainName"
-  ApiKeyID:
-    Value:
-      Ref: "ApiKey"
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/

@@ -1,5 +1,5 @@
 import { checkStatus } from 'utils/fetch'
-import { apiKey, apiURL } from 'utils/settings'
+import { apiURL } from 'utils/settings'
 
 // ------------------------------------
 // Constants
@@ -59,9 +59,8 @@ export function showMessageAction (message) {
 
 export const fetchComponents = (dispatch) => {
   dispatch(loadAction())
-  return fetch(apiURL + 'components', {
-    headers: { 'x-api-key': apiKey }
-  }).then(checkStatus)
+  return fetch(apiURL + 'components')
+    .then(checkStatus)
     .then(response => response.json())
     .then(json => dispatch(listComponentsAction(json)))
     .catch(error => {
@@ -83,7 +82,7 @@ export const postComponent = (name, description, status) => {
       status: status
     }
     return fetch(apiURL + 'components', {
-      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       method: 'POST',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -109,7 +108,7 @@ export const updateComponent = (componentID, name, description, status) => {
       status: status
     }
     return fetch(apiURL + 'components/' + componentID, {
-      headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -130,7 +129,6 @@ export const deleteComponent = (componentID) => {
   return dispatch => {
     dispatch(loadAction())
     return fetch(apiURL + 'components/' + componentID, {
-      headers: { 'X-api-key': apiKey },
       method: 'DELETE'
     }).then(checkStatus)
       .then(response => dispatch(removeComponentAction(componentID)))

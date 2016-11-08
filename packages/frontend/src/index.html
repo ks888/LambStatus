@@ -21,7 +21,6 @@
         if (x.readyState === 4 && x.status === 200) {
           j = JSON.parse(x.responseText);
           __LAMBSTATUS_API_URL__ = j.InvocationURL;
-          __LAMBSTATUS_API_KEY__ = j.ApiKey;
           __LAMBSTATUS_SERVICE_NAME__ = j.ServiceName;
         }
       };

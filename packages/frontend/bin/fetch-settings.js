@@ -55,37 +55,16 @@ const findParameterKey = (params, paramKey) => {
   return paramValue
 }
 
-function getApiKey (apiGateway, apiKeyID) {
-  return new Promise((resolve, reject) => {
-    const params = {
-      apiKey: apiKeyID,
-      includeValue: true
-    }
-    apiGateway.getApiKey(params, (error, data) => {
-      if (error) {
-        return reject(error)
-      }
-      if (!data || !data.value) {
-        return reject(new Error('getApiKey returned invalid data: ' + data))
-      }
-      resolve(data.value)
-    })
-  })
-}
-
 const getSettings = async () => {
   try {
     const { STACK_NAME: stackName, AWS_REGION: region } = process.env
     const cloudFormation = new AWS.CloudFormation({ region })
     const stack = await describeStack(cloudFormation, stackName)
 
-    const apiKeyID = findOutputKey(stack.Outputs, 'ApiKeyID')
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
     const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
 
-    const apiGateway = new AWS.APIGateway({ region })
-    const apiKey = await getApiKey(apiGateway, apiKeyID)
-    return { apiKey, invocationURL, serviceName }
+    return { invocationURL, serviceName }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -111,10 +90,9 @@ const getBucketInfo = async () => {
 }
 
 getSettings().then((
-  { apiKey, invocationURL, serviceName }
+  { invocationURL, serviceName }
 ) => {
   const apiInfo = {
-    ApiKey: apiKey,
     InvocationURL: invocationURL,
     ServiceName: serviceName
   }
