@@ -1,17 +1,8 @@
 import React from 'react'
-import TestUtils from 'react-addons-test-utils'
+import { shallow } from 'enzyme'
 import AdminPageLayout from 'layouts/AdminPageLayout/AdminPageLayout'
-
-function shallowRender (component) {
-  const renderer = TestUtils.createRenderer()
-
-  renderer.render(component)
-  return renderer.getRenderOutput()
-}
-
-function shallowRenderWithProps (props = {}) {
-  return shallowRender(<AdminPageLayout {...props} />)
-}
+import Header from 'components/Header'
+import Drawer from 'components/Drawer'
 
 describe('(Layout) AdminPage', function () {
   let _component
@@ -24,10 +15,18 @@ describe('(Layout) AdminPage', function () {
       children: _child
     }
 
-    _component = shallowRenderWithProps(_props)
+    _component = shallow(<AdminPageLayout {..._props} />)
   })
 
-  it('Should render as a <div>.', function () {
-    expect(_component.type).to.equal('div')
+  it('Should render with Header Component.', function () {
+    expect(_component.find(Header)).to.have.length(1)
+  })
+
+  it('Should render with Drawer Component.', function () {
+    expect(_component.find(Drawer)).to.have.length(1)
+  })
+
+  it('Should render with children.', function () {
+    expect(_component.contains(_child)).to.be.true
   })
 })

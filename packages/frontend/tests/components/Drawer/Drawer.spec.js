@@ -12,14 +12,14 @@ describe('(Component) Drawer', () => {
   })
 
   it('Should render a Link to Incidents route', () => {
-    const incidentNode = _wrapper.find('.mdl-navigation__link').at(0)
+    const incidentNode = _wrapper.find(Link).at(0)
     expect(incidentNode.key()).to.equal('incidents')
     expect(incidentNode.childAt(0).text()).to.equal('Incidents')
     expect(incidentNode.prop('to')).to.equal('/incidents')
   })
 
   it('Should render a Link to Components route', () => {
-    const incidentNode = _wrapper.find('.mdl-navigation__link').at(1)
+    const incidentNode = _wrapper.find(Link).at(1)
     expect(incidentNode.key()).to.equal('components')
     expect(incidentNode.childAt(0).text()).to.equal('Components')
     expect(incidentNode.prop('to')).to.equal('/components')
