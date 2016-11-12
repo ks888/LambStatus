@@ -31,8 +31,4 @@ export const Drawer = () => {
   </div>)
 }
 
-Drawer.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
-
 export default Drawer

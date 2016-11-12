@@ -19,10 +19,6 @@ describe('(Component) Button', () => {
     _wrapper = shallow(<Button {..._props} />)
   })
 
-  it('Should render as a <button>.', () => {
-    expect(_wrapper.is('button')).to.be.true
-  })
-
   it('Should render with the name of button.', () => {
     expect(_wrapper.text()).to.equal(buttonName)
   })
