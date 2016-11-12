@@ -5,4 +5,3 @@ dist
 coverage
 config/*.json
 .travis.yml
-tests
