@@ -1,7 +1,10 @@
 import { argv } from 'yargs'
-// import webpackConfig from './webpack.config'
-import { adminPageConfig, webpackAdminPageConfig } from './webpack.admin-page.config'
 import _debug from 'debug'
+import configGen from '../config'
+import webpackConfigGen from '../build/webpack.config'
+
+const config = configGen()
+const webpackConfig = webpackConfigGen(config)
 
 const debug = _debug('app:karma')
 debug('Create configuration.')
@@ -10,7 +13,7 @@ const karmaConfig = {
   basePath: '../',
   files: [
     {
-      pattern: `./${adminPageConfig.dir_test}/test-bundler.js`,
+      pattern: `./${config.dir_test}/test-bundler.js`,
       watched: false,
       served: true,
       included: true
@@ -20,7 +23,7 @@ const karmaConfig = {
   frameworks: ['mocha'],
   reporters: ['mocha'],
   preprocessors: {
-    [`${adminPageConfig.dir_test}/test-bundler.js`]: ['webpack']
+    [`${config.dir_test}/test-bundler.js`]: ['webpack']
   },
   browsers: ['PhantomJS'],
   customLaunchers: {
@@ -39,18 +42,18 @@ const karmaConfig = {
   webpack: {
     devtool: 'cheap-module-source-map',
     resolve: {
-      ...webpackAdminPageConfig.resolve,
+      ...webpackConfig.resolve,
       alias: {
-        ...webpackAdminPageConfig.resolve.alias,
+        ...webpackConfig.resolve.alias,
         sinon: 'sinon/pkg/sinon.js'
       }
     },
-    plugins: webpackAdminPageConfig.plugins,
+    plugins: webpackConfig.plugins,
     module: {
       noParse: [
         /\/sinon\.js/
       ],
-      loaders: webpackAdminPageConfig.module.loaders.concat([
+      loaders: webpackConfig.module.loaders.concat([
         {
           test: /sinon(\\|\/)pkg(\\|\/)sinon\.js/,
           loader: 'imports?define=>false,require=>false'
@@ -60,26 +63,26 @@ const karmaConfig = {
     // Enzyme fix, see:
     // https://github.com/airbnb/enzyme/issues/47
     externals: {
-      ...webpackAdminPageConfig.externals,
+      ...webpackConfig.externals,
       'react/addons': true,
       'react/lib/ExecutionEnvironment': true,
       'react/lib/ReactContext': 'window'
     },
-    sassLoader: webpackAdminPageConfig.sassLoader
+    sassLoader: webpackConfig.sassLoader
   },
   webpackMiddleware: {
     noInfo: true
   },
   coverageReporter: {
-    reporters: adminPageConfig.coverage_reporters
+    reporters: config.coverage_reporters
   }
 }
 
-if (adminPageConfig.globals.__COVERAGE__) {
+if (config.globals.__COVERAGE__) {
   karmaConfig.reporters.push('coverage')
   karmaConfig.webpack.module.preLoaders = [{
     test: /\.(js|jsx)$/,
-    include: new RegExp(adminPageConfig.dir_client),
+    include: new RegExp(config.dir_client),
     loader: 'isparta',
     exclude: /node_modules/
   }]

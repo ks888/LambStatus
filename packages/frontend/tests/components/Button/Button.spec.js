@@ -1,78 +1,49 @@
 import React from 'react'
 import Button from 'components/Button/Button'
+import ButtonCss from 'components/Button/Button.scss'
 import { shallow } from 'enzyme'
 
 describe('(Component) Button', () => {
   let _props, _spies, _wrapper
+  const buttonName = 'testname'
+  const buttonClass = 'testclass'
 
   beforeEach(() => {
     _spies = {}
     _props = {
       onClick: (_spies.onClick = sinon.spy()),
-      name: "testname",
-      class: "testclass",
-      plain: true
+      name: buttonName,
+      class: buttonClass,
+      plain: false
     }
     _wrapper = shallow(<Button {..._props} />)
   })
 
-  it('Should render as a <div>.', () => {
-    expect(_wrapper.is('div')).to.equal(true)
+  it('Should render as a <button>.', () => {
+    expect(_wrapper.is('button')).to.be.true
   })
 
-  it('Should render with an <h2> that includes Sample Counter text.', () => {
-    expect(_wrapper.find('h2').text()).to.match(/Counter:/)
+  it('Should render with the name of button.', () => {
+    expect(_wrapper.text()).to.equal(buttonName)
   })
 
-  it('Should render props.counter at the end of the sample counter <h2>.', () => {
-    expect(_wrapper.find('h2').text()).to.match(/5$/)
-    _wrapper.setProps({ counter: 8 })
-    expect(_wrapper.find('h2').text()).to.match(/8$/)
+  it('Should render with the given css class.', () => {
+    expect(_wrapper.hasClass(buttonClass)).to.be.true
   })
 
-  it('Should render exactly two buttons.', () => {
-    expect(_wrapper.find('button')).to.have.length(2)
+  it('Should render with the plain design.', () => {
+    expect(_wrapper.hasClass(ButtonCss.plain)).to.not.be.true
+
+    _props.plain = true
+    _wrapper = shallow(<Button {..._props} />)
+    expect(_wrapper.hasClass(ButtonCss.plain)).to.be.true
   })
 
-  describe('An increment button...', () => {
-    let _button
+  it('Should call onClick callback.', () => {
+    _spies.onClick.should.have.not.been.called
 
-    beforeEach(() => {
-      _button = _wrapper.find('button').filterWhere(a => a.text() === 'Increment')
-    })
+    _wrapper.simulate('click')
 
-    it('has bootstrap classes', () => {
-      expect(_button.hasClass('btn btn-default')).to.be.true
-    })
-
-    it('Should dispatch a `increment` action when clicked', () => {
-      _spies.dispatch.should.have.not.been.called
-
-      _button.simulate('click')
-
-      _spies.dispatch.should.have.been.called
-      _spies.increment.should.have.been.called
-    });
-  })
-
-  describe('A Double (Async) button...', () => {
-    let _button
-
-    beforeEach(() => {
-      _button = _wrapper.find('button').filterWhere(a => a.text() === 'Double (Async)')
-    })
-
-    it('has bootstrap classes', () => {
-      expect(_button.hasClass('btn btn-default')).to.be.true
-    })
-
-    it('Should dispatch a `doubleAsync` action when clicked', () => {
-      _spies.dispatch.should.have.not.been.called
-
-      _button.simulate('click')
-
-      _spies.dispatch.should.have.been.called
-      _spies.doubleAsync.should.have.been.called
-    });
+    _spies.onClick.should.have.been.called
   })
 })
