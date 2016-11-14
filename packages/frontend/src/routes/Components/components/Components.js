@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
@@ -17,14 +18,14 @@ const dialogType = {
   delete: 3
 }
 
-class Components extends React.Component {
+export class Components extends React.Component {
   constructor () {
     super()
     this.state = { dialogType: dialogType.none, selectedComponent: null }
   }
 
   componentDidMount () {
-    this.props.dispatch(fetchComponents)
+    this.props.fetchComponents()
   }
 
   componentDidUpdate () {
@@ -78,17 +79,17 @@ class Components extends React.Component {
   }
 
   handleAdd = (componentID, name, description, status) => {
-    this.props.dispatch(postComponent(name, description, status))
+    this.props.postComponent(name, description, status)
     this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleEdit = (componentID, name, description, status) => {
-    this.props.dispatch(updateComponent(componentID, name, description, status))
+    this.props.updateComponent(componentID, name, description, status)
     this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleDelete = (componentID) => {
-    this.props.dispatch(deleteComponent(componentID))
+    this.props.deleteComponent(componentID)
     this.handleHideDialog(this.refs.foolproofDialog)
   }
 
@@ -185,8 +186,11 @@ Components.propTypes = {
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
   isFetching: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  message: PropTypes.string
+  message: PropTypes.string,
+  fetchComponents: PropTypes.func.isRequired,
+  postComponent: PropTypes.func.isRequired,
+  updateComponent: PropTypes.func.isRequired,
+  deleteComponent: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -197,4 +201,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Components)
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({fetchComponents, postComponent, updateComponent, deleteComponent}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Components)

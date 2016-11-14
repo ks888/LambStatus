@@ -57,20 +57,22 @@ export function showMessageAction (message) {
   }
 }
 
-export const fetchComponents = (dispatch) => {
-  dispatch(loadAction())
-  return fetch(apiURL + 'components')
-    .then(checkStatus)
-    .then(response => response.json())
-    .then(json => dispatch(listComponentsAction(json)))
-    .catch(error => {
-      console.error(error.message)
-      console.error(error.stack)
-      if (error.name === 'HTTPError') {
-        dispatch(showMessageAction(error.message))
-        return
-      }
-    })
+export const fetchComponents = () => {
+  return dispatch => {
+    dispatch(loadAction())
+    return fetch(apiURL + 'components')
+      .then(checkStatus)
+      .then(response => response.json())
+      .then(json => dispatch(listComponentsAction(json)))
+      .catch(error => {
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          dispatch(showMessageAction(error.message))
+          return
+        }
+      })
+  }
 }
 
 export const postComponent = (name, description, status) => {
