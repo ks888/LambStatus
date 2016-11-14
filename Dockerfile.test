@@ -1,0 +1,5 @@
+FROM node:4.3.2
+
+ADD . .
+
+CMD cd packages/frontend && npm install && npm run test
