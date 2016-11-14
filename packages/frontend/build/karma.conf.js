@@ -25,7 +25,7 @@ const karmaConfig = {
   preprocessors: {
     [`${config.dir_test}/test-bundler.js`]: ['webpack']
   },
-  browsers: ['PhantomJS'],
+  browsers: ['Electron'],
   customLaunchers: {
     'PhantomJS_custom': {
       base: 'PhantomJS',
