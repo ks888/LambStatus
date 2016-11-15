@@ -7,7 +7,7 @@ module.exports = {
     task: 'lambci-ecs-BuildTask-1ATBBSYTY0L2M',
   },
   env: {
-    LAMBCI_REPO: LambStatus
+    LAMBCI_REPO: 'LambStatus'
   },
   allowConfigOverrides: false
 }
