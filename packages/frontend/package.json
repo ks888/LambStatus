@@ -78,8 +78,8 @@
     "type": "git",
     "url": "https://github.com/ks888/LambStatus.git"
   },
-  "author": "David Zukowski <david@zuko.me> (http://zuko.me)",
-  "license": "MIT",
+  "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
+  "license": "Apache-2.0",
   "dependencies": {
     "aws-sdk": "^2.6.1",
     "babel-cli": "^6.5.1",

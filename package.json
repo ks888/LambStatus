@@ -7,15 +7,17 @@
     "url": "https://github.com/ks888/LambStatus.git"
   },
   "scripts": {
-    "install-all": "npm install && lerna bootstrap",
+    "install-all": "npm run lambda:install && npm run frontend:install",
     "cloudformation:create": "cloudformation/bin/stack.sh create",
     "cloudformation:update": "cloudformation/bin/stack.sh update",
     "cloudformation:delete": "cloudformation/bin/stack.sh delete",
     "cloudformation:release": "cloudformation/bin/release.sh",
+    "lambda:install": "cd packages/lambda && npm install",
     "lambda:clean": "cd packages/lambda && npm run clean",
     "lambda:build": "cd packages/lambda && npm run build",
     "lambda:deploy": "cd packages/lambda && npm run deploy",
     "lambda:release": "cd packages/lambda && npm run release",
+    "frontend:install": "cd packages/frontend && npm install",
     "frontend:clean": "cd packages/frontend && npm run clean",
     "frontend:build": "cd packages/frontend && npm run build",
     "frontend:deploy": "cd packages/frontend && npm run deploy",
@@ -25,24 +27,8 @@
     "build": "npm run lambda:build && npm run frontend:build",
     "deploy": "npm run lambda:deploy && npm run frontend:deploy",
     "release": "npm run lambda:release && npm run frontend:release",
-    "start": "npm run frontend:start",
-    "test-local": "mocha --compilers js:./babel-register -g local",
-    "test-remote": "mocha --compilers js:./babel-register -g remote",
-    "test": "mocha --compilers js:./babel-register",
-    "logs": "export AWS_REGION=$(babel-node bin/dump-config.js REGION) && cd build/apex && apex logs -f",
-    "get-client-js-url": "node bin/run-babel.js ./get-client-js-url",
-    "dist-clean": "lerna run dist-clean && rimraf node_modules"
+    "start": "npm run frontend:start"
   },
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "babel-cli": "^6.11.4",
-    "babel-preset-es2015": "^6.13.2",
-    "lerna": "^1.1.3",
-    "rimraf": "^2.5.4",
-    "dotenv": "^2.0.0"
-  },
-  "devDependencies": {
-    "jq": "^1.7.2"
-  }
+  "license": "Apache-2.0"
 }
