@@ -127,9 +127,9 @@ class IncidentDialog extends React.Component {
     const componentStatuses = this.renderComponentStatuses()
     const incidentUpdates = this.renderIncidentUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
-      <h2 className={classnames('mdl-dialog__title', classes.title)}>
+      <h4 className={classnames('mdl-dialog__title', classes.title)}>
         {this.props.actionName} Incident
-      </h2>
+      </h4>
       <div className='mdl-dialog__content'>
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
