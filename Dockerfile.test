@@ -1,5 +1,23 @@
 FROM node:4.3.2
 
+RUN apt-get update && apt-get install -y xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable \
+  xfonts-cyrillic x11-apps clang libdbus-1-dev libgtk2.0-dev libnotify-dev libgnome-keyring-dev \
+  libgconf2-dev libasound2-dev libcap-dev libcups2-dev libxtst-dev libxss1 libnss3-dev \
+  gcc-multilib g++-multilib libgconf2-4 gtk2-engines-pixbuf
+
+ADD packages/lambda/package.json /lambda_build/
+
+RUN cd /lambda_build && npm install
+
+ADD packages/frontend/package.json /frontend_build/
+
+RUN cd /frontend_build && npm install
+
 ADD . .
 
-CMD cd packages/frontend && npm install && npm run test
+RUN rm -rf packages/lambda/node_modules && mv /lambda_build/node_modules ./packages/lambda
+
+RUN rm -rf packages/frontend/node_modules && mv /frontend_build/node_modules ./packages/frontend
+
+# CMD cd packages/lambda && npm run test && cd ../../packages/frontend && xvfb-run -a --server-args="-screen 0 1024x768x24" npm run test
+CMD cd packages/frontend && xvfb-run -a --server-args="-screen 0 1024x768x24" npm run test
