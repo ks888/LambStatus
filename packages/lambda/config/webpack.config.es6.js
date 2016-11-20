@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
 import path from 'path'
-import StringReplacePlugin from 'string-replace-webpack-plugin'
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
@@ -72,24 +71,9 @@ export default {
       {
         test: /\.json$/,
         loader: 'json'
-      },
-      {
-        test: /validate.js$/,
-        include: /node_modules\/json-schema/,
-        loader: StringReplacePlugin.replace({ // from the 'string-replace-webpack-plugin'
-          replacements: [{
-            pattern: /\(\{define:typeof define!="undefined"\?define:function\(deps, factory\)\{module\.exports = factory\(\);\}\}\)\./ig,
-            replacement: function (match, p1, offset, string) {
-              return false
-            }
-          }]
-        })
       }
     ]
   },
-  plugins: [
-    new StringReplacePlugin()
-  ],
   resolve: {
     root: path.resolve(__dirname, '../src')
   }
