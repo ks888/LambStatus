@@ -9,6 +9,11 @@ build:
     - npm-install:
         cwd: packages/frontend
     - script:
+      name: test lambda package
+      cwd: packages/lambda
+      code: |
+        npm run test
+    - script:
         name: test frontend package
         cwd: packages/frontend
         code: |

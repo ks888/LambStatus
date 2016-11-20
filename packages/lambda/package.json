@@ -11,6 +11,8 @@
     "lint": "eslint src",
     "build": "npm run clean && babel-node ./bin/fetch-aws-ids.js && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
     "deploy": ". $(dirname $0)/../../.env && cd build && AWS_REGION=${AWS_REGION} apex deploy",
+    "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
+    "test:dev": "npm run test -- --watch",
     "release": "babel-node ./bin/release.js",
     "logs": ". $(dirname $0)/../../.env && cd build && AWS_REGION=${AWS_REGION} apex logs -f"
   },
@@ -41,14 +43,18 @@
     "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "aws-sdk-mock": "^1.6.1",
     "babel-cli": "^6.18.0",
     "babel-eslint": "^6.1.2",
+    "chai": "^3.5.0",
     "eslint": "^3.3.1",
     "eslint-config-standard": "^6.0.0-beta.3",
     "eslint-config-standard-react": "^3.0.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-promise": "^3.3.0",
     "eslint-plugin-react": "^6.1.2",
-    "eslint-plugin-standard": "^2.0.0"
+    "eslint-plugin-standard": "^2.0.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
   }
 }
