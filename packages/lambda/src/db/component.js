@@ -31,11 +31,9 @@ export const getComponents = () => {
           },
           status: {
             S: compStatus
-          },
-          description: {
-            S: compDesc
           }
         } = component
+        const compDesc = component.hasOwnProperty('description') ? component.description.S : ''
         components.push({
           componentID: compID,
           name: compName,
@@ -75,6 +73,12 @@ export const getComponent = (componentID) => {
         return reject(new NotFoundError('no matched item'))
       }
 
+      queryResult.Items.forEach(item => {
+        if (!item.hasOwnProperty('description')) {
+          item.description = ''
+        }
+      })
+
       resolve(queryResult.Items)
     })
   })
@@ -89,22 +93,28 @@ export const updateComponent = (id, name, description, status) => {
       Key: {
         componentID: id
       },
-      UpdateExpression: 'set #n = :n, description = :d, #s = :s',
+      UpdateExpression: 'set #n = :n, #s = :s',
       ExpressionAttributeNames: {
         '#n': 'name',
         '#s': 'status'
       },
       ExpressionAttributeValues: {
         ':n': name,
-        ':d': description,
         ':s': status
       },
       TableName: ServiceComponentTable,
       ReturnValues: 'ALL_NEW'
     }
+    if (description !== '') {
+      params.UpdateExpression = 'set #n = :n, description = :d, #s = :s'
+      params.ExpressionAttributeValues[':d'] = description
+    }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
+      }
+      if (!data.Attributes.hasOwnProperty('description')) {
+        data.Attributes.description = ''
       }
       resolve(data)
     })
@@ -133,6 +143,9 @@ export const updateComponentStatus = (id, status) => {
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
+      }
+      if (!data.Attributes.hasOwnProperty('description')) {
+        data.Attributes.description = ''
       }
       resolve(data)
     })

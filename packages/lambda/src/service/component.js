@@ -17,7 +17,7 @@ export default class ComponentService {
       throw new ParameterError('invalid name parameter')
     }
 
-    if (description === undefined || description === '') {
+    if (description === undefined) {
       throw new ParameterError('invalid description parameter')
     }
 

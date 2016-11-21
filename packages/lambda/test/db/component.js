@@ -37,6 +37,32 @@ describe('getComponents', () => {
     })
   })
 
+  it('should set an empty value if description does not exist', () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    AWS.mock('DynamoDB', 'scan', (params, callback) => {
+      callback(null, {
+        Items: [
+          {
+            componentID: {
+              S: componentID
+            },
+            name: {
+              S: name
+            },
+            status: {
+              S: status
+            }
+          }
+        ]
+      })
+    })
+    return getComponents().then(result => {
+      expect(result).to.be.deep.equal([{ componentID, name, status, description: '' }])
+    })
+  })
+
   it('should return error on exception thrown', async () => {
     AWS.mock('DynamoDB', 'scan', (params, callback) => {
       callback('Error')
