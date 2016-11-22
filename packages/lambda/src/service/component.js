@@ -5,7 +5,8 @@ import { ParameterError } from 'utils/errors'
 
 export default class ComponentService {
   async getComponents () {
-    return await getComponents()
+    const comps = await getComponents()
+    return comps.sort((a, b) => a.order - b.order)
   }
 
   validate (componentID, name, description, status) {

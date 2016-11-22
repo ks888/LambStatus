@@ -12,6 +12,7 @@ describe('getComponents', () => {
     const name = 'testName'
     const status = 'testStatus'
     const description = 'testDesc'
+    const order = 1
     AWS.mock('DynamoDB', 'scan', (params, callback) => {
       callback(null, {
         Items: [
@@ -27,17 +28,20 @@ describe('getComponents', () => {
             },
             description: {
               S: description
+            },
+            order: {
+              N: String(order)
             }
           }
         ]
       })
     })
     return getComponents().then(result => {
-      expect(result).to.be.deep.equal([{ componentID, name, status, description }])
+      expect(result).to.be.deep.equal([{ componentID, name, status, description, order }])
     })
   })
 
-  it('should set an empty value if description does not exist', () => {
+  it('should set an empty value if description and order do not exist', () => {
     const componentID = 'testID'
     const name = 'testName'
     const status = 'testStatus'
@@ -59,7 +63,7 @@ describe('getComponents', () => {
       })
     })
     return getComponents().then(result => {
-      expect(result).to.be.deep.equal([{ componentID, name, status, description: '' }])
+      expect(result).to.be.deep.equal([{ componentID, name, status, description: '', order: 0 }])
     })
   })
 

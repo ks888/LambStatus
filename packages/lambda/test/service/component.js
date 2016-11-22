@@ -10,11 +10,11 @@ describe('ComponentService', () => {
 
   context('getComponents', () => {
     it('should return a list of components', () => {
-      const components = { testKey: 'testValue' }
+      const components = [{order: 2}, {order: 3}, {order: 1}]
       sinon.stub(componentTable, 'getComponents').returns(components)
       const comp = new ComponentService()
       return comp.getComponents().then(result => {
-        expect(result).to.be.equal(components)
+        expect(result).to.be.deep.equal([{order: 1}, {order: 2}, {order: 3}])
       })
     })
 

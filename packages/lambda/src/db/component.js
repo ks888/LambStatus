@@ -10,10 +10,11 @@ export const getComponents = () => {
   return new Promise((resolve, reject) => {
     const params = {
       TableName: ServiceComponentTable,
-      ProjectionExpression: 'componentID, description, #nm, #st',
+      ProjectionExpression: 'componentID, description, #nm, #st, #or',
       ExpressionAttributeNames: {
         '#nm': 'name',
-        '#st': 'status'
+        '#st': 'status',
+        '#or': 'order'
       }
     }
     awsDynamoDb.scan(params, (err, scanResult) => {
@@ -24,22 +25,18 @@ export const getComponents = () => {
       scanResult.Items.forEach((component) => {
         const {
           componentID: {
-            S: compID
+            S: componentID
           },
           name: {
-            S: compName
+            S: name
           },
           status: {
-            S: compStatus
+            S: status
           }
         } = component
-        const compDesc = component.hasOwnProperty('description') ? component.description.S : ''
-        components.push({
-          componentID: compID,
-          name: compName,
-          status: compStatus,
-          description: compDesc
-        })
+        const description = component.hasOwnProperty('description') ? component.description.S : ''
+        const order = component.hasOwnProperty('order') ? Number(component.order.N) : 0
+        components.push({componentID, name, status, description, order})
       })
 
       resolve(components)
