@@ -13,13 +13,15 @@ describe('(Redux Module) Components', () => {
     componentID: 'compID1',
     name: 'name1',
     description: 'desc1',
-    status: 'status1'
+    status: 'status1',
+    order: 0
   }
   const comp2 = {
     componentID: 'compID2',
     name: 'name2',
     description: 'desc2',
-    status: 'status2'
+    status: 'status2',
+    order: 0
   }
 
   describe('(Action Creator) loadAction', () => {

@@ -4,7 +4,7 @@ import ComponentService from 'service/component'
 import * as componentTable from 'db/component'
 
 describe('[ComponentService]', () => {
-  context('getComponents', () => {
+  describe('getComponents', () => {
     afterEach(() => {
       componentTable.getComponents.restore()
     })
@@ -27,7 +27,7 @@ describe('[ComponentService]', () => {
     })
   })
 
-  context('validate', () => {
+  describe('validate', () => {
     it('should return no error when input is valid', () => {
       const comp = new ComponentService()
       expect(() => comp.validate('id', 'name', 'desc', 'Operational', 0)).to.not.throw(/Error/)
@@ -65,7 +65,7 @@ describe('[ComponentService]', () => {
     })
   })
 
-  context('createComponent', () => {
+  describe('createComponent', () => {
     afterEach(() => {
       componentTable.updateComponent.restore()
     })
@@ -94,7 +94,7 @@ describe('[ComponentService]', () => {
     })
   })
 
-  context('updateComponent', () => {
+  describe('updateComponent', () => {
     afterEach(() => {
       componentTable.updateComponent.restore()
       componentTable.getComponent.restore()
