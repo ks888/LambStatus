@@ -81,7 +81,7 @@ export const getComponent = (componentID) => {
   })
 }
 
-export const updateComponent = (id, name, description, status) => {
+export const updateComponent = (id, name, description, status, order) => {
   const { AWS_REGION: region } = process.env
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
 
@@ -90,20 +90,22 @@ export const updateComponent = (id, name, description, status) => {
       Key: {
         componentID: id
       },
-      UpdateExpression: 'set #n = :n, #s = :s',
+      UpdateExpression: 'set #n = :n, #s = :s, #o = :o',
       ExpressionAttributeNames: {
         '#n': 'name',
-        '#s': 'status'
+        '#s': 'status',
+        '#o': 'order'
       },
       ExpressionAttributeValues: {
         ':n': name,
-        ':s': status
+        ':s': status,
+        ':o': order
       },
       TableName: ServiceComponentTable,
       ReturnValues: 'ALL_NEW'
     }
     if (description !== '') {
-      params.UpdateExpression = 'set #n = :n, description = :d, #s = :s'
+      params.UpdateExpression = 'set #n = :n, description = :d, #s = :s, #o = :o'
       params.ExpressionAttributeValues[':d'] = description
     }
     awsDynamoDb.update(params, (err, data) => {

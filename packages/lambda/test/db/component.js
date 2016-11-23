@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import AWS from 'aws-sdk-mock'
-import { getComponents } from 'db/component'
+import { getComponents, updateComponent } from 'db/component'
 
 describe('getComponents', () => {
   afterEach(() => {
@@ -73,6 +73,61 @@ describe('getComponents', () => {
     })
 
     return getComponents().catch(error => {
+      expect(error).to.match(/Error/)
+    })
+  })
+})
+
+describe('updateComponent', () => {
+  afterEach(() => {
+    AWS.restore('DynamoDB.DocumentClient')
+  })
+
+  it('should update a component', () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    const description = 'testDesc'
+    const order = '1'
+    AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+      expect(params.ExpressionAttributeValues).to.include.keys(':d')
+      callback(null, {
+        Attributes: {componentID, name, status, description, order}
+      })
+    })
+    return updateComponent(componentID, name, description, status, order).then(result => {
+      expect(result).to.be.deep.equal({Attributes: { componentID, name, status, description, order }})
+    })
+  })
+
+  it('should update a component with empty description', () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    const description = ''
+    const order = '1'
+    AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+      expect(params.ExpressionAttributeValues).to.not.include.keys(':d')
+      callback(null, {
+        Attributes: {componentID, name, status, order}
+      })
+    })
+    return updateComponent(componentID, name, description, status, order).then(result => {
+      expect(result).to.be.deep.equal({Attributes: { componentID, name, status, description, order }})
+    })
+  })
+
+  it('should return error on exception thrown', async () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    const description = ''
+    const order = '1'
+    AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+      callback('Error')
+    })
+
+    return updateComponent(componentID, name, description, status, order).catch(error => {
       expect(error).to.match(/Error/)
     })
   })
