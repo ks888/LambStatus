@@ -171,7 +171,8 @@ function listComponentsHandler (state = { }, action) {
       componentID: component.componentID,
       name: component.name,
       description: component.description,
-      status: component.status
+      status: component.status,
+      order: component.order
     }
   })
   return Object.assign({}, state, {
@@ -190,7 +191,8 @@ function addComponentHandler (state = { }, action) {
         componentID: component.componentID,
         name: component.name,
         description: component.description,
-        status: component.status
+        status: component.status,
+        order: component.order
       }
     ]
   })
@@ -204,11 +206,14 @@ function editComponentHandler (state = { }, action) {
       return Object.assign({}, component, {
         name: editedComponent.name,
         description: editedComponent.description,
-        status: editedComponent.status
+        status: editedComponent.status,
+        order: editedComponent.order
       })
     }
     return component
   })
+
+  newComponents.sort((a, b) => a.order - b.order)
 
   return Object.assign({}, state, {
     isFetching: false,
