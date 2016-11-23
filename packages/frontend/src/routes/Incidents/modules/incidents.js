@@ -296,13 +296,13 @@ function addIncidentHandler (state = { }, action) {
     isFetching: false,
     components: components,
     incidents: [
-      ...state.incidents,
       {
         incidentID: incident.incidentID,
         name: incident.name,
         status: incident.status,
         updatedAt: incident.updatedAt
-      }
+      },
+      ...state.incidents
     ]
   })
 }

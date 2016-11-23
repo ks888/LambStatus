@@ -116,9 +116,13 @@ function listIncidentHandler (state = { }, action) {
     return a.updatedAt < b.updatedAt
   })
 
+  const newIncidents = [...state.incidents, action.incident].sort((a, b) => {
+    return a.updatedAt < b.updatedAt
+  })
+
   return Object.assign({}, state, {
     isFetching: false,
-    incidents: [...state.incidents, action.incident]
+    incidents: newIncidents
   })
 }
 
