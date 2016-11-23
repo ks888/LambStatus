@@ -9,7 +9,7 @@ Parameters:
   Version:
     Description: The version of LambStatus
     Type: "String"
-    Default: "0.0.1"
+    Default: "0.0.2"
 Resources:
   LambdaRole:
     Type: "AWS::IAM::Role"

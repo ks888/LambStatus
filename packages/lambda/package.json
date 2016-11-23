@@ -1,6 +1,6 @@
 {
   "name": "lamb-status-lambda",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "AWS Lambda functions for LambStatus",
   "engines": {
     "node": ">=4.2.0",
@@ -13,7 +13,7 @@
     "deploy": ". $(dirname $0)/../../.env && cd build && AWS_REGION=${AWS_REGION} apex deploy",
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
     "test:dev": "npm run test -- --watch",
-    "release": "babel-node ./bin/release.js",
+    "release": "npm run build && babel-node ./bin/release.js",
     "logs": ". $(dirname $0)/../../.env && cd build && AWS_REGION=${AWS_REGION} apex logs -f"
   },
   "repository": {

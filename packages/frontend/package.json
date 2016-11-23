@@ -1,6 +1,6 @@
 {
   "name": "lamb-status-frontend",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Frontend for LambStatus",
   "main": "index.js",
   "engines": {
@@ -67,7 +67,7 @@
       }
     },
     "release": {
-      "command": "babel-node bin/release-dist",
+      "command": "npm run build && babel-node bin/release-dist",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
@@ -99,6 +99,7 @@
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
     "dialog-polyfill": "^0.4.4",
+    "dotenv": "^2.0.0",
     "extract-text-webpack-plugin": "^1.0.0",
     "file-loader": "^0.9.0",
     "fs-extra": "^0.30.0",
