@@ -55,10 +55,11 @@ export const getComponent = (componentID) => {
       ExpressionAttributeValues: {
         ':hkey': componentID
       },
-      ProjectionExpression: 'componentID, description, #nm, #st',
+      ProjectionExpression: 'componentID, description, #nm, #st, #or',
       ExpressionAttributeNames: {
         '#nm': 'name',
-        '#st': 'status'
+        '#st': 'status',
+        '#or': 'order'
       }
     }
     awsDynamoDb.query(params, (err, queryResult) => {
@@ -74,6 +75,7 @@ export const getComponent = (componentID) => {
         if (!item.hasOwnProperty('description')) {
           item.description = ''
         }
+        item.order = item.hasOwnProperty('order') ? Number(item.order) : 0
       })
 
       resolve(queryResult.Items)

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import AWS from 'aws-sdk-mock'
-import { getComponents, updateComponent } from 'db/component'
+import { getComponents, getComponent, updateComponent } from 'db/component'
 
 describe('getComponents', () => {
   afterEach(() => {
@@ -74,6 +74,62 @@ describe('getComponents', () => {
 
     return getComponents().catch(error => {
       expect(error).to.match(/Error/)
+    })
+  })
+})
+
+describe('getComponent', () => {
+  afterEach(() => {
+    AWS.restore('DynamoDB.DocumentClient')
+  })
+
+  it('should return a component', () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    const description = 'testDesc'
+    const order = 1
+    AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback(null, {
+        Items: [{componentID, name, status, description, order: String(order)}]
+      })
+    })
+    return getComponent(componentID).then(result => {
+      expect(result).to.be.deep.equal([{ componentID, name, status, description, order }])
+    })
+  })
+
+  it('should set an empty value if description and order do not exist', () => {
+    const componentID = 'testID'
+    const name = 'testName'
+    const status = 'testStatus'
+    AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback(null, {
+        Items: [{componentID, name, status}]
+      })
+    })
+    return getComponent().then(result => {
+      expect(result).to.be.deep.equal([{ componentID, name, status, description: '', order: 0 }])
+    })
+  })
+
+  it('should return error on exception thrown', async () => {
+    AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback('Error')
+    })
+
+    return getComponent().catch(error => {
+      expect(error).to.match(/Error/)
+    })
+  })
+
+  it('should return NotFoundError on no items', async () => {
+    AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      callback(null, {Items: []})
+    })
+
+    return getComponent().catch(error => {
+      expect(error).to.match(/NotFoundError/)
     })
   })
 })

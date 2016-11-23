@@ -18,7 +18,7 @@ describe('[ComponentService]', () => {
       })
     })
 
-    it('should return error on exception thrown', () => {
+    it('should return error when getComponents throws exception', () => {
       sinon.stub(componentTable, 'getComponents').throws()
       const comp = new ComponentService()
       return comp.getComponents().catch(error => {
@@ -85,10 +85,50 @@ describe('[ComponentService]', () => {
       })
     })
 
-    it('should return error on exception thrown', () => {
+    it('should return error when updateComponent throws exception', () => {
       sinon.stub(componentTable, 'updateComponent').throws()
       const comp = new ComponentService()
       return comp.createComponent('name', 'desc', 'Operational').catch(error => {
+        expect(error).to.match(/Error/)
+      })
+    })
+  })
+
+  context('updateComponent', () => {
+    afterEach(() => {
+      componentTable.updateComponent.restore()
+      componentTable.getComponent.restore()
+    })
+
+    it('should update component', () => {
+      sinon.stub(componentTable, 'updateComponent', (componentID, name, description, status, order) => {
+        return {
+          Attributes: {
+            componentID, name, description, status, order
+          }
+        }
+      })
+      sinon.stub(componentTable, 'getComponent', (componentID) => {})
+      const comp = new ComponentService()
+      return comp.updateComponent('id', 'name', 'desc', 'Operational').then(result => {
+        expect(result.order).to.be.a('number')
+      })
+    })
+
+    it('should return error when id does not exist', () => {
+      sinon.stub(componentTable, 'updateComponent').throws()
+      sinon.stub(componentTable, 'getComponent').throws()
+      const comp = new ComponentService()
+      return comp.updateComponent('id', 'name', 'desc', 'Operational').catch(error => {
+        expect(error).to.match(/Error/)
+      })
+    })
+
+    it('should return error when updateComponent throws exception', () => {
+      sinon.stub(componentTable, 'updateComponent').throws()
+      sinon.stub(componentTable, 'getComponent', (componentID) => {})
+      const comp = new ComponentService()
+      return comp.updateComponent('id', 'name', 'desc', 'Operational').catch(error => {
         expect(error).to.match(/Error/)
       })
     })

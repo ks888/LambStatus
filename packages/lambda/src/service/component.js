@@ -41,10 +41,11 @@ export default class ComponentService {
   }
 
   async updateComponent (componentID, name, description, status) {
-    this.validate(componentID, name, description, status)
+    const order = Math.floor(new Date().getTime() / 1000)
+    this.validate(componentID, name, description, status, order)
     await getComponent(componentID)  // existence check
 
-    const comp = await updateComponent(componentID, name, description, status)
+    const comp = await updateComponent(componentID, name, description, status, order)
     return comp.Attributes
   }
 
