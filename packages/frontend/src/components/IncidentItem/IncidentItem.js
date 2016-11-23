@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import moment from 'moment-timezone'
 import classes from './IncidentItem.scss'
 import Button from 'components/Button'
+import AutolinkedText from 'components/AutolinkedText'
 import { getIncidentColor } from 'utils/status'
 
 class IncidentItem extends React.Component {
@@ -25,7 +26,8 @@ class IncidentItem extends React.Component {
       <div className={classnames(classes.inner_item)} key={incidentUpdate.incidentUpdateID}>
         <div>
           {incidentUpdate.incidentStatus}
-          <span className={classnames(classes.inner_item_message)}> - {incidentUpdate.message}</span>
+          <span className={classnames(classes.inner_item_message)}> - <AutolinkedText text={incidentUpdate.message} />
+          </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
           {updatedAt}

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import moment from 'moment-timezone'
 import classes from './IncidentDialog.scss'
+import AutolinkedText from 'components/AutolinkedText'
 import Button from 'components/Button'
 import RadioButton from 'components/RadioButton'
 import TextField from 'components/TextField'
@@ -93,13 +94,15 @@ class IncidentDialog extends React.Component {
   }
 
   renderIncidentUpdateItem = (incidentUpdate) => {
-    let updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
+    const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
     return (
       <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item',
         'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
         <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
           <span>{incidentUpdate.incidentStatus} - updated at {updatedAt}</span>
-          <span className='mdl-list__item-sub-title'>{incidentUpdate.message}</span>
+          <span className='mdl-list__item-sub-title'>
+            <AutolinkedText text={incidentUpdate.message} />
+          </span>
         </span>
       </li>
     )
