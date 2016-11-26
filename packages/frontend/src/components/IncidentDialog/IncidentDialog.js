@@ -141,7 +141,8 @@ class IncidentDialog extends React.Component {
         {incidentUpdates}
       </div>
       <div className='mdl-dialog__actions'>
-        <Button onClick={this.handleClickDoneButton} name={this.props.actionName} class='mdl-button--accent' />
+        <Button onClick={this.handleClickDoneButton} name={this.props.actionName}
+          class='mdl-button--accent' disabled={this.props.isUpdating} />
         <Button onClick={this.props.onCanceled} name='Cancel' />
       </div>
     </dialog>)
@@ -167,6 +168,7 @@ IncidentDialog.propTypes = {
     name: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
+  isUpdating: PropTypes.bool.isRequired,
   actionName: PropTypes.string.isRequired
 }
 

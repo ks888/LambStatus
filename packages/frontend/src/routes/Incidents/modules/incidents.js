@@ -1,26 +1,28 @@
 import { checkStatus } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
+import { requestStatus } from 'utils/status'
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 const ACTION_NAME_PREFIX = 'INCIDENTS_'
-export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
+export const SET_STATUS = ACTION_NAME_PREFIX + 'SET_STATUS'
 export const LIST_INCIDENTS = ACTION_NAME_PREFIX + 'LIST_INCIDENTS'
 export const LIST_INCIDENT_UPDATES = ACTION_NAME_PREFIX + 'LIST_INCIDENT_UPDATES'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export const ADD_INCIDENT = ACTION_NAME_PREFIX + 'ADD_INCIDENT'
 export const UPDATE_INCIDENT = ACTION_NAME_PREFIX + 'UPDATE_INCIDENT'
 export const REMOVE_INCIDENT = ACTION_NAME_PREFIX + 'REMOVE_INCIDENT'
-export const SHOW_MESSAGE = ACTION_NAME_PREFIX + 'SHOW_MESSAGE'
+export const SET_ERROR = ACTION_NAME_PREFIX + 'SET_ERROR'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export function loadAction () {
+export function setStatusAction (status) {
   return {
-    type: LOAD
+    type: SET_STATUS,
+    status
   }
 }
 
@@ -67,15 +69,15 @@ export function removeIncidentAction (incidentID) {
   }
 }
 
-export function showMessageAction (message) {
+export function setErrorAction (message) {
   return {
-    type: SHOW_MESSAGE,
+    type: SET_ERROR,
     message: message
   }
 }
 
 export const fetchIncidents = (dispatch) => {
-  dispatch(loadAction())
+  dispatch(setStatusAction({loadStatus: requestStatus.inProgress}))
   return fetch(apiURL + 'incidents')
     .then(checkStatus)
     .then(response => response.json())
@@ -84,7 +86,8 @@ export const fetchIncidents = (dispatch) => {
       console.error(error.message)
       console.error(error.stack)
       if (error.name === 'HTTPError') {
-        dispatch(showMessageAction(error.message))
+        dispatch(setStatusAction({loadStatus: requestStatus.failure}))
+        dispatch(setErrorAction(error.message))
         return
       }
     })
@@ -92,7 +95,7 @@ export const fetchIncidents = (dispatch) => {
 
 export const fetchIncidentUpdates = (incidentID) => {
   return (dispatch) => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({loadStatus: requestStatus.inProgress}))
     return fetch(apiURL + 'incidents/' + incidentID + '/incidentupdates')
       .then(checkStatus)
       .then(response => response.json())
@@ -101,7 +104,8 @@ export const fetchIncidentUpdates = (incidentID) => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({loadStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -109,7 +113,7 @@ export const fetchIncidentUpdates = (incidentID) => {
 }
 
 export const fetchComponents = (dispatch) => {
-  dispatch(loadAction())
+  dispatch(setStatusAction({loadStatus: requestStatus.inProgress}))
   return fetch(apiURL + 'components')
     .then(checkStatus)
     .then(response => response.json())
@@ -118,7 +122,8 @@ export const fetchComponents = (dispatch) => {
       console.error(error.message)
       console.error(error.stack)
       if (error.name === 'HTTPError') {
-        dispatch(showMessageAction(error.message))
+        dispatch(setStatusAction({loadStatus: requestStatus.failure}))
+        dispatch(setErrorAction(error.message))
         return
       }
     })
@@ -126,7 +131,7 @@ export const fetchComponents = (dispatch) => {
 
 export const postIncident = (incidentID, name, incidentStatus, message, components) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     // only a status attribute is allowed to update.
     components = components.map((component) => {
       return {
@@ -151,7 +156,8 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -160,7 +166,7 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
 
 export const updateIncident = (incidentID, name, incidentStatus, message, components) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     let body = {
       name: name,
       incidentStatus: incidentStatus,
@@ -178,7 +184,8 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -187,7 +194,7 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
 
 export const deleteIncident = (incidentID) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     return fetch(apiURL + 'incidents/' + incidentID, {
       method: 'DELETE'
     }).then(checkStatus)
@@ -196,7 +203,8 @@ export const deleteIncident = (incidentID) => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -204,24 +212,24 @@ export const deleteIncident = (incidentID) => {
 }
 
 export const actions = {
-  loadAction,
+  setStatusAction,
   listIncidentsAction,
   listIncidentUpdatesAction,
   listComponentsAction,
   addIncidentAction,
   updateIncidentAction,
   removeIncidentAction,
-  showMessageAction
+  setErrorAction
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 
-function loadHandler (state = { }, action) {
+function setStatusHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: true,
-    message: ''
+    message: '',
+    ...action.status
   })
 }
 
@@ -240,7 +248,7 @@ function listIncidentsHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    isFetching: false,
+    loadStatus: requestStatus.success,
     incidents: incidents
   })
 }
@@ -269,7 +277,7 @@ function listIncidentUpdatesHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    isFetching: false,
+    loadStatus: requestStatus.success,
     incidents: newIncidents
   })
 }
@@ -283,6 +291,7 @@ function listComponentsHandler (state = { }, action) {
     }
   })
   return Object.assign({}, state, {
+    loadStatus: requestStatus.success,
     components: components
   })
 }
@@ -293,7 +302,7 @@ function addIncidentHandler (state = { }, action) {
   } = JSON.parse(action.response)
 
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     components: components,
     incidents: [
       {
@@ -324,7 +333,7 @@ function updateIncidentHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     components: components,
     incidents: newIncidents
   })
@@ -336,27 +345,28 @@ function removeIncidentHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     incidents: newIncidents
   })
 }
 
-function showMessageHandler (state = { }, action) {
+function setErrorHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: false,
+    loadStatus: requestStatus.failure,
+    updateStatus: requestStatus.failure,
     message: action.message
   })
 }
 
 const ACTION_HANDLERS = {
-  [LOAD]: loadHandler,
+  [SET_STATUS]: setStatusHandler,
   [LIST_INCIDENTS]: listIncidentsHandler,
   [LIST_INCIDENT_UPDATES]: listIncidentUpdatesHandler,
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [UPDATE_INCIDENT]: updateIncidentHandler,
   [REMOVE_INCIDENT]: removeIncidentHandler,
-  [SHOW_MESSAGE]: showMessageHandler
+  [SET_ERROR]: setErrorHandler
 }
 
 // ------------------------------------
@@ -364,7 +374,8 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 
 export default function incidentsReducer (state = {
-  isFetching: false,
+  loadStatus: requestStatus.none,
+  updateStatus: requestStatus.none,
   incidents: [],
   components: []
 }, action) {

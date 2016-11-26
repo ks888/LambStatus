@@ -1,6 +1,6 @@
-export let componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
 
-export let getComponentColor = (status) => {
+export const getComponentColor = (status) => {
   switch (status) {
     case 'Operational':
       return '#388e3c'
@@ -15,9 +15,9 @@ export let getComponentColor = (status) => {
   }
 }
 
-export let incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
+export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
 
-export let getIncidentColor = (impact) => {
+export const getIncidentColor = (impact) => {
   switch (impact) {
     case 'Investigating':
       return '#c62828'
@@ -30,4 +30,11 @@ export let getIncidentColor = (impact) => {
     default:
       return '#9e9e9e'
   }
+}
+
+export const requestStatus = {
+  none: 0,
+  inProgress: 1,
+  success: 2,
+  failure: 3
 }

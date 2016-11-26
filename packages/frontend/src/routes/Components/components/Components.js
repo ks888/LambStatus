@@ -2,14 +2,14 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { fetchComponents, postComponent, updateComponent, deleteComponent, requestStatus } from '../modules/components'
+import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Components.scss'
-import { getComponentColor } from 'utils/status'
+import { getComponentColor, requestStatus } from 'utils/status'
 
 const dialogType = {
   none: 0,
@@ -157,7 +157,8 @@ export class Components extends React.Component {
       Component
     </div>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
+    return (<div className={classnames(classes.layout, 'mdl-grid')}
+      style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>

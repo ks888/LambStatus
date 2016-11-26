@@ -10,7 +10,7 @@ import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Incidents.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor } from 'utils/status'
+import { getIncidentColor, requestStatus } from 'utils/status'
 
 const dialogType = {
   none: 0,
@@ -31,6 +31,12 @@ class Incidents extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    if (this.props.updateStatus === requestStatus.inProgress &&
+      nextProps.updateStatus === requestStatus.success) {
+      this.handleHideDialog()
+    }
+
+    // Set fetched incident updates
     if (this.state.incident !== null) {
       nextProps.incidents.forEach((incident) => {
         if (incident.incidentID === this.state.incident.incidentID) {
@@ -42,19 +48,13 @@ class Incidents extends React.Component {
 
   componentDidUpdate () {
     let dialog = ReactDOM.findDOMNode(this.refs.incidentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
-    if (dialog) {
+    if (dialog && !dialog.showModal) {
       // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
       // Here is a workaround for this limitation.
       document.getElementById('dialog-container').appendChild(dialog)
 
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      try {
-        dialog.showModal()
-      } catch (ex) {
-        console.warn('Failed to show dialog (the dialog may be already shown)')
-      }
+      dialogPolyfill.registerDialog(dialog)
+      dialog.showModal()
     }
   }
 
@@ -84,36 +84,27 @@ class Incidents extends React.Component {
     return () => this.handleShowDialog(dialogType.delete, incident)
   }
 
-  handleHideDialog = (refs) => {
-    const dialog = ReactDOM.findDOMNode(refs)
-    dialog.close()
+  handleHideDialog = () => {
+    const dialog = ReactDOM.findDOMNode(this.refs.incidentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
+    if (dialog) {
+      dialog.close()
 
-    document.getElementById('inner-dialog-container').appendChild(dialog)
+      document.getElementById('inner-dialog-container').appendChild(dialog)
 
-    this.setState({ incident: null, dialogType: dialogType.none })
-  }
-
-  handleHideIncidentDialog = () => {
-    return () => this.handleHideDialog(this.refs.incidentDialog)
-  }
-
-  handleHideFoolproofDialog = () => {
-    return () => this.handleHideDialog(this.refs.foolproofDialog)
+      this.setState({ incident: null, dialogType: dialogType.none })
+    }
   }
 
   handleAdd = (incidentID, name, incidentStatus, message, components) => {
     this.props.dispatch(postIncident(incidentID, name, incidentStatus, message, components))
-    this.handleHideDialog(this.refs.incidentDialog)
   }
 
   handleUpdate = (incidentID, name, incidentStatus, message, components) => {
     this.props.dispatch(updateIncident(incidentID, name, incidentStatus, message, components))
-    this.handleHideDialog(this.refs.incidentDialog)
   }
 
   handleDelete = (incidentID) => {
     this.props.dispatch(deleteIncident(incidentID))
-    this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   renderListItem = (incident) => {
@@ -150,6 +141,7 @@ class Incidents extends React.Component {
   }
 
   renderDialog = () => {
+    const isUpdating = (this.props.updateStatus === requestStatus.inProgress)
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
@@ -157,21 +149,24 @@ class Incidents extends React.Component {
         break
       case dialogType.add:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
-          onCanceled={this.handleHideIncidentDialog()}
+          onCanceled={this.handleHideDialog}
+          isUpdating={isUpdating}
           incident={this.state.incident}
           components={this.props.serviceComponents}
           actionName='Add' />
         break
       case dialogType.update:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleUpdate}
-          onCanceled={this.handleHideIncidentDialog()}
+          onCanceled={this.handleHideDialog}
+          isUpdating={isUpdating}
           incident={this.state.incident}
           components={this.props.serviceComponents}
           actionName='Update' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={this.handleHideFoolproofDialog()}
+          onCanceled={this.handleHideDialog}
+          isUpdating={isUpdating}
           name={this.state.incident.name} ID={this.state.incident.incidentID} />
         break
       default:
@@ -181,7 +176,7 @@ class Incidents extends React.Component {
   }
 
   render () {
-    const { incidents, isFetching, message } = this.props
+    const { incidents, loadStatus, message } = this.props
     const incidentItems = incidents.map(this.renderListItem)
     const dialog = this.renderDialog()
     const snackbar = <Snackbar message={message} />
@@ -190,7 +185,8 @@ class Incidents extends React.Component {
       Incident
     </div>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
+    return (<div className={classnames(classes.layout, 'mdl-grid')}
+      style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
         <h4>Incidents</h4>
       </div>
@@ -226,14 +222,16 @@ Incidents.propTypes = {
     name: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
-  isFetching: PropTypes.bool.isRequired,
+  loadStatus: PropTypes.number.isRequired,
+  updateStatus: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
   message: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
   return {
-    isFetching: state.incidents.isFetching,
+    loadStatus: state.incidents.loadStatus,
+    updateStatus: state.incidents.updateStatus,
     incidents: state.incidents.incidents,
     serviceComponents: state.incidents.components,
     message: state.incidents.message

@@ -1,5 +1,6 @@
 import { checkStatus } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
+import { requestStatus } from 'utils/status'
 
 // ------------------------------------
 // Constants
@@ -11,13 +12,6 @@ export const ADD_COMPONENT = ACTION_NAME_PREFIX + 'ADD_COMPONENT'
 export const EDIT_COMPONENT = ACTION_NAME_PREFIX + 'EDIT_COMPONENT'
 export const REMOVE_COMPONENT = ACTION_NAME_PREFIX + 'REMOVE_COMPONENT'
 export const SET_ERROR = ACTION_NAME_PREFIX + 'SET_ERROR'
-
-export const requestStatus = {
-  none: 0,
-  inProgress: 1,
-  success: 2,
-  failure: 3
-}
 
 // ------------------------------------
 // Actions
