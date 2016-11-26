@@ -1,12 +1,13 @@
 import fetchMock from 'fetch-mock'
 import {
-  LOAD,
+  SET_STATUS,
   LIST_COMPONENTS,
-  loadAction,
+  setStatusAction,
   listComponentsAction,
   fetchComponents,
   default as reducer
 } from 'routes/Components/modules/components'
+import { requestStatus } from 'utils/status'
 
 describe('(Redux Module) Components', () => {
   const comp1 = {
@@ -24,13 +25,15 @@ describe('(Redux Module) Components', () => {
     order: 0
   }
 
-  describe('(Action Creator) loadAction', () => {
+  describe('(Action Creator) setStatusAction', () => {
     it('Should be exported as a function.', () => {
-      expect(loadAction).to.be.a('function')
+      expect(setStatusAction).to.be.a('function')
     })
 
-    it('Should return an action with type "LOAD".', () => {
-      expect(loadAction()).to.have.property('type', LOAD)
+    it('Should return an action with type "SET_STATUS".', () => {
+      const action = setStatusAction({loadStatus: 0})
+      expect(action).to.have.property('type', SET_STATUS)
+      expect(action.status).to.have.property('loadStatus', 0)
     })
   })
 
@@ -63,14 +66,15 @@ describe('(Redux Module) Components', () => {
       expect(fetchComponents()).to.be.a('function')
     })
 
-    it('Should call dispatch load action first.', () => {
+    it('Should dispatch load action first.', () => {
       return fetchComponents()(_dispatchSpy)
         .then(() => {
-          expect(_dispatchSpy.firstCall.args[0].type).to.equal(LOAD)
+          expect(_dispatchSpy.firstCall.args[0].type).to.equal(SET_STATUS)
+          expect(_dispatchSpy.firstCall.args[0].status.loadStatus).to.equal(requestStatus.inProgress)
         })
     })
 
-    it('Should call dispatch list action next.', () => {
+    it('Should dispatch list action next.', () => {
       return fetchComponents()(_dispatchSpy)
         .then(() => {
           expect(_dispatchSpy.secondCall.args[0].type).to.equal(LIST_COMPONENTS)
@@ -79,22 +83,19 @@ describe('(Redux Module) Components', () => {
     })
   })
 
-  describe('(Action Handler) LOAD Handler', () => {
-    it('Should make the `isFetching` state true.', () => {
-      const state = reducer(undefined, loadAction())
-      expect(state.isFetching).to.be.true
+  describe('(Action Handler) SET_STATUS Handler', () => {
+    it('Should set values in action.status.', () => {
+      const state = reducer(undefined, setStatusAction({loadStatus: 0}))
+      expect(state.loadStatus).to.equal(0)
     })
   })
 
-  // NOTE: if you have a more complex state, you will probably want to verify
-  // that you did not mutate the state. In this case our state is just a number
-  // (which cannot be mutated).
   describe('(Action Handler) LIST_COMPONENTS Handler', () => {
     const comp1JSON = JSON.stringify([comp1])
     const comp12JSON = JSON.stringify([comp1, comp2])
-    it('Should make the `isFetching` state false.', () => {
+    it('Should set the `loadStatus` state success.', () => {
       const state = reducer(undefined, listComponentsAction(comp1JSON))
-      expect(state.isFetching).to.be.false
+      expect(state.loadStatus).to.equal(requestStatus.success)
     })
 
     it('Should properly set the `serviceComponents` state.', () => {
@@ -113,14 +114,20 @@ describe('(Redux Module) Components', () => {
 
     it('Should initialize states.', () => {
       const initialState = reducer(undefined, {})
-      expect(initialState.isFetching).to.equal(false)
+      expect(initialState.loadStatus).to.equal(requestStatus.none)
+      expect(initialState.updateStatus).to.equal(requestStatus.none)
       expect(initialState.serviceComponents).to.be.empty
     })
 
     it('Should return the previous state if an action was not matched.', () => {
-      const state = { isFetching: true, serviceComponents: [1] }
+      const state = {
+        loadStatus: requestStatus.loading,
+        updateStatus: requestStatus.loading,
+        serviceComponents: [1]
+      }
       let returnedState = reducer(state, {})
-      expect(state.isFetching).to.equal(returnedState.isFetching)
+      expect(requestStatus.loadStatus).to.equal(state.loadStatus)
+      expect(requestStatus.updateStatus).to.equal(state.updateStatus)
       expect(state.serviceComponents).to.equal(returnedState.serviceComponents)
     })
   })

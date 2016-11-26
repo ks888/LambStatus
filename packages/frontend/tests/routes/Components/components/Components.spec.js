@@ -10,7 +10,8 @@ describe('(Component) Components', () => {
     _spies = {}
     _props = {
       serviceComponents: [],
-      isFetching: false,
+      loadStatus: 0,
+      updateStatus: 0,
       message: '',
       fetchComponents: () => {},
       postComponent: () => {},

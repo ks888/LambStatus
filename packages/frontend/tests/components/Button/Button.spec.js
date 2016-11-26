@@ -14,7 +14,8 @@ describe('(Component) Button', () => {
       onClick: (_spies.onClick = sinon.spy()),
       name: buttonName,
       class: buttonClass,
-      plain: false
+      plain: false,
+      disabled: false
     }
     _wrapper = shallow(<Button {..._props} />)
   })
@@ -41,5 +42,10 @@ describe('(Component) Button', () => {
     _wrapper.simulate('click')
 
     _spies.onClick.should.have.been.called
+  })
+
+  it('Should render with the disabled button.', () => {
+    _wrapper = shallow(<Button {..._props} disabled />)
+    expect(_wrapper.find('button').prop('disabled')).to.be.true
   })
 })
