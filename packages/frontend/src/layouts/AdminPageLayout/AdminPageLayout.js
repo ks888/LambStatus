@@ -12,6 +12,7 @@ export const AdminPageLayout = ({ children }) => (
     <main className='mdl-layout__content'>
       {children}
     </main>
+    <div id='dialog-container' />
   </div>
 )
 

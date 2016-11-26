@@ -31,17 +31,15 @@ export class Components extends React.Component {
   componentDidUpdate () {
     let dialog = ReactDOM.findDOMNode(this.refs.componentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
     if (dialog) {
+      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
+      // Here is a workaround for this limitation.
+      document.getElementById('dialog-container').appendChild(dialog)
+
       if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog)
       }
       try {
         dialog.showModal()
-
-        // workaround https://github.com/GoogleChrome/dialog-polyfill/issues/105
-        let overlay = document.querySelector('._dialog_overlay')
-        if (overlay) {
-          overlay.style = null
-        }
       } catch (ex) {
         console.warn('Failed to show dialog (the dialog may be already shown)')
       }
@@ -65,8 +63,11 @@ export class Components extends React.Component {
   }
 
   handleHideDialog = (refs) => {
-    let dialog = ReactDOM.findDOMNode(refs)
+    const dialog = ReactDOM.findDOMNode(refs)
     dialog.close()
+
+    document.getElementById('inner-dialog-container').appendChild(dialog)
+
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
@@ -172,7 +173,9 @@ export class Components extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
-      {dialog}
+      <div id='inner-dialog-container'>
+        {dialog}
+      </div>
       {snackbar}
     </div>)
   }
