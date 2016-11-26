@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
+import { fetchComponents, postComponent, updateComponent, deleteComponent, requestStatus } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -21,7 +21,7 @@ const dialogType = {
 export class Components extends React.Component {
   constructor () {
     super()
-    this.state = { dialogType: dialogType.none, selectedComponent: null }
+    this.state = { dialogType: dialogType.none, component: null }
   }
 
   componentDidMount () {
@@ -29,20 +29,22 @@ export class Components extends React.Component {
   }
 
   componentDidUpdate () {
-    let dialog = ReactDOM.findDOMNode(this.refs.componentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
-    if (dialog) {
+    const dialog = ReactDOM.findDOMNode(this.refs.componentDialog) ||
+      ReactDOM.findDOMNode(this.refs.foolproofDialog)
+    if (dialog && !dialog.showModal) {
       // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
       // Here is a workaround for this limitation.
       document.getElementById('dialog-container').appendChild(dialog)
 
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      try {
-        dialog.showModal()
-      } catch (ex) {
-        console.warn('Failed to show dialog (the dialog may be already shown)')
-      }
+      dialogPolyfill.registerDialog(dialog)
+      dialog.showModal()
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.updateStatus === requestStatus.inProgress &&
+      nextProps.updateStatus === requestStatus.success) {
+      this.handleHideDialog()
     }
   }
 
@@ -62,36 +64,27 @@ export class Components extends React.Component {
     return () => this.handleShowDialog(dialogType.delete, component)
   }
 
-  handleHideDialog = (refs) => {
-    const dialog = ReactDOM.findDOMNode(refs)
-    dialog.close()
+  handleHideDialog = () => {
+    const dialog = ReactDOM.findDOMNode(this.refs.componentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
+    if (dialog) {
+      dialog.close()
 
-    document.getElementById('inner-dialog-container').appendChild(dialog)
+      document.getElementById('inner-dialog-container').appendChild(dialog)
 
-    this.setState({ component: null, dialogType: dialogType.none })
-  }
-
-  handleHideComponentDialog = () => {
-    return () => this.handleHideDialog(this.refs.componentDialog)
-  }
-
-  handleHideFoolproofDialog = () => {
-    return () => this.handleHideDialog(this.refs.foolproofDialog)
+      this.setState({ component: null, dialogType: dialogType.none })
+    }
   }
 
   handleAdd = (componentID, name, description, status) => {
     this.props.postComponent(name, description, status)
-    this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleEdit = (componentID, name, description, status) => {
     this.props.updateComponent(componentID, name, description, status)
-    this.handleHideDialog(this.refs.componentDialog)
   }
 
   handleDelete = (componentID) => {
     this.props.deleteComponent(componentID)
-    this.handleHideDialog(this.refs.foolproofDialog)
   }
 
   renderListItem = (component) => {
@@ -121,6 +114,7 @@ export class Components extends React.Component {
   }
 
   renderDialog = () => {
+    const isUpdating = (this.props.updateStatus === requestStatus.inProgress)
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
@@ -134,17 +128,17 @@ export class Components extends React.Component {
           status: 'Operational'
         }
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAdd}
-          onCanceled={this.handleHideComponentDialog()}
+          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
           component={component} actionName='Add' />
         break
       case dialogType.edit:
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleEdit}
-          onCanceled={this.handleHideComponentDialog()}
+          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
           component={this.state.component} actionName='Edit' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={this.handleHideFoolproofDialog()}
+          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
           name={this.state.component.name} ID={this.state.component.componentID} />
         break
       default:
@@ -154,7 +148,7 @@ export class Components extends React.Component {
   }
 
   render () {
-    const { serviceComponents, isFetching, message } = this.props
+    const { serviceComponents, loadStatus, message } = this.props
     const componentItems = serviceComponents.map(this.renderListItem)
     const dialog = this.renderDialog()
     const snackbar = <Snackbar message={message} />
@@ -163,7 +157,7 @@ export class Components extends React.Component {
       Component
     </div>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
+    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>
@@ -188,7 +182,8 @@ Components.propTypes = {
     description: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired
   }).isRequired).isRequired,
-  isFetching: PropTypes.bool.isRequired,
+  loadStatus: PropTypes.number.isRequired,
+  updateStatus: PropTypes.number.isRequired,
   message: PropTypes.string,
   fetchComponents: PropTypes.func.isRequired,
   postComponent: PropTypes.func.isRequired,
@@ -198,7 +193,8 @@ Components.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    isFetching: state.components.isFetching,
+    loadStatus: state.components.loadStatus,
+    updateStatus: state.components.updateStatus,
     serviceComponents: state.components.serviceComponents,
     message: state.components.message
   }

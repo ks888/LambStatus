@@ -5,20 +5,28 @@ import { apiURL } from 'utils/settings'
 // Constants
 // ------------------------------------
 const ACTION_NAME_PREFIX = 'COMPONENTS_'
-export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
+export const SET_STATUS = ACTION_NAME_PREFIX + 'SET_STATUS'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
 export const ADD_COMPONENT = ACTION_NAME_PREFIX + 'ADD_COMPONENT'
 export const EDIT_COMPONENT = ACTION_NAME_PREFIX + 'EDIT_COMPONENT'
 export const REMOVE_COMPONENT = ACTION_NAME_PREFIX + 'REMOVE_COMPONENT'
-export const SHOW_MESSAGE = ACTION_NAME_PREFIX + 'SHOW_MESSAGE'
+export const SET_ERROR = ACTION_NAME_PREFIX + 'SET_ERROR'
+
+export const requestStatus = {
+  none: 0,
+  inProgress: 1,
+  success: 2,
+  failure: 3
+}
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export function loadAction () {
+export function setStatusAction (status) {
   return {
-    type: LOAD
+    type: SET_STATUS,
+    status
   }
 }
 
@@ -50,16 +58,16 @@ export function removeComponentAction (componentID) {
   }
 }
 
-export function showMessageAction (message) {
+export function setErrorAction (message) {
   return {
-    type: SHOW_MESSAGE,
+    type: SET_ERROR,
     message: message
   }
 }
 
 export const fetchComponents = () => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({loadStatus: requestStatus.inProgress}))
     return fetch(apiURL + 'components')
       .then(checkStatus)
       .then(response => response.json())
@@ -68,7 +76,8 @@ export const fetchComponents = () => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({loadStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -77,7 +86,7 @@ export const fetchComponents = () => {
 
 export const postComponent = (name, description, status) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     let body = {
       name: name,
       description: description,
@@ -94,7 +103,8 @@ export const postComponent = (name, description, status) => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -103,7 +113,7 @@ export const postComponent = (name, description, status) => {
 
 export const updateComponent = (componentID, name, description, status) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     let body = {
       name: name,
       description: description,
@@ -120,7 +130,8 @@ export const updateComponent = (componentID, name, description, status) => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -129,7 +140,7 @@ export const updateComponent = (componentID, name, description, status) => {
 
 export const deleteComponent = (componentID) => {
   return dispatch => {
-    dispatch(loadAction())
+    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
     return fetch(apiURL + 'components/' + componentID, {
       method: 'DELETE'
     }).then(checkStatus)
@@ -138,7 +149,8 @@ export const deleteComponent = (componentID) => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(showMessageAction(error.message))
+          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
+          dispatch(setErrorAction(error.message))
           return
         }
       })
@@ -146,22 +158,22 @@ export const deleteComponent = (componentID) => {
 }
 
 export const actions = {
-  loadAction,
+  setStatusAction,
   listComponentsAction,
   addComponentAction,
   editComponentAction,
   removeComponentAction,
-  showMessageAction
+  setErrorAction
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 
-function loadHandler (state = { }, action) {
+function setStatusHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: true,
-    message: ''
+    message: '',
+    ...action.status
   })
 }
 
@@ -176,7 +188,7 @@ function listComponentsHandler (state = { }, action) {
     }
   })
   return Object.assign({}, state, {
-    isFetching: false,
+    loadStatus: requestStatus.success,
     serviceComponents: components
   })
 }
@@ -184,7 +196,7 @@ function listComponentsHandler (state = { }, action) {
 function addComponentHandler (state = { }, action) {
   let component = JSON.parse(action.serviceComponent)
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     serviceComponents: [
       ...state.serviceComponents,
       {
@@ -216,7 +228,7 @@ function editComponentHandler (state = { }, action) {
   newComponents.sort((a, b) => a.order - b.order)
 
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     serviceComponents: newComponents
   })
 }
@@ -227,25 +239,26 @@ function removeComponentHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    isFetching: false,
+    updateStatus: requestStatus.success,
     serviceComponents: serviceComponents
   })
 }
 
-function showMessageHandler (state = { }, action) {
+function setErrorHandler (state = { }, action) {
   return Object.assign({}, state, {
-    isFetching: false,
+    loadStatus: requestStatus.failure,
+    updateStatus: requestStatus.failure,
     message: action.message
   })
 }
 
 const ACTION_HANDLERS = {
-  [LOAD]: loadHandler,
+  [SET_STATUS]: setStatusHandler,
   [LIST_COMPONENTS]: listComponentsHandler,
   [ADD_COMPONENT]: addComponentHandler,
   [EDIT_COMPONENT]: editComponentHandler,
   [REMOVE_COMPONENT]: removeComponentHandler,
-  [SHOW_MESSAGE]: showMessageHandler
+  [SET_ERROR]: setErrorHandler
 }
 
 // ------------------------------------
@@ -253,7 +266,8 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 
 export default function componentsReducer (state = {
-  isFetching: false,
+  loadStatus: requestStatus.none,
+  updateStatus: requestStatus.none,
   serviceComponents: []
 }, action) {
   const handler = ACTION_HANDLERS[action.type]

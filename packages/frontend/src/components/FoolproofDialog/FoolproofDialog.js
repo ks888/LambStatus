@@ -17,7 +17,8 @@ class FoolproofDialog extends React.Component {
         This operation can not be undone.
       </div>
       <div className='mdl-dialog__actions'>
-        <Button onClick={this.handleClickDeleteButton} name='DELETE' class='mdl-button--accent' />
+        <Button onClick={this.handleClickDeleteButton} name='DELETE'
+          class='mdl-button--accent' disabled={this.props.isUpdating} />
         <Button onClick={this.props.onCanceled} name='Cancel' />
       </div>
     </dialog>)
@@ -28,7 +29,8 @@ FoolproofDialog.propTypes = {
   onCompleted: PropTypes.func.isRequired,
   onCanceled: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
-  ID: PropTypes.string.isRequired
+  ID: PropTypes.string.isRequired,
+  isUpdating: PropTypes.bool.isRequired
 }
 
 export default FoolproofDialog

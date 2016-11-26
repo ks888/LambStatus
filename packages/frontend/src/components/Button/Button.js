@@ -16,9 +16,10 @@ class Button extends React.Component {
     } else {
       classList = classnames('mdl-button', 'mdl-js-button', 'mdl-button--raised', this.props.class)
     }
+
     return (
       <button type='button' onClick={this.props.onClick} ref='button'
-        className={classList}>
+        className={classList} disabled={this.props.disabled}>
         {this.props.name}
       </button>
     )
@@ -32,7 +33,8 @@ Button.propTypes = {
     PropTypes.element
   ]),
   class: PropTypes.string,
-  plain: PropTypes.bool
+  plain: PropTypes.bool,
+  disabled: PropTypes.bool
 }
 
 export default Button
