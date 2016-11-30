@@ -7,12 +7,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
   <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-amber.min.css" />
-  <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
-  <script src="dialog-polyfill.js"></script>
-  <link rel="stylesheet" type="text/css" href="dialog-polyfill.css" />
-</head>
-<body style="height: 100%">
-  <div id="root" style="height: 100%"></div>
+  <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
   <script>
     try {
       x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
@@ -29,5 +24,10 @@
       window.console && console.log(e);
     }
   </script>
+  <script src="dialog-polyfill.js"></script>
+  <link rel="stylesheet" type="text/css" href="dialog-polyfill.css" />
+</head>
+<body style="height: 100%">
+  <div id="root" style="height: 100%"></div>
 </body>
 </html>

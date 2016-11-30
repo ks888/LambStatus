@@ -1,17 +1,14 @@
-import { applyMiddleware, compose, createStore } from 'redux'
-import { routerMiddleware } from 'react-router-redux'
+import { applyMiddleware, compose, createStore, combineReducers } from 'redux'
+import { routerMiddleware, routerReducer as router } from 'react-router-redux'
 import thunk from 'redux-thunk'
-import makeRootReducer from './reducers'
+import componentReducer from 'routes/Components/modules/components'
+import incidentReducer from 'routes/Incidents/modules/incidents'
+import statusesReducer from 'routes/Statuses/modules/statuses'
+import historyReducer from 'routes/History/modules/history'
 
 export default (initialState = {}, history) => {
-  // ======================================================
-  // Middleware Configuration
-  // ======================================================
   const middleware = [thunk, routerMiddleware(history)]
 
-  // ======================================================
-  // Store Enhancers
-  // ======================================================
   const enhancers = []
   if (__DEBUG__) {
     const devToolsExtension = window.devToolsExtension
@@ -20,25 +17,18 @@ export default (initialState = {}, history) => {
     }
   }
 
-  // ======================================================
-  // Store Instantiation and HMR Setup
-  // ======================================================
-  const store = createStore(
-    makeRootReducer(),
+  return createStore(
+    combineReducers({
+      components: componentReducer,
+      incidents: incidentReducer,
+      statuses: statusesReducer,
+      history: historyReducer,
+      router
+    }),
     initialState,
     compose(
       applyMiddleware(...middleware),
       ...enhancers
     )
   )
-  store.asyncReducers = {}
-
-  if (module.hot) {
-    module.hot.accept('./reducers', () => {
-      const reducers = require('./reducers').default
-      store.replaceReducer(reducers(store.asyncReducers))
-    })
-  }
-
-  return store
 }

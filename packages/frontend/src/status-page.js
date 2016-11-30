@@ -1,10 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { useRouterHistory } from 'react-router'
+import { Router, Route, IndexRoute, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-import createStore from './store/createStore'
-import AppContainer from './containers/AppContainer'
+import { Provider } from 'react-redux'
+
+import createStore from 'store/createStore'
+import StatusPageLayout from 'layouts/StatusPageLayout'
+import Statuses from 'routes/Statuses/components/Statuses'
+import History from 'routes/History/components/History'
 
 // ========================================================
 // Browser History Setup
@@ -41,14 +45,20 @@ if (__DEBUG__) {
 const MOUNT_NODE = document.getElementById('root')
 
 let render = () => {
-  const routes = require('./routes/status-page').default(store)
+  const routes = (
+    <Route path='/' component={StatusPageLayout}>
+      <IndexRoute component={Statuses} />
+      <Route path='statuses' component={Statuses} />
+      <Route path='history' component={History} />
+    </Route>
+  )
 
   ReactDOM.render(
-    <AppContainer
-      store={store}
-      history={history}
-      routes={routes}
-    />,
+    <Provider store={store}>
+      <div style={{ height: '100%' }}>
+        <Router history={history} children={routes} />
+      </div>
+    </Provider>,
     MOUNT_NODE
   )
 }
@@ -74,12 +84,14 @@ if (__DEV__) {
     }
 
     // Setup hot module replacement
+    /*
     module.hot.accept('./routes/status-page', () => {
       setTimeout(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE)
         render()
       })
     })
+    */
   }
 }
 

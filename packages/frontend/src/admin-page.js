@@ -1,10 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { useRouterHistory } from 'react-router'
+import { Router, Route, IndexRoute, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
-import createStore from './store/createStore'
-import AppContainer from './containers/AppContainer'
+import { Provider } from 'react-redux'
+
+import createStore from 'store/createStore'
+import AdminPageLayout from 'layouts/AdminPageLayout'
+import Components from 'routes/Components/components/Components'
+import Incidents from 'routes/Incidents/components/Incidents'
 
 // ========================================================
 // Browser History Setup
@@ -41,14 +45,20 @@ if (__DEBUG__) {
 const MOUNT_NODE = document.getElementById('root')
 
 let render = () => {
-  const routes = require('./routes/admin-page').default(store)
+  const routes = (
+    <Route path='/' component={AdminPageLayout}>
+      <IndexRoute component={Components} />
+      <Route path='components' component={Components} />
+      <Route path='incidents' component={Incidents} />
+    </Route>
+  )
 
   ReactDOM.render(
-    <AppContainer
-      store={store}
-      history={history}
-      routes={routes}
-    />,
+    <Provider store={store}>
+      <div style={{ height: '100%' }}>
+        <Router history={history} children={routes} />
+      </div>
+    </Provider>,
     MOUNT_NODE
   )
 }
@@ -74,16 +84,19 @@ if (__DEV__) {
     }
 
     // Setup hot module replacement
-    module.hot.accept('./routes/admin-page', () => {
+    /*
+    module.hot.accept('./routes', () => {
       setTimeout(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE)
         render()
       })
     })
+    */
   }
 }
 
 // ========================================================
 // Go!
 // ========================================================
+
 render()
