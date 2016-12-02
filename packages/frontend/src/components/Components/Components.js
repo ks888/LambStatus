@@ -1,8 +1,5 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { fetchComponents, postComponent, updateComponent, deleteComponent } from '../modules/components'
 import ComponentDialog from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -18,7 +15,7 @@ const dialogType = {
   delete: 3
 }
 
-export class Components extends React.Component {
+export default class Components extends React.Component {
   constructor () {
     super()
     this.state = { dialogType: dialogType.none, component: null }
@@ -191,18 +188,3 @@ Components.propTypes = {
   updateComponent: PropTypes.func.isRequired,
   deleteComponent: PropTypes.func.isRequired
 }
-
-const mapStateToProps = (state) => {
-  return {
-    loadStatus: state.components.loadStatus,
-    updateStatus: state.components.updateStatus,
-    serviceComponents: state.components.serviceComponents,
-    message: state.components.message
-  }
-}
-
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchComponents, postComponent, updateComponent, deleteComponent}, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Components)

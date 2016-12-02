@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
-import { fetchIncidents, fetchComponents } from '../modules/statuses'
+import { fetchIncidents, fetchComponents } from 'actions/statuses'
 import { serviceName } from 'utils/settings'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
@@ -10,7 +9,7 @@ import classes from './Statuses.scss'
 import moment from 'moment-timezone'
 import { getComponentColor } from 'utils/status'
 
-class Statuses extends React.Component {
+export default class Statuses extends React.Component {
   constructor () {
     super()
     this.dateFormat = 'MMM DD, YYYY'
@@ -136,13 +135,3 @@ Statuses.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired
 }
-
-const mapStateToProps = (state) => {
-  return {
-    isFetching: state.statuses.isFetching,
-    incidents: state.statuses.incidents,
-    serviceComponents: state.statuses.components
-  }
-}
-
-export default connect(mapStateToProps)(Statuses)

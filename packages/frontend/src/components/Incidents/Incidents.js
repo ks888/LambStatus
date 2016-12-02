@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { connect } from 'react-redux'
 import { fetchIncidents, fetchIncidentUpdates, fetchComponents, postIncident,
-  updateIncident, deleteIncident } from '../modules/incidents'
+  updateIncident, deleteIncident } from 'actions/incidents'
 import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -19,7 +18,7 @@ const dialogType = {
   delete: 3
 }
 
-class Incidents extends React.Component {
+export default class Incidents extends React.Component {
   constructor () {
     super()
     this.state = { dialogType: dialogType.none, incident: null }
@@ -227,15 +226,3 @@ Incidents.propTypes = {
   dispatch: PropTypes.func.isRequired,
   message: PropTypes.string
 }
-
-const mapStateToProps = (state) => {
-  return {
-    loadStatus: state.incidents.loadStatus,
-    updateStatus: state.incidents.updateStatus,
-    incidents: state.incidents.incidents,
-    serviceComponents: state.incidents.components,
-    message: state.incidents.message
-  }
-}
-
-export default connect(mapStateToProps)(Incidents)

@@ -7,8 +7,8 @@ import { Provider } from 'react-redux'
 
 import createStore from 'store/createStore'
 import AdminPageLayout from 'layouts/AdminPageLayout'
-import Components from 'routes/Components/components/Components'
-import Incidents from 'routes/Incidents/components/Incidents'
+import Components from 'containers/Components'
+import Incidents from 'containers/Incidents'
 
 // ========================================================
 // Browser History Setup

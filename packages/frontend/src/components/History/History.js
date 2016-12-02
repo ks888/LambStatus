@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
-import { fetchIncidents, fetchIncidentUpdates } from '../modules/history'
+import { fetchIncidents, fetchIncidentUpdates } from 'actions/history'
 import Title from 'components/Title'
 import ModestLink from 'components/ModestLink'
 import IncidentItem from 'components/IncidentItem'
@@ -8,7 +7,7 @@ import classnames from 'classnames'
 import classes from './History.scss'
 import moment from 'moment-timezone'
 
-class History extends React.Component {
+export default class History extends React.Component {
   componentDidMount () {
     this.props.dispatch(fetchIncidents)
   }
@@ -88,12 +87,3 @@ History.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired
 }
-
-const mapStateToProps = (state) => {
-  return {
-    isFetching: state.history.isFetching,
-    incidents: state.history.incidents
-  }
-}
-
-export default connect(mapStateToProps)(History)

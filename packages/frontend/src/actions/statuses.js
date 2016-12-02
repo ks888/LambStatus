@@ -1,18 +1,11 @@
 import { checkStatus } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
-// ------------------------------------
-// Constants
-// ------------------------------------
 const ACTION_NAME_PREFIX = 'STATUSES_'
 export const LOAD = ACTION_NAME_PREFIX + 'LOAD'
 export const FINISH_LOAD = ACTION_NAME_PREFIX + 'FINISH_LOAD'
 export const LIST_INCIDENT = ACTION_NAME_PREFIX + 'LIST_INCIDENT'
 export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
-
-// ------------------------------------
-// Actions
-// ------------------------------------
 
 export function loadAction () {
   return {
@@ -92,70 +85,4 @@ export const actions = {
   loadAction,
   listIncidentAction,
   listComponentsAction
-}
-
-// ------------------------------------
-// Action Handlers
-// ------------------------------------
-
-function loadHandler (state = { }, action) {
-  return Object.assign({}, state, {
-    isFetching: true
-  })
-}
-
-// finish loading with no data
-function finishLoadHandler (state = { }, action) {
-  return Object.assign({}, state, {
-    isFetching: false
-  })
-}
-
-function listIncidentHandler (state = { }, action) {
-  action.incident.incidentUpdates.sort((a, b) => {
-    return a.updatedAt < b.updatedAt
-  })
-
-  const newIncidents = [...state.incidents, action.incident].sort((a, b) => {
-    return a.updatedAt < b.updatedAt
-  })
-
-  return Object.assign({}, state, {
-    isFetching: false,
-    incidents: newIncidents
-  })
-}
-
-function listComponentsHandler (state = { }, action) {
-  let components = JSON.parse(action.components).map((component) => {
-    return {
-      componentID: component.componentID,
-      name: component.name,
-      description: component.description,
-      status: component.status
-    }
-  })
-  return Object.assign({}, state, {
-    components: components
-  })
-}
-
-const ACTION_HANDLERS = {
-  [LOAD]: loadHandler,
-  [FINISH_LOAD]: finishLoadHandler,
-  [LIST_INCIDENT]: listIncidentHandler,
-  [LIST_COMPONENTS]: listComponentsHandler
-}
-
-// ------------------------------------
-// Reducer
-// ------------------------------------
-
-export default function incidentsReducer (state = {
-  isFetching: false,
-  incidents: [],
-  components: []
-}, action) {
-  const handler = ACTION_HANDLERS[action.type]
-  return handler ? handler(state, action) : state
 }

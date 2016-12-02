@@ -1,10 +1,7 @@
-import { applyMiddleware, compose, createStore, combineReducers } from 'redux'
-import { routerMiddleware, routerReducer as router } from 'react-router-redux'
+import { applyMiddleware, compose, createStore } from 'redux'
+import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
-import componentReducer from 'routes/Components/modules/components'
-import incidentReducer from 'routes/Incidents/modules/incidents'
-import statusesReducer from 'routes/Statuses/modules/statuses'
-import historyReducer from 'routes/History/modules/history'
+import rootReducer from 'reducers'
 
 export default (initialState = {}, history) => {
   const middleware = [thunk, routerMiddleware(history)]
@@ -17,18 +14,21 @@ export default (initialState = {}, history) => {
     }
   }
 
-  return createStore(
-    combineReducers({
-      components: componentReducer,
-      incidents: incidentReducer,
-      statuses: statusesReducer,
-      history: historyReducer,
-      router
-    }),
+  const store = createStore(
+    rootReducer,
     initialState,
     compose(
       applyMiddleware(...middleware),
       ...enhancers
     )
   )
+
+  if (module.hot) {
+    module.hot.accept('../reducers', () => {
+      const nextReducer = require('../reducers')
+      store.replaceReducer(nextReducer)
+    })
+  }
+
+  return store
 }

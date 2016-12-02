@@ -7,8 +7,8 @@ import { Provider } from 'react-redux'
 
 import createStore from 'store/createStore'
 import StatusPageLayout from 'layouts/StatusPageLayout'
-import Statuses from 'routes/Statuses/components/Statuses'
-import History from 'routes/History/components/History'
+import Statuses from 'containers/Statuses'
+import History from 'containers/History'
 
 // ========================================================
 // Browser History Setup
