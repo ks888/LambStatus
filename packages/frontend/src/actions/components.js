@@ -1,3 +1,4 @@
+import 'whatwg-fetch'
 import { checkStatus } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 

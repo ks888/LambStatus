@@ -31,10 +31,3 @@ export const getIncidentColor = (impact) => {
       return '#9e9e9e'
   }
 }
-
-export const requestStatus = {
-  none: 0,
-  inProgress: 1,
-  success: 2,
-  failure: 3
-}
