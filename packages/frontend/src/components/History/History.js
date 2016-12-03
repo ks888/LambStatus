@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import { fetchIncidents, fetchIncidentUpdates } from 'actions/history'
 import Title from 'components/Title'
 import ModestLink from 'components/ModestLink'
 import IncidentItem from 'components/IncidentItem'
@@ -8,12 +7,37 @@ import classes from './History.scss'
 import moment from 'moment-timezone'
 
 export default class History extends React.Component {
+  static propTypes = {
+    incidents: PropTypes.arrayOf(PropTypes.shape({
+      incidentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
+    }).isRequired).isRequired,
+    fetchIncidents: PropTypes.func.isRequired,
+    fetchIncidentUpdates: PropTypes.func.isRequired
+  }
+
+  fetchCallbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: (msg) => {
+      this.setState({isFetching: false, message: msg})
+    }
+  }
+
   componentDidMount () {
-    this.props.dispatch(fetchIncidents)
+    this.props.fetchIncidents(this.fetchCallbacks)
   }
 
   handleShowDetail = (incidentID) => {
-    this.props.dispatch(fetchIncidentUpdates(incidentID))
+    this.props.fetchIncidentUpdates(incidentID, this.fetchCallbacks)
   }
 
   renderIncidentItems = (month, incidents) => {
@@ -69,21 +93,4 @@ export default class History extends React.Component {
       <ModestLink link='/' text='Current Incidents' />
     </div>)
   }
-}
-
-History.propTypes = {
-  incidents: PropTypes.arrayOf(PropTypes.shape({
-    incidentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    updatedAt: PropTypes.string.isRequired,
-    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-      incidentUpdateID: PropTypes.string.isRequired,
-      incidentStatus: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
-    }).isRequired)
-  }).isRequired).isRequired,
-  isFetching: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired
 }

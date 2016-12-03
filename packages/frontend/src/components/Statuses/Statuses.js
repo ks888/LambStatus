@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import { fetchIncidents, fetchComponents } from 'actions/statuses'
 import { serviceName } from 'utils/settings'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
@@ -10,14 +9,48 @@ import moment from 'moment-timezone'
 import { getComponentColor } from 'utils/status'
 
 export default class Statuses extends React.Component {
+  static propTypes = {
+    incidents: PropTypes.arrayOf(PropTypes.shape({
+      incidentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
+    }).isRequired).isRequired,
+    components: PropTypes.arrayOf(PropTypes.shape({
+      componentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired
+    }).isRequired).isRequired,
+    fetchComponents: PropTypes.func.isRequired,
+    fetchIncidentsWithUpdates: PropTypes.func.isRequired
+  }
+
   constructor () {
     super()
     this.dateFormat = 'MMM DD, YYYY'
+    this.state = {
+      isFetching: false,
+      message: ''
+    }
+  }
+
+  fetchCallbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: (msg) => {
+      this.setState({isFetching: false, message: msg})
+    }
   }
 
   componentDidMount () {
-    this.props.dispatch(fetchIncidents)
-    this.props.dispatch(fetchComponents)
+    this.props.fetchIncidentsWithUpdates(this.fetchCallbacks)
+    this.props.fetchComponents(this.fetchCallbacks)
   }
 
   renderComponentItem = (component) => {
@@ -76,6 +109,8 @@ export default class Statuses extends React.Component {
     }, {})
 
     incidents.forEach((incident) => {
+      if (!incident.incidentUpdates) return
+
       let updatedDates = new Set()
       incident.incidentUpdates.map((incidentUpdate) => {
         const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format(this.dateFormat)
@@ -94,11 +129,12 @@ export default class Statuses extends React.Component {
   }
 
   render () {
-    const { incidents, serviceComponents, isFetching } = this.props
-    const componentItems = serviceComponents.map(this.renderComponentItem)
+    const { incidents, components } = this.props
+    const componentItems = components.map(this.renderComponentItem)
     const dateItems = this.renderDateItems(incidents)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
+    return (<div className={classnames(classes.layout, 'mdl-grid')}
+      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <Title service_name={serviceName} />
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
@@ -112,26 +148,4 @@ export default class Statuses extends React.Component {
       <ModestLink link='/history' text='Incident History' />
     </div>)
   }
-}
-
-Statuses.propTypes = {
-  incidents: PropTypes.arrayOf(PropTypes.shape({
-    incidentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    updatedAt: PropTypes.string.isRequired,
-    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-      incidentUpdateID: PropTypes.string.isRequired,
-      incidentStatus: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
-    }).isRequired)
-  }).isRequired).isRequired,
-  serviceComponents: PropTypes.arrayOf(PropTypes.shape({
-    componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  isFetching: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired
 }

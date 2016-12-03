@@ -64,6 +64,31 @@ export const fetchIncidents = (callbacks = {}) => {
   }
 }
 
+export const fetchIncidentsWithUpdates = (callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    return fetch(apiURL + 'incidents')
+      .then(checkStatus)
+      .then(response => response.json())
+      .then(json => {
+        const obj = JSON.parse(json)
+        if (obj.length !== 0) {
+          obj.forEach(incident => dispatch(fetchIncidentUpdates(incident.incidentID)))
+        } else {
+          if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        }
+      })
+      .catch(error => {
+        console.error(error.message)
+        console.error(error.stack)
+        if (error.name === 'HTTPError') {
+          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
+        }
+      })
+  }
+}
+
 export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
