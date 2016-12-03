@@ -9,7 +9,7 @@ Parameters:
   Version:
     Description: The version of LambStatus
     Type: "String"
-    Default: "0.0.2"
+    Default: "0.0.3"
 Resources:
   LambdaRole:
     Type: "AWS::IAM::Role"
@@ -1136,12 +1136,8 @@ Resources:
       Bucket:
         Ref: StatusPageS3
       Key: settings.json
-      Body: !Sub
-        - {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageURL}"}
-        - StatusPageURL:
-            Fn::GetAtt:
-              - "StatusPageDistribution"
-              - "DomainName"
+      Body: !Sub |-
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
     DependsOn:
       - StatusPageDistribution
   AdminPageApiInfo:
@@ -1157,7 +1153,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
