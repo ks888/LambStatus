@@ -17,6 +17,7 @@ global.sinon = sinon
 global.expect = chai.expect
 global.should = chai.should()
 global.__LAMBSTATUS_API_URL__ = '/'
+global.__LAMBSTATUS_STATUS_PAGE_URL__ = ''
 global.__LAMBSTATUS_SERVICE_NAME__ = ''
 
 // ---------------------------------------
