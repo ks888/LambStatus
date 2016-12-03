@@ -19,7 +19,7 @@
     "__COVERAGE__" : false,
     "__BASENAME__" : false,
     "__LAMBSTATUS_API_URL__" : '',
-    "__LAMBSTATUS_API_KEY__" : '',
+    "__LAMBSTATUS_STATUS_PAGE_URL__" : '',
     "__LAMBSTATUS_SERVICE_NAME__" : '',
     "dialogPolyfill"   : {},
     "componentHandler" : {},

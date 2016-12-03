@@ -1136,8 +1136,14 @@ Resources:
       Bucket:
         Ref: StatusPageS3
       Key: settings.json
-      Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}"}
+      Body: !Sub
+        - {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageURL}"}
+        - StatusPageURL:
+            Fn::GetAtt:
+              - "StatusPageDistribution"
+              - "DomainName"
+    DependsOn:
+      - StatusPageDistribution
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:

@@ -62,9 +62,10 @@ const getSettings = async () => {
     const stack = await describeStack(cloudFormation, stackName)
 
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
+    const statusPageURL = findOutputKey(stack.Outputs, 'StatusPageCloudFrontURL')
     const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
 
-    return { invocationURL, serviceName }
+    return { invocationURL, statusPageURL, serviceName }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -90,10 +91,11 @@ const getBucketInfo = async () => {
 }
 
 getSettings().then((
-  { invocationURL, serviceName }
+  { invocationURL, statusPageURL, serviceName }
 ) => {
   const apiInfo = {
     InvocationURL: invocationURL,
+    StatusPageURL: statusPageURL,
     ServiceName: serviceName
   }
   return JSON.stringify(apiInfo, null, 2)
