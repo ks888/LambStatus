@@ -81,6 +81,7 @@
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "amazon-cognito-identity-js": "^1.8.0",
     "aws-sdk": "^2.6.1",
     "babel-cli": "^6.5.1",
     "babel-core": "^6.3.17",
