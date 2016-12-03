@@ -9,7 +9,7 @@ export const Header = (props) => (
       <span className='mdl-layout-title'>LambStatus</span>
       <div className='mdl-layout-spacer' />
       <nav className='mdl-navigation mdl-layout--large-screen-only'>
-        <a className='mdl-navigation__link' href={statusPageURL}>View Status Page</a>
+        <a className='mdl-navigation__link' href={'https://' + statusPageURL}>View Status Page</a>
       </nav>
     </div>
   </header>
