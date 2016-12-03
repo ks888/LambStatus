@@ -7,9 +7,11 @@ import historyReducer from 'reducers/history'
 
 const rootReducer = combineReducers({
   components: componentReducer,
+  /*
   incidents: incidentReducer,
   statuses: statusesReducer,
   history: historyReducer,
+  */
   router
 })
 

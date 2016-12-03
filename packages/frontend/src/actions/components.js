@@ -1,79 +1,65 @@
-import { requestStatus } from 'utils/status'
 import { checkStatus } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
-const ACTION_NAME_PREFIX = 'COMPONENTS_'
-export const SET_STATUS = ACTION_NAME_PREFIX + 'SET_STATUS'
-export const LIST_COMPONENTS = ACTION_NAME_PREFIX + 'LIST_COMPONENTS'
-export const ADD_COMPONENT = ACTION_NAME_PREFIX + 'ADD_COMPONENT'
-export const EDIT_COMPONENT = ACTION_NAME_PREFIX + 'EDIT_COMPONENT'
-export const REMOVE_COMPONENT = ACTION_NAME_PREFIX + 'REMOVE_COMPONENT'
-export const SET_ERROR = ACTION_NAME_PREFIX + 'SET_ERROR'
+export const LIST_COMPONENTS = 'LIST_COMPONENTS'
+export const ADD_COMPONENT = 'ADD_COMPONENT'
+export const EDIT_COMPONENT = 'EDIT_COMPONENT'
+export const REMOVE_COMPONENT = 'REMOVE_COMPONENT'
 
-export function setStatusAction (status) {
-  return {
-    type: SET_STATUS,
-    status
-  }
-}
-
-export function listComponentsAction (json) {
+export function listComponents (json) {
   return {
     type: LIST_COMPONENTS,
-    serviceComponents: json
+    components: json
   }
 }
 
-export function addComponentAction (json) {
+export function addComponent (json) {
   return {
     type: ADD_COMPONENT,
-    serviceComponent: json
+    component: json
   }
 }
 
-export function editComponentAction (json) {
+export function editComponent (json) {
   return {
     type: EDIT_COMPONENT,
-    serviceComponent: json
+    component: json
   }
 }
 
-export function removeComponentAction (componentID) {
+export function removeComponent (componentID) {
   return {
     type: REMOVE_COMPONENT,
-    componentID: componentID
+    componentID
   }
 }
 
-export function setErrorAction (message) {
-  return {
-    type: SET_ERROR,
-    message: message
-  }
-}
-
-export const fetchComponents = () => {
+export const fetchComponents = (callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
-    dispatch(setStatusAction({loadStatus: requestStatus.inProgress}))
+    if (onLoad && typeof onLoad === 'function') onLoad()
     return fetch(apiURL + 'components')
       .then(checkStatus)
       .then(response => response.json())
-      .then(json => dispatch(listComponentsAction(json)))
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(listComponents(json))
+      })
       .catch(error => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(setStatusAction({loadStatus: requestStatus.failure}))
-          dispatch(setErrorAction(error.message))
+          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
           return
         }
       })
   }
 }
 
-export const postComponent = (name, description, status) => {
+export const postComponent = (name, description, status, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
-    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
+    if (onLoad && typeof onLoad === 'function') onLoad()
     let body = {
       name: name,
       description: description,
@@ -85,22 +71,25 @@ export const postComponent = (name, description, status) => {
       body: JSON.stringify(body)
     }).then(checkStatus)
       .then(response => response.json())
-      .then(json => dispatch(addComponentAction(json)))
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(addComponent(json))
+      })
       .catch(error => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
-          dispatch(setErrorAction(error.message))
+          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
           return
         }
       })
   }
 }
 
-export const updateComponent = (componentID, name, description, status) => {
+export const updateComponent = (componentID, name, description, status, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
-    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
+    if (onLoad && typeof onLoad === 'function') onLoad()
     let body = {
       name: name,
       description: description,
@@ -112,43 +101,39 @@ export const updateComponent = (componentID, name, description, status) => {
       body: JSON.stringify(body)
     }).then(checkStatus)
       .then(response => response.json())
-      .then(json => dispatch(editComponentAction(json)))
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(editComponent(json))
+      })
       .catch(error => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
-          dispatch(setErrorAction(error.message))
+          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
           return
         }
       })
   }
 }
 
-export const deleteComponent = (componentID) => {
+export const deleteComponent = (componentID, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
-    dispatch(setStatusAction({updateStatus: requestStatus.inProgress}))
+    if (onLoad && typeof onLoad === 'function') onLoad()
     return fetch(apiURL + 'components/' + componentID, {
       method: 'DELETE'
     }).then(checkStatus)
-      .then(response => dispatch(removeComponentAction(componentID)))
+      .then(response => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(removeComponent(componentID))
+      })
       .catch(error => {
         console.error(error.message)
         console.error(error.stack)
         if (error.name === 'HTTPError') {
-          dispatch(setStatusAction({updateStatus: requestStatus.failure}))
-          dispatch(setErrorAction(error.message))
+          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
           return
         }
       })
   }
-}
-
-export const actions = {
-  setStatusAction,
-  listComponentsAction,
-  addComponentAction,
-  editComponentAction,
-  removeComponentAction,
-  setErrorAction
 }

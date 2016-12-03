@@ -6,7 +6,7 @@ import Button from 'components/Button'
 import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Components.scss'
-import { getComponentColor, requestStatus } from 'utils/status'
+import { getComponentColor } from 'utils/status'
 
 const dialogType = {
   none: 0,
@@ -16,13 +16,38 @@ const dialogType = {
 }
 
 export default class Components extends React.Component {
+  static propTypes = {
+    components: PropTypes.arrayOf(PropTypes.shape({
+      componentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired
+    }).isRequired).isRequired,
+    fetchComponents: PropTypes.func.isRequired,
+    postComponent: PropTypes.func.isRequired,
+    updateComponent: PropTypes.func.isRequired,
+    deleteComponent: PropTypes.func.isRequired
+  }
+
   constructor () {
     super()
-    this.state = { dialogType: dialogType.none, component: null }
+    this.state = {
+      dialogType: dialogType.none,
+      component: null,
+      isFetching: false,
+      isUpdating: false,
+      message: ''
+    }
   }
 
   componentDidMount () {
-    this.props.fetchComponents()
+    this.props.fetchComponents({
+      onLoad: () => { this.setState({isFetching: true}) },
+      onSuccess: () => { this.setState({isFetching: false}) },
+      onFailure: (msg) => {
+        this.setState({isFetching: false, message: msg})
+      }
+    })
   }
 
   componentDidUpdate () {
@@ -35,13 +60,6 @@ export default class Components extends React.Component {
 
       dialogPolyfill.registerDialog(dialog)
       dialog.showModal()
-    }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.updateStatus === requestStatus.inProgress &&
-      nextProps.updateStatus === requestStatus.success) {
-      this.handleHideDialog()
     }
   }
 
@@ -73,15 +91,42 @@ export default class Components extends React.Component {
   }
 
   handleAdd = (componentID, name, description, status) => {
-    this.props.postComponent(name, description, status)
+    this.props.postComponent(name, description, status, {
+      onLoad: () => { this.setState({isUpdating: true}) },
+      onSuccess: () => {
+        this.setState({isUpdating: false})
+        this.handleHideDialog()
+      },
+      onFailure: (msg) => {
+        this.setState({isUpdating: false, message: msg})
+      }
+    })
   }
 
   handleEdit = (componentID, name, description, status) => {
-    this.props.updateComponent(componentID, name, description, status)
+    this.props.updateComponent(componentID, name, description, status, {
+      onLoad: () => { this.setState({isUpdating: true}) },
+      onSuccess: () => {
+        this.setState({isUpdating: false})
+        this.handleHideDialog()
+      },
+      onFailure: (msg) => {
+        this.setState({isUpdating: false, message: msg})
+      }
+    })
   }
 
   handleDelete = (componentID) => {
-    this.props.deleteComponent(componentID)
+    this.props.deleteComponent(componentID, {
+      onLoad: () => { this.setState({isUpdating: true}) },
+      onSuccess: () => {
+        this.setState({isUpdating: false})
+        this.handleHideDialog()
+      },
+      onFailure: (msg) => {
+        this.setState({isUpdating: false, message: msg})
+      }
+    })
   }
 
   renderListItem = (component) => {
@@ -111,7 +156,6 @@ export default class Components extends React.Component {
   }
 
   renderDialog = () => {
-    const isUpdating = (this.props.updateStatus === requestStatus.inProgress)
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
@@ -125,17 +169,17 @@ export default class Components extends React.Component {
           status: 'Operational'
         }
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAdd}
-          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
+          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
           component={component} actionName='Add' />
         break
       case dialogType.edit:
         dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleEdit}
-          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
+          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
           component={this.state.component} actionName='Edit' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={this.handleHideDialog} isUpdating={isUpdating}
+          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
           name={this.state.component.name} ID={this.state.component.componentID} />
         break
       default:
@@ -145,17 +189,17 @@ export default class Components extends React.Component {
   }
 
   render () {
-    const { serviceComponents, loadStatus, message } = this.props
-    const componentItems = serviceComponents.map(this.renderListItem)
+    const { components } = this.props
+    const componentItems = components.map(this.renderListItem)
     const dialog = this.renderDialog()
-    const snackbar = <Snackbar message={message} />
+    const snackbar = <Snackbar message={this.state.message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Component
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
+      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
         <h4>Components</h4>
       </div>
@@ -171,20 +215,4 @@ export default class Components extends React.Component {
       {snackbar}
     </div>)
   }
-}
-
-Components.propTypes = {
-  serviceComponents: PropTypes.arrayOf(PropTypes.shape({
-    componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  loadStatus: PropTypes.number.isRequired,
-  updateStatus: PropTypes.number.isRequired,
-  message: PropTypes.string,
-  fetchComponents: PropTypes.func.isRequired,
-  postComponent: PropTypes.func.isRequired,
-  updateComponent: PropTypes.func.isRequired,
-  deleteComponent: PropTypes.func.isRequired
 }

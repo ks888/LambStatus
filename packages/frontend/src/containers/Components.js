@@ -5,10 +5,7 @@ import Components from 'components/Components'
 
 const mapStateToProps = (state) => {
   return {
-    loadStatus: state.components.loadStatus,
-    updateStatus: state.components.updateStatus,
-    serviceComponents: state.components.serviceComponents,
-    message: state.components.message
+    components: state.components.components
   }
 }
 
