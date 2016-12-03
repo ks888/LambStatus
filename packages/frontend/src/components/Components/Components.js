@@ -90,43 +90,27 @@ export default class Components extends React.Component {
     }
   }
 
+  updateCallbacks = {
+    onLoad: () => { this.setState({isUpdating: true}) },
+    onSuccess: () => {
+      this.setState({isUpdating: false})
+      this.handleHideDialog()
+    },
+    onFailure: (msg) => {
+      this.setState({isUpdating: false, message: msg})
+    }
+  }
+
   handleAdd = (componentID, name, description, status) => {
-    this.props.postComponent(name, description, status, {
-      onLoad: () => { this.setState({isUpdating: true}) },
-      onSuccess: () => {
-        this.setState({isUpdating: false})
-        this.handleHideDialog()
-      },
-      onFailure: (msg) => {
-        this.setState({isUpdating: false, message: msg})
-      }
-    })
+    this.props.postComponent(name, description, status, this.updateCallbacks)
   }
 
   handleEdit = (componentID, name, description, status) => {
-    this.props.updateComponent(componentID, name, description, status, {
-      onLoad: () => { this.setState({isUpdating: true}) },
-      onSuccess: () => {
-        this.setState({isUpdating: false})
-        this.handleHideDialog()
-      },
-      onFailure: (msg) => {
-        this.setState({isUpdating: false, message: msg})
-      }
-    })
+    this.props.updateComponent(componentID, name, description, status, this.updateCallbacks)
   }
 
   handleDelete = (componentID) => {
-    this.props.deleteComponent(componentID, {
-      onLoad: () => { this.setState({isUpdating: true}) },
-      onSuccess: () => {
-        this.setState({isUpdating: false})
-        this.handleHideDialog()
-      },
-      onFailure: (msg) => {
-        this.setState({isUpdating: false, message: msg})
-      }
-    })
+    this.props.deleteComponent(componentID, this.updateCallbacks)
   }
 
   renderListItem = (component) => {

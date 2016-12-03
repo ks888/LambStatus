@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { fetchIncidents, fetchIncidentUpdates, fetchComponents, postIncident,
-  updateIncident, deleteIncident } from 'actions/incidents'
 import IncidentDialog from 'components/IncidentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -9,7 +7,7 @@ import Snackbar from 'components/Snackbar'
 import classnames from 'classnames'
 import classes from './Incidents.scss'
 import moment from 'moment-timezone'
-import { getIncidentColor, requestStatus } from 'utils/status'
+import { getIncidentColor } from 'utils/status'
 
 const dialogType = {
   none: 0,
@@ -19,22 +17,56 @@ const dialogType = {
 }
 
 export default class Incidents extends React.Component {
+  static propTypes = {
+    incidents: PropTypes.arrayOf(PropTypes.shape({
+      incidentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
+    }).isRequired).isRequired,
+    components: PropTypes.arrayOf(PropTypes.shape({
+      componentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired
+    }).isRequired).isRequired,
+    fetchComponents: PropTypes.func.isRequired,
+    fetchIncidents: PropTypes.func.isRequired,
+    fetchIncidentUpdates: PropTypes.func.isRequired,
+    postIncident: PropTypes.func.isRequired,
+    updateIncident: PropTypes.func.isRequired,
+    deleteIncident: PropTypes.func.isRequired
+  }
+
   constructor () {
     super()
-    this.state = { dialogType: dialogType.none, incident: null }
+    this.state = {
+      dialogType: dialogType.none,
+      incident: null,
+      isFetching: false,
+      isUpdating: false,
+      message: ''
+    }
   }
 
   componentDidMount () {
-    this.props.dispatch(fetchIncidents)
-    this.props.dispatch(fetchComponents)
+    const fetchCallbacks = {
+      onLoad: () => { this.setState({isFetching: true}) },
+      onSuccess: () => { this.setState({isFetching: false}) },
+      onFailure: (msg) => {
+        this.setState({isFetching: false, message: msg})
+      }
+    }
+    this.props.fetchIncidents(fetchCallbacks)
+    this.props.fetchComponents(fetchCallbacks)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.updateStatus === requestStatus.inProgress &&
-      nextProps.updateStatus === requestStatus.success) {
-      this.handleHideDialog()
-    }
-
     // Set fetched incident updates
     if (this.state.incident !== null) {
       nextProps.incidents.forEach((incident) => {
@@ -74,7 +106,7 @@ export default class Incidents extends React.Component {
 
   handleShowUpdateDialog = (incident) => {
     return () => {
-      this.props.dispatch(fetchIncidentUpdates(incident.incidentID))
+      this.props.fetchIncidentUpdates(incident.incidentID)
       this.handleShowDialog(dialogType.update, incident)
     }
   }
@@ -94,16 +126,27 @@ export default class Incidents extends React.Component {
     }
   }
 
+  updateCallbacks = {
+    onLoad: () => { this.setState({isUpdating: true}) },
+    onSuccess: () => {
+      this.setState({isUpdating: false})
+      this.handleHideDialog()
+    },
+    onFailure: (msg) => {
+      this.setState({isUpdating: false, message: msg})
+    }
+  }
+
   handleAdd = (incidentID, name, incidentStatus, message, components) => {
-    this.props.dispatch(postIncident(incidentID, name, incidentStatus, message, components))
+    this.props.postIncident(incidentID, name, incidentStatus, message, components, this.updateCallbacks)
   }
 
   handleUpdate = (incidentID, name, incidentStatus, message, components) => {
-    this.props.dispatch(updateIncident(incidentID, name, incidentStatus, message, components))
+    this.props.updateIncident(incidentID, name, incidentStatus, message, components, this.updateCallbacks)
   }
 
   handleDelete = (incidentID) => {
-    this.props.dispatch(deleteIncident(incidentID))
+    this.props.deleteIncident(incidentID, this.updateCallbacks)
   }
 
   renderListItem = (incident) => {
@@ -140,7 +183,6 @@ export default class Incidents extends React.Component {
   }
 
   renderDialog = () => {
-    const isUpdating = (this.props.updateStatus === requestStatus.inProgress)
     let dialog
     switch (this.state.dialogType) {
       case dialogType.none:
@@ -149,23 +191,23 @@ export default class Incidents extends React.Component {
       case dialogType.add:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleAdd}
           onCanceled={this.handleHideDialog}
-          isUpdating={isUpdating}
+          isUpdating={this.state.isUpdating}
           incident={this.state.incident}
-          components={this.props.serviceComponents}
+          components={this.props.components}
           actionName='Add' />
         break
       case dialogType.update:
         dialog = <IncidentDialog ref='incidentDialog' onCompleted={this.handleUpdate}
           onCanceled={this.handleHideDialog}
-          isUpdating={isUpdating}
+          isUpdating={this.state.isUpdating}
           incident={this.state.incident}
-          components={this.props.serviceComponents}
+          components={this.props.components}
           actionName='Update' />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
           onCanceled={this.handleHideDialog}
-          isUpdating={isUpdating}
+          isUpdating={this.state.isUpdating}
           name={this.state.incident.name} ID={this.state.incident.incidentID} />
         break
       default:
@@ -175,17 +217,17 @@ export default class Incidents extends React.Component {
   }
 
   render () {
-    const { incidents, loadStatus, message } = this.props
+    const { incidents } = this.props
     const incidentItems = incidents.map(this.renderListItem)
     const dialog = this.renderDialog()
-    const snackbar = <Snackbar message={message} />
+    const snackbar = <Snackbar message={this.state.message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Incident
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: (loadStatus === requestStatus.inProgress) ? 0.5 : 1 }}>
+      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
         <h4>Incidents</h4>
       </div>
@@ -201,28 +243,4 @@ export default class Incidents extends React.Component {
       {snackbar}
     </div>)
   }
-}
-
-Incidents.propTypes = {
-  incidents: PropTypes.arrayOf(PropTypes.shape({
-    incidentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    updatedAt: PropTypes.string.isRequired,
-    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-      incidentUpdateID: PropTypes.string.isRequired,
-      incidentStatus: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
-    }).isRequired)
-  }).isRequired).isRequired,
-  serviceComponents: PropTypes.arrayOf(PropTypes.shape({
-    componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  loadStatus: PropTypes.number.isRequired,
-  updateStatus: PropTypes.number.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  message: PropTypes.string
 }

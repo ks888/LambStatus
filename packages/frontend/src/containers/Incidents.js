@@ -1,14 +1,19 @@
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchIncidents, fetchIncidentUpdates, postIncident, updateIncident, deleteIncident } from 'actions/incidents'
+import { fetchComponents } from 'actions/components'
 import Incidents from 'components/Incidents'
 
 const mapStateToProps = (state) => {
   return {
-    loadStatus: state.incidents.loadStatus,
-    updateStatus: state.incidents.updateStatus,
     incidents: state.incidents.incidents,
-    serviceComponents: state.incidents.components,
-    message: state.incidents.message
+    components: state.components.components
   }
 }
 
-export default connect(mapStateToProps)(Incidents)
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({fetchIncidents, fetchComponents, fetchIncidentUpdates,
+    postIncident, updateIncident, deleteIncident}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Incidents)

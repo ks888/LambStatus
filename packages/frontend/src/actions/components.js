@@ -50,7 +50,6 @@ export const fetchComponents = (callbacks = {}) => {
         console.error(error.stack)
         if (error.name === 'HTTPError') {
           if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-          return
         }
       })
   }
@@ -80,7 +79,6 @@ export const postComponent = (name, description, status, callbacks = {}) => {
         console.error(error.stack)
         if (error.name === 'HTTPError') {
           if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-          return
         }
       })
   }
@@ -110,7 +108,6 @@ export const updateComponent = (componentID, name, description, status, callback
         console.error(error.stack)
         if (error.name === 'HTTPError') {
           if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-          return
         }
       })
   }
@@ -132,7 +129,6 @@ export const deleteComponent = (componentID, callbacks = {}) => {
         console.error(error.stack)
         if (error.name === 'HTTPError') {
           if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-          return
         }
       })
   }
