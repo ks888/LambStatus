@@ -9,6 +9,7 @@ import createStore from 'store/createStore'
 import AdminPageLayout from 'layouts/AdminPageLayout'
 import Components from 'containers/Components'
 import Incidents from 'containers/Incidents'
+import Signin from 'containers/Signin'
 
 // ========================================================
 // Browser History Setup
@@ -50,6 +51,7 @@ let render = () => {
       <IndexRoute component={Components} />
       <Route path='components' component={Components} />
       <Route path='incidents' component={Incidents} />
+      <Route path='signin' component={Signin} />
     </Route>
   )
 
