@@ -1,6 +1,6 @@
 {
   "name": "lamb-status-frontend",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Frontend for LambStatus",
   "main": "index.js",
   "engines": {
