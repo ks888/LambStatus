@@ -101,7 +101,8 @@ export default class Signin extends React.Component {
           {this.state.message}
         </div>
         <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
-        <TextField label='Password' text={this.state.password} rows={1} onChange={this.handleChangePassword} />
+        <TextField label='Password' text={this.state.password} rows={1}
+          onChange={this.handleChangePassword} hideText />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSigninButton} name='Signin'
@@ -119,7 +120,8 @@ export default class Signin extends React.Component {
         <div className={classes.errorMessage}>
           {this.state.message}
         </div>
-        <TextField label='New Password' text={this.state.password} rows={1} onChange={this.handleChangePassword} />
+        <TextField label='New Password' text={this.state.password} rows={1}
+          onChange={this.handleChangePassword} hideText />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleSetNewPasswordButton} name='DONE'
