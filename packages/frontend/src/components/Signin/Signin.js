@@ -22,6 +22,7 @@ export default class Signin extends React.Component {
       username: '',
       password: '',
       isUpdating: false,
+      message: '',
       newPasswordCallback: null
     }
   }
@@ -48,9 +49,9 @@ export default class Signin extends React.Component {
   }
 
   updateCallbacks = {
-    onLoad: () => { this.setState({isUpdating: true}) },
+    onLoad: () => { this.setState({isUpdating: true, message: ''}) },
     onSuccess: () => {
-      this.setState({isUpdating: false})
+      this.setState({isUpdating: false, message: ''})
       this.handleHideDialog()
     },
     onFailure: (msg) => {
@@ -64,6 +65,7 @@ export default class Signin extends React.Component {
       onNewPasswordRequested: (callback) => {
         this.setState({
           isUpdating: false,
+          message: '',
           password: '',
           dialogType: dialogType.setNewPassword,
           newPasswordCallback: callback
@@ -95,6 +97,9 @@ export default class Signin extends React.Component {
         Signin
       </h2>
       <div className='mdl-dialog__content'>
+        <div className={classes.errorMessage}>
+          {this.state.message}
+        </div>
         <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
         <TextField label='Password' text={this.state.password} rows={1} onChange={this.handleChangePassword} />
       </div>
@@ -111,6 +116,9 @@ export default class Signin extends React.Component {
         Signin
       </h2>
       <div className='mdl-dialog__content'>
+        <div className={classes.errorMessage}>
+          {this.state.message}
+        </div>
         <TextField label='New Password' text={this.state.password} rows={1} onChange={this.handleChangePassword} />
       </div>
       <div className='mdl-dialog__actions'>
