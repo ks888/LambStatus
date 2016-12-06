@@ -1,7 +1,6 @@
 import 'whatwg-fetch'
-import { CognitoUserPool, AuthenticationDetails, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js'
-import { checkStatus } from 'utils/fetch'
-import { apiURL } from 'utils/settings'
+import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js'
+import { userPoolId, clientId } from 'utils/settings'
 
 export const SIGNIN_SUCCESS = 'SIGNIN_SUCCESS'
 
@@ -23,8 +22,8 @@ export const signin = (username, password, callbacks = {}) => {
     const authenticationDetails = new AuthenticationDetails(authenticationData)
 
     const poolData = {
-      UserPoolId: 'ap-northeast-1_BTtTftreC',
-      ClientId: '2t48m7pdb91l11fuo6t1u9ngkl'
+      UserPoolId: userPoolId,
+      ClientId: clientId
     }
     const userPool = new CognitoUserPool(poolData)
     const userData = {
