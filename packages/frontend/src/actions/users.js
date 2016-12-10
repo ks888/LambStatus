@@ -2,15 +2,17 @@ import 'whatwg-fetch'
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js'
 import { userPoolId, clientId } from 'utils/settings'
 
-export const SIGNIN_SUCCESS = 'SIGNIN_SUCCESS'
+export const GET_USER = 'GET_USER'
 
-export function signinSuccess (token) {
+export function getUser (user) {
   return {
-    type: SIGNIN_SUCCESS,
-    token
+    type: GET_USER,
+    user
   }
 }
 
+// cognito library automatically sets signin results to local storage.
+// So, we do not save the results to ReduxStore.
 export const signin = (username, password, callbacks = {}) => {
   const { onLoad, onNewPasswordRequested, onSuccess, onFailure } = callbacks
   return dispatch => {
@@ -35,7 +37,7 @@ export const signin = (username, password, callbacks = {}) => {
       onSuccess: (result) => {
         console.log('JWT token: ' + result.getAccessToken().getJwtToken())
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        // dispatch(signin(token))
+        dispatch(getUser({username}))
       },
       onFailure: (error) => {
         console.error(error.message)
@@ -52,14 +54,14 @@ export const signin = (username, password, callbacks = {}) => {
         }
 
         onNewPasswordRequested((newPassword, callbacks) => {
-          setNewPassword(cognitoUser, newPassword, callbacks)
+          setNewPassword(dispatch, cognitoUser, newPassword, callbacks)
         })
       }
     })
   }
 }
 
-const setNewPassword = (cognitoUser, newPassword, callbacks = {}) => {
+const setNewPassword = (dispatch, cognitoUser, newPassword, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   if (onLoad && typeof onLoad === 'function') onLoad()
 
@@ -67,7 +69,7 @@ const setNewPassword = (cognitoUser, newPassword, callbacks = {}) => {
     onSuccess: (result) => {
       console.log('JWT token: ' + result.getAccessToken().getJwtToken())
       if (onSuccess && typeof onSuccess === 'function') onSuccess()
-      // dispatch(signin(token))
+      dispatch(getUser({username: cognitoUser.username}))
     },
     onFailure: (error) => {
       if (error instanceof Error) {
@@ -80,4 +82,40 @@ const setNewPassword = (cognitoUser, newPassword, callbacks = {}) => {
       }
     }
   })
+}
+
+export const fetchUser = () => {
+  return dispatch => {
+    const poolData = {
+      UserPoolId: userPoolId,
+      ClientId: clientId
+    }
+    const userPool = new CognitoUserPool(poolData)
+    const cognitoUser = userPool.getCurrentUser()
+    if (cognitoUser !== null) {
+      dispatch(getUser({username: cognitoUser.username}))
+    }
+  }
+}
+
+export const isSignedIn = () => {
+  const poolData = {
+    UserPoolId: userPoolId,
+    ClientId: clientId
+  }
+  const userPool = new CognitoUserPool(poolData)
+  const cognitoUser = userPool.getCurrentUser()
+  if (cognitoUser === null) {
+    return false
+  }
+
+  let signedIn = false
+  cognitoUser.getSession(function(err, session) {
+    if (err) {
+      console.warn(err.message)
+      return
+    }
+    signedIn = true
+  })
+  return signedIn
 }

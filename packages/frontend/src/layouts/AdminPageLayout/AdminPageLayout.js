@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import Header from 'components/Header'
+import Header from 'containers/Header'
 import Drawer from 'components/Drawer'
 import classes from './AdminPageLayout.scss'
 

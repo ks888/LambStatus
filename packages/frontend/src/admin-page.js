@@ -10,6 +10,7 @@ import AdminPageLayout from 'layouts/AdminPageLayout'
 import Components from 'containers/Components'
 import Incidents from 'containers/Incidents'
 import Signin from 'containers/Signin'
+import { isSignedIn } from 'actions/users'
 
 // ========================================================
 // Browser History Setup
@@ -45,13 +46,29 @@ if (__DEBUG__) {
 // ========================================================
 const MOUNT_NODE = document.getElementById('root')
 
+function requireAuth (nextState, replace) {
+  if (!isSignedIn()) {
+    replace({
+      pathname: '/signin'
+    })
+  }
+}
+
+function guestOnly (nextState, replace) {
+  if (isSignedIn()) {
+    replace({
+      pathname: '/'
+    })
+  }
+}
+
 let render = () => {
   const routes = (
     <Route path='/' component={AdminPageLayout}>
-      <IndexRoute component={Components} />
-      <Route path='components' component={Components} />
-      <Route path='incidents' component={Incidents} />
-      <Route path='signin' component={Signin} />
+      <IndexRoute component={Components} onEnter={requireAuth} />
+      <Route path='components' component={Components} onEnter={requireAuth} />
+      <Route path='incidents' component={Incidents} onEnter={requireAuth} />
+      <Route path='signin' component={Signin} onEnter={guestOnly} />
     </Route>
   )
 
