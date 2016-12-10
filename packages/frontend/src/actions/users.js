@@ -1,4 +1,5 @@
 import 'whatwg-fetch'
+import { push } from 'react-router-redux'
 import { CognitoUserPool, AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js'
 import { userPoolId, clientId } from 'utils/settings'
 
@@ -38,6 +39,7 @@ export const signin = (username, password, callbacks = {}) => {
         console.log('JWT token: ' + result.getAccessToken().getJwtToken())
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(getUser({username}))
+        dispatch(push('/'))
       },
       onFailure: (error) => {
         console.error(error.message)
@@ -67,9 +69,9 @@ const setNewPassword = (dispatch, cognitoUser, newPassword, callbacks = {}) => {
 
   cognitoUser.completeNewPasswordChallenge(newPassword, {}, {
     onSuccess: (result) => {
-      console.log('JWT token: ' + result.getAccessToken().getJwtToken())
       if (onSuccess && typeof onSuccess === 'function') onSuccess()
       dispatch(getUser({username: cognitoUser.username}))
+      dispatch(push('/'))
     },
     onFailure: (error) => {
       if (error instanceof Error) {
@@ -121,4 +123,17 @@ export const isAuthorized = (callback) => {
 }
 
 export const signOut = () => {
+  return dispatch => {
+    const poolData = {
+      UserPoolId: userPoolId,
+      ClientId: clientId
+    }
+    const userPool = new CognitoUserPool(poolData)
+    const cognitoUser = userPool.getCurrentUser()
+    if (cognitoUser !== null) {
+      cognitoUser.signOut()
+      dispatch(getUser({username: ''}))
+      dispatch(push('/signin'))
+    }
+  }
 }
