@@ -98,7 +98,7 @@ export const fetchUser = () => {
   }
 }
 
-export const isSignedIn = () => {
+export const isAuthorized = (callback) => {
   const poolData = {
     UserPoolId: userPoolId,
     ClientId: clientId
@@ -106,16 +106,19 @@ export const isSignedIn = () => {
   const userPool = new CognitoUserPool(poolData)
   const cognitoUser = userPool.getCurrentUser()
   if (cognitoUser === null) {
-    return false
+    callback(false)
+    return
   }
 
-  let signedIn = false
-  cognitoUser.getSession(function(err, session) {
+  cognitoUser.getSession(function (err, session) {
     if (err) {
       console.warn(err.message)
+      callback(false)
       return
     }
-    signedIn = true
+    callback(true)
   })
-  return signedIn
+}
+
+export const signOut = () => {
 }

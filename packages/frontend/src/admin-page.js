@@ -10,7 +10,7 @@ import AdminPageLayout from 'layouts/AdminPageLayout'
 import Components from 'containers/Components'
 import Incidents from 'containers/Incidents'
 import Signin from 'containers/Signin'
-import { isSignedIn } from 'actions/users'
+import { isAuthorized } from 'actions/users'
 
 // ========================================================
 // Browser History Setup
@@ -47,19 +47,19 @@ if (__DEBUG__) {
 const MOUNT_NODE = document.getElementById('root')
 
 function requireAuth (nextState, replace) {
-  if (!isSignedIn()) {
-    replace({
-      pathname: '/signin'
-    })
-  }
+  isAuthorized(authorized => {
+    if (!authorized) {
+      replace({ pathname: '/signin' })
+    }
+  })
 }
 
 function guestOnly (nextState, replace) {
-  if (isSignedIn()) {
-    replace({
-      pathname: '/'
-    })
-  }
+  isAuthorized(authorized => {
+    if (authorized) {
+      replace({ pathname: '/' })
+    }
+  })
 }
 
 let render = () => {
