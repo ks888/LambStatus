@@ -36,7 +36,6 @@ export const signin = (username, password, callbacks = {}) => {
     const cognitoUser = new CognitoUser(userData)
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
-        console.log('JWT token: ' + result.getAccessToken().getJwtToken())
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(getUser({username}))
         dispatch(push('/'))
@@ -135,5 +134,59 @@ export const signOut = () => {
       dispatch(getUser({username: ''}))
       dispatch(push('/signin'))
     }
+  }
+}
+
+export const forgotPassword = (username, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    const poolData = {
+      UserPoolId: userPoolId,
+      ClientId: clientId
+    }
+    const userPool = new CognitoUserPool(poolData)
+    const userData = {
+      Username: username,
+      Pool: userPool
+    }
+    const cognitoUser = new CognitoUser(userData)
+    cognitoUser.forgotPassword({
+      onSuccess: (result) => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+      },
+      onFailure: (error) => {
+        console.error(error.message)
+        console.error(error.stack)
+        if (onFailure && typeof onFailure === 'function') onFailure(error.message)
+      }
+    })
+  }
+}
+
+export const setCodeAndPassword = (verificationCode, username, password, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    const poolData = {
+      UserPoolId: userPoolId,
+      ClientId: clientId
+    }
+    const userPool = new CognitoUserPool(poolData)
+    const userData = {
+      Username: username,
+      Pool: userPool
+    }
+    const cognitoUser = new CognitoUser(userData)
+    cognitoUser.confirmPassword(verificationCode, password, {
+      onSuccess: (result) => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+      },
+      onFailure: (error) => {
+        console.error(error.message)
+        console.error(error.stack)
+        if (onFailure && typeof onFailure === 'function') onFailure(error.message)
+      }
+    })
   }
 }

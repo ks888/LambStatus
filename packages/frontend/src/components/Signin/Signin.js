@@ -7,12 +7,16 @@ import classes from './Signin.scss'
 
 const dialogType = {
   signin: 1,
-  setNewPassword: 2
+  setNewPassword: 2,
+  forgotPassword: 3,
+  setCode: 4
 }
 
 export default class Signin extends React.Component {
   static propTypes = {
-    signin: PropTypes.func.isRequired
+    signin: PropTypes.func.isRequired,
+    forgotPassword: PropTypes.func.isRequired,
+    setCodeAndPassword: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -21,6 +25,7 @@ export default class Signin extends React.Component {
       dialogType: dialogType.signin,
       username: '',
       password: '',
+      code: '',
       isUpdating: false,
       message: '',
       newPasswordCallback: null
@@ -48,6 +53,10 @@ export default class Signin extends React.Component {
     this.setState({password: value})
   }
 
+  handleChangeCode = (value) => {
+    this.setState({code: value})
+  }
+
   updateCallbacks = {
     onLoad: () => { this.setState({isUpdating: true, message: ''}) },
     onSuccess: () => {
@@ -57,6 +66,14 @@ export default class Signin extends React.Component {
     onFailure: (msg) => {
       this.setState({isUpdating: false, message: msg})
     }
+  }
+
+  showSignInDialog = (e) => {
+    this.setState({
+      isUpdating: false,
+      message: '',
+      dialogType: dialogType.signin
+    })
   }
 
   handleClickSigninButton = (e) => {
@@ -74,6 +91,15 @@ export default class Signin extends React.Component {
     })
   }
 
+  handleClickForgotButton = (e) => {
+    this.setState({
+      isUpdating: false,
+      message: '',
+      dialogType: dialogType.forgotPassword,
+      password: ''
+    })
+  }
+
   handleSetNewPasswordButton = (e) => {
     const { password, newPasswordCallback } = this.state
     if (newPasswordCallback && typeof newPasswordCallback === 'function') {
@@ -81,6 +107,33 @@ export default class Signin extends React.Component {
     } else {
       console.warn('States do not include newPasswordCallback')
     }
+  }
+
+  handleClickSendCodeButton = (e) => {
+    this.props.forgotPassword(this.state.username, {
+      ...this.updateCallbacks,
+      onSuccess: () => {
+        this.setState({
+          isUpdating: false,
+          message: '',
+          dialogType: dialogType.setCode
+        })
+      }
+    })
+  }
+
+  handleClickSetCodeButton = (e) => {
+    this.props.setCodeAndPassword(this.state.code, this.state.username, this.state.password, {
+      ...this.updateCallbacks,
+      onSuccess: () => {
+        this.setState({
+          isUpdating: false,
+          message: 'Set new password successfully!',
+          dialogType: dialogType.signin,
+          password: ''
+        })
+      }
+    })
   }
 
   handleHideDialog = () => {
@@ -103,6 +156,9 @@ export default class Signin extends React.Component {
         <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
         <TextField label='Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
+        <div className={classes.forgotPassword} onClick={this.handleClickForgotButton}>
+          Forgot Password?
+        </div>
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSigninButton} name='Signin'
@@ -130,12 +186,61 @@ export default class Signin extends React.Component {
     </dialog>)
   }
 
+  renderForgotPasswordDialog = () => {
+    return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
+      <h2 className={classnames('mdl-dialog__title', classes.title)}>
+        Forgot Password?
+      </h2>
+      <div className='mdl-dialog__content'>
+        <div>
+          Enter your username. A verification code will be sent to your email address.
+        </div>
+        <div className={classes.errorMessage}>
+          {this.state.message}
+        </div>
+        <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
+      </div>
+      <div className='mdl-dialog__actions'>
+        <Button onClick={this.handleClickSendCodeButton} name='Send verification code'
+          class='mdl-button--accent' disabled={this.state.isUpdating} />
+        <Button onClick={this.showSignInDialog} name='Cancel' />
+      </div>
+    </dialog>)
+  }
+
+  renderSetCodeDialog = () => {
+    return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
+      <h2 className={classnames('mdl-dialog__title', classes.title)}>
+        Set New Password
+      </h2>
+      <div className='mdl-dialog__content'>
+        <div>
+          Enter the verification code in the email and new password.
+        </div>
+        <div className={classes.errorMessage}>
+          {this.state.message}
+        </div>
+        <TextField label='Verification code' text={this.state.code} rows={1} onChange={this.handleChangeCode} />
+        <TextField label='Password' text={this.state.password} rows={1}
+          onChange={this.handleChangePassword} hideText />
+      </div>
+      <div className='mdl-dialog__actions'>
+        <Button onClick={this.handleClickSetCodeButton} name='Done'
+          class='mdl-button--accent' disabled={this.state.isUpdating} />
+      </div>
+    </dialog>)
+  }
+
   renderDialog = () => {
     switch (this.state.dialogType) {
       case dialogType.signin:
         return this.renderSigninDialog()
       case dialogType.setNewPassword:
         return this.renderNewPasswordDialog()
+      case dialogType.forgotPassword:
+        return this.renderForgotPasswordDialog()
+      case dialogType.setCode:
+        return this.renderSetCodeDialog()
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
     }
