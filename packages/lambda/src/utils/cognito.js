@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk'
 
-export const createUserPool = (region, poolName, snsCallerArn) => {
+export const createUserPool = (region, poolName, serviceName, adminPageURL, snsCallerArn) => {
   const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
   const params = {
     PoolName: poolName,
@@ -10,6 +10,8 @@ export const createUserPool = (region, poolName, snsCallerArn) => {
     },
     AliasAttributes: ['email'],
     AutoVerifiedAttributes: ['email'],
+    EmailVerificationSubject: `${serviceName} StatusPage - Your temporary password`,
+    EmailVerificationMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`,
     MfaConfiguration: 'OPTIONAL',
     Policies: {
       PasswordPolicy: {
@@ -69,6 +71,27 @@ export const createUserPoolClient = (region, userPoolID, clientName) => {
   }
   return new Promise((resolve, reject) => {
     cognito.createUserPoolClient(params, (err, result) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
+export const createUser = (region, userPoolId, userName, email) => {
+  const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
+  const params = {
+    UserPoolId: userPoolId,
+    Username: userName,
+    DesiredDeliveryMediums: ['EMAIL'],
+    UserAttributes: [
+      {Name: 'email', Value: email},
+      {Name: 'email_verified', Value: 'true'}
+    ]
+  }
+  return new Promise((resolve, reject) => {
+    cognito.adminCreateUser(params, (err, result) => {
       if (err) {
         return reject(err)
       }

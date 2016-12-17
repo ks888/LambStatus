@@ -10,6 +10,12 @@ Parameters:
     Description: The version of LambStatus
     Type: "String"
     Default: "0.0.4"
+  InitialUserName:
+    Description: The name of an initial user
+    Type: String
+  InitialUserEmail:
+    Description: The email address of an initial user. The verification email will be sent to the address.
+    Type: String
 Resources:
   LambdaRole:
     Type: "AWS::IAM::Role"
@@ -368,6 +374,17 @@ Resources:
       Description: "API for page status"
       Name:
         Ref: "AWS::StackName"
+  Authorizer:
+    Type: "AWS::ApiGateway::Authorizer"
+    Properties:
+      IdentitySource: method.request.header.Authorization
+      Name: CognitoUserPool
+      ProviderARNs:
+        - !Sub |-
+          ${CognitoUserPool.UserPoolID}
+      RestApiId:
+        Ref: "RestApi"
+      Type: COGNITO_USER_POOLS
   ComponentsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -428,7 +445,9 @@ Resources:
       ResourceId:
         Ref: "ComponentsApiResource"
       HttpMethod: "POST"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -488,7 +507,9 @@ Resources:
       ResourceId:
         Ref: "ComponentApiResource"
       HttpMethod: "PATCH"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -534,7 +555,9 @@ Resources:
       ResourceId:
         Ref: "ComponentApiResource"
       HttpMethod: "DELETE"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -649,7 +672,9 @@ Resources:
       ResourceId:
         Ref: "IncidentsApiResource"
       HttpMethod: "POST"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -717,7 +742,9 @@ Resources:
       ResourceId:
         Ref: "IncidentApiResource"
       HttpMethod: "PATCH"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -763,7 +790,9 @@ Resources:
       ResourceId:
         Ref: "IncidentApiResource"
       HttpMethod: "DELETE"
-      AuthorizationType: "NONE"
+      AuthorizationType: "CUSTOM"
+      AuthorizerId:
+        Ref: Authorizer
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -1195,6 +1224,27 @@ Resources:
       Timeout: 30
     DependsOn:
       - CognitoHandleFunctionRole
+  CognitoCreateUserFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/CognitoCreateUser.zip
+      Description: Create a user.
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-CognitoCreateUser
+      Handler: "_apex_index.handle"
+      Role:
+        Fn::GetAtt:
+          - CognitoHandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+    DependsOn:
+      - CognitoHandleFunctionRole
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1208,9 +1258,10 @@ Resources:
         Ref: StatusPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
     DependsOn:
       - StatusPageDistribution
+      - CognitoUserPoolClient
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1283,10 +1334,15 @@ Resources:
         ${AWS::Region}
       PoolName: !Sub |-
         ${AWS::StackName}
+      ServiceName: !Sub |-
+        ${ServiceName}
+      AdminPageURL: !Sub |-
+        https://${AdminPageDistribution.DomainName}
       SnsCallerArn: !Sub |-
         ${CognitoSMSCallerRole.Arn}
     DependsOn:
       - CognitoSMSCallerRole
+      - AdminPageDistribution
   CognitoUserPoolClient:
     Type: Custom::CognitoUserPoolClient
     Properties:
@@ -1299,6 +1355,19 @@ Resources:
       ClientName: Browser
       UserPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}
+    DependsOn:
+      - CognitoUserPool
+  CognitoInitialUser:
+    Type: Custom::CognitoInitialUser
+    Properties:
+      ServiceToken: !Sub |-
+        ${CognitoCreateUserFunction.Arn}
+      UserPoolID: !Sub |-
+        ${CognitoUserPool.UserPoolID}
+      Email: !Sub |-
+        ${InitialUserEmail}
+      UserName: !Sub |-
+        ${InitialUserName}
     DependsOn:
       - CognitoUserPool
 Outputs:

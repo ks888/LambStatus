@@ -21,6 +21,8 @@
     "__LAMBSTATUS_API_URL__" : '',
     "__LAMBSTATUS_STATUS_PAGE_URL__" : '',
     "__LAMBSTATUS_SERVICE_NAME__" : '',
+    "__LAMBSTATUS_USER_POOL_ID__" : '',
+    "__LAMBSTATUS_CLIENT_ID__" : '',
     "dialogPolyfill"   : {},
     "componentHandler" : {},
   },

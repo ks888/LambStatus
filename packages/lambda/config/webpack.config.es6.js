@@ -56,6 +56,10 @@ export default {
     CognitoCreateUserPoolClient: [
       'babel-polyfill',
       './src/cognitoCreateUserPoolClient/index.js'
+    ],
+    CognitoCreateUser: [
+      'babel-polyfill',
+      './src/cognitoCreateUser/index.js'
     ]
   },
   output: {

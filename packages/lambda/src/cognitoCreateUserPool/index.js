@@ -5,9 +5,10 @@ export async function handler (event, context, callback) {
   const {
     Region: region,
     PoolName: poolName,
+    ServiceName: serviceName,
+    AdminPageURL: adminPageURL,
     SnsCallerArn: snsCallerArn
   } = event.ResourceProperties
-  console.log(`received request (region: ${region}, poolName: ${poolName}, snsCallerArn: ${snsCallerArn})`)
 
   if (event.RequestType === 'Delete') {
     try {
@@ -24,7 +25,9 @@ export async function handler (event, context, callback) {
 
   if (event.RequestType === 'Update') {
     if (poolName !== event.OldResourceProperties.poolName ||
-      snsCallerArn !== event.OldResourceProperties.snsCallerArn) {
+      snsCallerArn !== event.OldResourceProperties.SnsCallerArn ||
+      serviceName !== event.OldResourceProperties.ServiceName ||
+      adminPageURL !== event.OldResourceProperties.AdminPageURL) {
       response.send(event, context, response.FAILED, 'can\'t update parameters of user pool')
     } else {
       const poolID = event.PhysicalResourceId
@@ -34,7 +37,7 @@ export async function handler (event, context, callback) {
   }
 
   try {
-    const userPool = await createUserPool(region, poolName, snsCallerArn)
+    const userPool = await createUserPool(region, poolName, serviceName, adminPageURL, snsCallerArn)
     const poolID = userPool.UserPool.Id
     response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
   } catch (error) {

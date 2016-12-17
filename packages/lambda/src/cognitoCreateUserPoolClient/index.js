@@ -24,7 +24,6 @@ export async function handler (event, context, callback) {
     UserPoolID: userPoolID,
     ClientName: clientName
   } = event.ResourceProperties
-  console.log(`received request (region: ${region}, UserPoolID: ${userPoolID}, ClientName: ${clientName})`)
 
   try {
     const userPoolClient = await createUserPoolClient(region, userPoolID, clientName)
