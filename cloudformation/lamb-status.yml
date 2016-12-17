@@ -10,10 +10,10 @@ Parameters:
     Description: The version of LambStatus
     Type: "String"
     Default: "0.0.4"
-  InitialUserName:
+  UserName:
     Description: The name of an initial user
     Type: String
-  InitialUserEmail:
+  UserEmail:
     Description: The email address of an initial user. The verification email will be sent to the address.
     Type: String
 Resources:
@@ -381,7 +381,7 @@ Resources:
       Name: CognitoUserPool
       ProviderARNs:
         - !Sub |-
-          ${CognitoUserPool.UserPoolID}
+          arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPool.UserPoolID}
       RestApiId:
         Ref: "RestApi"
       Type: COGNITO_USER_POOLS
@@ -1365,9 +1365,9 @@ Resources:
       UserPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}
       Email: !Sub |-
-        ${InitialUserEmail}
+        ${UserEmail}
       UserName: !Sub |-
-        ${InitialUserName}
+        ${UserName}
     DependsOn:
       - CognitoUserPool
 Outputs:
