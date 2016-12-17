@@ -6,12 +6,15 @@ export const createUserPool = (region, poolName, serviceName, adminPageURL, snsC
     PoolName: poolName,
     AdminCreateUserConfig: {
       AllowAdminCreateUserOnly: true,
-      UnusedAccountValidityDays: 7
+      UnusedAccountValidityDays: 7,
+      InviteMessageTemplate: {
+        EmailSubject: `${serviceName} StatusPage - Your temporary password`,
+        EmailMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`
+      }
     },
     AliasAttributes: ['email'],
     AutoVerifiedAttributes: ['email'],
-    EmailVerificationSubject: `${serviceName} StatusPage - Your temporary password`,
-    EmailVerificationMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`,
+    EmailVerificationSubject: `${serviceName} StatusPage - Your verification code`,
     MfaConfiguration: 'OPTIONAL',
     Policies: {
       PasswordPolicy: {
