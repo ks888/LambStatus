@@ -48,6 +48,10 @@ export default {
     S3SyncObjects: [
       'babel-polyfill',
       './src/s3SyncObjects/index.js'
+    ],
+    CognitoCreateUserPool: [
+      'babel-polyfill',
+      './src/cognitoCreateUserPool/index.js'
     ]
   },
   output: {

@@ -1124,6 +1124,56 @@ Resources:
       Timeout: 30
     DependsOn:
       - S3HandleFunctionRole
+  CognitoHandleFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: WriteCloudWatchLogs
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: CreateUserPool
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cognito-idp:*
+                  - iam:PassRole
+                Resource: '*'
+  CognitoCreateUserPoolFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/CognitoCreateUserPool.zip
+      Description: Create a user pool.
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-CognitoCreateUserPool
+      Handler: "_apex_index.handle"
+      Role:
+        Fn::GetAtt:
+          - CognitoHandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+    DependsOn:
+      - CognitoHandleFunctionRole
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1182,6 +1232,40 @@ Resources:
         ${AWS::Region}
       DestinationBucket:
         Ref: AdminPageS3
+  CognitoSMSCallerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: SNSPublish
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:publish
+                Resource: '*'
+  CognitoUserPool:
+    Type: Custom::CognitoUserPool
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CognitoCreateUserPoolFunction
+          - Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      PoolName: !Sub |-
+        ${AWS::StackName}
+      SnsCallerArn: !Sub |-
+        ${CognitoSMSCallerRole.Arn}
+    DependsOn:
+      - CognitoSMSCallerRole
 Outputs:
   LambdaRoleArn:
     Value:
