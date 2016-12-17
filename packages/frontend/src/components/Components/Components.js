@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
-import ComponentDialog from 'components/ComponentDialog'
+import classnames from 'classnames'
+import ComponentDialog from 'containers/ComponentDialog'
+import { componentDialogType } from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
-import Snackbar from 'components/Snackbar'
-import classnames from 'classnames'
-import classes from './Components.scss'
+import ErrorMessage from 'components/ErrorMessage'
 import { getComponentColor } from 'utils/status'
+import classes from './Components.scss'
 
 const dialogType = {
   none: 0,
@@ -24,8 +24,6 @@ export default class Components extends React.Component {
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
-    postComponent: PropTypes.func.isRequired,
-    updateComponent: PropTypes.func.isRequired,
     deleteComponent: PropTypes.func.isRequired
   }
 
@@ -50,19 +48,6 @@ export default class Components extends React.Component {
     })
   }
 
-  componentDidUpdate () {
-    const dialog = ReactDOM.findDOMNode(this.refs.componentDialog) ||
-      ReactDOM.findDOMNode(this.refs.foolproofDialog)
-    if (dialog && !dialog.showModal) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      dialogPolyfill.registerDialog(dialog)
-      dialog.showModal()
-    }
-  }
-
   handleShowDialog = (type, component) => {
     this.setState({ component: component, dialogType: type })
   }
@@ -79,38 +64,8 @@ export default class Components extends React.Component {
     return () => this.handleShowDialog(dialogType.delete, component)
   }
 
-  handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.componentDialog) || ReactDOM.findDOMNode(this.refs.foolproofDialog)
-    if (dialog) {
-      dialog.close()
-
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-
-      this.setState({ component: null, dialogType: dialogType.none })
-    }
-  }
-
-  updateCallbacks = {
-    onLoad: () => { this.setState({isUpdating: true}) },
-    onSuccess: () => {
-      this.setState({isUpdating: false})
-      this.handleHideDialog()
-    },
-    onFailure: (msg) => {
-      this.setState({isUpdating: false, message: msg})
-    }
-  }
-
-  handleAdd = (componentID, name, description, status) => {
-    this.props.postComponent(name, description, status, this.updateCallbacks)
-  }
-
-  handleEdit = (componentID, name, description, status) => {
-    this.props.updateComponent(componentID, name, description, status, this.updateCallbacks)
-  }
-
-  handleDelete = (componentID) => {
-    this.props.deleteComponent(componentID, this.updateCallbacks)
+  handleCloseDialog = () => {
+    this.setState({ component: null, dialogType: dialogType.none })
   }
 
   renderListItem = (component) => {
@@ -152,19 +107,17 @@ export default class Components extends React.Component {
           description: '',
           status: 'Operational'
         }
-        dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleAdd}
-          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
-          component={component} actionName='Add' />
+        dialog = <ComponentDialog onClosed={this.handleCloseDialog}
+          component={component} dialogType={componentDialogType.add} />
         break
       case dialogType.edit:
-        dialog = <ComponentDialog ref='componentDialog' onCompleted={this.handleEdit}
-          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
-          component={this.state.component} actionName='Edit' />
+        dialog = <ComponentDialog onClosed={this.handleCloseDialog}
+          component={this.state.component} dialogType={componentDialogType.edit} />
         break
       case dialogType.delete:
-        dialog = <FoolproofDialog ref='foolproofDialog' onCompleted={this.handleDelete}
-          onCanceled={this.handleHideDialog} isUpdating={this.state.isUpdating}
-          name={this.state.component.name} ID={this.state.component.componentID} />
+        dialog = <FoolproofDialog onClosed={this.handleCloseDialog}
+          name={this.state.component.name} ID={this.state.component.componentID}
+          deleteComponent={this.props.deleteComponent} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
@@ -176,7 +129,6 @@ export default class Components extends React.Component {
     const { components } = this.props
     const componentItems = components.map(this.renderListItem)
     const dialog = this.renderDialog()
-    const snackbar = <Snackbar message={this.state.message} />
     const textInButton = (<div>
       <i className='material-icons'>add</i>
       Component
@@ -190,13 +142,15 @@ export default class Components extends React.Component {
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
         <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
       </div>
+      <div className='mdl-cell mdl-cell--12-col mdl-list'>
+        <ErrorMessage message={this.state.message} />
+      </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
       <div id='inner-dialog-container'>
         {dialog}
       </div>
-      {snackbar}
     </div>)
   }
 }

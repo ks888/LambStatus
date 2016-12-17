@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchComponents, postComponent, updateComponent, deleteComponent } from 'actions/components'
+import { fetchComponents, deleteComponent } from 'actions/components'
 import Components from 'components/Components'
 
 const mapStateToProps = (state) => {
@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchComponents, postComponent, updateComponent, deleteComponent}, dispatch)
+  return bindActionCreators({fetchComponents, deleteComponent}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Components)

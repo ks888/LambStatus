@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import Button from 'components/Button'
+import ErrorMessage from 'components/ErrorMessage'
 import TextField from 'components/TextField'
 import classes from './Signin.scss'
 
@@ -35,7 +36,6 @@ export default class Signin extends React.Component {
   componentDidMount () {
     const dialog = ReactDOM.findDOMNode(this.refs.dialog)
     if (dialog && !dialog.showModal) {
-      console.log('dialog')
       // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
       // Here is a workaround for this limitation.
       document.getElementById('dialog-container').appendChild(dialog)
@@ -150,9 +150,7 @@ export default class Signin extends React.Component {
         Signin
       </h2>
       <div className='mdl-dialog__content'>
-        <div className={classes.errorMessage}>
-          {this.state.message}
-        </div>
+        <ErrorMessage message={this.state.message} />
         <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
         <TextField label='Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
@@ -173,9 +171,7 @@ export default class Signin extends React.Component {
         Signin
       </h2>
       <div className='mdl-dialog__content'>
-        <div className={classes.errorMessage}>
-          {this.state.message}
-        </div>
+        <ErrorMessage message={this.state.message} />
         <TextField label='New Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
       </div>
@@ -195,9 +191,7 @@ export default class Signin extends React.Component {
         <div>
           Enter your email address. A verification code will be sent to the address.
         </div>
-        <div className={classes.errorMessage}>
-          {this.state.message}
-        </div>
+        <ErrorMessage message={this.state.message} />
         <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
       </div>
       <div className='mdl-dialog__actions'>
@@ -217,9 +211,7 @@ export default class Signin extends React.Component {
         <div>
           Email has been sent to your address. Enter the verification code in the email and set new password.
         </div>
-        <div className={classes.errorMessage}>
-          {this.state.message}
-        </div>
+        <ErrorMessage message={this.state.message} />
         <TextField label='Verification code' text={this.state.code} rows={1} onChange={this.handleChangeCode} />
         <TextField label='Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
