@@ -1174,6 +1174,27 @@ Resources:
       Timeout: 30
     DependsOn:
       - CognitoHandleFunctionRole
+  CognitoCreateUserPoolClientFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/CognitoCreateUserPoolClient.zip
+      Description: Create a user pool client.
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-CognitoCreateUserPoolClient
+      Handler: "_apex_index.handle"
+      Role:
+        Fn::GetAtt:
+          - CognitoHandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+    DependsOn:
+      - CognitoHandleFunctionRole
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -1266,6 +1287,20 @@ Resources:
         ${CognitoSMSCallerRole.Arn}
     DependsOn:
       - CognitoSMSCallerRole
+  CognitoUserPoolClient:
+    Type: Custom::CognitoUserPoolClient
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CognitoCreateUserPoolClientFunction
+          - Arn
+      Region: !Sub |-
+        ${AWS::Region}
+      ClientName: Browser
+      UserPoolID: !Sub |-
+        ${CognitoUserPool.UserPoolID}
+    DependsOn:
+      - CognitoUserPool
 Outputs:
   LambdaRoleArn:
     Value:

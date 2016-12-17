@@ -45,3 +45,34 @@ export const createUserPool = (region, poolName, snsCallerArn) => {
     })
   })
 }
+
+export const deleteUserPool = (region, userPoolID) => {
+  const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
+  const params = {
+    UserPoolId: userPoolID
+  }
+  return new Promise((resolve, reject) => {
+    cognito.deleteUserPool(params, (err, result) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
+export const createUserPoolClient = (region, userPoolID, clientName) => {
+  const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
+  const params = {
+    UserPoolId: userPoolID,
+    ClientName: clientName
+  }
+  return new Promise((resolve, reject) => {
+    cognito.createUserPoolClient(params, (err, result) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}

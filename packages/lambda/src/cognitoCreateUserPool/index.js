@@ -1,22 +1,7 @@
 import response from 'cfn-response'
-import { createUserPool } from 'utils/cognito'
+import { createUserPool, deleteUserPool } from 'utils/cognito'
 
 export async function handler (event, context, callback) {
-  if (event.RequestType === 'Delete') {
-    response.send(event, context, response.SUCCESS)
-    return
-  }
-
-  if (event.RequestType === 'Update') {
-    if (event.ResourceProperties.poolName !== event.OldResourceProperties.poolName ||
-      event.ResourceProperties.snsCallerArn !== event.OldResourceProperties.snsCallerArn) {
-      response.send(event, context, response.FAILED, 'can\'t update parameters of user pool')
-    } else {
-      response.send(event, context, response.SUCCESS)
-    }
-    return
-  }
-
   const {
     Region: region,
     PoolName: poolName,
@@ -24,9 +9,34 @@ export async function handler (event, context, callback) {
   } = event.ResourceProperties
   console.log(`received request (region: ${region}, poolName: ${poolName}, snsCallerArn: ${snsCallerArn})`)
 
+  if (event.RequestType === 'Delete') {
+    try {
+      const poolID = event.PhysicalResourceId
+      await deleteUserPool(region, poolID)
+      response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
+    } catch (error) {
+      console.log(error.message)
+      console.log(error.stack)
+      response.send(event, context, response.FAILED, error.message)
+    }
+    return
+  }
+
+  if (event.RequestType === 'Update') {
+    if (poolName !== event.OldResourceProperties.poolName ||
+      snsCallerArn !== event.OldResourceProperties.snsCallerArn) {
+      response.send(event, context, response.FAILED, 'can\'t update parameters of user pool')
+    } else {
+      const poolID = event.PhysicalResourceId
+      response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
+    }
+    return
+  }
+
   try {
     const userPool = await createUserPool(region, poolName, snsCallerArn)
-    response.send(event, context, response.SUCCESS, {UserPoolID: userPool.UserPool.Id})
+    const poolID = userPool.UserPool.Id
+    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
