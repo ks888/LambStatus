@@ -153,7 +153,7 @@ export default class Signin extends React.Component {
         <div className={classes.errorMessage}>
           {this.state.message}
         </div>
-        <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
+        <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
         <TextField label='Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
         <div className={classes.forgotPassword} onClick={this.handleClickForgotButton}>
@@ -193,12 +193,12 @@ export default class Signin extends React.Component {
       </h2>
       <div className='mdl-dialog__content'>
         <div>
-          Enter your username. A verification code will be sent to your email address.
+          Enter your email address. A verification code will be sent to the address.
         </div>
         <div className={classes.errorMessage}>
           {this.state.message}
         </div>
-        <TextField label='Username' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
+        <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSendCodeButton} name='Send verification code'
@@ -215,7 +215,7 @@ export default class Signin extends React.Component {
       </h2>
       <div className='mdl-dialog__content'>
         <div>
-          Enter the verification code in the email and new password.
+          Email has been sent to your address. Enter the verification code in the email and set new password.
         </div>
         <div className={classes.errorMessage}>
           {this.state.message}
@@ -227,6 +227,7 @@ export default class Signin extends React.Component {
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSetCodeButton} name='Done'
           class='mdl-button--accent' disabled={this.state.isUpdating} />
+        <Button onClick={this.showSignInDialog} name='Cancel' />
       </div>
     </dialog>)
   }
