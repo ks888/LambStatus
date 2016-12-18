@@ -1,6 +1,6 @@
 {
   "name": "lamb-status",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Serverless Status Pages",
   "repository": {
     "type": "git",
