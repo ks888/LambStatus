@@ -8,7 +8,7 @@ import ErrorMessage from 'components/ErrorMessage'
 class FoolproofDialog extends React.Component {
   static propTypes = {
     onClosed: PropTypes.func.isRequired,
-    deleteComponent: PropTypes.func.isRequired,
+    deleteFunction: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
     ID: PropTypes.string.isRequired
   }
@@ -45,7 +45,7 @@ class FoolproofDialog extends React.Component {
   }
 
   handleClickDeleteButton = () => {
-    this.props.deleteComponent(this.props.ID, this.updateCallbacks)
+    this.props.deleteFunction(this.props.ID, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

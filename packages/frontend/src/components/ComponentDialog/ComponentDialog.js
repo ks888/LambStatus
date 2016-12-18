@@ -5,6 +5,7 @@ import classes from './ComponentDialog.scss'
 import Button from 'components/Button'
 import ErrorMessage from 'components/ErrorMessage'
 import TextField from 'components/TextField'
+import { componentStatuses } from 'utils/status'
 
 export const dialogType = {
   add: 1,
@@ -19,7 +20,7 @@ class ComponentDialog extends React.Component {
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired
-    }).isRequired,
+    }),
     dialogType: PropTypes.number.isRequired,
     postComponent: PropTypes.func.isRequired,
     updateComponent: PropTypes.func.isRequired
@@ -27,13 +28,21 @@ class ComponentDialog extends React.Component {
 
   constructor (props) {
     super(props)
-    this.state = {
-      name: props.component.name,
-      description: props.component.description,
-      status: props.component.status,
-      isUpdating: false,
-      message: ''
+    if (props.component) {
+      this.state = {
+        name: props.component.name,
+        description: props.component.description,
+        status: props.component.status
+      }
+    } else {
+      this.state = {
+        name: '',
+        description: '',
+        status: componentStatuses[0]
+      }
     }
+    this.state.isUpdating = false
+    this.state.message = ''
   }
 
   componentDidMount () {

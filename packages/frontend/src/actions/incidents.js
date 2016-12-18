@@ -111,7 +111,7 @@ export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   }
 }
 
-export const postIncident = (incidentID, name, incidentStatus, message, components, callbacks = {}) => {
+export const postIncident = (name, incidentStatus, message, components, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()

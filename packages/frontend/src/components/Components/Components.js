@@ -101,14 +101,8 @@ export default class Components extends React.Component {
         dialog = null
         break
       case dialogType.add:
-        let component = {
-          componentID: '',
-          name: '',
-          description: '',
-          status: 'Operational'
-        }
         dialog = <ComponentDialog onClosed={this.handleCloseDialog}
-          component={component} dialogType={componentDialogType.add} />
+          dialogType={componentDialogType.add} />
         break
       case dialogType.edit:
         dialog = <ComponentDialog onClosed={this.handleCloseDialog}
@@ -117,7 +111,7 @@ export default class Components extends React.Component {
       case dialogType.delete:
         dialog = <FoolproofDialog onClosed={this.handleCloseDialog}
           name={this.state.component.name} ID={this.state.component.componentID}
-          deleteComponent={this.props.deleteComponent} />
+          deleteFunction={this.props.deleteComponent} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
