@@ -18,6 +18,11 @@ put_stack() {
   PACKAGE_JSON="$(dirname $0)/../../package.json"
   VERSION=$(cat "${PACKAGE_JSON}" | sed -n 's/.*\"version\": \"\(.*\)\".*/\1/p')
 
+  if [ "${USER_EMAIL}" == "" ]; then
+    echo "Error: set USER_EMAIL at .env file"
+    exit 1
+  fi
+
   aws cloudformation ${ACTION} \
       --region ${AWS_REGION} \
       --stack-name ${STACK_NAME} \
@@ -25,7 +30,9 @@ put_stack() {
       --capabilities CAPABILITY_IAM \
       --parameters \
         ParameterKey=ServiceName,ParameterValue=${SERVICE_NAME},UsePreviousValue=false \
-        ParameterKey=Version,ParameterValue=${VERSION},UsePreviousValue=false
+        ParameterKey=Version,ParameterValue=${VERSION},UsePreviousValue=false \
+        ParameterKey=UserName,ParameterValue=${USER_NAME},UsePreviousValue=false \
+        ParameterKey=UserEmail,ParameterValue=${USER_EMAIL},UsePreviousValue=false
 }
 
 delete_stack() {

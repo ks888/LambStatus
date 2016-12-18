@@ -13,15 +13,16 @@ With a few clicks, You can build a status page like this:
 
 Status page system is able to utilize the benefits of Serverless architectures, because:
 
-* it eases your pain caused by the scaling / availability issues. It is a worst situation if your service is down AND heavy traffic from stuck users stops your status page.
+* It dramatically eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
 
-* it reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
+* It reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
 
 ## Features
 
 * Easy build: launch the cloudformation stack using [this template](https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.0.3/lamb-status.yml) and that's it!
-* Component management: show your service's current status by components
-* Incident management: when an incident occurs, keep telling latest situations to users
+* Incidents: when something happens, open an incident, and keep telling latest situations to users
+* Components: show your service's status by components like API, Website, etc.
+* Users: only authenticated users can access admin pages.
 
 *Note: LambStatus is still under development, and not ready for production use. Opening an issue / PR for feature request / bug report is welcome!*
 
@@ -39,22 +40,22 @@ When a window to create a new CloudFormation stack is opened (like below), click
 
 ![CloudFormationWizard1](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard1.png)
 
-Then, enter the name of your service and click Next.
+Then, enter your service name and initial user's info and click Next.
 
 ![CloudFormationWizard2](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard2.png)
 
-Click Next again, and check the acknowledgment checkbox and click Create.
+Click Next again.
 
 ![CloudFormationWizard3](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard3.png)
 
+Check the acknowledgment checkbox at the bottom and click Create.
+
 ![CloudFormationWizard4](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard4.png)
 
-The stack will be created in 20-25 minutes (it is mainly due to the creation of CloudFront Distribution).
-
-## Usage
-
-After the stack creation, see the `Outputs` of the stack and access the URL to which `StatusPageCloudFrontURL` specifies. You will get your status page.
+When the stack is created, the email will be sent to the email address of the initial user. It may take 20-25 minutes, mainly due to the settings of CloudFront Distribution.
 
 ![CloudFormationWizard5](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard5.png)
 
-As well, access the URL to which `AdminPageCloudFrontURL` specifies, then your admin page is there.
+Click the link in the email, and sign in to admin console.
+
+![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)

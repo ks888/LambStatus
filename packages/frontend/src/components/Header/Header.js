@@ -35,7 +35,7 @@ export default class Header extends React.Component {
     const userMenu = this.renderUserMenu()
     return (<header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
       <div className='mdl-layout__header-row'>
-        <span className='mdl-layout-title'>LambStatus</span>
+        <span className='mdl-layout-title'>LambStatus Admin</span>
         <div className='mdl-layout-spacer' />
         <nav className='mdl-navigation'>
           <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={'https://' + statusPageURL}>

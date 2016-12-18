@@ -1414,3 +1414,9 @@ Outputs:
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
+  UserPoolID:
+    Value: !Sub |-
+      ${CognitoUserPool.UserPoolID}
+  UserPoolClientID:
+    Value: !Sub |-
+      ${CognitoUserPoolClient.UserPoolClientID}
