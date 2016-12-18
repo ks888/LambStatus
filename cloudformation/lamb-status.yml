@@ -445,9 +445,9 @@ Resources:
       ResourceId:
         Ref: "ComponentsApiResource"
       HttpMethod: "POST"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -507,9 +507,9 @@ Resources:
       ResourceId:
         Ref: "ComponentApiResource"
       HttpMethod: "PATCH"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -555,9 +555,9 @@ Resources:
       ResourceId:
         Ref: "ComponentApiResource"
       HttpMethod: "DELETE"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -672,9 +672,9 @@ Resources:
       ResourceId:
         Ref: "IncidentsApiResource"
       HttpMethod: "POST"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -742,9 +742,9 @@ Resources:
       ResourceId:
         Ref: "IncidentApiResource"
       HttpMethod: "PATCH"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -790,9 +790,9 @@ Resources:
       ResourceId:
         Ref: "IncidentApiResource"
       HttpMethod: "DELETE"
-      AuthorizationType: "CUSTOM"
+      AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
-        Ref: Authorizer
+        Ref: "Authorizer"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -1258,7 +1258,7 @@ Resources:
         Ref: StatusPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
     DependsOn:
       - StatusPageDistribution
       - CognitoUserPoolClient
@@ -1275,7 +1275,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:

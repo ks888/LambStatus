@@ -147,7 +147,7 @@ export default class Signin extends React.Component {
   renderSigninDialog = () => {
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        Signin
+        Sign in
       </h2>
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
@@ -168,9 +168,12 @@ export default class Signin extends React.Component {
   renderNewPasswordDialog = () => {
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        Signin
+        Sign in
       </h2>
       <div className='mdl-dialog__content'>
+        <div>
+          Login successful. Now, set your own password.
+        </div>
         <ErrorMessage message={this.state.message} />
         <TextField label='New Password' text={this.state.password} rows={1}
           onChange={this.handleChangePassword} hideText />
