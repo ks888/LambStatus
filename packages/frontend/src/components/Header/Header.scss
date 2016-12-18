@@ -3,3 +3,15 @@
   margin-left: 0 !important;
   width: 100% !important;
 }
+
+.nav_item {
+  color: #FFFFFF;
+  font-weight: 400;
+  text-transform: none;
+  padding-right: 0;
+  padding-left: 36px;
+  opacity: 0.87;
+  &:hover {
+    background-color: rgb(96,125,139);
+  }
+}

@@ -11,6 +11,10 @@ const components = {
   components: {
     name: 'Components',
     path: '/components'
+  },
+  users: {
+    name: 'Users',
+    path: '/users'
   }
 }
 

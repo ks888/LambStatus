@@ -14,9 +14,14 @@ class TextField extends React.Component {
   }
 
   render () {
+    let textfieldType = 'text'
+    if (this.props.hideText) {
+      textfieldType = 'password'
+    }
+
     let textfield
     if (!this.props.rows || this.props.rows === 1) {
-      textfield = (<input className='mdl-textfield__input' type='text' id='textfield'
+      textfield = (<input className='mdl-textfield__input' type={textfieldType} id='textfield'
         value={this.props.text} onChange={this.handleChange} />)
     } else {
       textfield = (<textarea className='mdl-textfield__input' type='text' rows={this.props.rows} id='textfield'
@@ -37,7 +42,8 @@ TextField.propTypes = {
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
   text: PropTypes.string,
-  rows: PropTypes.number
+  rows: PropTypes.number,
+  hideText: PropTypes.bool
 }
 
 export default TextField

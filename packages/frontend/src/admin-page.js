@@ -9,6 +9,9 @@ import createStore from 'store/createStore'
 import AdminPageLayout from 'layouts/AdminPageLayout'
 import Components from 'containers/Components'
 import Incidents from 'containers/Incidents'
+import Users from 'components/Users'
+import Signin from 'containers/Signin'
+import { isAuthorized } from 'actions/users'
 
 // ========================================================
 // Browser History Setup
@@ -44,12 +47,30 @@ if (__DEBUG__) {
 // ========================================================
 const MOUNT_NODE = document.getElementById('root')
 
+function requireAuth (nextState, replace) {
+  isAuthorized(authorized => {
+    if (!authorized) {
+      replace({ pathname: '/signin' })
+    }
+  })
+}
+
+function guestOnly (nextState, replace) {
+  isAuthorized(authorized => {
+    if (authorized) {
+      replace({ pathname: '/' })
+    }
+  })
+}
+
 let render = () => {
   const routes = (
     <Route path='/' component={AdminPageLayout}>
-      <IndexRoute component={Components} />
-      <Route path='components' component={Components} />
-      <Route path='incidents' component={Incidents} />
+      <IndexRoute component={Components} onEnter={requireAuth} />
+      <Route path='components' component={Components} onEnter={requireAuth} />
+      <Route path='incidents' component={Incidents} onEnter={requireAuth} />
+      <Route path='users' component={Users} onEnter={requireAuth} />
+      <Route path='signin' component={Signin} onEnter={guestOnly} />
     </Route>
   )
 

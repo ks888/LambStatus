@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { checkStatus } from 'utils/fetch'
+import { checkStatus, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_INCIDENTS = 'LIST_INCIDENTS'
@@ -129,7 +129,7 @@ export const postIncident = (incidentID, name, incidentStatus, message, componen
       components: components
     }
     return fetch(apiURL + 'incidents', {
-      headers: { 'Content-Type': 'application/json' },
+      headers: buildHeaders(),
       method: 'POST',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -159,7 +159,7 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       components: components
     }
     return fetch(apiURL + 'incidents/' + incidentID, {
-      headers: { 'Content-Type': 'application/json' },
+      headers: buildHeaders(),
       method: 'PATCH',
       body: JSON.stringify(body)
     }).then(checkStatus)
@@ -183,6 +183,7 @@ export const deleteIncident = (incidentID, callbacks = {}) => {
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
     return fetch(apiURL + 'incidents/' + incidentID, {
+      headers: buildHeaders(),
       method: 'DELETE'
     }).then(checkStatus)
       .then(response => {

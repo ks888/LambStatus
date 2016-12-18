@@ -1,18 +1,49 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import { statusPageURL } from 'utils/settings'
 import classes from './Header.scss'
 
-export const Header = (props) => (
-  <header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
-    <div className='mdl-layout__header-row'>
-      <span className='mdl-layout-title'>LambStatus</span>
-      <div className='mdl-layout-spacer' />
-      <nav className='mdl-navigation mdl-layout--large-screen-only'>
-        <a className='mdl-navigation__link' href={'https://' + statusPageURL}>View Status Page</a>
-      </nav>
-    </div>
-  </header>
-)
+export default class Header extends React.Component {
+  static propTypes = {
+    username: PropTypes.string,
+    fetchUser: PropTypes.func.isRequired,
+    signOut: PropTypes.func.isRequired
+  }
 
-export default Header
+  componentDidMount () {
+    this.props.fetchUser()
+  }
+
+  renderUserMenu = () => {
+    return (
+      <div>
+        <button id='header-user-menu'
+          className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)}>
+           {this.props.username}
+          <i className='material-icons'>keyboard_arrow_down</i>
+        </button>
+
+        <ul className='mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect'
+          htmlFor='header-user-menu'>
+          <li className='mdl-menu__item mdl-menu__item--full-bleed-divider' onClick={this.props.signOut}>Sign out</li>
+        </ul>
+      </div>
+    )
+  }
+
+  render () {
+    const userMenu = this.renderUserMenu()
+    return (<header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
+      <div className='mdl-layout__header-row'>
+        <span className='mdl-layout-title'>LambStatus Admin</span>
+        <div className='mdl-layout-spacer' />
+        <nav className='mdl-navigation'>
+          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={'https://' + statusPageURL}>
+            View Status Page
+          </a>
+          {userMenu}
+        </nav>
+      </div>
+    </header>)
+  }
+}

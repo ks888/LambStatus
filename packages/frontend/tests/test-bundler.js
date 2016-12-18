@@ -19,6 +19,8 @@ global.should = chai.should()
 global.__LAMBSTATUS_API_URL__ = '/'
 global.__LAMBSTATUS_STATUS_PAGE_URL__ = ''
 global.__LAMBSTATUS_SERVICE_NAME__ = ''
+global.__LAMBSTATUS_USER_POOL_ID__ = ''
+global.__LAMBSTATUS_CLIENT_ID__ = ''
 
 // ---------------------------------------
 // Require Tests

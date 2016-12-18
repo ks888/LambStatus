@@ -64,8 +64,10 @@ const getSettings = async () => {
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
     const statusPageURL = findOutputKey(stack.Outputs, 'StatusPageCloudFrontURL')
     const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
+    const userPoolID = findOutputKey(stack.Outputs, 'UserPoolID')
+    const clientID = findOutputKey(stack.Outputs, 'UserPoolClientID')
 
-    return { invocationURL, statusPageURL, serviceName }
+    return { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -91,12 +93,14 @@ const getBucketInfo = async () => {
 }
 
 getSettings().then((
-  { invocationURL, statusPageURL, serviceName }
+  { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
 ) => {
   const apiInfo = {
     InvocationURL: invocationURL,
     StatusPageURL: statusPageURL,
-    ServiceName: serviceName
+    ServiceName: serviceName,
+    UserPoolID: userPoolID,
+    ClientID: clientID
   }
   return JSON.stringify(apiInfo, null, 2)
 }).then((json) => {
