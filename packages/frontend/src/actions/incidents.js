@@ -73,6 +73,8 @@ export const fetchIncidentsWithUpdates = (callbacks = {}) => {
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
+        dispatch(listIncidents(json))
+
         const obj = JSON.parse(json)
         if (obj.length !== 0) {
           obj.forEach(incident => dispatch(fetchIncidentUpdates(incident.incidentID)))
@@ -111,7 +113,7 @@ export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   }
 }
 
-export const postIncident = (incidentID, name, incidentStatus, message, components, callbacks = {}) => {
+export const postIncident = (name, incidentStatus, message, components, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()

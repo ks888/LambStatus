@@ -79,10 +79,11 @@ export default class History extends React.Component {
   }
 
   render () {
-    const { incidents, isFetching } = this.props
+    const { incidents } = this.props
     const incidentsByMonth = this.renderIncidentsByMonth(incidents)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')} style={{ opacity: isFetching ? 0.5 : 1 }}>
+    return (<div className={classnames(classes.layout, 'mdl-grid')}
+      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <Title service_name='Service' />
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incident History</h4>

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import moment from 'moment-timezone'
 import classes from './IncidentDialog.scss'
@@ -7,17 +8,81 @@ import Button from 'components/Button'
 import RadioButton from 'components/RadioButton'
 import TextField from 'components/TextField'
 import DropdownList from 'components/DropdownList'
+import ErrorMessage from 'components/ErrorMessage'
 import { componentStatuses, incidentStatuses } from 'utils/status'
 
+export const dialogType = {
+  add: 1,
+  update: 2
+}
+
 class IncidentDialog extends React.Component {
+  static propTypes = {
+    onClosed: PropTypes.func.isRequired,
+    incidentID: PropTypes.string,
+    dialogType: PropTypes.number.isRequired,
+    incident: PropTypes.shape({
+      incidentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
+    }),
+    components: PropTypes.arrayOf(PropTypes.shape({
+      componentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired
+    }).isRequired).isRequired,
+    fetchComponents: PropTypes.func.isRequired,
+    fetchIncidentUpdates: PropTypes.func.isRequired,
+    postIncident: PropTypes.func.isRequired,
+    updateIncident: PropTypes.func.isRequired
+  }
+
   constructor (props) {
     super(props)
-    this.state = {
-      incidentID: props.incident.incidentID,
-      name: props.incident.name,
-      components: props.components,
-      incidentStatus: props.incident.status || incidentStatuses[0],
-      message: ''
+    if (props.incident) {
+      this.state = {
+        name: props.incident.name,
+        incidentStatus: props.incident.status
+      }
+    } else {
+      this.state = {
+        name: '',
+        incidentStatus: incidentStatuses[0]
+      }
+    }
+    this.state.components = props.components
+    this.state.isUpdating = false
+    this.state.incidentMessage = ''
+    this.state.message = ''
+  }
+
+  componentDidMount () {
+    const fetchCallbacks = {
+      onFailure: (msg) => {
+        this.setState({message: msg})
+      }
+    }
+    if (!this.props.components || this.props.components.length === 0) {
+      this.props.fetchComponents(fetchCallbacks)
+    }
+    if (this.props.incident && !this.props.incident.incidentUpdates) {
+      this.props.fetchIncidentUpdates(this.props.incident.incidentID, fetchCallbacks)
+    }
+
+    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
+    if (dialog && !dialog.showModal) {
+      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
+      // Here is a workaround for this limitation.
+      document.getElementById('dialog-container').appendChild(dialog)
+
+      dialogPolyfill.registerDialog(dialog)
+      dialog.showModal()
     }
   }
 
@@ -27,7 +92,7 @@ class IncidentDialog extends React.Component {
 
   handleChangeComponentStatus = (componentID) => {
     return (status) => {
-      let newComponents = this.state.components.map((component) => {
+      let newComponents = this.props.components.map((component) => {
         if (component.componentID === componentID) {
           return Object.assign({}, component, {
             status: status
@@ -43,13 +108,39 @@ class IncidentDialog extends React.Component {
     this.setState({incidentStatus: value})
   }
 
-  handleChangeMessage = (value) => {
-    this.setState({message: value})
+  handleChangeIncidentMessage = (value) => {
+    this.setState({incidentMessage: value})
   }
 
-  handleClickDoneButton = (e) => {
-    this.props.onCompleted(this.state.incidentID, this.state.name, this.state.incidentStatus,
-      this.state.message, this.state.components)
+  updateCallbacks = {
+    onLoad: () => { this.setState({isUpdating: true}) },
+    onSuccess: () => {
+      this.setState({isUpdating: false})
+      this.handleHideDialog()
+    },
+    onFailure: (msg) => {
+      this.setState({isUpdating: false, message: msg})
+    }
+  }
+
+  handleClickAddButton = (e) => {
+    this.props.postIncident(this.state.name, this.state.incidentStatus,
+      this.state.incidentMessage, this.state.components, this.updateCallbacks)
+  }
+
+  handleClickUpdateButton = (e) => {
+    this.props.updateIncident(this.props.incident.incidentID, this.state.name,
+      this.state.incidentStatus, this.state.incidentMessage, this.state.components,
+      this.updateCallbacks)
+  }
+
+  handleHideDialog = () => {
+    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
+    if (dialog) {
+      dialog.close()
+      document.getElementById('inner-dialog-container').appendChild(dialog)
+    }
+    this.props.onClosed()
   }
 
   renderIncidentStatuses = () => {
@@ -109,7 +200,7 @@ class IncidentDialog extends React.Component {
   }
 
   renderIncidentUpdates = () => {
-    if (!this.props.incident.incidentUpdates) {
+    if (!this.props.incident || !this.props.incident.incidentUpdates) {
       return
     }
     const updates = this.props.incident.incidentUpdates.map(this.renderIncidentUpdateItem)
@@ -126,50 +217,43 @@ class IncidentDialog extends React.Component {
   }
 
   render () {
+    let actionName, clickHandler
+    switch (this.props.dialogType) {
+      case dialogType.add:
+        actionName = 'Add'
+        clickHandler = this.handleClickAddButton
+        break
+      case dialogType.update:
+        actionName = 'Update'
+        clickHandler = this.handleClickUpdateButton
+        break
+      default:
+        console.warn('unknown dialog type: ', this.state.dialogType)
+    }
+
     const incidentStatuses = this.renderIncidentStatuses()
     const componentStatuses = this.renderComponentStatuses()
     const incidentUpdates = this.renderIncidentUpdates()
-    return (<dialog className={classnames('mdl-dialog', classes.dialog)}>
+    return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h4 className={classnames('mdl-dialog__title', classes.title)}>
-        {this.props.actionName} Incident
+        {actionName} Incident
       </h4>
       <div className='mdl-dialog__content'>
+        <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {incidentStatuses}
-        <TextField label='Message' text={this.state.message} rows={2} onChange={this.handleChangeMessage} />
+        <TextField label='Message' text={this.state.incidentMessage} rows={2}
+          onChange={this.handleChangeIncidentMessage} />
         {componentStatuses}
         {incidentUpdates}
       </div>
       <div className='mdl-dialog__actions'>
-        <Button onClick={this.handleClickDoneButton} name={this.props.actionName}
-          class='mdl-button--accent' disabled={this.props.isUpdating} />
-        <Button onClick={this.props.onCanceled} name='Cancel' />
+        <Button onClick={clickHandler} name={actionName}
+          class='mdl-button--accent' disabled={this.state.isUpdating} />
+        <Button onClick={this.handleHideDialog} name='Cancel' />
       </div>
     </dialog>)
   }
-}
-
-IncidentDialog.propTypes = {
-  onCompleted: PropTypes.func.isRequired,
-  onCanceled: PropTypes.func.isRequired,
-  incident: PropTypes.shape({
-    incidentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string,
-    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-      incidentUpdateID: PropTypes.string.isRequired,
-      incidentStatus: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
-    }).isRequired)
-  }).isRequired,
-  components: PropTypes.arrayOf(PropTypes.shape({
-    componentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  isUpdating: PropTypes.bool.isRequired,
-  actionName: PropTypes.string.isRequired
 }
 
 export default IncidentDialog
