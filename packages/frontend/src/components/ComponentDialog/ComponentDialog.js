@@ -116,7 +116,7 @@ class ComponentDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
-        <TextField label='Description' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
+        <TextField label='Description (optional)' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={clickHandler} name={actionName}

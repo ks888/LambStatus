@@ -31,7 +31,7 @@ export default class IncidentService {
       throw new ParameterError('invalid incident status parameter')
     }
 
-    if (message === undefined || message === '') {
+    if (message === undefined) {
       throw new ParameterError('invalid message parameter')
     }
 

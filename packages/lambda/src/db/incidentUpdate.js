@@ -26,6 +26,12 @@ export const getIncidentUpdates = (incidentID) => {
         return reject(new NotFoundError('no matched item'))
       }
 
+      queryResult.Items.forEach(item => {
+        if (!item.hasOwnProperty('message')) {
+          item.message = ''
+        }
+      })
+
       resolve(queryResult.Items)
     })
   })
@@ -42,18 +48,24 @@ export const updateIncidentUpdate = (incidentID, incidentStatus, message, update
         incidentID: incidentID,
         incidentUpdateID: incidentUpdateID
       },
-      UpdateExpression: 'set incidentStatus = :i, updatedAt = :u, message = :m',
+      UpdateExpression: 'set incidentStatus = :i, updatedAt = :u',
       ExpressionAttributeValues: {
         ':i': incidentStatus,
-        ':u': updatedAt,
-        ':m': message
+        ':u': updatedAt
       },
       TableName: IncidentUpdateTable,
       ReturnValues: 'ALL_NEW'
     }
+    if (message !== '') {
+      params.UpdateExpression = 'set incidentStatus = :i, updatedAt = :u, message = :m'
+      params.ExpressionAttributeValues[':m'] = message
+    }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
+      }
+      if (!data.Attributes.hasOwnProperty('message')) {
+        data.Attributes.message = ''
       }
       resolve(data)
     })
