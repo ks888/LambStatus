@@ -9,7 +9,7 @@ Parameters:
   Version:
     Description: The version of LambStatus
     Type: "String"
-    Default: "0.1.0"
+    Default: "0.1.1"
   UserName:
     Description: The name of an initial user
     Type: String
