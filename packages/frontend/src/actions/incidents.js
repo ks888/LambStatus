@@ -73,6 +73,8 @@ export const fetchIncidentsWithUpdates = (callbacks = {}) => {
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
+        dispatch(listIncidents(json))
+
         const obj = JSON.parse(json)
         if (obj.length !== 0) {
           obj.forEach(incident => dispatch(fetchIncidentUpdates(incident.incidentID)))
