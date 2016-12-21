@@ -24,6 +24,13 @@ export default class History extends React.Component {
     fetchIncidentUpdates: PropTypes.func.isRequired
   }
 
+  constructor () {
+    super()
+    this.state = {
+      isFetching: false
+    }
+  }
+
   fetchCallbacks = {
     onLoad: () => { this.setState({isFetching: true}) },
     onSuccess: () => { this.setState({isFetching: false}) },
