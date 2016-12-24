@@ -1,6 +1,6 @@
-// These values are fetched when the index.html is loaded
-export const apiURL = __LAMBSTATUS_API_URL__
-export const serviceName = __LAMBSTATUS_SERVICE_NAME__
-export const statusPageURL = __LAMBSTATUS_STATUS_PAGE_URL__
-export const userPoolId = __LAMBSTATUS_USER_POOL_ID__
-export const clientId = __LAMBSTATUS_CLIENT_ID__
+// These values are set when the settings json is loaded.
+export let apiURL
+export let serviceName
+export let statusPageURL
+export let userPoolId
+export let clientId

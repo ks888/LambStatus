@@ -9,6 +9,7 @@ import createStore from 'store/createStore'
 import StatusPageLayout from 'layouts/StatusPageLayout'
 import Statuses from 'containers/Statuses'
 import History from 'containers/History'
+import * as settings from 'utils/settings'
 
 // ========================================================
 // Browser History Setup
@@ -96,6 +97,25 @@ if (__DEV__) {
 }
 
 // ========================================================
-// Go!
+// Wait until settings are loaded, then start rendering.
 // ========================================================
-render()
+
+let counter = 0
+const timer = setInterval(() => {
+  counter++
+  if (typeof __LAMBSTATUS_API_URL__ !== 'undefined') {
+    clearInterval(timer)
+
+    settings.apiURL = __LAMBSTATUS_API_URL__
+    settings.serviceName = __LAMBSTATUS_SERVICE_NAME__
+    settings.statusPageURL = __LAMBSTATUS_STATUS_PAGE_URL__
+    settings.userPoolId = __LAMBSTATUS_USER_POOL_ID__
+    settings.clientId = __LAMBSTATUS_CLIENT_ID__
+    render()
+  }
+  if (counter >= 6000) {
+    // wait 1 minute
+    console.error('failed to load settings')
+    clearInterval(timer)
+  }
+}, 10)
