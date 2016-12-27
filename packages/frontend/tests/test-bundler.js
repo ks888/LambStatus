@@ -7,6 +7,7 @@ import chai from 'chai'
 import sinonChai from 'sinon-chai'
 import chaiAsPromised from 'chai-as-promised'
 import chaiEnzyme from 'chai-enzyme'
+import * as settings from 'utils/settings'
 
 chai.use(sinonChai)
 chai.use(chaiAsPromised)
@@ -16,11 +17,11 @@ global.chai = chai
 global.sinon = sinon
 global.expect = chai.expect
 global.should = chai.should()
-global.__LAMBSTATUS_API_URL__ = '/'
-global.__LAMBSTATUS_STATUS_PAGE_URL__ = ''
-global.__LAMBSTATUS_SERVICE_NAME__ = ''
-global.__LAMBSTATUS_USER_POOL_ID__ = ''
-global.__LAMBSTATUS_CLIENT_ID__ = ''
+settings.apiURL = '/'
+settings.serviceName = ''
+settings.statusPageURL = ''
+settings.userPoolId = ''
+settings.clientId = ''
 
 // ---------------------------------------
 // Require Tests
