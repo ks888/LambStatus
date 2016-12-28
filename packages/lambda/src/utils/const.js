@@ -3,5 +3,6 @@ export const ServiceComponentTable = `${stackName}-ServiceComponentTable`
 export const IncidentTable = `${stackName}-IncidentTable`
 export const IncidentUpdateTable = `${stackName}-IncidentUpdateTable`
 
-export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Outage']
+export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Partial Outage',
+  'Major Outage']
 export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
