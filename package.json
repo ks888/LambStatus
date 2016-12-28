@@ -7,7 +7,6 @@
     "url": "https://github.com/ks888/LambStatus.git"
   },
   "scripts": {
-    "install-all": "npm run lambda:install && npm run frontend:install",
     "cloudformation:create": "cloudformation/bin/stack.sh create",
     "cloudformation:update": "cloudformation/bin/stack.sh update",
     "cloudformation:delete": "cloudformation/bin/stack.sh delete",
@@ -23,6 +22,7 @@
     "frontend:deploy": "cd packages/frontend && npm run deploy",
     "frontend:release": "cd packages/frontend && npm run release",
     "frontend:start": "cd packages/frontend && npm run start",
+    "install": "npm run lambda:install && npm run frontend:install",
     "clean": "npm run lambda:clean && npm run frontend:clean",
     "build": "npm run lambda:build && npm run frontend:build",
     "deploy": "npm run lambda:deploy && npm run frontend:deploy",

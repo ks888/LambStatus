@@ -17,15 +17,6 @@ Status page system is able to utilize the benefits of Serverless architectures, 
 
 * It reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
 
-## Features
-
-* Easy build: launch the cloudformation stack using [this template](https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.1.1/lamb-status.yml) and that's it!
-* Incidents: when something happens, open an incident, and keep telling latest situations to users
-* Components: show your service's status by components like API, Website, etc.
-* Users: only authenticated users can access admin pages.
-
-*Note: LambStatus is still under development, and not ready for production use. Opening an issue / PR for feature request / bug report is welcome!*
-
 ## Requirement
 
 * AWS Account
@@ -59,3 +50,41 @@ When the stack is created, the email will be sent to the email address of the in
 Click the link in the email, and sign in to admin console.
 
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
+
+*Note: LambStatus is still under development, and not ready for production use. Opening an issue for feature request / bug report is welcome!*
+
+## Development
+
+Here is the rough architecture:
+
+![Architecture](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/Architecture.png)
+
+To build and deploy them, follow these steps:
+
+1. Clone the repository
+
+  `git clone https://github.com/ks888/LambStatus`
+
+2. Install all dependencies
+
+  `npm run install`
+
+3. Set configuration values at the `.env` file, just like you do on the launch of CloudFormation stack.
+
+4. Launch cloudFormation stack
+
+  `npm run cloudformation:create`
+
+  Wait until the stack is created.
+
+5. Build
+
+  `npm run lambda:build && npm run frontend:build`
+
+  `npm run lambda:build` builds the lambda functions and `npm run frontend:build` builds the frontend which will be uploaded to S3 bucket.
+
+5. Deploy
+
+  `npm run deploy`
+
+Now, the email will be sent to the email address you specified. Click the link in the email, and sign in to admin console.
