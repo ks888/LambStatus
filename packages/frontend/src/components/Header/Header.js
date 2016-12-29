@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import { statusPageURL } from 'utils/settings'
 import classes from './Header.scss'
@@ -12,6 +13,9 @@ export default class Header extends React.Component {
 
   componentDidMount () {
     this.props.fetchUser()
+
+    let jsElem = ReactDOM.findDOMNode(this.refs.menu)
+    componentHandler.upgradeElement(jsElem)
   }
 
   renderUserMenu = () => {
@@ -24,7 +28,7 @@ export default class Header extends React.Component {
         </button>
 
         <ul className='mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect'
-          htmlFor='header-user-menu'>
+          htmlFor='header-user-menu' ref='menu'>
           <li className='mdl-menu__item mdl-menu__item--full-bleed-divider' onClick={this.props.signOut}>Sign out</li>
         </ul>
       </div>
