@@ -24,7 +24,7 @@ class DropdownList extends React.Component {
     })
     return (
       <span className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown)} ref='dropdown'>
-        <select className='mdl-textfield__input' onChange={this.handleChange} defaultValue={this.props.initialValue}>
+        <select className='mdl-textfield__input' onChange={this.handleChange} value={this.props.initialValue}>
           {statusDOMs}
         </select>
       </span>

@@ -68,10 +68,8 @@ class IncidentDialog extends React.Component {
         this.setState({message: msg})
       }
     }
-    if (!this.props.components || this.props.components.length === 0) {
-      this.props.fetchComponents(fetchCallbacks)
-    }
-    if (this.props.incident && !this.props.incident.incidentUpdates) {
+    this.props.fetchComponents(fetchCallbacks)
+    if (this.props.incident) {
       this.props.fetchIncidentUpdates(this.props.incident.incidentID, fetchCallbacks)
     }
 
@@ -86,13 +84,17 @@ class IncidentDialog extends React.Component {
     }
   }
 
+  componentWillReceiveProps = (nextProps) => {
+    this.setState({components: nextProps.components})
+  }
+
   handleChangeName = (value) => {
     this.setState({name: value})
   }
 
   handleChangeComponentStatus = (componentID) => {
     return (status) => {
-      let newComponents = this.props.components.map((component) => {
+      let newComponents = this.state.components.map((component) => {
         if (component.componentID === componentID) {
           return Object.assign({}, component, {
             status: status
@@ -163,7 +165,7 @@ class IncidentDialog extends React.Component {
   }
 
   renderComponentStatuses = () => {
-    const components = this.props.components.map((component) => {
+    const components = this.state.components.map((component) => {
       return (
         <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
           <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>

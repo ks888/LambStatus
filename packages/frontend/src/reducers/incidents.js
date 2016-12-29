@@ -34,11 +34,10 @@ function listIncidentUpdatesHandler (state = { }, action) {
 
 function addIncidentHandler (state = { }, action) {
   const {
-    incident, components
+    incident
   } = JSON.parse(action.response)
 
   return Object.assign({}, state, {
-    components: components,
     incidents: [
       incident,
       ...state.incidents
@@ -48,7 +47,7 @@ function addIncidentHandler (state = { }, action) {
 
 function editIncidentHandler (state = { }, action) {
   const {
-    incident: updatedIncident, components: components
+    incident: updatedIncident
   } = JSON.parse(action.response)
 
   const newIncidents = state.incidents.map((incident) => {
@@ -59,7 +58,6 @@ function editIncidentHandler (state = { }, action) {
   })
 
   return Object.assign({}, state, {
-    components: components,
     incidents: newIncidents
   })
 }
