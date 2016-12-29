@@ -92,7 +92,7 @@ export const updateComponent = (id, name, description, status, order) => {
       Key: {
         componentID: id
       },
-      UpdateExpression: 'set #n = :n, #s = :s, #o = :o',
+      UpdateExpression: 'set #n = :n, description = :d, #s = :s, #o = :o',
       ExpressionAttributeNames: {
         '#n': 'name',
         '#s': 'status',
@@ -101,14 +101,15 @@ export const updateComponent = (id, name, description, status, order) => {
       ExpressionAttributeValues: {
         ':n': name,
         ':s': status,
-        ':o': order
+        ':o': order,
+        ':d': description
       },
       TableName: ServiceComponentTable,
       ReturnValues: 'ALL_NEW'
     }
-    if (description !== '') {
-      params.UpdateExpression = 'set #n = :n, description = :d, #s = :s, #o = :o'
-      params.ExpressionAttributeValues[':d'] = description
+    if (description === '') {
+      params.UpdateExpression = 'set #n = :n, #s = :s, #o = :o remove description'
+      delete params.ExpressionAttributeValues[':d']
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
