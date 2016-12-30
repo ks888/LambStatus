@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { checkStatus, buildHeaders } from 'utils/fetch'
+import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_COMPONENTS = 'LIST_COMPONENTS'
@@ -46,13 +46,7 @@ export const fetchComponents = (callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(listComponents(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -75,13 +69,7 @@ export const postComponent = (name, description, status, callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(addComponent(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -104,13 +92,7 @@ export const updateComponent = (componentID, name, description, status, callback
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(editComponent(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -126,12 +108,6 @@ export const deleteComponent = (componentID, callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(removeComponent(componentID))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }

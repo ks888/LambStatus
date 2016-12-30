@@ -21,6 +21,16 @@ export const checkStatus = (response) => {
   })
 }
 
+export const handleError = (onHTTPError) => {
+  return (error) => {
+    console.error(error.message)
+    console.error(error.stack)
+    if (error.name === 'HTTPError') {
+      if (onHTTPError && typeof onHTTPError === 'function') onHTTPError(error.message)
+    }
+  }
+}
+
 export const buildHeaders = () => {
   const poolData = {
     UserPoolId: userPoolId,

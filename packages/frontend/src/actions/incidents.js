@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { checkStatus, buildHeaders } from 'utils/fetch'
+import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_INCIDENTS = 'LIST_INCIDENTS'
@@ -55,13 +55,7 @@ export const fetchIncidents = (callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(listIncidents(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -82,13 +76,7 @@ export const fetchIncidentsWithUpdates = (callbacks = {}) => {
           if (onSuccess && typeof onSuccess === 'function') onSuccess()
         }
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -103,13 +91,7 @@ export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(listIncidentUpdates(json, incidentID))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -140,13 +122,7 @@ export const postIncident = (name, incidentStatus, message, components, callback
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(addIncident(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -170,13 +146,7 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(editIncident(json))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }
 
@@ -192,12 +162,6 @@ export const deleteIncident = (incidentID, callbacks = {}) => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(removeIncident(incidentID))
       })
-      .catch(error => {
-        console.error(error.message)
-        console.error(error.stack)
-        if (error.name === 'HTTPError') {
-          if (onFailure && typeof onFailure === 'function') onFailure(error.message)
-        }
-      })
+      .catch(handleError(onFailure))
   }
 }

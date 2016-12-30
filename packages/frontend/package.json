@@ -40,7 +40,7 @@
       }
     },
     "start": {
-      "command": "babel-node bin/server",
+      "command": "npm run clean && babel-node bin/fetch-settings.js && babel-node bin/server",
       "env": {
         "DEBUG": "app:*"
       }
