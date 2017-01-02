@@ -1,18 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import createBrowserHistory from 'history/lib/createBrowserHistory'
-import { Router, Route, IndexRoute, useRouterHistory } from 'react-router'
+import { Router, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
 
 import createStore from 'store/createStore'
-import AdminPageLayout from 'layouts/AdminPageLayout'
-import Components from 'containers/Components'
-import Incidents from 'containers/Incidents'
-import Users from 'components/Users'
-import Signin from 'containers/Signin'
-import { isAuthorized } from 'actions/users'
 import * as settings from 'utils/settings'
+import routes from 'routes/admin'
 
 // ========================================================
 // Browser History Setup
@@ -48,33 +43,7 @@ if (__DEBUG__) {
 // ========================================================
 const MOUNT_NODE = document.getElementById('root')
 
-function requireAuth (nextState, replace) {
-  isAuthorized(authorized => {
-    if (!authorized) {
-      replace({ pathname: '/signin' })
-    }
-  })
-}
-
-function guestOnly (nextState, replace) {
-  isAuthorized(authorized => {
-    if (authorized) {
-      replace({ pathname: '/' })
-    }
-  })
-}
-
-let render = () => {
-  const routes = (
-    <Route path='/' component={AdminPageLayout}>
-      <IndexRoute component={Components} onEnter={requireAuth} />
-      <Route path='components' component={Components} onEnter={requireAuth} />
-      <Route path='incidents' component={Incidents} onEnter={requireAuth} />
-      <Route path='users' component={Users} onEnter={requireAuth} />
-      <Route path='signin' component={Signin} onEnter={guestOnly} />
-    </Route>
-  )
-
+let render = (routes) => {
   ReactDOM.render(
     <Provider store={store}>
       <div style={{ height: '100%' }}>
@@ -97,23 +66,22 @@ if (__DEV__) {
     }
 
     // Wrap render in try/catch
-    render = () => {
+    render = (routes) => {
       try {
-        renderApp()
+        renderApp(routes)
       } catch (error) {
         renderError(error)
       }
     }
 
     // Setup hot module replacement
-    /*
-    module.hot.accept('./routes', () => {
+    module.hot.accept('./routes/admin', () => {
       setTimeout(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE)
-        render()
+        const newRoutes = require('./routes/admin').default
+        render(newRoutes)
       })
     })
-    */
   }
 }
 
@@ -132,7 +100,7 @@ const timer = setInterval(() => {
     settings.statusPageURL = __LAMBSTATUS_STATUS_PAGE_URL__
     settings.userPoolId = __LAMBSTATUS_USER_POOL_ID__
     settings.clientId = __LAMBSTATUS_CLIENT_ID__
-    render()
+    render(routes)
   }
   if (counter >= 6000) {
     // wait 1 minute
