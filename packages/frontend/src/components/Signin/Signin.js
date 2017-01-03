@@ -35,12 +35,14 @@ export default class Signin extends React.Component {
 
   componentDidMount () {
     const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog && !dialog.showModal) {
+    if (dialog) {
       // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
       // Here is a workaround for this limitation.
       document.getElementById('dialog-container').appendChild(dialog)
 
-      dialogPolyfill.registerDialog(dialog)
+      if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog)
+      }
       dialog.showModal()
     }
   }
