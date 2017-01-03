@@ -1,6 +1,6 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import AdminPageLayout from 'layouts/AdminPageLayout/AdminPageLayout'
+import AdminPageLayout from 'components/AdminPageLayout'
 import Header from 'containers/Header'
 import Drawer from 'components/Drawer'
 
