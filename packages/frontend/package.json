@@ -13,11 +13,9 @@
     "build:dev": "better-npm-run build:dev",
     "lint": "eslint src tests server",
     "lint:fix": "npm run lint -- --fix",
-    "start": "better-npm-run start",
-    "start:admin": "npm run start -- admin",
-    "start:status": "npm run start -- status",
-    "dev": "better-npm-run dev",
-    "dev:no-debug": "npm run dev -- --no_debug",
+    "start": "npm run start:admin",
+    "start:admin": "better-npm-run start admin",
+    "start:status": "better-npm-run start status",
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
@@ -41,12 +39,6 @@
     },
     "start": {
       "command": "npm run clean && babel-node bin/fetch-settings.js && babel-node bin/server",
-      "env": {
-        "DEBUG": "app:*"
-      }
-    },
-    "dev": {
-      "command": "nodemon --exec babel-node bin/server",
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "app:*"
@@ -109,11 +101,6 @@
     "imports-loader": "^0.6.5",
     "ip": "^1.1.2",
     "json-loader": "^0.5.4",
-    "koa": "^2.0.0-alpha.3",
-    "koa-connect-history-api-fallback": "^0.3.0",
-    "koa-convert": "^1.2.0",
-    "koa-proxy": "^0.6.0",
-    "koa-static": "^3.0.0",
     "linkifyjs": "^2.1.3",
     "mime": "^1.3.4",
     "moment-timezone": "^0.5.5",
@@ -139,11 +126,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.0.0-beta.6",
+    "browser-sync": "^2.18.5",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
     "chai-enzyme": "^0.5.0",
     "cheerio": "^0.20.0",
     "codecov": "^1.0.1",
+    "connect-history-api-fallback": "^1.3.0",
     "electron": "^1.4.6",
     "enzyme": "^2.0.0",
     "eslint": "^3.0.1",
@@ -162,7 +151,6 @@
     "karma-mocha-reporter": "^2.0.0",
     "karma-webpack-with-fast-source-maps": "^1.9.2",
     "mocha": "^3.0.1",
-    "nodemon": "^1.8.1",
     "react-addons-test-utils": "^15.0.0",
     "redbox-react": "^1.2.10",
     "sinon": "^1.17.3",

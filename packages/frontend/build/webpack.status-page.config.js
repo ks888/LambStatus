@@ -1,7 +1,7 @@
 import webpackConfig from '../build/webpack.config'
 import configGen from '../config'
 
-process.env.PORT = 3001
+process.env.PORT = 3002
 export let statusPageConfig = configGen()
 
 statusPageConfig.utils_paths.entry_point = statusPageConfig.utils_paths.client('status-page.js')

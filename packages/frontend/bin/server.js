@@ -1,14 +1,38 @@
-import app from '../server/main'
-import { adminPageConfig, webpackAdminPageConfig } from '../build/webpack.admin-page.config'
-import { statusPageConfig, webpackStatusPageConfig } from '../build/webpack.status-page.config'
+import browserSync from 'browser-sync'
+import webpack from 'webpack'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackHotMiddleware from 'webpack-hot-middleware'
+import historyApiFallback from 'connect-history-api-fallback'
+
+import { webpackAdminPageConfig } from '../build/webpack.admin-page.config'
+import { webpackStatusPageConfig } from '../build/webpack.status-page.config'
 
 const target = process.argv[2]
-if (target === 'admin' || target === undefined) {
-  let adminApp = app(adminPageConfig, webpackAdminPageConfig)
-  adminApp.listen()
+let config
+if (target === 'admin') {
+  config = webpackAdminPageConfig
+} else if (target === 'status') {
+  config = webpackStatusPageConfig
 }
 
-if (target === 'status' || target === undefined) {
-  let statusPageApp = app(statusPageConfig, webpackStatusPageConfig)
-  statusPageApp.listen()
-}
+const bundler = webpack(config)
+browserSync.create().init({
+  server: {
+    baseDir: 'server/static'
+  },
+  middleware: [
+    historyApiFallback(),
+    webpackDevMiddleware(bundler, config.devMiddlewareOptions),
+    webpackHotMiddleware(bundler)
+  ],
+  files: [
+    'server/static/*'
+  ],
+  port: config.devPort,
+  ui: {
+    port: Number(config.devPort) + 1
+  },
+  socket: {
+    domain: `localhost:${config.devPort}`
+  }
+})

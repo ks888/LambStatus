@@ -20,7 +20,14 @@ export default function (config) {
       root: paths.client(),
       extensions: ['', '.js', '.jsx', '.json']
     },
-    module: {}
+    module: {},
+    devMiddlewareOptions: {
+      publicPath: config.compiler_public_path,
+      quiet: config.compiler_quiet,
+      noInfo: config.compiler_quiet,
+      stats: config.compiler_stats
+    },
+    devPort: config.server_port
   }
   // ------------------------------------
   // Entry Points
