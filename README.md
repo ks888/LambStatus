@@ -9,6 +9,10 @@ With a few clicks, You can build a status page like this:
 
 ![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo1.png)
 
+The demo pages are available:
+* [Status page](https://lambstatus.github.io/demo-status/) (the page to tell your service's status to your users)
+* [Admin page](https://lambstatus.github.io/demo-admin/) (the page to change your service's status)
+
 ## Why Serverless?
 
 Status page system is able to utilize the benefits of Serverless architectures, because:
@@ -50,6 +54,8 @@ When the stack is created, the email will be sent to the email address of the in
 Click the link in the email, and sign in to admin console.
 
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
+
+See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
 
 *Note: LambStatus is still under development, and not ready for production use. Opening an issue for feature request / bug report is welcome!*
 
