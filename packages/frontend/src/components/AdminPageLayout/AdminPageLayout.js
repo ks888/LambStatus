@@ -5,7 +5,7 @@ import Drawer from 'components/Drawer'
 import classes from './AdminPageLayout.scss'
 
 export const AdminPageLayout = ({ children }) => (
-  <div className={classnames(classes.root, 'mdl-layout', 'mdl-js-layout',
+  <div className={classnames(classes.root, 'mdl-layout',
     'mdl-layout--fixed-drawer', 'mdl-layout--fixed-header')}>
     <Header />
     <Drawer />
