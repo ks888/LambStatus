@@ -20,6 +20,7 @@
     "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
     "release": "better-npm-run release",
+    "release:force": "npm run release -- --force",
     "codecov": "cat coverage/*/lcov.info | codecov"
   },
   "betterScripts": {

@@ -26,7 +26,7 @@
     "clean": "npm run lambda:clean && npm run frontend:clean",
     "build": "npm run lambda:build && npm run frontend:build",
     "deploy": "npm run lambda:deploy && npm run frontend:deploy",
-    "release": "npm run lambda:release && npm run frontend:release",
+    "release": "npm run cloudformation:release && npm run lambda:release && npm run frontend:release",
     "start": "npm run frontend:start"
   },
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",

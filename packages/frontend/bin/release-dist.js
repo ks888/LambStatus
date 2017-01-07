@@ -6,7 +6,7 @@ import packageJSON from '../package.json'
 dotenv.config({path: `${__dirname}/../../../.env`})
 const { REGION: region } = process.env
 const releaseBucketName = 'lambstatus'
-const stopIfObjectsExist = true
+const stopIfObjectsExist = (process.argv[2] !== '--force')
 
 const release = async (dir, prefix) => {
   try {
