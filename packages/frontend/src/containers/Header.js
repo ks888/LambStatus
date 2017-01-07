@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchUser, signOut } from 'actions/users'
+import { fetchUser, signout } from 'actions/users'
 import Header from 'components/Header'
 
 const mapStateToProps = (state) => {
@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchUser, signOut}, dispatch)
+  return bindActionCreators({fetchUser, signout}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header)

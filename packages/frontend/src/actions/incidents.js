@@ -59,27 +59,6 @@ export const fetchIncidents = (callbacks = {}) => {
   }
 }
 
-export const fetchIncidentsWithUpdates = (callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'incidents')
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        dispatch(listIncidents(json))
-
-        const obj = JSON.parse(json)
-        if (obj.length !== 0) {
-          obj.forEach(incident => dispatch(fetchIncidentUpdates(incident.incidentID)))
-        } else {
-          if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        }
-      })
-      .catch(handleError(onFailure))
-  }
-}
-
 export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
@@ -99,13 +78,6 @@ export const postIncident = (name, incidentStatus, message, components, callback
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
-    // only a status attribute is allowed to update.
-    components = components.map((component) => {
-      return {
-        componentID: component.componentID,
-        status: component.status
-      }
-    })
     let body = {
       name: name,
       incidentStatus: incidentStatus,

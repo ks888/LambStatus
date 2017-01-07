@@ -28,7 +28,8 @@ export default class Statuses extends React.Component {
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
-    fetchIncidentsWithUpdates: PropTypes.func.isRequired
+    fetchIncidents: PropTypes.func.isRequired,
+    fetchIncidentUpdates: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -36,6 +37,7 @@ export default class Statuses extends React.Component {
     this.dateFormat = 'MMM DD, YYYY'
     this.state = {
       isFetching: false,
+      needIncidentUpdates: false,
       message: ''
     }
   }
@@ -49,8 +51,23 @@ export default class Statuses extends React.Component {
   }
 
   componentDidMount () {
-    this.props.fetchIncidentsWithUpdates(this.fetchCallbacks)
+    this.props.fetchIncidents({
+      onLoad: this.fetchCallbacks.onLoad,
+      onSuccess: () => {
+        this.setState({isFetching: false, needIncidentUpdates: true})
+      },
+      onFailure: this.fetchCallbacks.onFailure
+    })
     this.props.fetchComponents(this.fetchCallbacks)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.state.needIncidentUpdates) {
+      nextProps.incidents.forEach((incident) => {
+        this.props.fetchIncidentUpdates(incident.incidentID, this.fetchCallbacks)
+      })
+      this.setState({needIncidentUpdates: false})
+    }
   }
 
   renderComponentItem = (component) => {

@@ -1,8 +1,13 @@
 import fetchMock from 'fetch-mock'
 import {
   LIST_COMPONENTS,
-  listComponents,
-  fetchComponents
+  ADD_COMPONENT,
+  EDIT_COMPONENT,
+  REMOVE_COMPONENT,
+  fetchComponents,
+  postComponent,
+  updateComponent,
+  deleteComponent
 } from 'actions/components'
 
 describe('(Action) components', () => {
@@ -13,60 +18,150 @@ describe('(Action) components', () => {
     status: 'status1',
     order: 0
   }
-  const comp2 = {
-    componentID: 'compID2',
-    name: 'name2',
-    description: 'desc2',
-    status: 'status2',
-    order: 0
-  }
 
-  describe('listComponents', () => {
-    it('Should be exported as a function.', () => {
-      expect(listComponents).to.be.a('function')
-    })
+  let dispatchSpy, callbacks
 
-    it('Should return an action with type "LIST_COMPONENTS"', () => {
-      const action = listComponents("json")
-      expect(action).to.have.property('type', LIST_COMPONENTS)
-      expect(action).to.have.property('components', "json")
-    })
+  beforeEach(() => {
+    dispatchSpy = sinon.spy(() => {})
+    callbacks = {
+      onLoad: sinon.spy(),
+      onSuccess: sinon.spy(),
+      onFailure: sinon.spy()
+    }
+  })
+
+  afterEach(() => {
+    fetchMock.restore()
   })
 
   describe('fetchComponents', () => {
-    let globalState, dispatchSpy
-
-    beforeEach(() => {
-      dispatchSpy = sinon.spy(() => {})
-
-      fetchMock.get(/.*\/components/, { body: [comp1] });
-    })
-
-    afterEach(() => {
-      fetchMock.restore()
-    })
-
-    it('Should be exported as a function.', () => {
-      expect(fetchComponents).to.be.a('function')
-    })
-
-    it('Should return a function (is a thunk).', () => {
+    it('Should return a function.', () => {
       expect(fetchComponents()).to.be.a('function')
     })
 
-    it('Should call onLoad callback.', () => {
-      const onLoadCallback = sinon.spy()
-      return fetchComponents({ onLoad: onLoadCallback })(dispatchSpy)
+    it('Should fetch components.', () => {
+      fetchMock.get(/.*\/components/, { body: [comp1] })
+
+      return fetchComponents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(onLoadCallback.calledOnce).to.be.true
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.calledOnce).to.be.true
+          expect(callbacks.onFailure.called).to.be.false
+
+          expect(dispatchSpy.firstCall.args[0].type).to.equal(LIST_COMPONENTS)
+          expect(dispatchSpy.firstCall.args[0].components).to.deep.equal([comp1])
         })
     })
 
-    it('Should dispatch LIST_COMPONENTS action.', () => {
-      return fetchComponents()(dispatchSpy)
+    it('Should handle error properly.', () => {
+      fetchMock.get(/.*\/components/, { status: 400, body: {} })
+
+      return fetchComponents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(LIST_COMPONENTS)
-          expect(dispatchSpy.firstCall.args[0].components).to.deep.equal([comp1])
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.called).to.be.false
+          expect(callbacks.onFailure.calledOnce).to.be.true
+
+          expect(dispatchSpy.called).to.be.false
+        })
+    })
+  })
+
+  describe('postComponent', () => {
+    it('Should return a function.', () => {
+      expect(postComponent()).to.be.a('function')
+    })
+
+    it('Should post a new component.', () => {
+      fetchMock.post(/.*\/components/, { body: comp1 })
+
+      return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.calledOnce).to.be.true
+          expect(callbacks.onFailure.called).to.be.false
+
+          expect(dispatchSpy.firstCall.args[0].type).to.equal(ADD_COMPONENT)
+          expect(dispatchSpy.firstCall.args[0].component).to.deep.equal(comp1)
+        })
+    })
+
+    it('Should handle error properly.', () => {
+      fetchMock.post(/.*\/components/, { status: 400, body: {} })
+
+      return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.called).to.be.false
+          expect(callbacks.onFailure.calledOnce).to.be.true
+
+          expect(dispatchSpy.called).to.be.false
+        })
+    })
+  })
+
+  describe('updateComponent', () => {
+    it('Should return a function.', () => {
+      expect(updateComponent()).to.be.a('function')
+    })
+
+    it('Should update the existing component.', () => {
+      fetchMock.patch(/.*\/components\/.*/, { body: comp1 })
+
+      return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.calledOnce).to.be.true
+          expect(callbacks.onFailure.called).to.be.false
+
+          expect(dispatchSpy.firstCall.args[0].type).to.equal(EDIT_COMPONENT)
+          expect(dispatchSpy.firstCall.args[0].component).to.deep.equal(comp1)
+        })
+    })
+
+    it('Should handle error properly.', () => {
+      fetchMock.patch(/.*\/components\/.*/, { status: 400, body: {} })
+
+      return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.called).to.be.false
+          expect(callbacks.onFailure.calledOnce).to.be.true
+
+          expect(dispatchSpy.called).to.be.false
+        })
+    })
+  })
+
+  describe('deleteComponent', () => {
+    it('Should return a function.', () => {
+      expect(deleteComponent()).to.be.a('function')
+    })
+
+    it('Should delete the component.', () => {
+      fetchMock.delete(/.*\/components\/.*/, {})
+
+      return deleteComponent('c1', callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.calledOnce).to.be.true
+          expect(callbacks.onFailure.called).to.be.false
+
+          expect(dispatchSpy.firstCall.args[0].type).to.equal(REMOVE_COMPONENT)
+          expect(dispatchSpy.firstCall.args[0].componentID).to.equal('c1')
+        })
+    })
+
+    it('Should handle error properly.', () => {
+      fetchMock.delete(/.*\/components\/.*/, { status: 400, body: {} })
+
+      return deleteComponent('c1', callbacks)(dispatchSpy)
+        .then(() => {
+          expect(callbacks.onLoad.calledOnce).to.be.true
+          expect(callbacks.onSuccess.called).to.be.false
+          expect(callbacks.onFailure.calledOnce).to.be.true
+
+          expect(dispatchSpy.called).to.be.false
         })
     })
   })

@@ -20,8 +20,8 @@ global.should = chai.should()
 settings.apiURL = '/'
 settings.serviceName = ''
 settings.statusPageURL = ''
-settings.userPoolId = ''
-settings.clientId = ''
+settings.userPoolId = 'ap-northeast-1_XXXXXXXXX'
+settings.clientId = 'test'
 
 // ---------------------------------------
 // Require Tests

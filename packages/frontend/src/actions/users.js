@@ -121,7 +121,7 @@ export const isAuthorized = (callback) => {
   })
 }
 
-export const signOut = () => {
+export const signout = () => {
   return dispatch => {
     const poolData = {
       UserPoolId: userPoolId,
