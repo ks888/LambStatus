@@ -1,7 +1,5 @@
-import fetchMock from 'fetch-mock'
-import { LIST_COMPONENTS, listComponents } from 'actions/components'
-import reducer from 'reducers/components'
-import { requestStatus } from 'utils/status'
+import { listComponents, addComponent, editComponent, removeComponent } from 'actions/components'
+import componentsReducer from 'reducers/components'
 
 describe('(Reducer) components', () => {
   const comp1 = {
@@ -20,34 +18,39 @@ describe('(Reducer) components', () => {
   }
 
   describe('listComponentsHandler', () => {
-    const comp1JSON = JSON.stringify([comp1])
-    const comp12JSON = JSON.stringify([comp1, comp2])
-
-    it('Should properly set the `components` state.', () => {
-      let state = reducer(undefined, listComponents(comp1JSON))
+    it('Should update the `components` state.', () => {
+      const state = componentsReducer(undefined, listComponents(JSON.stringify([comp1])))
       expect(state.components).to.deep.equal([comp1])
+    })
+  })
 
-      state = reducer(undefined, listComponents(comp12JSON))
+  describe('addComponentHandler', () => {
+    it('Should update the `components` state.', () => {
+      const state = componentsReducer({
+        components: [comp1]
+      }, addComponent(JSON.stringify(comp2)))
       expect(state.components).to.deep.equal([comp1, comp2])
     })
   })
 
-  describe('componentsReducer', () => {
-    it('Should be a function.', () => {
-      expect(reducer).to.be.a('function')
+  describe('editComponentHandler', () => {
+    it('Should update the `components` state.', () => {
+      const newComp1 = Object.assign({}, comp1, {
+        name: 'newname'
+      })
+      const state = componentsReducer({
+        components: [comp1]
+      }, editComponent(JSON.stringify(newComp1)))
+      expect(state.components).to.deep.equal([newComp1])
     })
+  })
 
-    it('Should initialize states.', () => {
-      const initialState = reducer(undefined, {})
-      expect(initialState.components).to.be.empty
-    })
-
-    it('Should return the previous state if an action was not matched.', () => {
-      const state = {
-        components: [1]
-      }
-      let returnedState = reducer(state, {})
-      expect(state.components).to.equal(returnedState.components)
+  describe('removeComponentHandler', () => {
+    it('Should update the `components` state.', () => {
+      const state = componentsReducer({
+        components: [comp1]
+      }, removeComponent(comp1.componentID))
+      expect(state.components).to.deep.equal([])
     })
   })
 })
