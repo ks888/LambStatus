@@ -65,6 +65,10 @@ Resources:
             Action: "dynamodb:*"
             Resource: !Sub |-
               arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentUpdateTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CloudWatchMetricsTable}
       Roles:
         - Ref: "LambdaRole"
   GetComponentsLambdaFunction:
@@ -1084,6 +1088,21 @@ Resources:
           KeyType: "HASH"
         - AttributeName: "incidentUpdateID"
           KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+  CloudWatchMetricsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-CloudWatchMetricsTable
+      AttributeDefinitions:
+        - AttributeName: "metricID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "metricID"
+          KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"

@@ -41,6 +41,18 @@ export default {
       'babel-polyfill',
       './src/postIncidents/index.js'
     ],
+    ListCloudWatchNamespaces: [
+      'babel-polyfill',
+      './src/listCloudWatchNamespaces/index.js'
+    ],
+    ListCloudWatchMetrics: [
+      'babel-polyfill',
+      './src/listCloudWatchMetrics/index.js'
+    ],
+    PostCloudWatchMetric: [
+      'babel-polyfill',
+      './src/postCloudWatchMetric/index.js'
+    ],
     S3PutObject: [
       'babel-polyfill',
       './src/s3PutObjects/index.js'
