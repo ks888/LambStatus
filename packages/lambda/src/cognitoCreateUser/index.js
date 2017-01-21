@@ -11,7 +11,8 @@ export async function handler (event, context, callback) {
   if (event.RequestType === 'Update') {
     if (event.ResourceProperties.UserName !== event.OldResourceProperties.UserName ||
       event.ResourceProperties.Email !== event.OldResourceProperties.Email) {
-      response.send(event, context, response.FAILED, 'can\'t update parameters of user')
+      console.log('can\'t update parameters of user')
+      response.send(event, context, response.FAILED)
     } else {
       response.send(event, context, response.SUCCESS)
     }
@@ -31,6 +32,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED, error.message)
+    response.send(event, context, response.FAILED)
   }
 }

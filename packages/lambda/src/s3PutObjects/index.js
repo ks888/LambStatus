@@ -16,6 +16,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED, error.message)
+    response.send(event, context, response.FAILED)
   }
 }

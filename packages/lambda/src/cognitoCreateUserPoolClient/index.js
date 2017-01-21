@@ -11,7 +11,8 @@ export async function handler (event, context, callback) {
 
   if (event.RequestType === 'Update') {
     if (event.ResourceProperties.ClientName !== event.OldResourceProperties.ClientName) {
-      response.send(event, context, response.FAILED, 'can\'t update parameters of user pool client')
+      console.log('can\'t update parameters of user pool client')
+      response.send(event, context, response.FAILED)
     } else {
       const clientID = event.PhysicalResourceId
       response.send(event, context, response.SUCCESS, {UserPoolClientID: clientID})
@@ -32,6 +33,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED, error.message)
+    response.send(event, context, response.FAILED)
   }
 }

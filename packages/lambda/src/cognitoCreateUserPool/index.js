@@ -18,7 +18,7 @@ export async function handler (event, context, callback) {
     } catch (error) {
       console.log(error.message)
       console.log(error.stack)
-      response.send(event, context, response.FAILED, error.message)
+      response.send(event, context, response.FAILED)
     }
     return
   }
@@ -28,7 +28,8 @@ export async function handler (event, context, callback) {
       snsCallerArn !== event.OldResourceProperties.SnsCallerArn ||
       serviceName !== event.OldResourceProperties.ServiceName ||
       adminPageURL !== event.OldResourceProperties.AdminPageURL) {
-      response.send(event, context, response.FAILED, 'can\'t update parameters of user pool')
+      console.log('can\'t update parameters of user pool')
+      response.send(event, context, response.FAILED)
     } else {
       const poolID = event.PhysicalResourceId
       response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
@@ -43,6 +44,6 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED, error.message)
+    response.send(event, context, response.FAILED)
   }
 }
