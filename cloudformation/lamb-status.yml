@@ -68,7 +68,11 @@ Resources:
           - Effect: "Allow"
             Action: "dynamodb:*"
             Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${CloudWatchMetricsTable}
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsDataTable}
       Roles:
         - Ref: "LambdaRole"
   GetComponentsLambdaFunction:
@@ -1091,18 +1095,37 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
-  CloudWatchMetricsTable:
+  MetricsTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
       # The prefix of table name must be stack name
       TableName: !Sub |-
-        ${AWS::StackName}-CloudWatchMetricsTable
+        ${AWS::StackName}-MetricsTable
       AttributeDefinitions:
         - AttributeName: "metricID"
           AttributeType: "S"
       KeySchema:
         - AttributeName: "metricID"
           KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+  MetricsDataTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-MetricsDataTable
+      AttributeDefinitions:
+        - AttributeName: "metricID"
+          AttributeType: "S"
+        - AttributeName: "timestamp"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "metricID"
+          KeyType: "HASH"
+        - AttributeName: "timestamp"
+          KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"

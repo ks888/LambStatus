@@ -41,6 +41,10 @@ export default {
       'babel-polyfill',
       './src/postIncidents/index.js'
     ],
+    CollectMetricsData: [
+      'babel-polyfill',
+      './src/collectMetricsData/index.js'
+    ],
     ListCloudWatchNamespaces: [
       'babel-polyfill',
       './src/listCloudWatchNamespaces/index.js'
