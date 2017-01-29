@@ -369,7 +369,7 @@ Resources:
           - "CollectMetricsDataFunctionRole"
           - "Arn"
       Runtime: "nodejs4.3"
-      Timeout: 30
+      Timeout: 60
     DependsOn:
       - CollectMetricsDataFunctionRole
   CollectMetricsDataLambdaInvokePermission:
@@ -435,6 +435,19 @@ Resources:
                   - cloudwatch:GetMetricStatistics
                   - cloudwatch:ListMetrics
                 Resource: "*"
+  CollectMetricsDataEvent:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: The periodical event to collect metrics data
+      ScheduleExpression: rate(1 minute)
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - "CollectMetricsDataLambdaFunction"
+              - "Arn"
+          Id: CollectMetricsDataFunction
+          Input: !Sub |-
+            {"StatusPageS3BucketName": "${AdminPageS3}"}
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
