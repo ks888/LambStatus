@@ -8,5 +8,6 @@ export const MetricsDataTable = `${stackName}-MetricsDataTable`
 export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Partial Outage',
   'Major Outage']
 export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
-
 export const monitoringServices = ['CloudWatch']
+
+export const region = process.env.AWS_DEFAULT_REGION

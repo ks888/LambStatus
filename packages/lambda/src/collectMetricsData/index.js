@@ -1,13 +1,13 @@
 import MetricsService from 'service/metrics'
-import { getMetricData } from 'utils/cloudWatch'
+import MetricsData from 'metrics'
 
 export async function handler (event, context, callback) {
   const service = new MetricsService()
   try {
     const metrics = await service.listMetrics()
     await Promise.all(metrics.map(async (metric) => {
-      const datapoints = await getMetricData(metric.props)
-      await service.saveMetricData(metric.metricID, datapoints)
+      const metricsData = new MetricsData(metric.metricID, metric.type, metric.props, event.StatusPageS3BucketName)
+      await metricsData.collectData()
     }))
     callback(null)
   } catch (error) {

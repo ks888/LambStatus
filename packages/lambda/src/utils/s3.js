@@ -1,6 +1,22 @@
 import AWS from 'aws-sdk'
 import mime from 'mime'
 
+export const getObject = (region, bucketName, objectName) => {
+  const awsS3 = new AWS.S3({ region })
+  return new Promise((resolve, reject) => {
+    const params = {
+      Bucket: bucketName,
+      Key: objectName
+    }
+    awsS3.getObject(params, (err, result) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(result)
+    })
+  })
+}
+
 export const putObject = (region, bucketName, objectName, body) => {
   const awsS3 = new AWS.S3({ region })
   return new Promise((resolve, reject) => {

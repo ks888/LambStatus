@@ -47,8 +47,4 @@ export default class MetricsService {
     }
     return await this.metrics.postMetric(metricID, type, props)
   }
-
-  async saveMetricData (metricID, datapoints) {
-    return await this.metricsData.postMetricData(metricID, datapoints)
-  }
 }
