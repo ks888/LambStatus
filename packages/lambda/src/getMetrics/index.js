@@ -2,7 +2,7 @@ import { Metrics } from 'metrics'
 
 export async function handler (event, context, callback) {
   try {
-    const metrics = await new Metrics().listMetrics('CloudWatch', {Namespace: event.namespace})
+    const metrics = await new Metrics().listMetrics(event.type)
     callback(null, JSON.stringify(metrics))
   } catch (error) {
     console.log(error.message)

@@ -10,16 +10,16 @@ export class Metrics {
     this.metricsDB = new MetricsDB()
   }
 
-  async listMetrics (type, conditions = {}) {
+  async listMetrics (type) {
     // should be instantiated based on 'type'
-    return await new CloudWatchService().listMetrics(conditions)
+    return await new CloudWatchService().listMetrics()
   }
 
   async listRegisteredMetrics () {
     return await this.metricsDB.listMetrics()
   }
 
-  validate (metricID, type, namespace, metricName, dimensions) {
+  validate (metricID, type, props) {
     if (metricID === undefined || metricID === '') {
       throw new ParameterError('invalid metricID parameter')
     }
@@ -28,28 +28,14 @@ export class Metrics {
       throw new ParameterError('invalid type parameter')
     }
 
-    if (namespace === undefined || namespace === '') {
+    if (props === undefined) {
       throw new ParameterError('invalid namespace parameter')
-    }
-
-    if (metricName === undefined || metricName === '') {
-      throw new ParameterError('invalid metricName parameter')
-    }
-
-    if (dimensions === undefined || !Array.isArray(dimensions)) {
-      throw new ParameterError('invalid dimensions parameter')
     }
   }
 
-  async registerMetric (type, namespace, metricName, dimensions) {
+  async registerMetric (type, props) {
     const metricID = generateID()
-    this.validate(metricID, type, namespace, metricName, dimensions)
-
-    const props = {
-      Namespace: namespace,
-      MetricName: metricName,
-      Dimensions: dimensions
-    }
+    this.validate(metricID, type, props)
     return await this.metricsDB.postMetric(metricID, type, props)
   }
 }

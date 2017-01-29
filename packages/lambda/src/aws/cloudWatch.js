@@ -1,14 +1,11 @@
 import AWS from 'aws-sdk'
 
 export default class CloudWatchService {
-  async listMetrics (conditions) {
-    const {
-      Namespace: namespace
-    } = conditions
+  async listMetrics () {
     let metrics = []
     let nextToken = null
     while (true) {
-      const result = await this.listSomeMetrics(namespace, nextToken)
+      const result = await this.listSomeMetrics(nextToken)
       metrics = metrics.concat(result.Metrics)
       if (!result.NextToken) {
         return metrics
@@ -18,13 +15,10 @@ export default class CloudWatchService {
   }
 
   // listMetrics operation returns up to 500 metrics.
-  listSomeMetrics (namespace, nextToken) {
+  listSomeMetrics (nextToken) {
     const cloudWatch = new AWS.CloudWatch()
     return new Promise((resolve, reject) => {
       let params = {}
-      if (namespace) {
-        params.Namespace = namespace
-      }
       if (nextToken) {
         params.NextToken = nextToken
       }

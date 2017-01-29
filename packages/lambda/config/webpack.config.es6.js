@@ -45,17 +45,13 @@ export default {
       'babel-polyfill',
       './src/collectMetricsData/index.js'
     ],
-    ListCloudWatchNamespaces: [
+    GetMetrics: [
       'babel-polyfill',
-      './src/listCloudWatchNamespaces/index.js'
+      './src/getMetrics/index.js'
     ],
-    ListCloudWatchMetrics: [
+    PostMetrics: [
       'babel-polyfill',
-      './src/listCloudWatchMetrics/index.js'
-    ],
-    PostCloudWatchMetric: [
-      'babel-polyfill',
-      './src/postCloudWatchMetric/index.js'
+      './src/postMetrics/index.js'
     ],
     S3PutObject: [
       'babel-polyfill',
