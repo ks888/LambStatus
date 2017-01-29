@@ -1,8 +1,8 @@
-import { listMetrics } from 'utils/cloudWatch'
+import { Metrics } from 'metrics'
 
 export async function handler (event, context, callback) {
   try {
-    const metrics = await listMetrics()
+    const metrics = await new Metrics().listMetrics('CloudWatch')
     const namespaces = new Set()
     metrics.forEach((metric) => {
       namespaces.add(metric.Namespace)

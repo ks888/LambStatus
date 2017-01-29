@@ -1,6 +1,58 @@
+import CloudWatchService from 'aws/cloudWatch'
+import MetricsDB from 'db/metrics'
+import generateID from 'utils/generateID'
+import { ParameterError } from 'utils/errors'
+import { monitoringServices, region } from 'utils/const'
 import { getObject, putObject } from 'utils/s3'
-import { getMetricData } from 'utils/cloudWatch'
-import { region } from 'utils/const'
+
+export class Metrics {
+  constructor () {
+    this.metricsDB = new MetricsDB()
+  }
+
+  async listMetrics (type, conditions = {}) {
+    // should be instantiated based on 'type'
+    return await new CloudWatchService().listMetrics(conditions)
+  }
+
+  async listRegisteredMetrics () {
+    return await this.metricsDB.listMetrics()
+  }
+
+  validate (metricID, type, namespace, metricName, dimensions) {
+    if (metricID === undefined || metricID === '') {
+      throw new ParameterError('invalid metricID parameter')
+    }
+
+    if (monitoringServices.indexOf(type) < 0) {
+      throw new ParameterError('invalid type parameter')
+    }
+
+    if (namespace === undefined || namespace === '') {
+      throw new ParameterError('invalid namespace parameter')
+    }
+
+    if (metricName === undefined || metricName === '') {
+      throw new ParameterError('invalid metricName parameter')
+    }
+
+    if (dimensions === undefined || !Array.isArray(dimensions)) {
+      throw new ParameterError('invalid dimensions parameter')
+    }
+  }
+
+  async registerMetric (type, namespace, metricName, dimensions) {
+    const metricID = generateID()
+    this.validate(metricID, type, namespace, metricName, dimensions)
+
+    const props = {
+      Namespace: namespace,
+      MetricName: metricName,
+      Dimensions: dimensions
+    }
+    return await this.metricsDB.postMetric(metricID, type, props)
+  }
+}
 
 class DataObject {
   constructor (objectName, body) {
@@ -20,12 +72,14 @@ class DataObject {
   }
 }
 
-export default class MetricsData {
+export class MetricsData {
   constructor (metricID, type, props, dataBucket) {
     this.metricID = metricID
     this.type = type
     this.props = props
     this.dataBucket = dataBucket
+    // should be instantiated based on 'type'
+    this.service = new CloudWatchService()
   }
 
   async getDataObject (date) {
@@ -65,7 +119,7 @@ export default class MetricsData {
       }
     }
 
-    let datapoints = await getMetricData(this.props, lastTimestamp, currDate)
+    let datapoints = await this.service.getMetricData(this.props, lastTimestamp, currDate)
     if (datapoints.length > 0 && datapoints[0].timestamp === lastTimestamp) {
       datapoints = datapoints.slice(1)
     }

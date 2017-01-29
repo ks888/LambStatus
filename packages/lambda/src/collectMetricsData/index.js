@@ -1,10 +1,8 @@
-import MetricsService from 'service/metrics'
-import MetricsData from 'metrics'
+import { Metrics, MetricsData } from 'metrics'
 
 export async function handler (event, context, callback) {
-  const service = new MetricsService()
   try {
-    const metrics = await service.listMetrics()
+    const metrics = await new Metrics().listRegisteredMetrics()
     await Promise.all(metrics.map(async (metric) => {
       const metricsData = new MetricsData(metric.metricID, metric.type, metric.props, event.StatusPageS3BucketName)
       await metricsData.collectData()

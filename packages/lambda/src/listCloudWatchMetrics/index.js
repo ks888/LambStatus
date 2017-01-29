@@ -1,8 +1,8 @@
-import { listMetrics } from 'utils/cloudWatch'
+import { Metrics } from 'metrics'
 
 export async function handler (event, context, callback) {
   try {
-    const metrics = await listMetrics(event.namespace)
+    const metrics = await new Metrics().listMetrics('CloudWatch', {Namespace: event.namespace})
     callback(null, JSON.stringify(metrics))
   } catch (error) {
     console.log(error.message)
