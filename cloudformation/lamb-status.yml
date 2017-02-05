@@ -503,7 +503,7 @@ Resources:
               - "Arn"
           Id: CollectMetricsDataFunction
           Input: !Sub |-
-            {"StatusPageS3BucketName": "${AdminPageS3}"}
+            {"StatusPageS3BucketName": "${StatusPageS3}"}
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
