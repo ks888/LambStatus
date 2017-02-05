@@ -1666,16 +1666,16 @@ Resources:
 Outputs:
   LambdaRoleArn:
     Value:
-      Fn::GetAtt:
-        - "LambdaRole"
-        - "Arn"
-    Description: "ARN for LambdaRole"
-  LambdaCustomResourceRoleArn:
+      !GetAtt LambdaRole.Arn
+  MetricsFunctionRoleArn:
     Value:
-      Fn::GetAtt:
-        - S3HandleFunctionRole
-        - Arn
-    Description: ARN for LambdaCustomResourceRole
+      !GetAtt MetricsFunctionRole.Arn
+  S3HandleFunctionRoleArn:
+    Value:
+      !GetAtt S3HandleFunctionRole.Arn
+  CognitoHandleFunctionRoleArn:
+    Value:
+      !GetAtt CognitoHandleFunctionRole.Arn
   AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:

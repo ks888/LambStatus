@@ -7,19 +7,22 @@ dotenv.config({path: `${__dirname}/../../../.env`})
 
 let awsResourceIDs = require('../build/aws_resource_ids.json')
 
-let lambdaRoleArn, lambdaCustomResourceRoleArn
-awsResourceIDs.forEach((resourceID) => {
-  if (resourceID.OutputKey === 'LambdaRoleArn') {
-    lambdaRoleArn = resourceID.OutputValue
-  } else if (resourceID.OutputKey === 'LambdaCustomResourceRoleArn') {
-    lambdaCustomResourceRoleArn = resourceID.OutputValue
+const getArn = (resourceIDs, keyName) => {
+  let arn
+  resourceIDs.some((resourceID) => {
+    if (resourceID.OutputKey === keyName) {
+      arn = resourceID.OutputValue
+      return true
+    }
+  })
+  if (!arn) {
+    console.log('Error: no required arn')
+    process.exit(1)
   }
-})
-if (lambdaRoleArn === undefined || lambdaCustomResourceRoleArn === undefined) {
-  console.log('Error: invalid aws_resource_ids.json')
-  process.exit(1)
+  return arn
 }
 
+const lambdaRoleArn = getArn(awsResourceIDs, 'LambdaRoleArn')
 const { STACK_NAME: stackName } = process.env
 const apexProjectTemplate = {
   name: stackName,
@@ -38,17 +41,30 @@ mkdirp.sync(buildDir)
 fs.writeFileSync(`${buildDir}/project.json`, json)
 console.log('project.json created')
 
-// some functions need a different role than default one.
-const customResourceFunctionTemplate = {
-  role: lambdaCustomResourceRoleArn
+// some lambda functions need a different role than default one.
+const createFunctionJSON = (arn, targetDirs) => {
+  const functionJSON = JSON.stringify({role: arn}, null, 2)
+  targetDirs.forEach((dir) => {
+    mkdirp.sync(dir)
+    fs.writeFileSync(`${dir}/function.json`, functionJSON)
+    console.log(`${dir}/function.json created`)
+  })
 }
-const functionJSON = JSON.stringify(customResourceFunctionTemplate, null, 2)
-const targetDirs = [
+
+const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
+createFunctionJSON(metricsFunctionRoleArn, [
+  buildDir + '/functions/CollectMetricsData',
+  buildDir + '/functions/GetMetrics',
+  buildDir + '/functions/PostMetrics'
+])
+const s3HandleFunctionRoleArn = getArn(awsResourceIDs, 'S3HandleFunctionRoleArn')
+createFunctionJSON(s3HandleFunctionRoleArn, [
   buildDir + '/functions/S3PutObject',
   buildDir + '/functions/S3SyncObjects'
-]
-targetDirs.forEach((dir) => {
-  mkdirp.sync(dir)
-  fs.writeFileSync(`${dir}/function.json`, functionJSON)
-  console.log(`${dir}/function.json created`)
-})
+])
+const cognitoHandleFunctionRoleArn = getArn(awsResourceIDs, 'CognitoHandleFunctionRoleArn')
+createFunctionJSON(cognitoHandleFunctionRoleArn, [
+  buildDir + '/functions/CognitoCreateUser',
+  buildDir + '/functions/CognitoCreateUserPool',
+  buildDir + '/functions/CognitoCreateUserPoolClient'
+])
