@@ -3,6 +3,7 @@ import { serviceName } from 'utils/settings'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
 import ModestLink from 'components/ModestLink'
+import MetricsGraph from 'components/MetricsGraph'
 import classnames from 'classnames'
 import classes from './Statuses.scss'
 import moment from 'moment-timezone'
@@ -156,6 +157,10 @@ export default class Statuses extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
+      <div className='mdl-cell mdl-cell--12-col'>
+        <MetricsGraph metricID='data1' title='Title'
+          data={[{timestamp: '2017-02-05T08:10:44.449Z', value: 1}]} fetchData={() => {}} />
+      </div>
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incidents</h4>
       </div>
