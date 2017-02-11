@@ -4,3 +4,4 @@ export let serviceName
 export let statusPageURL
 export let userPoolId
 export let clientId
+export let statusPageS3BucketURL

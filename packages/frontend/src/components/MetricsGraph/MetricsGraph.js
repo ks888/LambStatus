@@ -1,19 +1,15 @@
 import React, { PropTypes } from 'react'
 import c3 from 'c3'
 import 'c3/c3.css'
-import classnames from 'classnames'
 import ErrorMessage from 'components/ErrorMessage'
-import classes from './MetricsGraph.global.scss'
 import { timeframes, getFormat, getCullingFunc } from 'utils/status'
+import './MetricsGraph.global.scss'
 
 export default class MetricsGraph extends React.Component {
   static propTypes = {
     metricID: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    data: PropTypes.arrayOf(PropTypes.shape({
-      timestamp: PropTypes.string.isRequired,
-      value: PropTypes.number.isRequired
-    }).isRequired).isRequired,
+    metrics: PropTypes.object.isRequired,
     dataunit: PropTypes.string.isRequired,
     timeframe: PropTypes.oneOf(timeframes).isRequired,
     fetchData: PropTypes.func.isRequired
@@ -28,7 +24,8 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidMount () {
-    this.props.fetchData({
+    const curr = new Date()
+    this.props.fetchData(this.props.metricID, curr.getFullYear(), curr.getMonth() + 1, curr.getDate(), {
       onLoad: () => { this.setState({isFetching: true}) },
       onSuccess: () => { this.setState({isFetching: false}) },
       onFailure: (msg) => {
@@ -36,17 +33,26 @@ export default class MetricsGraph extends React.Component {
       }
     })
 
-    this.updateGraph()
+    if (this.props.metrics.hasOwnProperty(this.props.metricID)) {
+      this.updateGraph()
+    }
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (prevProps.data !== this.props.data || prevProps.timeframe !== this.props.timeframe) {
+    if (!this.props.metrics.hasOwnProperty(this.props.metricID)) {
+      return
+    }
+
+    if (prevProps.metrics[this.props.metricID].data !== this.props.metrics[this.props.metricID].data ||
+      prevProps.timeframe !== this.props.timeframe) {
       this.updateGraph()
     }
   }
 
   updateGraph = () => {
-    const data = this.props.data
+    const curr = new Date()
+    const date = `${curr.getFullYear()}-${curr.getMonth() + 1}-${curr.getDate()}`
+    const data = this.props.metrics[this.props.metricID].data[date]
     const timestamps = []
     const values = []
     let minValue = data[0].value

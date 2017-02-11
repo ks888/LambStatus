@@ -66,8 +66,9 @@ const getSettings = async () => {
     const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
     const userPoolID = findOutputKey(stack.Outputs, 'UserPoolID')
     const clientID = findOutputKey(stack.Outputs, 'UserPoolClientID')
+    const statusPageS3BucketURL = findOutputKey(stack.Outputs, 'StatusPageS3BucketURL')
 
-    return { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
+    return { invocationURL, statusPageURL, serviceName, userPoolID, clientID, statusPageS3BucketURL }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -93,14 +94,15 @@ const getBucketInfo = async () => {
 }
 
 getSettings().then((
-  { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
+  { invocationURL, statusPageURL, serviceName, userPoolID, clientID, statusPageS3BucketURL }
 ) => {
   const apiInfo = {
     InvocationURL: invocationURL,
     StatusPageURL: statusPageURL,
     ServiceName: serviceName,
     UserPoolID: userPoolID,
-    ClientID: clientID
+    ClientID: clientID,
+    StatusPageS3BucketURL: statusPageS3BucketURL
   }
   return JSON.stringify(apiInfo, null, 2)
 }).then((json) => {

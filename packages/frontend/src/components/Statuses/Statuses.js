@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react'
+import classnames from 'classnames'
+import moment from 'moment-timezone'
 import { serviceName } from 'utils/settings'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
 import ModestLink from 'components/ModestLink'
-import MetricsGraph from 'components/MetricsGraph'
-import classnames from 'classnames'
+import MetricsGraph from 'containers/MetricsGraph'
 import classes from './Statuses.scss'
-import moment from 'moment-timezone'
 import { getComponentColor } from 'utils/status'
-import dummydata from './../MetricsGraph/dummyData1'
 
 export default class Statuses extends React.Component {
   static propTypes = {
@@ -159,9 +158,8 @@ export default class Statuses extends React.Component {
         {componentItems}
       </ul>
       <div className='mdl-cell mdl-cell--12-col'>
-        <MetricsGraph metricID='data1' title='Average response time'
-          data={dummydata} dataunit='ms' timeframe='Month'
-          fetchData={() => {}} />
+        <MetricsGraph metricID='tnMsHMoTVKPK' title='Average response time'
+          dataunit='ms' timeframe='Day' />
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incidents</h4>

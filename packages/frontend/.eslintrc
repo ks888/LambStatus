@@ -23,6 +23,7 @@
     "__LAMBSTATUS_SERVICE_NAME__" : '',
     "__LAMBSTATUS_USER_POOL_ID__" : '',
     "__LAMBSTATUS_CLIENT_ID__" : '',
+    "__LAMBSTATUS_STATUS_PAGE_S3_BUCKET_URL__" : '',
     "dialogPolyfill"   : {},
     "componentHandler" : {},
   },

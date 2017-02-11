@@ -1214,6 +1214,12 @@ Resources:
   StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - "*"
       WebsiteConfiguration:
         IndexDocument: "index.html"
   StatusPageS3BucketPolicy:

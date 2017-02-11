@@ -22,6 +22,7 @@ settings.serviceName = ''
 settings.statusPageURL = ''
 settings.userPoolId = 'ap-northeast-1_XXXXXXXXX'
 settings.clientId = 'test'
+settings.statusPageS3BucketURL = ''
 
 // ---------------------------------------
 // Require Tests
