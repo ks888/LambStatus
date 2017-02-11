@@ -8,6 +8,7 @@ import classnames from 'classnames'
 import classes from './Statuses.scss'
 import moment from 'moment-timezone'
 import { getComponentColor } from 'utils/status'
+import dummydata from './../MetricsGraph/dummyData1'
 
 export default class Statuses extends React.Component {
   static propTypes = {
@@ -158,8 +159,9 @@ export default class Statuses extends React.Component {
         {componentItems}
       </ul>
       <div className='mdl-cell mdl-cell--12-col'>
-        <MetricsGraph metricID='data1' title='Title'
-          data={[{timestamp: '2017-02-05T08:10:44.449Z', value: 1}]} fetchData={() => {}} />
+        <MetricsGraph metricID='data1' title='Average response time'
+          data={dummydata} dataunit='ms' timeframe='Month'
+          fetchData={() => {}} />
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incidents</h4>

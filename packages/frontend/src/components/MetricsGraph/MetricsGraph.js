@@ -3,7 +3,8 @@ import c3 from 'c3'
 import 'c3/c3.css'
 import classnames from 'classnames'
 import ErrorMessage from 'components/ErrorMessage'
-import classes from './MetricsGraph.scss'
+import classes from './MetricsGraph.global.scss'
+import { timeframes, getFormat, getCullingFunc } from 'utils/status'
 
 export default class MetricsGraph extends React.Component {
   static propTypes = {
@@ -13,13 +14,14 @@ export default class MetricsGraph extends React.Component {
       timestamp: PropTypes.string.isRequired,
       value: PropTypes.number.isRequired
     }).isRequired).isRequired,
+    dataunit: PropTypes.string.isRequired,
+    timeframe: PropTypes.oneOf(timeframes).isRequired,
     fetchData: PropTypes.func.isRequired
   }
 
   constructor () {
     super()
     this.state = {
-      displayRange: 24,  // hours
       isFetching: false,
       message: ''
     }
@@ -34,40 +36,50 @@ export default class MetricsGraph extends React.Component {
       }
     })
 
-    const dummydata = [
-      {timestamp: '2017-02-05T00:10:44.449Z', value: 1},
-      {timestamp: '2017-02-06T01:10:44.449Z', value: 2},
-      {timestamp: '2017-02-07T02:10:44.449Z', value: 3},
-      {timestamp: '2017-02-08T03:10:44.449Z', value: 10},
-      {timestamp: '2017-02-09T04:10:44.449Z', value: 20},
-      {timestamp: '2017-02-10T05:10:44.449Z', value: 30},
-      {timestamp: '2017-02-11T06:10:44.449Z', value: 1},
-      {timestamp: '2017-02-12T07:10:44.449Z', value: 2},
-      {timestamp: '2017-02-13T08:10:44.449Z', value: 3},
-      {timestamp: '2017-02-14T09:10:44.449Z', value: 100},
-      {timestamp: '2017-02-15T10:10:44.449Z', value: 200},
-      {timestamp: '2017-02-16T11:10:44.449Z', value: 300},
-      {timestamp: '2017-02-17T12:10:44.449Z', value: 1},
-      {timestamp: '2017-02-18T13:10:44.449Z', value: 2},
-      {timestamp: '2017-02-19T14:10:44.449Z', value: 3},
-      {timestamp: '2017-02-20T15:10:44.449Z', value: 1},
-      {timestamp: '2017-02-21T16:10:44.449Z', value: 2},
-      {timestamp: '2017-02-22T17:10:44.449Z', value: 3},
-      {timestamp: '2017-02-23T18:10:44.449Z', value: 10},
-      {timestamp: '2017-02-24T19:10:44.449Z', value: 20},
-      {timestamp: '2017-02-25T20:10:44.449Z', value: 30},
-      {timestamp: '2017-02-26T21:10:44.449Z', value: 1},
-      {timestamp: '2017-02-27T22:10:44.449Z', value: 2},
-      {timestamp: '2017-02-28T23:10:44.449Z', value: 3}
-    ]
+    this.updateGraph()
+  }
 
-    const timestamps = dummydata.map((item) => { return item.timestamp })
-    //const values = this.props.data.map((item) => { return item.value })
-    const values = dummydata.map((item) => { return item.value })
-    this.chart = c3.generate({
+  componentDidUpdate (prevProps, prevState) {
+    if (prevProps.data !== this.props.data || prevProps.timeframe !== this.props.timeframe) {
+      this.updateGraph()
+    }
+  }
+
+  updateGraph = () => {
+    const data = this.props.data
+    const timestamps = []
+    const values = []
+    let minValue = data[0].value
+    let maxValue = data[0].value
+    const cull = getCullingFunc(this.props.timeframe)
+    for (let i = 0; i < data.length; i++) {
+      if (minValue > data[i].value) minValue = data[i].value
+      if (maxValue < data[i].value) maxValue = data[i].value
+
+      if (cull(i)) {
+        timestamps.push(data[i].timestamp)
+        values.push(data[i].value)
+      }
+    }
+    const ceil = (rawValue) => {
+      const value = Math.ceil(rawValue)
+      const place = Math.pow(10, (value.toString().length - 1))
+      return Math.ceil(value / place) * place
+    }
+    const floor = (rawValue) => {
+      const value = Math.floor(rawValue)
+      const place = Math.pow(10, (value.toString().length - 1))
+      return Math.floor(value / place) * place
+    }
+    const ceilMaxValue = ceil(maxValue)
+    const floorMinValue = floor(minValue)
+    const yTicks = [floorMinValue, (ceilMaxValue + floorMinValue) / 2, ceilMaxValue]
+    const xTickFormat = getFormat(this.props.timeframe)
+
+    c3.generate({
       bindto: '#' + this.props.metricID,
       size: {
-        height: 200
+        height: 120
       },
       data: {
         x: 'x',
@@ -77,25 +89,48 @@ export default class MetricsGraph extends React.Component {
           ['data', ...values]
         ]
       },
+      point: {
+        show: false
+      },
       axis: {
         x: {
           type: 'timeseries',
           tick: {
-            format: function (x) { return `${x.getMonth() + 1}/${x.getDate()}` },
-            localtime: true
+            format: xTickFormat,
+            localtime: true,
+            count: 30
+          },
+          padding: {
+            left: 0,
+            right: 0
+          }
+        },
+        y: {
+          min: floorMinValue,
+          max: ceilMaxValue,
+          tick: {
+            values: yTicks
+          },
+          padding: {
+            bottom: 0
           }
         }
+      },
+      grid: {
+        y: {
+          show: true
+        }
+      },
+      tooltip: {
+        format: {
+          name: () => { return this.props.title },
+          value: (value) => { return value + this.props.dataunit }
+        }
+      },
+      legend: {
+        show: false
       }
     })
-   }
-
-  componentDidUpdate (prevProps, prevState) {
-    if (this.chart) {
-      const data = this.props.data.map((item) => { return item.value })
-      this.chart.load({
-        columns: [[this.props.metricID, ...data]]
-      })
-    }
   }
 
   render () {

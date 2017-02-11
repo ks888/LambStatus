@@ -183,6 +183,7 @@ export default function (config) {
     webpackConfig.module.loaders.push({
       test: /\.scss$/,
       include: cssModulesRegex,
+      exclude: /\.global\.scss$/,
       loaders: [
         'style',
         cssModulesLoader,
@@ -194,6 +195,7 @@ export default function (config) {
     webpackConfig.module.loaders.push({
       test: /\.css$/,
       include: cssModulesRegex,
+      exclude: /\.global\.css$/,
       loaders: [
         'style',
         cssModulesLoader,
@@ -204,6 +206,25 @@ export default function (config) {
 
   // Loaders for files that should not be treated as CSS modules.
   const excludeCSSModules = isUsingCSSModules ? cssModulesRegex : false
+  webpackConfig.module.loaders.push({
+    test: /\.global\.scss$/,
+    include: cssModulesRegex,
+    loaders: [
+      'style',
+      BASE_CSS_LOADER,
+      'postcss',
+      'sass?sourceMap'
+    ]
+  })
+  webpackConfig.module.loaders.push({
+    test: /\.global\.css$/,
+    include: cssModulesRegex,
+    loaders: [
+      'style',
+      BASE_CSS_LOADER,
+      'postcss'
+    ]
+  })
   webpackConfig.module.loaders.push({
     test: /\.scss$/,
     exclude: excludeCSSModules,
