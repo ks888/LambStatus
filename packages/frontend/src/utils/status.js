@@ -49,13 +49,24 @@ export const getFormat = (timeframe) => {
   }
 }
 
-export const getCullingFunc = (timeframe) => {
+export const getFlushFunc = (timeframe) => {
   switch (timeframe) {
     case 'Day':
       return () => { return true }
-    case 'Week':
-      return (i) => { return i % 12 === 0 }
     default:
-      return (i) => { return i % 24 === 0 }
+      return (currTimestamp, nextTimestamp) => {
+        return currTimestamp.substr(0, 13) !== nextTimestamp.substr(0, 13)
+      }
+  }
+}
+
+export const getNumDates = (timeframe) => {
+  switch (timeframe) {
+    case 'Day':
+      return 1
+    case 'Week':
+      return 7
+    default:
+      return 30
   }
 }

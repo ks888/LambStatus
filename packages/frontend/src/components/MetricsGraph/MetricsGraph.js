@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react'
 import c3 from 'c3'
+import moment from 'moment-timezone'
 import 'c3/c3.css'
 import ErrorMessage from 'components/ErrorMessage'
-import { timeframes, getFormat, getCullingFunc } from 'utils/status'
+import { timeframes, getFormat, getFlushFunc, getNumDates } from 'utils/status'
 import './MetricsGraph.global.scss'
 
 export default class MetricsGraph extends React.Component {
@@ -24,14 +25,20 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidMount () {
-    const curr = new Date()
-    this.props.fetchData(this.props.metricID, curr.getFullYear(), curr.getMonth() + 1, curr.getDate(), {
-      onLoad: () => { this.setState({isFetching: true}) },
-      onSuccess: () => { this.setState({isFetching: false}) },
-      onFailure: (msg) => {
-        this.setState({isFetching: false, message: msg})
-      }
-    })
+    const numDates = getNumDates(this.props.timeframe)
+    const currDate = new Date()
+    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
+    for (let i = 0; i < numDates + 1; i++) {
+      this.props.fetchData(this.props.metricID, currDate.getFullYear(),
+        currDate.getMonth() + 1, currDate.getDate(), {
+          onLoad: () => { this.setState({isFetching: true}) },
+          onSuccess: () => { this.setState({isFetching: false}) },
+          onFailure: (msg) => {
+            this.setState({isFetching: false, message: msg})
+          }
+        })
+      currDate.setDate(currDate.getDate() - 1)
+    }
 
     if (this.props.metrics.hasOwnProperty(this.props.metricID)) {
       this.updateGraph()
@@ -50,23 +57,57 @@ export default class MetricsGraph extends React.Component {
   }
 
   updateGraph = () => {
-    const curr = new Date()
-    const date = `${curr.getFullYear()}-${curr.getMonth() + 1}-${curr.getDate()}`
-    const data = this.props.metrics[this.props.metricID].data[date]
+    const numDates = getNumDates(this.props.timeframe)
+    const currDate = new Date()
+    const endDateStr = currDate.toISOString()
+    currDate.setDate(currDate.getDate() - numDates)
+    const beginDateStr = currDate.toISOString()
+
+    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
+    const data = []
+    for (let i = 0; i < numDates + 1; i++) {
+      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      Array.prototype.push.apply(data, this.props.metrics[this.props.metricID].data[date])
+
+      currDate.setDate(currDate.getDate() + 1)
+    }
+
     const timestamps = []
     const values = []
-    let minValue = data[0].value
-    let maxValue = data[0].value
-    const cull = getCullingFunc(this.props.timeframe)
+    let minValue = data[data.length - 1].value
+    let maxValue = minValue
+    const needFlush = getFlushFunc(this.props.timeframe)
+    let sum = 0
+    let count = 0
+    let currTimestamp
     for (let i = 0; i < data.length; i++) {
+      if (beginDateStr > data[i].timestamp || data[i].timestamp > endDateStr) {
+        continue
+      }
+
       if (minValue > data[i].value) minValue = data[i].value
       if (maxValue < data[i].value) maxValue = data[i].value
+      if (!currTimestamp) currTimestamp = data[i].timestamp
 
-      if (cull(i)) {
-        timestamps.push(data[i].timestamp)
-        values.push(data[i].value)
+      if (needFlush(currTimestamp, data[i].timestamp)) {
+        const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
+        timestamps.push(timestamp.toDate())
+        values.push(sum / count)
+
+        currTimestamp = data[i].timestamp
+        sum = data[i].value
+        count = 1
+      } else {
+        sum += data[i].value
+        count++
       }
     }
+    if (currTimestamp) {
+      const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
+      timestamps.push(timestamp.toDate())
+      values.push(sum / count)
+    }
+
     const ceil = (rawValue) => {
       const value = Math.ceil(rawValue)
       const place = Math.pow(10, (value.toString().length - 1))
@@ -103,9 +144,9 @@ export default class MetricsGraph extends React.Component {
           type: 'timeseries',
           tick: {
             format: xTickFormat,
-            localtime: true,
             count: 30
           },
+          localtime: true,
           padding: {
             left: 0,
             right: 0
