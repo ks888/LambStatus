@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react'
+import classnames from 'classnames'
 import c3 from 'c3'
 import moment from 'moment-timezone'
 import 'c3/c3.css'
-import ErrorMessage from 'components/ErrorMessage'
-import { timeframes, getFormat, getFlushFunc, getNumDates } from 'utils/status'
+import { timeframes, getXAxisFormat, getTooltipTitleFormat, getFlushFunc, getNumDates } from 'utils/status'
+import classes from './MetricsGraph.scss'
 import './MetricsGraph.global.scss'
 
 export default class MetricsGraph extends React.Component {
@@ -16,27 +17,13 @@ export default class MetricsGraph extends React.Component {
     fetchData: PropTypes.func.isRequired
   }
 
-  constructor () {
-    super()
-    this.state = {
-      isFetching: false,
-      message: ''
-    }
-  }
-
   componentDidMount () {
     const numDates = getNumDates(this.props.timeframe)
     const currDate = new Date()
     currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
       this.props.fetchData(this.props.metricID, currDate.getFullYear(),
-        currDate.getMonth() + 1, currDate.getDate(), {
-          onLoad: () => { this.setState({isFetching: true}) },
-          onSuccess: () => { this.setState({isFetching: false}) },
-          onFailure: (msg) => {
-            this.setState({isFetching: false, message: msg})
-          }
-        })
+        currDate.getMonth() + 1, currDate.getDate())
       currDate.setDate(currDate.getDate() - 1)
     }
 
@@ -121,7 +108,8 @@ export default class MetricsGraph extends React.Component {
     const ceilMaxValue = ceil(maxValue)
     const floorMinValue = floor(minValue)
     const yTicks = [floorMinValue, (ceilMaxValue + floorMinValue) / 2, ceilMaxValue]
-    const xTickFormat = getFormat(this.props.timeframe)
+    const xTickFormat = getXAxisFormat(this.props.timeframe)
+    const tooltipTitleFormat = getTooltipTitleFormat(this.props.timeframe)
 
     c3.generate({
       bindto: '#' + this.props.metricID,
@@ -170,8 +158,9 @@ export default class MetricsGraph extends React.Component {
       },
       tooltip: {
         format: {
+          title: tooltipTitleFormat,
           name: () => { return this.props.title },
-          value: (value) => { return value + this.props.dataunit }
+          value: (value) => { return Math.round(value) + this.props.dataunit }
         }
       },
       legend: {
@@ -181,6 +170,9 @@ export default class MetricsGraph extends React.Component {
   }
 
   render () {
-    return (<div id={this.props.metricID} />)
+    if (this.props.metrics.hasOwnProperty(this.props.metricID)) {
+      return (<div id={this.props.metricID} />)
+    }
+    return (<div className={classnames(classes.loading)} >Fetching...</div>)
   }
 }

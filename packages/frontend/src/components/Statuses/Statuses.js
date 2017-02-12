@@ -159,7 +159,7 @@ export default class Statuses extends React.Component {
       </ul>
       <div className='mdl-cell mdl-cell--12-col'>
         <MetricsGraph metricID='tnMsHMoTVKPK' title='Average response time'
-          dataunit='ms' timeframe='Month' />
+          dataunit='ms' timeframe='Day' />
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incidents</h4>

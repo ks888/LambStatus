@@ -37,7 +37,7 @@ export const getIncidentColor = (impact) => {
 
 export const timeframes = ['Day', 'Week', 'Month']
 
-export const getFormat = (timeframe) => {
+export const getXAxisFormat = (timeframe) => {
   switch (timeframe) {
     case 'Day':
       return (x) => {
@@ -46,6 +46,18 @@ export const getFormat = (timeframe) => {
       }
     default:
       return (x) => { return `${x.getMonth() + 1}/${x.getDate()}` }
+  }
+}
+
+export const getTooltipTitleFormat = (timeframe) => {
+  switch (timeframe) {
+    case 'Day':
+      return (x) => {
+        const padding = x.getMinutes() < 10 ? '0' : ''
+        return `${x.getMonth() + 1}/${x.getDate()} - ${x.getHours()}:${padding}${x.getMinutes()}`
+      }
+    default:
+      return (x) => { return `${x.getMonth() + 1}/${x.getDate()} - ${x.getHours()}:00` }
   }
 }
 
