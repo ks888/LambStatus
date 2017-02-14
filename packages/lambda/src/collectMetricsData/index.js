@@ -2,7 +2,7 @@ import { Metrics, MetricsData } from 'metrics'
 
 export async function handler (event, context, callback) {
   try {
-    const metrics = await new Metrics().listRegisteredMetrics()
+    const metrics = await new Metrics().listMetrics()
     await Promise.all(metrics.map(async (metric) => {
       const metricsData = new MetricsData(metric.metricID, metric.type, metric.props, event.StatusPageS3BucketName)
       await metricsData.collectData()

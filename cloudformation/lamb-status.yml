@@ -350,7 +350,7 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates
-  GetMetricsLambdaFunction:
+  GetExternalMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
@@ -361,7 +361,7 @@ Resources:
       Description: "Get metrics"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
-        ${AWS::StackName}-GetMetrics
+        ${AWS::StackName}-GetExternalMetrics
       Handler: "_apex_index.handle"
       MemorySize: 128
       Role:
@@ -370,17 +370,17 @@ Resources:
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
-  GetMetricsLambdaInvokePermission:
+  GetExternalMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
       FunctionName:
         Fn::GetAtt:
-          - "GetMetricsLambdaFunction"
+          - "GetExternalMetricsLambdaFunction"
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/metrics
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/external-metrics
   PostMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1098,7 +1098,7 @@ Resources:
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
-  MetricsApiResource:
+  ExternalMetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
       RestApiId:
@@ -1107,14 +1107,14 @@ Resources:
         Fn::GetAtt:
           - "RestApi"
           - "RootResourceId"
-      PathPart: "metrics"
-  GetMetricsApiMethod:
+      PathPart: "external-metrics"
+  GetExternalMetricsApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
       RestApiId:
         Ref: "RestApi"
       ResourceId:
-        Ref: "MetricsApiResource"
+        Ref: "ExternalMetricsApiResource"
       HttpMethod: "GET"
       AuthorizationType: "COGNITO_USER_POOLS"
       AuthorizerId:
@@ -1129,7 +1129,7 @@ Resources:
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
           - Function:
               Fn::GetAtt:
-                - "GetMetricsLambdaFunction"
+                - "GetExternalMetricsLambdaFunction"
                 - "Arn"
         RequestTemplates:
           application/json: !Sub |-
@@ -1149,6 +1149,16 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
+  MetricsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "RestApi"
+          - "RootResourceId"
+      PathPart: "metrics"
   PostMetricsApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:

@@ -10,12 +10,12 @@ export class Metrics {
     this.metricsDB = new MetricsDB()
   }
 
-  async listMetrics (type) {
+  async listExternalMetrics (type) {
     // should be instantiated based on 'type'
     return await new CloudWatchService().listMetrics()
   }
 
-  async listRegisteredMetrics () {
+  async listMetrics () {
     return await this.metricsDB.listMetrics()
   }
 

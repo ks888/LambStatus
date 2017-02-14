@@ -45,9 +45,9 @@ export default {
       'babel-polyfill',
       './src/collectMetricsData/index.js'
     ],
-    GetMetrics: [
+    GetExternalMetrics: [
       'babel-polyfill',
-      './src/getMetrics/index.js'
+      './src/getExternalMetrics/index.js'
     ],
     PostMetrics: [
       'babel-polyfill',
