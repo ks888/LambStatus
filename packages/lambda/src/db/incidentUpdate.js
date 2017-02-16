@@ -3,6 +3,7 @@ import VError from 'verror'
 import { IncidentUpdateTable } from 'utils/const'
 import generateID from 'utils/generateID'
 import { NotFoundError } from 'utils/errors'
+import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export const getIncidentUpdates = (incidentID) => {
   const region = process.env.AWS_DEFAULT_REGION
@@ -27,9 +28,7 @@ export const getIncidentUpdates = (incidentID) => {
       }
 
       queryResult.Items.forEach(item => {
-        if (!item.hasOwnProperty('message')) {
-          item.message = ''
-        }
+        fillInsufficientProps({message: ''}, item)
       })
 
       resolve(queryResult.Items)
@@ -43,30 +42,25 @@ export const updateIncidentUpdate = (incidentID, incidentStatus, message, update
 
   return new Promise((resolve, reject) => {
     let incidentUpdateID = generateID()
+    const [updateExp, attrNames, attrValues] = buildUpdateExpression({
+      incidentStatus, message, updatedAt
+    })
     const params = {
       Key: {
-        incidentID: incidentID,
-        incidentUpdateID: incidentUpdateID
+        incidentID,
+        incidentUpdateID
       },
-      UpdateExpression: 'set incidentStatus = :i, updatedAt = :u',
-      ExpressionAttributeValues: {
-        ':i': incidentStatus,
-        ':u': updatedAt
-      },
+      UpdateExpression: updateExp,
+      ExpressionAttributeNames: attrNames,
+      ExpressionAttributeValues: attrValues,
       TableName: IncidentUpdateTable,
       ReturnValues: 'ALL_NEW'
-    }
-    if (message !== '') {
-      params.UpdateExpression = 'set incidentStatus = :i, updatedAt = :u, message = :m'
-      params.ExpressionAttributeValues[':m'] = message
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
       }
-      if (!data.Attributes.hasOwnProperty('message')) {
-        data.Attributes.message = ''
-      }
+      fillInsufficientProps({message: ''}, data.Attributes)
       resolve(data)
     })
   })
