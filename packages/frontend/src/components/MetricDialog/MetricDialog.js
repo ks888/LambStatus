@@ -165,7 +165,8 @@ class MetricDialog extends React.Component {
     const statusDOMs = metricStatuses.map((status) => {
       let checked = status === this.state.status
       return (
-        <RadioButton key={status} onChange={this.handleChangeStatus} label={status} checked={checked} groupName='status' />
+        <RadioButton key={status} onChange={this.handleChangeStatus} label={status}
+          checked={checked} groupName='status' />
       )
     })
     return (
@@ -203,13 +204,13 @@ class MetricDialog extends React.Component {
         {actionName} Metric
       </h2>
       <div className='mdl-dialog__content'>
-            <ErrorMessage message={this.state.message} />
-            {types}
-            {metrics}
-            <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
-            <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
-            <TextField label='Description (optional)' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
-            {metricStatuses}
+        <ErrorMessage message={this.state.message} />
+        {types}
+        {metrics}
+        <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
+        <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
+        <TextField label='Description (optional)' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
+        {metricStatuses}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={clickHandler} name={actionName}

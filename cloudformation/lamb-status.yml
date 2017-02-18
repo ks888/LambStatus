@@ -397,7 +397,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -428,7 +428,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -443,6 +443,68 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/metrics
+  PatchMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/PatchMetrics.zip
+      Description: "Update the existing metric"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PatchMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PatchMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/metrics/{metricid}
+  DeleteMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/DeleteMetrics.zip
+      Description: "Update the existing metric"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-DeleteMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  DeleteMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "DeleteMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/metrics/{metricid}
   CollectMetricsDataLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1216,6 +1278,14 @@ Resources:
           - "RestApi"
           - "RootResourceId"
       PathPart: "metrics"
+  MetricApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "MetricsApiResource"
+      PathPart: "{metricid}"
   GetMetricsApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -1305,6 +1375,127 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  PatchMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  DeleteMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "204"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
       MethodResponses:
         - StatusCode: "200"

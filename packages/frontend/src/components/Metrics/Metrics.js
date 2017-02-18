@@ -31,7 +31,7 @@ export default class Metrics extends React.Component {
     super()
     this.state = {
       dialogType: dialogType.none,
-      metric: null,
+      metricID: null,
       isFetching: false,
       message: ''
     }
@@ -47,24 +47,24 @@ export default class Metrics extends React.Component {
     })
   }
 
-  handleShowDialog = (type, metric) => {
-    this.setState({ metric: metric, dialogType: type })
+  handleShowDialog = (type, metricID) => {
+    this.setState({ metricID, dialogType: type })
   }
 
   handleShowAddDialog = () => {
     return () => this.handleShowDialog(dialogType.add)
   }
 
-  handleShowEditDialog = (metric) => {
-    return () => this.handleShowDialog(dialogType.edit, metric)
+  handleShowEditDialog = (metricID) => {
+    return () => this.handleShowDialog(dialogType.edit, metricID)
   }
 
-  handleShowDeleteDialog = (metric) => {
-    return () => this.handleShowDialog(dialogType.delete, metric)
+  handleShowDeleteDialog = (metricID) => {
+    return () => this.handleShowDialog(dialogType.delete, metricID)
   }
 
   handleCloseDialog = () => {
-    this.setState({ metric: null, dialogType: dialogType.none })
+    this.setState({ metricID: null, dialogType: dialogType.none })
   }
 
   renderListItem = (metric) => {
@@ -81,11 +81,11 @@ export default class Metrics extends React.Component {
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(metric)} />
+                onClick={this.handleShowEditDialog(metric.metricID)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(metric)} />
+                onClick={this.handleShowDeleteDialog(metric.metricID)} />
             </div>
           </div>
         </span>
@@ -105,11 +105,17 @@ export default class Metrics extends React.Component {
         break
       case dialogType.edit:
         dialog = <MetricDialog onClosed={this.handleCloseDialog}
-          metric={this.state.metric} dialogType={metricDialogType.edit} />
+          metricID={this.state.metricID} dialogType={metricDialogType.edit} />
         break
       case dialogType.delete:
+        let metricName
+        this.props.metrics.forEach((metric) => {
+          if (metric.metricID === this.state.metricID) {
+            metricName = metric.title
+          }
+        })
         dialog = <FoolproofDialog onClosed={this.handleCloseDialog}
-          name={this.state.metric.name} ID={this.state.metric.metricID}
+          name={metricName} ID={this.state.metricID}
           deleteFunction={this.props.deleteMetric} />
         break
       default:

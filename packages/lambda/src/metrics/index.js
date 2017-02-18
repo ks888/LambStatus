@@ -49,10 +49,26 @@ export class Metrics {
     }
   }
 
-  async registerMetric (type, title, unit, description, status, props) {
+  async createMetric (type, title, unit, description, status, props) {
     const metricID = generateID()
     this.validate(metricID, type, title, unit, description, status, props)
     return await this.metricsDB.postMetric(metricID, type, title, unit, description, status, props)
+  }
+
+  async updateMetric (metricID, type, title, unit, description, status, props) {
+    this.validate(metricID, type, title, unit, description, status, props)
+    await this.metricsDB.getMetric(metricID)  // existence check
+
+    return await this.metricsDB.postMetric(metricID, type, title, unit, description, status, props)
+  }
+
+  async deleteMetric (metricID) {
+    if (metricID === undefined || metricID === '') {
+      throw new ParameterError('invalid metricID parameter')
+    }
+    await this.metricsDB.getMetric(metricID)  // existence check
+
+    await this.metricsDB.deleteMetric(metricID)
   }
 }
 

@@ -1,4 +1,5 @@
-import { LIST_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
+import { LIST_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, EDIT_METRIC, REMOVE_METRIC,
+         LIST_METRICS_DATA } from 'actions/metrics'
 
 function listMetricsHandler (state = { }, action) {
   return Object.assign({}, state, {
@@ -21,6 +22,23 @@ function addMetricHandler (state = { }, action) {
       ...state.metrics,
       JSON.parse(action.metric)
     ]
+  })
+}
+
+function editMetricHandler (state = { }, action) {
+  let editedMetric = JSON.parse(action.metric)
+
+  const newMetrics = state.metrics.map((metric) => {
+    if (metric.metricID === editedMetric.metricID) {
+      return Object.assign({}, metric, editedMetric)
+    }
+    return metric
+  })
+
+  newMetrics.sort((a, b) => a.order - b.order)
+
+  return Object.assign({}, state, {
+    metrics: newMetrics
   })
 }
 
@@ -62,6 +80,7 @@ const ACTION_HANDLERS = {
   [LIST_METRICS]: listMetricsHandler,
   [LIST_EXTERNAL_METRICS]: listExternalMetricsHandler,
   [ADD_METRIC]: addMetricHandler,
+  [EDIT_METRIC]: editMetricHandler,
   [REMOVE_METRIC]: removeMetricHandler,
   [LIST_METRICS_DATA]: listMetricsDataHandler
 }

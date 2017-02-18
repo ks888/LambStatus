@@ -6,6 +6,7 @@ export const LIST_METRICS = 'LIST_METRICS'
 export const LIST_EXTERNAL_METRICS = 'LIST_EXTERNAL_METRICS'
 export const LIST_METRICS_DATA = 'LIST_METRICS_DATA'
 export const ADD_METRIC = 'ADD_METRIC'
+export const EDIT_METRIC = 'EDIT_METRIC'
 export const REMOVE_METRIC = 'REMOVE_METRIC'
 
 export function listMetrics (json) {
@@ -37,6 +38,13 @@ export function listMetricsData (metricID, year, month, date, metricsData) {
 export function addMetric (json) {
   return {
     type: ADD_METRIC,
+    metric: json
+  }
+}
+
+export function editMetric (json) {
+  return {
+    type: EDIT_METRIC,
     metric: json
   }
 }
@@ -98,7 +106,24 @@ export const postMetric = (type, props, title, status, unit, description, callba
   }
 }
 
-export const updateMetric = () => {}
+export const updateMetric = (metricID, type, props, title, status, unit, description, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    let body = { type, props, title, status, unit, description }
+    return fetch(apiURL + 'metrics/' + metricID, {
+      headers: buildHeaders(),
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    }).then(checkStatus)
+      .then(response => response.json())
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(editMetric(json))
+      })
+      .catch(handleError(onFailure))
+  }
+}
 
 export const deleteMetric = (metricID, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks

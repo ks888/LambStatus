@@ -60,22 +60,24 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   render () {
-    const namespaces = new Set([''])
-    if (this.props.metrics) {
-      this.props.metrics.forEach((metric) => {
-        namespaces.add(metric.Namespace)
-      })
-    }
-
+    let namespaces = []
     const metrics = []
-    if (this.props.props && this.props.props.Namespace) {
+    if (this.props.metrics) {
+      const namespaceSet = new Set([''])
       this.props.metrics.forEach((metric) => {
-        if (metric.Namespace === this.props.props.Namespace) {
-          metrics.push(this.buildMetricExpression(metric))
-        }
+        namespaceSet.add(metric.Namespace)
       })
+      namespaces = Array.from(namespaceSet).sort()
+
+      if (this.props.props && this.props.props.Namespace) {
+        this.props.metrics.forEach((metric) => {
+          if (metric.Namespace === this.props.props.Namespace) {
+            metrics.push(this.buildMetricExpression(metric))
+          }
+        })
+      }
+      metrics.sort()
     }
-    metrics.sort()
 
     let initialNamespace = ''
     let initialMetric = ''
@@ -88,22 +90,22 @@ export default class CloudWatchMetricsSelector extends React.Component {
     }
 
     return (
-        <div>
-          <label className={classes.label} htmlFor='metric'>
-            CloudWatch Namespace
-          </label>
-          <div id='metric' className={classes['dropdown-list']}>
-            <DropdownList onChange={this.handleChangeNamespace}
-              list={Array.from(namespaces).sort()} initialValue={initialNamespace} />
-          </div>
-          <label className={classes.label} htmlFor='metric'>
-            CloudWatch MetricName & Dimensions
-          </label>
-          <div id='metric' className={classes['dropdown-list']}>
-            <DropdownList onChange={this.handleChangeMetric}
-              list={metrics} initialValue={initialMetric} />
-          </div>
+      <div>
+        <label className={classes.label} htmlFor='metric'>
+          CloudWatch Namespace
+        </label>
+        <div id='metric' className={classes['dropdown-list']}>
+          <DropdownList onChange={this.handleChangeNamespace}
+            list={namespaces} initialValue={initialNamespace} />
         </div>
+        <label className={classes.label} htmlFor='metric'>
+          CloudWatch MetricName & Dimensions
+        </label>
+        <div id='metric' className={classes['dropdown-list']}>
+          <DropdownList onChange={this.handleChangeMetric}
+            list={metrics} initialValue={initialMetric} />
+        </div>
+      </div>
     )
   }
 }

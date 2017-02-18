@@ -57,6 +57,14 @@ export default {
       'babel-polyfill',
       './src/postMetrics/index.js'
     ],
+    PatchMetrics: [
+      'babel-polyfill',
+      './src/patchMetrics/index.js'
+    ],
+    DeleteMetrics: [
+      'babel-polyfill',
+      './src/deleteMetrics/index.js'
+    ],
     S3PutObject: [
       'babel-polyfill',
       './src/s3PutObjects/index.js'

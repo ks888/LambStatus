@@ -54,8 +54,6 @@ const createFunctionJSON = (arn, targetDirs) => {
 const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
 createFunctionJSON(metricsFunctionRoleArn, [
   buildDir + '/functions/CollectMetricsData',
-  buildDir + '/functions/GetMetrics',
-  buildDir + '/functions/PostMetrics',
   buildDir + '/functions/GetExternalMetrics'
 ])
 const s3HandleFunctionRoleArn = getArn(awsResourceIDs, 'S3HandleFunctionRoleArn')
