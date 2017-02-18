@@ -3,12 +3,22 @@ import { apiURL, statusPageS3BucketURL } from 'utils/settings'
 import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 
 export const LIST_METRICS = 'LIST_METRICS'
+export const LIST_EXTERNAL_METRICS = 'LIST_EXTERNAL_METRICS'
 export const LIST_METRICS_DATA = 'LIST_METRICS_DATA'
+export const ADD_METRIC = 'ADD_METRIC'
 export const REMOVE_METRIC = 'REMOVE_METRIC'
 
 export function listMetrics (json) {
   return {
     type: LIST_METRICS,
+    metrics: json
+  }
+}
+
+export function listExternalMetrics (metricsType, json) {
+  return {
+    type: LIST_EXTERNAL_METRICS,
+    metricsType,
     metrics: json
   }
 }
@@ -21,6 +31,13 @@ export function listMetricsData (metricID, year, month, date, metricsData) {
     month,
     date,
     metricsData
+  }
+}
+
+export function addMetric (json) {
+  return {
+    type: ADD_METRIC,
+    metric: json
   }
 }
 
@@ -45,6 +62,43 @@ export const fetchMetrics = (callbacks = {}) => {
       .catch(handleError(onFailure))
   }
 }
+
+export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    return fetch(apiURL + 'external-metrics?type=' + metricsType, {
+      headers: buildHeaders()
+    }).then(checkStatus)
+      .then(response => response.json())
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(listExternalMetrics(metricsType, json))
+      })
+      .catch(handleError(onFailure))
+  }
+}
+
+export const postMetric = (type, props, title, status, unit, description, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    let body = { type, props, title, status, unit, description }
+    return fetch(apiURL + 'metrics', {
+      headers: buildHeaders(),
+      method: 'POST',
+      body: JSON.stringify(body)
+    }).then(checkStatus)
+      .then(response => response.json())
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(addMetric(json))
+      })
+      .catch(handleError(onFailure))
+  }
+}
+
+export const updateMetric = () => {}
 
 export const deleteMetric = (metricID, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks

@@ -22,7 +22,7 @@ class RadioButton extends React.Component {
       type: 'radio',
       id: this.props.label,
       className: 'mdl-radio__button',
-      name: 'incidentStatus',
+      name: this.props.groupName,
       onChange: this.handleChange,
       ref: 'radiobutton_input'
     }
@@ -40,6 +40,7 @@ class RadioButton extends React.Component {
 RadioButton.propTypes = {
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
+  groupName: PropTypes.string.isRequired,
   checked: PropTypes.bool
 }
 

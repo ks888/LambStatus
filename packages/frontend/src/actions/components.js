@@ -54,11 +54,7 @@ export const postComponent = (name, description, status, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = {
-      name: name,
-      description: description,
-      status: status
-    }
+    let body = { name, description, status }
     return fetch(apiURL + 'components', {
       headers: buildHeaders(),
       method: 'POST',

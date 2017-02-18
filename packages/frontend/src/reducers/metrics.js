@@ -1,8 +1,26 @@
-import { LIST_METRICS, REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
+import { LIST_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
 
 function listMetricsHandler (state = { }, action) {
   return Object.assign({}, state, {
     metrics: JSON.parse(action.metrics)
+  })
+}
+
+function listExternalMetricsHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    externalMetrics: {
+      [action.metricsType]: JSON.parse(action.metrics),
+      ...state.externalMetrics
+    }
+  })
+}
+
+function addMetricHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    metrics: [
+      ...state.metrics,
+      JSON.parse(action.metric)
+    ]
   })
 }
 
@@ -42,12 +60,15 @@ function listMetricsDataHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LIST_METRICS]: listMetricsHandler,
+  [LIST_EXTERNAL_METRICS]: listExternalMetricsHandler,
+  [ADD_METRIC]: addMetricHandler,
   [REMOVE_METRIC]: removeMetricHandler,
   [LIST_METRICS_DATA]: listMetricsDataHandler
 }
 
 export default function metricsReducer (state = {
-  metrics: []
+  metrics: [],
+  externalMetrics: {}
 }, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
