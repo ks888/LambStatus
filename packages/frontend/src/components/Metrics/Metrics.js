@@ -1,12 +1,14 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import ComponentDialog from 'containers/ComponentDialog'
-import { componentDialogType } from 'components/ComponentDialog'
+//import MetricDialog from 'containers/MetricDialog'
+import MetricDialog from 'containers/ComponentDialog'
+//import { metricDialogType } from 'components/MetricDialog'
+import { metricDialogType } from 'components/ComponentDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
 import ErrorMessage from 'components/ErrorMessage'
-import { getComponentColor } from 'utils/status'
-import classes from './Components.scss'
+import { getMetricColor } from 'utils/status'
+import classes from './Metrics.scss'
 
 const dialogType = {
   none: 0,
@@ -15,30 +17,30 @@ const dialogType = {
   delete: 3
 }
 
-export default class Components extends React.Component {
+export default class Metrics extends React.Component {
   static propTypes = {
-    components: PropTypes.arrayOf(PropTypes.shape({
-      componentID: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.shape({
+      metricID: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    fetchComponents: PropTypes.func.isRequired,
-    deleteComponent: PropTypes.func.isRequired
+    fetchMetrics: PropTypes.func.isRequired,
+    deleteMetric: PropTypes.func.isRequired
   }
 
   constructor () {
     super()
     this.state = {
       dialogType: dialogType.none,
-      component: null,
+      metric: null,
       isFetching: false,
       message: ''
     }
   }
 
   componentDidMount () {
-    this.props.fetchComponents({
+    this.props.fetchMetrics({
       onLoad: () => { this.setState({isFetching: true}) },
       onSuccess: () => { this.setState({isFetching: false}) },
       onFailure: (msg) => {
@@ -47,45 +49,45 @@ export default class Components extends React.Component {
     })
   }
 
-  handleShowDialog = (type, component) => {
-    this.setState({ component: component, dialogType: type })
+  handleShowDialog = (type, metric) => {
+    this.setState({ metric: metric, dialogType: type })
   }
 
   handleShowAddDialog = () => {
     return () => this.handleShowDialog(dialogType.add)
   }
 
-  handleShowEditDialog = (component) => {
-    return () => this.handleShowDialog(dialogType.edit, component)
+  handleShowEditDialog = (metric) => {
+    return () => this.handleShowDialog(dialogType.edit, metric)
   }
 
-  handleShowDeleteDialog = (component) => {
-    return () => this.handleShowDialog(dialogType.delete, component)
+  handleShowDeleteDialog = (metric) => {
+    return () => this.handleShowDialog(dialogType.delete, metric)
   }
 
   handleCloseDialog = () => {
-    this.setState({ component: null, dialogType: dialogType.none })
+    this.setState({ metric: null, dialogType: dialogType.none })
   }
 
-  renderListItem = (component) => {
-    let statusColor = getComponentColor(component.status)
+  renderListItem = (metric) => {
+    let statusColor = getMetricColor(metric.status)
     return (
-      <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
+      <li key={metric.metricID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{color: statusColor}}>web</i>
-          <span>{component.name}</span>
-          <span className='mdl-list__item-sub-title'>{component.description}</span>
+            style={{color: statusColor}}>insert_chart</i>
+          <span>{metric.title}</span>
+          <span className='mdl-list__item-sub-title'>{metric.description}</span>
         </span>
         <span className='mdl-list__item-secondary-content'>
           <div className='mdl-grid'>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(component)} />
+                onClick={this.handleShowEditDialog(metric)} />
             </div>
             <div className='mdl-cell mdl-cell--6-col'>
               <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(component)} />
+                onClick={this.handleShowDeleteDialog(metric)} />
             </div>
           </div>
         </span>
@@ -100,17 +102,17 @@ export default class Components extends React.Component {
         dialog = null
         break
       case dialogType.add:
-        dialog = <ComponentDialog onClosed={this.handleCloseDialog}
-          dialogType={componentDialogType.add} />
+        dialog = <MetricDialog onClosed={this.handleCloseDialog}
+          dialogType={metricDialogType.add} />
         break
       case dialogType.edit:
-        dialog = <ComponentDialog onClosed={this.handleCloseDialog}
-          component={this.state.component} dialogType={componentDialogType.edit} />
+        dialog = <MetricDialog onClosed={this.handleCloseDialog}
+          metric={this.state.metric} dialogType={metricDialogType.edit} />
         break
       case dialogType.delete:
         dialog = <FoolproofDialog onClosed={this.handleCloseDialog}
-          name={this.state.component.name} ID={this.state.component.componentID}
-          deleteFunction={this.props.deleteComponent} />
+          name={this.state.metric.name} ID={this.state.metric.metricID}
+          deleteFunction={this.props.deleteMetric} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
@@ -119,18 +121,18 @@ export default class Components extends React.Component {
   }
 
   render () {
-    const { components } = this.props
-    const componentItems = components.map(this.renderListItem)
+    const { metrics } = this.props
+    const metricItems = metrics.map(this.renderListItem)
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
-      Component
+      Metric
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
-        <h4>Components</h4>
+        <h4>Metrics</h4>
       </div>
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
         <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
@@ -139,7 +141,7 @@ export default class Components extends React.Component {
         <ErrorMessage message={this.state.message} />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-        {componentItems}
+        {metricItems}
       </ul>
       <div id='inner-dialog-container'>
         {dialog}

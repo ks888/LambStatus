@@ -1,4 +1,20 @@
-import { LIST_METRICS_DATA } from 'actions/metrics'
+import { LIST_METRICS, REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
+
+function listMetricsHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    metrics: JSON.parse(action.metrics)
+  })
+}
+
+function removeMetricHandler (state = { }, action) {
+  let metrics = state.metrics.filter((metric) => {
+    return metric.metricID !== action.metricID
+  })
+
+  return Object.assign({}, state, {
+    metrics
+  })
+}
 
 function listMetricsDataHandler (state = { }, action) {
   const {
@@ -25,10 +41,14 @@ function listMetricsDataHandler (state = { }, action) {
 }
 
 const ACTION_HANDLERS = {
+  [LIST_METRICS]: listMetricsHandler,
+  [REMOVE_METRIC]: removeMetricHandler,
   [LIST_METRICS_DATA]: listMetricsDataHandler
 }
 
-export default function metricsReducer (state = {}, action) {
+export default function metricsReducer (state = {
+  metrics: []
+}, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
 }
