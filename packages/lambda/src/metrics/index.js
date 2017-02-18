@@ -2,7 +2,7 @@ import CloudWatchService from 'aws/cloudWatch'
 import MetricsDB from 'db/metrics'
 import generateID from 'utils/generateID'
 import { ParameterError } from 'utils/errors'
-import { monitoringServices, region } from 'utils/const'
+import { metricStatuses, monitoringServices, region } from 'utils/const'
 import { getObject, putObject } from 'utils/s3'
 
 export class Metrics {
@@ -19,7 +19,7 @@ export class Metrics {
     return await this.metricsDB.listMetrics()
   }
 
-  validate (metricID, type, props) {
+  validate (metricID, type, title, unit, description, status, props) {
     if (metricID === undefined || metricID === '') {
       throw new ParameterError('invalid metricID parameter')
     }
@@ -28,15 +28,31 @@ export class Metrics {
       throw new ParameterError('invalid type parameter')
     }
 
-    if (props === undefined) {
-      throw new ParameterError('invalid namespace parameter')
+    if (title === undefined || title === '') {
+      throw new ParameterError('invalid title parameter')
+    }
+
+    if (unit === undefined) {
+      throw new ParameterError('invalid unit parameter')
+    }
+
+    if (description === undefined) {
+      throw new ParameterError('invalid description parameter')
+    }
+
+    if (metricStatuses.indexOf(status) < 0) {
+      throw new ParameterError('invalid status parameter')
+    }
+
+    if (props === undefined || props === null || typeof props !== 'object') {
+      throw new ParameterError('invalid props parameter')
     }
   }
 
-  async registerMetric (type, props) {
+  async registerMetric (type, title, unit, description, status, props) {
     const metricID = generateID()
-    this.validate(metricID, type, props)
-    return await this.metricsDB.postMetric(metricID, type, props)
+    this.validate(metricID, type, title, unit, description, status, props)
+    return await this.metricsDB.postMetric(metricID, type, title, unit, description, status, props)
   }
 }
 

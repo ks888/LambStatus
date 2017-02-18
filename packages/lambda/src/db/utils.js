@@ -29,7 +29,7 @@ export const buildUpdateExpression = (values) => {
 export const fillInsufficientProps = (values, props) => {
   Object.keys(values).forEach((key) => {
     if (!props.hasOwnProperty(key)) {
-      props[key] = ''
+      props[key] = values[key]
     }
   })
 }
