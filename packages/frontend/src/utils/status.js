@@ -41,7 +41,7 @@ export const metricStatuses = ['Hidden', 'Visible']
 export const getMetricColor = (impact) => {
   switch (impact) {
     case 'Visible':
-      return '#c62828'
+      return '#388e3c'
     case 'Hidden':
       return '#9e9e9e'
     default:

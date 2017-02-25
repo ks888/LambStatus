@@ -28,9 +28,13 @@ export default class Statuses extends React.Component {
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
+    metrics: PropTypes.arrayOf(PropTypes.shape({
+      metricID: PropTypes.string.isRequired
+    }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
     fetchIncidents: PropTypes.func.isRequired,
-    fetchIncidentUpdates: PropTypes.func.isRequired
+    fetchIncidentUpdates: PropTypes.func.isRequired,
+    fetchMetrics: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -60,6 +64,7 @@ export default class Statuses extends React.Component {
       onFailure: this.fetchCallbacks.onFailure
     })
     this.props.fetchComponents(this.fetchCallbacks)
+    this.props.fetchMetrics(this.fetchCallbacks)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -146,10 +151,15 @@ export default class Statuses extends React.Component {
     )
   }
 
+  renderMetrics = (metric) => {
+    return <MetricsGraph metricID={metric.metricID} timeframe='Day' />
+  }
+
   render () {
-    const { incidents, components } = this.props
+    const { incidents, components, metrics } = this.props
     const componentItems = components.map(this.renderComponentItem)
     const dateItems = this.renderDateItems(incidents)
+    const metricItems = metrics.map(this.renderMetrics)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
@@ -158,11 +168,15 @@ export default class Statuses extends React.Component {
         {componentItems}
       </ul>
       <div className='mdl-cell mdl-cell--12-col'>
-        <MetricsGraph metricID='tnMsHMoTVKPK' title='Average response time'
-          dataunit='ms' timeframe='Day' />
+        <h4 className={classnames(classes.title)}>Metrics</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
-        <h4>Incidents</h4>
+        <div className='mdl-list'>
+          {metricItems}
+        </div>
+      </div>
+      <div className='mdl-cell mdl-cell--12-col'>
+        <h4 className={classnames(classes.title)}>Incidents</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
         {dateItems}
