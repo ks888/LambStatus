@@ -170,7 +170,7 @@ class MetricDialog extends React.Component {
       )
     })
     return (
-      <div>
+      <div className={classes['metric-statuses']}>
         <label className={classes.label} htmlFor='statuses'>
           Metric Status
         </label>
@@ -206,10 +206,13 @@ class MetricDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
         {types}
-        {metrics}
+        <div className={classes.metrics}>
+          {metrics}
+        </div>
         <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
         <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
-        <TextField label='Description (optional)' text={this.state.description} rows={2} onChange={this.handleChangeDescription} />
+        <TextField label='Description (optional)' text={this.state.description} rows={2}
+          onChange={this.handleChangeDescription} />
         {metricStatuses}
       </div>
       <div className='mdl-dialog__actions'>

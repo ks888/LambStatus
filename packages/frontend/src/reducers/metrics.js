@@ -62,17 +62,18 @@ function listMetricsDataHandler (state = { }, action) {
   } = action
   const dataKey = `${year}-${month}-${date}`
 
-  // TODO remove this code when the reducer which stores a list of metrics is implemented
-  if (!state.hasOwnProperty(metricID)) {
-    state[metricID] = {data: {}}
-  }
-
-  return Object.assign({}, state, {
-    [metricID]: Object.assign({}, state[metricID], {
-      data: Object.assign({}, state[metricID].data, {
+  const newMetrics = state.metrics.map((metric) => {
+    if (metric.metricID === metricID) {
+      const newMetricsData = Object.assign({}, metric.data, {
         [dataKey]: metricsData
       })
-    })
+      return Object.assign({}, metric, {data: newMetricsData})
+    }
+    return metric
+  })
+
+  return Object.assign({}, state, {
+    metrics: newMetrics
   })
 }
 

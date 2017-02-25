@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import MetricDialog from 'containers/MetricDialog'
+import MetricPreviewDialog from 'components/MetricPreviewDialog'
 import { metricDialogType } from 'components/MetricDialog'
 import FoolproofDialog from 'components/FoolproofDialog'
 import Button from 'components/Button'
@@ -11,8 +12,9 @@ import classes from './Metrics.scss'
 const dialogType = {
   none: 0,
   add: 1,
-  edit: 2,
-  delete: 3
+  preview: 2,
+  edit: 3,
+  delete: 4
 }
 
 export default class Metrics extends React.Component {
@@ -55,6 +57,10 @@ export default class Metrics extends React.Component {
     return () => this.handleShowDialog(dialogType.add)
   }
 
+  handleShowPreviewDialog = (metricID) => {
+    return () => this.handleShowDialog(dialogType.preview, metricID)
+  }
+
   handleShowEditDialog = (metricID) => {
     return () => this.handleShowDialog(dialogType.edit, metricID)
   }
@@ -79,11 +85,15 @@ export default class Metrics extends React.Component {
         </span>
         <span className='mdl-list__item-secondary-content'>
           <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--6-col'>
+            <div className='mdl-cell mdl-cell--4-col'>
+              <Button plain name='Preview'
+                onClick={this.handleShowPreviewDialog(metric.metricID)} />
+            </div>
+            <div className='mdl-cell mdl-cell--3-col'>
               <Button plain name='Edit'
                 onClick={this.handleShowEditDialog(metric.metricID)} />
             </div>
-            <div className='mdl-cell mdl-cell--6-col'>
+            <div className='mdl-cell mdl-cell--5-col'>
               <Button plain name='Delete'
                 onClick={this.handleShowDeleteDialog(metric.metricID)} />
             </div>
@@ -102,6 +112,9 @@ export default class Metrics extends React.Component {
       case dialogType.add:
         dialog = <MetricDialog onClosed={this.handleCloseDialog}
           dialogType={metricDialogType.add} />
+        break
+      case dialogType.preview:
+        dialog = <MetricPreviewDialog onClosed={this.handleCloseDialog} metricID={this.state.metricID} />
         break
       case dialogType.edit:
         dialog = <MetricDialog onClosed={this.handleCloseDialog}

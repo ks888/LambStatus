@@ -3,9 +3,15 @@ import { bindActionCreators } from 'redux'
 import { fetchMetricsData } from 'actions/metrics'
 import MetricsGraph from 'components/MetricsGraph'
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
+  let focusedMetric
+  state.metrics.metrics.forEach((metric) => {
+    if (metric.metricID === ownProps.metricID) {
+      focusedMetric = metric
+    }
+  })
   return {
-    metrics: state.metrics
+    metric: focusedMetric
   }
 }
 

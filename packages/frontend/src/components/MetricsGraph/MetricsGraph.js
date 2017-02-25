@@ -9,10 +9,14 @@ import './MetricsGraph.global.scss'
 
 export default class MetricsGraph extends React.Component {
   static propTypes = {
-    metricID: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    metrics: PropTypes.object.isRequired,
-    dataunit: PropTypes.string.isRequired,
+    metricID: PropTypes.string,
+    metric: PropTypes.shape({
+      metricID: PropTypes.string.isRequired,
+      props: PropTypes.object.isRequired,
+      title: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
+      data: PropTypes.object
+    }),
     timeframe: PropTypes.oneOf(timeframes).isRequired,
     fetchData: PropTypes.func.isRequired
   }
@@ -27,17 +31,17 @@ export default class MetricsGraph extends React.Component {
       currDate.setDate(currDate.getDate() - 1)
     }
 
-    if (this.props.metrics.hasOwnProperty(this.props.metricID)) {
+    if (this.props.metric.data) {
       this.updateGraph()
     }
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (!this.props.metrics.hasOwnProperty(this.props.metricID)) {
+    if (!this.props.metric.data) {
       return
     }
 
-    if (prevProps.metrics[this.props.metricID].data !== this.props.metrics[this.props.metricID].data ||
+    if (prevProps.metric.data !== this.props.metric.data ||
       prevProps.timeframe !== this.props.timeframe) {
       this.updateGraph()
     }
@@ -54,7 +58,7 @@ export default class MetricsGraph extends React.Component {
     const data = []
     for (let i = 0; i < numDates + 1; i++) {
       const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
-      Array.prototype.push.apply(data, this.props.metrics[this.props.metricID].data[date])
+      Array.prototype.push.apply(data, this.props.metric.data[date])
 
       currDate.setDate(currDate.getDate() + 1)
     }
@@ -159,8 +163,8 @@ export default class MetricsGraph extends React.Component {
       tooltip: {
         format: {
           title: tooltipTitleFormat,
-          name: () => { return this.props.title },
-          value: (value) => { return Math.round(value) + this.props.dataunit }
+          name: () => { return this.props.metric.title },
+          value: (value) => { return Math.round(value) + this.props.metric.unit }
         }
       },
       legend: {
@@ -170,7 +174,7 @@ export default class MetricsGraph extends React.Component {
   }
 
   render () {
-    if (this.props.metrics.hasOwnProperty(this.props.metricID)) {
+    if (this.props.metric.data) {
       return (<div id={this.props.metricID} />)
     }
     return (<div className={classnames(classes.loading)} >Fetching...</div>)
