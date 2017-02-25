@@ -11,8 +11,6 @@ export default class MetricsGraph extends React.Component {
   static propTypes = {
     metricID: PropTypes.string,
     metric: PropTypes.shape({
-      metricID: PropTypes.string.isRequired,
-      props: PropTypes.object.isRequired,
       title: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
       data: PropTypes.object
@@ -22,14 +20,7 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidMount () {
-    const numDates = getNumDates(this.props.timeframe)
-    const currDate = new Date()
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
-    for (let i = 0; i < numDates + 1; i++) {
-      this.props.fetchData(this.props.metricID, currDate.getFullYear(),
-        currDate.getMonth() + 1, currDate.getDate())
-      currDate.setDate(currDate.getDate() - 1)
-    }
+    this.fetchMetricData()
 
     if (this.props.metric.data) {
       this.updateGraph()
@@ -41,9 +32,24 @@ export default class MetricsGraph extends React.Component {
       return
     }
 
+    if (prevProps.timeframe !== this.props.timeframe) {
+      this.fetchMetricData()
+    }
+
     if (prevProps.metric.data !== this.props.metric.data ||
       prevProps.timeframe !== this.props.timeframe) {
       this.updateGraph()
+    }
+  }
+
+  fetchMetricData = () => {
+    const numDates = getNumDates(this.props.timeframe)
+    const currDate = new Date()
+    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
+    for (let i = 0; i < numDates + 1; i++) {
+      this.props.fetchData(this.props.metricID, currDate.getFullYear(),
+        currDate.getMonth() + 1, currDate.getDate())
+      currDate.setDate(currDate.getDate() - 1)
     }
   }
 
@@ -173,10 +179,44 @@ export default class MetricsGraph extends React.Component {
     })
   }
 
-  render () {
-    if (this.props.metric.data) {
-      return (<div id={this.props.metricID} />)
+  calculateAvg = () => {
+    let sum = 0
+    let count = 0
+    Object.keys(this.props.metric.data).forEach((key) => {
+      const dataByDate = this.props.metric.data[key]
+      dataByDate.forEach((entry) => {
+        sum += entry.value
+        count++
+      })
+    })
+
+    if (count === 0) {
+      return 0
     }
-    return (<div className={classnames(classes.loading)} >Fetching...</div>)
+    return Math.round(sum / count)
+  }
+
+  render () {
+    let graph = (<div className={classnames(classes.loading)} >Fetching...</div>)
+    let average = 0
+    if (this.props.metric.data) {
+      graph = (<div id={this.props.metricID} />)
+      average = this.calculateAvg()
+    }
+
+    return (
+      <li key={this.props.metricID} className={classnames('mdl-list__item',
+        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.item)}>
+        <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}>
+          <div className={classnames(classes.title)}>
+            {this.props.metric.title}
+            <span className={classnames(classes.average)}>
+              {`${average}${this.props.metric.unit}`}
+            </span>
+          </div>
+          {graph}
+        </span>
+      </li>
+    )
   }
 }
