@@ -55,8 +55,15 @@ export const getXAxisFormat = (timeframe) => {
   switch (timeframe) {
     case 'Day':
       return (x) => {
+        if (x.getMinutes() === 60) {
+          return `${x.getHours() + 1}:00`
+        }
+        return `${x.getHours()}:${Math.round(x.getMinutes() / 10)}0`
+        /*
+        // Round minutes. It seems too vague.
         const inc = x.getMinutes() > 30 ? 1 : 0
         return `${x.getHours() + inc}:00`
+        */
       }
     default:
       return (x) => { return `${x.getMonth() + 1}/${x.getDate()}` }
