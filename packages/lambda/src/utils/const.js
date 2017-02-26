@@ -9,6 +9,8 @@ export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded 
   'Major Outage']
 export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
 export const monitoringServices = ['CloudWatch']
-export const metricStatuses = ['Visible', 'Hidden']
+export const metricStatusVisible = 'Visible'
+export const metricStatusHidden = 'Hidden'
+export const metricStatuses = [metricStatusVisible, metricStatusHidden]
 
 export const region = process.env.AWS_DEFAULT_REGION

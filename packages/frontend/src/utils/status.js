@@ -55,7 +55,7 @@ export const getXAxisFormat = (timeframe) => {
   switch (timeframe) {
     case 'Day':
       return (x) => {
-        if (x.getMinutes() === 60) {
+        if (x.getMinutes() >= 55) {
           return `${x.getHours() + 1}:00`
         }
         return `${x.getHours()}:${Math.round(x.getMinutes() / 10)}0`

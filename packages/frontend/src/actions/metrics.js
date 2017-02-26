@@ -3,6 +3,7 @@ import { apiURL, statusPageS3BucketURL } from 'utils/settings'
 import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 
 export const LIST_METRICS = 'LIST_METRICS'
+export const LIST_PUBLIC_METRICS = 'LIST_PUBLIC_METRICS'
 export const LIST_EXTERNAL_METRICS = 'LIST_EXTERNAL_METRICS'
 export const LIST_METRICS_DATA = 'LIST_METRICS_DATA'
 export const ADD_METRIC = 'ADD_METRIC'
@@ -12,6 +13,13 @@ export const REMOVE_METRIC = 'REMOVE_METRIC'
 export function listMetrics (json) {
   return {
     type: LIST_METRICS,
+    metrics: json
+  }
+}
+
+export function listPublicMetrics (json) {
+  return {
+    type: LIST_PUBLIC_METRICS,
     metrics: json
   }
 }
@@ -60,12 +68,28 @@ export const fetchMetrics = (callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'metrics')
-      .then(checkStatus)
+    return fetch(apiURL + 'metrics', {
+      headers: buildHeaders()
+    }).then(checkStatus)
       .then(response => response.json())
       .then(json => {
         if (onSuccess && typeof onSuccess === 'function') onSuccess()
         dispatch(listMetrics(json))
+      })
+      .catch(handleError(onFailure))
+  }
+}
+
+export const fetchPublicMetrics = (callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  return dispatch => {
+    if (onLoad && typeof onLoad === 'function') onLoad()
+    return fetch(apiURL + 'public-metrics')
+      .then(checkStatus)
+      .then(response => response.json())
+      .then(json => {
+        if (onSuccess && typeof onSuccess === 'function') onSuccess()
+        dispatch(listPublicMetrics(json))
       })
       .catch(handleError(onFailure))
   }

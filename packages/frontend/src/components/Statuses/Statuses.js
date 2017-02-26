@@ -35,7 +35,7 @@ export default class Statuses extends React.Component {
     fetchComponents: PropTypes.func.isRequired,
     fetchIncidents: PropTypes.func.isRequired,
     fetchIncidentUpdates: PropTypes.func.isRequired,
-    fetchMetrics: PropTypes.func.isRequired
+    fetchPublicMetrics: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -66,7 +66,7 @@ export default class Statuses extends React.Component {
       onFailure: this.fetchCallbacks.onFailure
     })
     this.props.fetchComponents(this.fetchCallbacks)
-    this.props.fetchMetrics(this.fetchCallbacks)
+    this.props.fetchPublicMetrics(this.fetchCallbacks)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -166,7 +166,7 @@ export default class Statuses extends React.Component {
       }
       const candidate = (
         <Button plain name={text} class={(i === 0 ? classes['timeframe-left'] : classes.timeframe)}
-          onClick={this.clickHandler(timeframes[i])} />
+          key={timeframes[i]} onClick={this.clickHandler(timeframes[i])} />
       )
       candidates.push(candidate)
     }
@@ -181,8 +181,29 @@ export default class Statuses extends React.Component {
     const { incidents, components, metrics } = this.props
     const componentItems = components.map(this.renderComponentItem)
     const timeframeSelector = this.renderTimeframeSelector()
-    const metricItems = metrics.map(this.renderMetrics)
     const dateItems = this.renderDateItems(incidents)
+
+    let metricsTitle, metricsContent
+    if (metrics.length !== 0) {
+      let metricItems = metrics.map(this.renderMetrics)
+      metricsTitle = (
+        <div className='mdl-cell mdl-cell--12-col'>
+          <h4 className={classnames(classes.title)}>
+            Metrics
+            <span className={classnames(classes.timeframes)}>
+              {timeframeSelector}
+            </span>
+          </h4>
+        </div>
+      )
+      metricsContent = (
+        <div className='mdl-cell mdl-cell--12-col'>
+          <div className='mdl-list'>
+            {metricItems}
+          </div>
+        </div>
+      )
+    }
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
@@ -190,19 +211,8 @@ export default class Statuses extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
-      <div className='mdl-cell mdl-cell--12-col'>
-        <h4 className={classnames(classes.title)}>
-          Metrics
-          <span className={classnames(classes.timeframes)}>
-            {timeframeSelector}
-          </span>
-        </h4>
-      </div>
-      <div className='mdl-cell mdl-cell--12-col'>
-        <div className='mdl-list'>
-          {metricItems}
-        </div>
-      </div>
+      {metricsTitle}
+      {metricsContent}
       <div className='mdl-cell mdl-cell--12-col'>
         <h4 className={classnames(classes.title)}>Incidents</h4>
       </div>

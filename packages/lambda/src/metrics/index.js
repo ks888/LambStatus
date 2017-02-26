@@ -2,7 +2,7 @@ import CloudWatchService from 'aws/cloudWatch'
 import MetricsDB from 'db/metrics'
 import generateID from 'utils/generateID'
 import { ParameterError } from 'utils/errors'
-import { metricStatuses, monitoringServices, region } from 'utils/const'
+import { metricStatuses, metricStatusVisible, monitoringServices, region } from 'utils/const'
 import { getObject, putObject } from 'utils/s3'
 
 export class Metrics {
@@ -13,6 +13,13 @@ export class Metrics {
   async listExternalMetrics (type) {
     // should be instantiated based on 'type'
     return await new CloudWatchService().listMetrics()
+  }
+
+  async listPublicMetrics () {
+    const metrics = await this.metricsDB.listMetrics()
+    return metrics.filter((element) => {
+      return element.status === metricStatusVisible
+    })
   }
 
   async listMetrics () {
