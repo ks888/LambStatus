@@ -122,7 +122,7 @@ export default class MetricsGraph extends React.Component {
     const tooltipTitleFormat = getTooltipTitleFormat(this.props.timeframe)
 
     c3.generate({
-      bindto: '#' + this.props.metricID,
+      bindto: '#metricID' + this.props.metricID,
       size: {
         height: 120
       },
@@ -200,7 +200,7 @@ export default class MetricsGraph extends React.Component {
     let graph = (<div className={classnames(classes.loading)} >Fetching...</div>)
     let average = 0
     if (this.props.metric.data) {
-      graph = (<div id={this.props.metricID} />)
+      graph = (<div id={'metricID' + this.props.metricID} />)
       average = this.calculateAvg()
     }
 
