@@ -2,12 +2,13 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import moment from 'moment-timezone'
 import { serviceName } from 'utils/settings'
+import Button from 'components/Button'
 import Title from 'components/Title'
 import IncidentItem from 'components/IncidentItem'
 import ModestLink from 'components/ModestLink'
 import MetricsGraph from 'containers/MetricsGraph'
 import classes from './Statuses.scss'
-import { getComponentColor } from 'utils/status'
+import { timeframes, getComponentColor } from 'utils/status'
 
 export default class Statuses extends React.Component {
   static propTypes = {
@@ -43,7 +44,8 @@ export default class Statuses extends React.Component {
     this.state = {
       isFetching: false,
       needIncidentUpdates: false,
-      message: ''
+      message: '',
+      timeframe: timeframes[0]
     }
   }
 
@@ -74,6 +76,10 @@ export default class Statuses extends React.Component {
       })
       this.setState({needIncidentUpdates: false})
     }
+  }
+
+  clickHandler = (timeframe) => {
+    return () => { this.setState({timeframe}) }
   }
 
   renderComponentItem = (component) => {
@@ -151,15 +157,32 @@ export default class Statuses extends React.Component {
     )
   }
 
+  renderTimeframeSelector = () => {
+    let candidates = []
+    for (let i = 0; i < timeframes.length; i++) {
+      let text = timeframes[i]
+      if (timeframes[i] === this.state.timeframe) {
+        text = <span className={classes['timeframe-checked']}>{timeframes[i]}</span>
+      }
+      const candidate = (
+        <Button plain name={text} class={(i === 0 ? classes['timeframe-left'] : classes.timeframe)}
+          onClick={this.clickHandler(timeframes[i])} />
+      )
+      candidates.push(candidate)
+    }
+    return candidates
+  }
+
   renderMetrics = (metric) => {
-    return <MetricsGraph metricID={metric.metricID} timeframe='Day' />
+    return <MetricsGraph key={metric.metricID} metricID={metric.metricID} timeframe={this.state.timeframe} />
   }
 
   render () {
     const { incidents, components, metrics } = this.props
     const componentItems = components.map(this.renderComponentItem)
-    const dateItems = this.renderDateItems(incidents)
+    const timeframeSelector = this.renderTimeframeSelector()
     const metricItems = metrics.map(this.renderMetrics)
+    const dateItems = this.renderDateItems(incidents)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
@@ -168,7 +191,12 @@ export default class Statuses extends React.Component {
         {componentItems}
       </ul>
       <div className='mdl-cell mdl-cell--12-col'>
-        <h4 className={classnames(classes.title)}>Metrics</h4>
+        <h4 className={classnames(classes.title)}>
+          Metrics
+          <span className={classnames(classes.timeframes)}>
+            {timeframeSelector}
+          </span>
+        </h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         <div className='mdl-list'>
