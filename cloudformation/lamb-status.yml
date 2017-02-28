@@ -1952,7 +1952,7 @@ Resources:
         Ref: StatusPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "https://${StatusPageDistribution.DomainName}"}
     DependsOn:
       - StatusPageDistribution
       - CognitoUserPoolClient
@@ -1969,7 +1969,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "https://${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
@@ -2087,10 +2087,8 @@ Outputs:
     Value:
       Ref: "AdminPageS3"
   AdminPageCloudFrontURL:
-    Value:
-      Fn::GetAtt:
-        - "AdminPageDistribution"
-        - "DomainName"
+    Value: !Sub |-
+      https://${AdminPageDistribution.DomainName}
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -2101,10 +2099,8 @@ Outputs:
     Value:
       Ref: "StatusPageS3"
   StatusPageCloudFrontURL:
-    Value:
-      Fn::GetAtt:
-        - "StatusPageDistribution"
-        - "DomainName"
+    Value: !Sub |-
+      https://${StatusPageDistribution.DomainName}
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/

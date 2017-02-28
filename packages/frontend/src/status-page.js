@@ -100,7 +100,6 @@ const timer = setInterval(() => {
     settings.statusPageURL = __LAMBSTATUS_STATUS_PAGE_URL__
     settings.userPoolId = __LAMBSTATUS_USER_POOL_ID__
     settings.clientId = __LAMBSTATUS_CLIENT_ID__
-    settings.statusPageS3BucketURL = __LAMBSTATUS_STATUS_PAGE_S3_BUCKET_URL__
     render(routes)
   }
   if (counter >= 6000) {

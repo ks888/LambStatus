@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { apiURL, statusPageS3BucketURL } from 'utils/settings'
+import { apiURL, statusPageURL } from 'utils/settings'
 import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 
 export const LIST_METRICS = 'LIST_METRICS'
@@ -169,7 +169,7 @@ export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) =>
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(`${statusPageS3BucketURL}/metrics/${metricID}/${year}/${month}/${date}.json`)
+    return fetch(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`)
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
