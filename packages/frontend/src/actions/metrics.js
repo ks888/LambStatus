@@ -169,7 +169,8 @@ export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) =>
   const { onLoad, onSuccess, onFailure } = callbacks
   return dispatch => {
     if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`)
+    return fetch(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
+                {cache: 'no-cache'})
       .then(checkStatus)
       .then(response => response.json())
       .then(json => {
