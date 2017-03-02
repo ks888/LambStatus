@@ -33,7 +33,6 @@ export default class Components extends React.Component {
       dialogType: dialogType.none,
       component: null,
       isFetching: false,
-      isUpdating: false,
       message: ''
     }
   }

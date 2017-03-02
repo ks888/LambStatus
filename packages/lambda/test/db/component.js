@@ -147,7 +147,7 @@ describe('[db/component]', () => {
       const description = 'testDesc'
       const order = '1'
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
-        expect(params.ExpressionAttributeValues).to.include.keys(':d')
+        expect(params.ExpressionAttributeValues).to.include.keys(':description')
         callback(null, {
           Attributes: {componentID, name, status, description, order}
         })

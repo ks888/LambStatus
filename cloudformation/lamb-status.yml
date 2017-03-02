@@ -65,6 +65,10 @@ Resources:
             Action: "dynamodb:*"
             Resource: !Sub |-
               arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentUpdateTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
       Roles:
         - Ref: "LambdaRole"
   GetComponentsLambdaFunction:
@@ -346,6 +350,284 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates
+  GetExternalMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/GetExternalMetrics.zip
+      Description: "Get external metrics"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetExternalMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetExternalMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetExternalMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/external-metrics
+  GetPublicMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/GetPublicMetrics.zip
+      Description: "Get public metrics"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetPublicMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetPublicMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetPublicMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/public-metrics
+  GetMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/GetMetrics.zip
+      Description: "Get metrics"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/metrics
+  PostMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/PostMetrics.zip
+      Description: "Post a new metric"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PostMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PostMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PostMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/metrics
+  PatchMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/PatchMetrics.zip
+      Description: "Update the existing metric"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PatchMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PatchMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/metrics/{metricid}
+  DeleteMetricsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/DeleteMetrics.zip
+      Description: "Update the existing metric"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-DeleteMetrics
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  DeleteMetricsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "DeleteMetricsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/metrics/{metricid}
+  CollectMetricsDataLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub |-
+          fn/${Version}/CollectMetricsData.zip
+      Description: "Collect metrics data"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-CollectMetricsData
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "MetricsFunctionRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 60
+  CollectMetricsDataLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "CollectMetricsDataLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*
+  MetricsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: WriteS3
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:DeleteObject
+                  - s3:ListBucket
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource: arn:aws:s3:::*
+        - PolicyName: WriteCloudWatchLogs
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: ReadMetricsTable
+          PolicyDocument:
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:*"
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
+        - PolicyName: ReadMetricData
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudwatch:GetMetricData
+                  - cloudwatch:GetMetricStatistics
+                  - cloudwatch:ListMetrics
+                Resource: "*"
+  CollectMetricsDataEvent:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: The periodical event to collect metrics data
+      ScheduleExpression: rate(1 minute)
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - "CollectMetricsDataLambdaFunction"
+              - "Arn"
+          Id: CollectMetricsDataFunction
+          Input: !Sub |-
+            {"StatusPageS3BucketName": "${StatusPageS3}"}
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
@@ -940,9 +1222,399 @@ Resources:
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
+  ExternalMetricsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "RestApi"
+          - "RootResourceId"
+      PathPart: "external-metrics"
+  GetExternalMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "ExternalMetricsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.type: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetExternalMetricsLambdaFunction"
+                - "Arn"
+        RequestTemplates:
+          application/json: !Sub |-
+            {"type":"$input.params('type')"}
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsExternalMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "ExternalMetricsApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  PublicMetricsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "RestApi"
+          - "RootResourceId"
+      PathPart: "public-metrics"
+  GetPublicMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "PublicMetricsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetPublicMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsPublicMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "PublicMetricsApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  MetricsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "RestApi"
+          - "RootResourceId"
+      PathPart: "metrics"
+  MetricApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "MetricsApiResource"
+      PathPart: "{metricid}"
+  GetMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  PostMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricsApiResource"
+      HttpMethod: "POST"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMetricsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricsApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  PatchMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  DeleteMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteMetricsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "204"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMetricApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MetricApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
   StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - "*"
       WebsiteConfiguration:
         IndexDocument: "index.html"
   StatusPageS3BucketPolicy:
@@ -1084,6 +1756,21 @@ Resources:
           KeyType: "HASH"
         - AttributeName: "incidentUpdateID"
           KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+  MetricsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-MetricsTable
+      AttributeDefinitions:
+        - AttributeName: "metricID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "metricID"
+          KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
@@ -1265,7 +1952,7 @@ Resources:
         Ref: StatusPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "https://${StatusPageDistribution.DomainName}"}
     DependsOn:
       - StatusPageDistribution
       - CognitoUserPoolClient
@@ -1282,7 +1969,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.json
       Body: !Sub |-
-        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
+        {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "https://${StatusPageDistribution.DomainName}", "UserPoolID": "${CognitoUserPool.UserPoolID}", "ClientID": "${CognitoUserPoolClient.UserPoolClientID}"}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
@@ -1380,16 +2067,16 @@ Resources:
 Outputs:
   LambdaRoleArn:
     Value:
-      Fn::GetAtt:
-        - "LambdaRole"
-        - "Arn"
-    Description: "ARN for LambdaRole"
-  LambdaCustomResourceRoleArn:
+      !GetAtt LambdaRole.Arn
+  MetricsFunctionRoleArn:
     Value:
-      Fn::GetAtt:
-        - S3HandleFunctionRole
-        - Arn
-    Description: ARN for LambdaCustomResourceRole
+      !GetAtt MetricsFunctionRole.Arn
+  S3HandleFunctionRoleArn:
+    Value:
+      !GetAtt S3HandleFunctionRole.Arn
+  CognitoHandleFunctionRoleArn:
+    Value:
+      !GetAtt CognitoHandleFunctionRole.Arn
   AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -1400,10 +2087,8 @@ Outputs:
     Value:
       Ref: "AdminPageS3"
   AdminPageCloudFrontURL:
-    Value:
-      Fn::GetAtt:
-        - "AdminPageDistribution"
-        - "DomainName"
+    Value: !Sub |-
+      https://${AdminPageDistribution.DomainName}
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -1414,10 +2099,8 @@ Outputs:
     Value:
       Ref: "StatusPageS3"
   StatusPageCloudFrontURL:
-    Value:
-      Fn::GetAtt:
-        - "StatusPageDistribution"
-        - "DomainName"
+    Value: !Sub |-
+      https://${StatusPageDistribution.DomainName}
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/

@@ -2,6 +2,7 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
+import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export const getComponents = () => {
   const region = process.env.AWS_DEFAULT_REGION
@@ -72,9 +73,7 @@ export const getComponent = (componentID) => {
       }
 
       queryResult.Items.forEach(item => {
-        if (!item.hasOwnProperty('description')) {
-          item.description = ''
-        }
+        fillInsufficientProps({description: ''}, item)
         item.order = item.hasOwnProperty('order') ? Number(item.order) : 0
       })
 
@@ -88,36 +87,22 @@ export const updateComponent = (id, name, description, status, order) => {
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
 
   return new Promise((resolve, reject) => {
+    const [updateExp, attrNames, attrValues] = buildUpdateExpression({
+      name, description, status, order
+    })
     const params = {
-      Key: {
-        componentID: id
-      },
-      UpdateExpression: 'set #n = :n, description = :d, #s = :s, #o = :o',
-      ExpressionAttributeNames: {
-        '#n': 'name',
-        '#s': 'status',
-        '#o': 'order'
-      },
-      ExpressionAttributeValues: {
-        ':n': name,
-        ':s': status,
-        ':o': order,
-        ':d': description
-      },
+      Key: { componentID: id },
+      UpdateExpression: updateExp,
+      ExpressionAttributeNames: attrNames,
+      ExpressionAttributeValues: attrValues,
       TableName: ServiceComponentTable,
       ReturnValues: 'ALL_NEW'
-    }
-    if (description === '') {
-      params.UpdateExpression = 'set #n = :n, #s = :s, #o = :o remove description'
-      delete params.ExpressionAttributeValues[':d']
     }
     awsDynamoDb.update(params, (err, data) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
       }
-      if (!data.Attributes.hasOwnProperty('description')) {
-        data.Attributes.description = ''
-      }
+      fillInsufficientProps({name, description, status, order}, data.Attributes)
       resolve(data)
     })
   })
@@ -128,17 +113,14 @@ export const updateComponentStatus = (id, status) => {
   const awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
 
   return new Promise((resolve, reject) => {
+    const [updateExp, attrNames, attrValues] = buildUpdateExpression({ status })
     const params = {
       Key: {
         componentID: id
       },
-      UpdateExpression: 'set #s = :s',
-      ExpressionAttributeNames: {
-        '#s': 'status'
-      },
-      ExpressionAttributeValues: {
-        ':s': status
-      },
+      UpdateExpression: updateExp,
+      ExpressionAttributeNames: attrNames,
+      ExpressionAttributeValues: attrValues,
       TableName: ServiceComponentTable,
       ReturnValues: 'ALL_NEW'
     }
@@ -146,9 +128,7 @@ export const updateComponentStatus = (id, status) => {
       if (err) {
         return reject(new VError(err, 'DynamoDB'))
       }
-      if (!data.Attributes.hasOwnProperty('description')) {
-        data.Attributes.description = ''
-      }
+      fillInsufficientProps({description: ''}, data.Attributes)
       resolve(data)
     })
   })

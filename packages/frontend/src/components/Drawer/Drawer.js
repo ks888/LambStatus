@@ -12,6 +12,10 @@ const components = {
     name: 'Components',
     path: '/components'
   },
+  metrics: {
+    name: 'Metrics',
+    path: '/metrics'
+  },
   users: {
     name: 'Users',
     path: '/users'

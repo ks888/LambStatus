@@ -1,0 +1,21 @@
+.c3-axis {
+  font: 12px Roboto;
+  fill: #707070;
+}
+
+.c3-axis path {
+  stroke: #E0E0E0;
+}
+
+.c3-line {
+  stroke-width: 2px;
+}
+
+.c3-grid line {
+  stroke-dasharray: none;
+  stroke: #E0E0E0;
+}
+
+.tick line {
+  stroke: #E0E0E0;
+}

@@ -42,7 +42,7 @@ export default class Header extends React.Component {
         <span className='mdl-layout-title'>LambStatus Admin</span>
         <div className='mdl-layout-spacer' />
         <nav className='mdl-navigation'>
-          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={'https://' + statusPageURL}>
+          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={statusPageURL}>
             View Status Page
           </a>
           {userMenu}
