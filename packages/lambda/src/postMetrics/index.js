@@ -8,6 +8,12 @@ export async function handler (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: failed to post the metric')
+    switch (error.name) {
+      case 'ParameterError':
+        callback('Error: ' + error.message)
+        break
+      default:
+        callback('Error: failed to post the metric')
+    }
   }
 }
