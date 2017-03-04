@@ -52,7 +52,7 @@ export class Metrics {
     }
 
     if (props === undefined || props === null || typeof props !== 'object') {
-      throw new ParameterError('invalid props parameter')
+      throw new ParameterError('invalid metrics parameter')
     }
   }
 
@@ -158,12 +158,12 @@ export class MetricsData {
     }
 
     const currDateDatapoints = datapoints.slice(splitIndex)
-    if (currDateDatapoints.length !== 0) {
+    if (currDateDatapoints.length !== 0 || !currDateData) {
       await this.saveData(currDate, currDateDatapoints, currDateData)
     }
 
     const prevDateDatapoints = datapoints.slice(0, splitIndex)
-    if (prevDateDatapoints.length !== 0) {
+    if (prevDateDatapoints.length !== 0 || !prevDateData) {
       await this.saveData(prevDate, prevDateDatapoints, prevDateData)
     }
   }

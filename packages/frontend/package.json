@@ -46,7 +46,7 @@
       }
     },
     "deploy": {
-      "command": "babel-node bin/upload-dist",
+      "command": "npm run build && babel-node bin/upload-dist",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"

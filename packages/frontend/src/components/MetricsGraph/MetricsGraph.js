@@ -68,6 +68,9 @@ export default class MetricsGraph extends React.Component {
 
       currDate.setDate(currDate.getDate() + 1)
     }
+    if (data.length === 0) {
+      return
+    }
 
     const timestamps = []
     const values = []
@@ -196,12 +199,26 @@ export default class MetricsGraph extends React.Component {
     return Math.round(sum / count)
   }
 
+  hasDatapoints = () => {
+    if (!this.props.metric.data) {
+      return false
+    }
+
+    return Object.keys(this.props.metric.data).reduce((prev, key) => {
+      return prev || (this.props.metric.data[key].length !== 0)
+    }, false)
+  }
+
   render () {
     let graph = (<div className={classnames(classes.loading)} >Fetching...</div>)
     let average = 0
     if (this.props.metric.data) {
-      graph = (<div id={'metricID' + this.props.metricID} />)
-      average = this.calculateAvg()
+      if (!this.hasDatapoints()) {
+        graph = (<div className={classnames(classes.loading)} >No data for this time period yet.</div>)
+      } else {
+        graph = (<div id={'metricID' + this.props.metricID} />)
+        average = this.calculateAvg()
+      }
     }
 
     return (

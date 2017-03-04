@@ -60,6 +60,16 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   render () {
+    let initialNamespace = ''
+    let initialMetric = ''
+    if (this.props.props) {
+      const props = this.props.props
+      initialNamespace = props.Namespace
+      if (props.Dimensions) {
+        initialMetric = this.buildMetricExpression(props)
+      }
+    }
+
     let namespaces = []
     const metrics = []
     if (this.props.metrics) {
@@ -77,16 +87,9 @@ export default class CloudWatchMetricsSelector extends React.Component {
         })
       }
       metrics.sort()
-    }
-
-    let initialNamespace = ''
-    let initialMetric = ''
-    if (this.props.props) {
-      const props = this.props.props
-      initialNamespace = props.Namespace
-      if (props.Dimensions) {
-        initialMetric = this.buildMetricExpression(props)
-      }
+    } else {
+      namespaces.push(initialNamespace)
+      metrics.push(initialMetric)
     }
 
     return (
