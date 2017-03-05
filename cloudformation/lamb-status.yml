@@ -7,11 +7,6 @@ Parameters:
     Type: String
     Default: MyService
     MinLength: 1
-  Version:
-    Description: The version of LambStatus
-    Type: String
-    Default: 0.1.3
-    MinLength: 1
   UserName:
     Description: The name of an initial user
     Type: String
@@ -22,6 +17,10 @@ Parameters:
     Type: String
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+Mappings:
+  Constants:
+    LambStatus:
+      Version: 0.2.0
 Resources:
   LambdaRole:
     Type: "AWS::IAM::Role"
@@ -77,8 +76,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetComponents.zip
+        S3Key: !Sub
+          - fn/${Version}/GetComponents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get a list of components"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -108,8 +109,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PostComponents.zip
+        S3Key: !Sub
+          - fn/${Version}/PostComponents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Create a new component"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -139,8 +142,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PatchComponents.zip
+        S3Key: !Sub
+          - fn/${Version}/PatchComponents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Update an existing component"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -170,8 +175,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/DeleteComponents.zip
+        S3Key: !Sub
+          - fn/${Version}/DeleteComponents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Delete an existing component"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -201,8 +208,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetIncidents.zip
+        S3Key: !Sub
+          - fn/${Version}/GetIncidents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get a list of incidents"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -232,8 +241,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PostIncidents.zip
+        S3Key: !Sub
+          - fn/${Version}/PostIncidents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Create a new incident"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -263,8 +274,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PatchIncidents.zip
+        S3Key: !Sub
+          - fn/${Version}/PatchIncidents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Update an existing incident"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -294,8 +307,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/DeleteIncidents.zip
+        S3Key: !Sub
+          - fn/${Version}/DeleteIncidents.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Delete an incident"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -325,8 +340,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetIncidentUpdates.zip
+        S3Key: !Sub
+          - fn/${Version}/GetIncidentUpdates.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get incident updates"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -356,8 +373,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetExternalMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/GetExternalMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get external metrics"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -387,8 +406,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetPublicMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/GetPublicMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get public metrics"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -418,8 +439,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/GetMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/GetMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Get metrics"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -449,8 +472,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PostMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/PostMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Post a new metric"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -480,8 +505,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/PatchMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/PatchMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Update the existing metric"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -511,8 +538,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/DeleteMetrics.zip
+        S3Key: !Sub
+          - fn/${Version}/DeleteMetrics.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Update the existing metric"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -542,8 +571,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/CollectMetricsData.zip
+        S3Key: !Sub
+          - fn/${Version}/CollectMetricsData.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Collect metrics data"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1811,8 +1842,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/S3PutObject.zip
+        S3Key: !Sub
+          - fn/${Version}/S3PutObject.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: Put an object into S3.
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1832,8 +1865,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/S3SyncObjects.zip
+        S3Key: !Sub
+          - fn/${Version}/S3SyncObjects.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: Sync S3 objects.
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1882,8 +1917,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/CognitoCreateUserPool.zip
+        S3Key: !Sub
+          - fn/${Version}/CognitoCreateUserPool.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: Create a user pool.
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1903,8 +1940,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/CognitoCreateUserPoolClient.zip
+        S3Key: !Sub
+          - fn/${Version}/CognitoCreateUserPoolClient.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: Create a user pool client.
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1924,8 +1963,10 @@ Resources:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
-        S3Key: !Sub |-
-          fn/${Version}/CognitoCreateUser.zip
+        S3Key: !Sub
+          - fn/${Version}/CognitoCreateUser.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: Create a user.
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -1978,8 +2019,10 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: !Sub |-
-        status-page/${Version}
+      SourceKey: !Sub
+        - status-page/${Version}
+        - Version:
+            Fn::FindInMap: [ Constants, LambStatus, Version ]
       DestinationRegion: !Sub |-
         ${AWS::Region}
       DestinationBucket:
@@ -1992,8 +2035,10 @@ Resources:
           - S3SyncObjectsFunction
           - Arn
       SourceBucket: lambstatus
-      SourceKey: !Sub |-
-        admin-page/${Version}
+      SourceKey: !Sub
+        - admin-page/${Version}
+        - Version:
+            Fn::FindInMap: [ Constants, LambStatus, Version ]
       DestinationRegion: !Sub |-
         ${AWS::Region}
       DestinationBucket:
