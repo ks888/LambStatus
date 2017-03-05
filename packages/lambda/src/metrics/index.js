@@ -85,13 +85,6 @@ class DataObject {
     this.body = body
   }
 
-  getLastTimestamp () {
-    if (this.body.length > 0) {
-      return this.body[this.body.length - 1].timestamp
-    }
-    return null
-  }
-
   append (newData) {
     this.body = this.body.concat(newData)
   }
@@ -123,49 +116,48 @@ export class MetricsData {
     return await putObject(region, this.dataBucket, object.objectName, body)
   }
 
+  async calculateUncollectedDates (curr) {
+    const maxBackfillDates = 30
+    for (let i = 0; i < maxBackfillDates; i++) {
+      const data = await this.getDataObject(curr)
+      if (data) {
+        return i
+      }
+      curr.setDate(curr.getDate() - 1)
+    }
+    return maxBackfillDates
+  }
+
   async collectData () {
-    const currDate = new Date()
-    const currDateData = await this.getDataObject(currDate)
+    const now = new Date()
+    const numUncollectedDates = await this.calculateUncollectedDates(new Date(now.getTime()))
+    console.log(`collect the data for ${numUncollectedDates} dates (metricID: ${this.metricID})`)
+    await Promise.all(Array.apply(null, {length: numUncollectedDates + 1}).map(async (value, i) => {
+      const curr = new Date(now.getTime())
+      curr.setDate(curr.getDate() - i)
 
-    const prevDate = new Date(currDate.getTime())
-    prevDate.setDate(prevDate.getDate() - 1)
-    let prevDateData = null
-    let lastTimestamp
-    if (currDateData && currDateData.getLastTimestamp() !== null) {
-      lastTimestamp = currDateData.getLastTimestamp()
-    } else {
-      // try the prev date
-      prevDateData = await this.getDataObject(prevDate)
-      if (prevDateData && prevDateData.getLastTimestamp() !== null) {
-        lastTimestamp = prevDateData.getLastTimestamp()
+      const existingData = await this.getDataObject(curr)
+      let begin, lastTimestamp
+      if (existingData && existingData.body.length > 0) {
+        begin = existingData.body[existingData.body.length - 1].timestamp
+        lastTimestamp = begin
       } else {
-        // it's like a first attempt to collect data.
-        lastTimestamp = prevDate.toISOString()
+        begin = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
       }
-    }
 
-    let datapoints = await this.service.getMetricData(this.props, lastTimestamp, currDate)
-    if (datapoints.length > 0 && datapoints[0].timestamp === lastTimestamp) {
-      datapoints = datapoints.slice(1)
-    }
-    const currDateStr = currDate.toISOString().slice(0, 10)
-    let splitIndex = datapoints.length
-    for (let i = 0; i < datapoints.length; i++) {
-      if (datapoints[i].timestamp.startsWith(currDateStr)) {
-        splitIndex = i
-        break
+      const end = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
+      end.setDate(end.getDate() + 1)
+
+      let datapoints = await this.service.getMetricData(this.props, begin, end)
+      if (datapoints.length > 0 && lastTimestamp && datapoints[0].timestamp === lastTimestamp) {
+        datapoints = datapoints.slice(1)
       }
-    }
+      console.log(`collected ${datapoints.length} datapoints (metricID: ${this.metricID}, i: ${i})`)
 
-    const currDateDatapoints = datapoints.slice(splitIndex)
-    if (currDateDatapoints.length !== 0 || !currDateData) {
-      await this.saveData(currDate, currDateDatapoints, currDateData)
-    }
-
-    const prevDateDatapoints = datapoints.slice(0, splitIndex)
-    if (prevDateDatapoints.length !== 0 || !prevDateData) {
-      await this.saveData(prevDate, prevDateDatapoints, prevDateData)
-    }
+      if (datapoints.length > 0 || !existingData) {
+        await this.saveData(curr, datapoints, existingData)
+      }
+    }))
   }
 
   async saveData (date, datapoints, existingDataObject) {

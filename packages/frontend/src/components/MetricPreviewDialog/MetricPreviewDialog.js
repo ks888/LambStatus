@@ -65,7 +65,7 @@ class MetricPreviewDialog extends React.Component {
         <div className='mdl-list'>
           <MetricsGraph metricID={this.props.metricID} timeframe={this.state.timeframe} />
         </div>
-        Note: if the metric added just now, try again in 1 minute. Data will be backfilled up to 24 hours in the past.
+        Note: if the metric added just now, try again in 1 minute. Data will be backfilled up to 30 days in the past.
         <div className='mdl-dialog__actions'>
           <Button onClick={this.handleHideDialog} name='Cancel' />
         </div>

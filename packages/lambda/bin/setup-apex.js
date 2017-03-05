@@ -42,8 +42,8 @@ fs.writeFileSync(`${buildDir}/project.json`, json)
 console.log('project.json created')
 
 // some lambda functions need a different role than default one.
-const createFunctionJSON = (arn, targetDirs) => {
-  const functionJSON = JSON.stringify({role: arn}, null, 2)
+const createFunctionJSON = (role, timeout, memory, targetDirs) => {
+  const functionJSON = JSON.stringify({role, timeout, memory}, null, 2)
   targetDirs.forEach((dir) => {
     mkdirp.sync(dir)
     fs.writeFileSync(`${dir}/function.json`, functionJSON)
@@ -52,17 +52,19 @@ const createFunctionJSON = (arn, targetDirs) => {
 }
 
 const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
-createFunctionJSON(metricsFunctionRoleArn, [
-  buildDir + '/functions/CollectMetricsData',
+createFunctionJSON(metricsFunctionRoleArn, 60, 512, [
+  buildDir + '/functions/CollectMetricsData'
+])
+createFunctionJSON(metricsFunctionRoleArn, 30, 128, [
   buildDir + '/functions/GetExternalMetrics'
 ])
 const s3HandleFunctionRoleArn = getArn(awsResourceIDs, 'S3HandleFunctionRoleArn')
-createFunctionJSON(s3HandleFunctionRoleArn, [
+createFunctionJSON(s3HandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/S3PutObject',
   buildDir + '/functions/S3SyncObjects'
 ])
 const cognitoHandleFunctionRoleArn = getArn(awsResourceIDs, 'CognitoHandleFunctionRoleArn')
-createFunctionJSON(cognitoHandleFunctionRoleArn, [
+createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/CognitoCreateUser',
   buildDir + '/functions/CognitoCreateUserPool',
   buildDir + '/functions/CognitoCreateUserPoolClient'

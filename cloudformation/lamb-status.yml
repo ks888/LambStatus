@@ -549,7 +549,7 @@ Resources:
       FunctionName: !Sub |-
         ${AWS::StackName}-CollectMetricsData
       Handler: "_apex_index.handle"
-      MemorySize: 128
+      MemorySize: 512
       Role:
         Fn::GetAtt:
           - "MetricsFunctionRole"
