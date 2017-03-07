@@ -1,15 +1,16 @@
-import { LIST_METRICS, LIST_PUBLIC_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, EDIT_METRIC,
+import { LIST_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, EDIT_METRIC,
          REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
 
 function listMetricsHandler (state = { }, action) {
-  return Object.assign({}, state, {
-    metrics: JSON.parse(action.metrics)
+  const newMetrics = JSON.parse(action.metrics)
+  state.metrics.forEach((metric) => {
+    newMetrics.forEach((newMetric) => {
+      if (newMetric.metricID === metric.metricID) newMetric.data = metric.data
+    })
   })
-}
 
-function listPublicMetricsHandler (state = { }, action) {
   return Object.assign({}, state, {
-    metrics: JSON.parse(action.metrics)
+    metrics: newMetrics
   })
 }
 
@@ -85,7 +86,6 @@ function listMetricsDataHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LIST_METRICS]: listMetricsHandler,
-  [LIST_PUBLIC_METRICS]: listPublicMetricsHandler,
   [LIST_EXTERNAL_METRICS]: listExternalMetricsHandler,
   [ADD_METRIC]: addMetricHandler,
   [EDIT_METRIC]: editMetricHandler,
