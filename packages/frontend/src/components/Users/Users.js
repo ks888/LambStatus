@@ -1,6 +1,5 @@
 import React from 'react'
 import classnames from 'classnames'
-import { Link } from 'react-router'
 import classes from './Users.scss'
 import { userPoolId } from 'utils/settings'
 
@@ -17,9 +16,9 @@ export default class Users extends React.Component {
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         Operations like creating a user are not supported here. Access
-        <Link to={linkToUsersPage} className={classes.link}>
+        <a href={linkToUsersPage} className={classes.link}>
           Users page at Amazon Cognito
-        </Link>
+        </a>
         for these operations.
       </div>
     </div>)
