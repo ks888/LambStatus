@@ -79,6 +79,8 @@ export default class Signin extends React.Component {
   }
 
   handleClickSigninButton = (e) => {
+    if (this.state.isUpdating) return
+
     this.props.signin(this.state.username, this.state.password, {
       ...this.updateCallbacks,
       onNewPasswordRequested: (callback) => {
@@ -103,6 +105,8 @@ export default class Signin extends React.Component {
   }
 
   handleSetNewPasswordButton = (e) => {
+    if (this.state.isUpdating) return
+
     const { password, newPasswordCallback } = this.state
     if (newPasswordCallback && typeof newPasswordCallback === 'function') {
       newPasswordCallback(password, this.updateCallbacks)
@@ -112,6 +116,8 @@ export default class Signin extends React.Component {
   }
 
   handleClickSendCodeButton = (e) => {
+    if (this.state.isUpdating) return
+
     this.props.forgotPassword(this.state.username, {
       ...this.updateCallbacks,
       onSuccess: () => {
@@ -125,6 +131,8 @@ export default class Signin extends React.Component {
   }
 
   handleClickSetCodeButton = (e) => {
+    if (this.state.isUpdating) return
+
     this.props.setCodeAndPassword(this.state.code, this.state.username, this.state.password, {
       ...this.updateCallbacks,
       onSuccess: () => {
@@ -155,7 +163,7 @@ export default class Signin extends React.Component {
         <ErrorMessage message={this.state.message} />
         <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
         <TextField label='Password' text={this.state.password} rows={1}
-          onChange={this.handleChangePassword} hideText />
+          onChange={this.handleChangePassword} onEnterKey={this.handleClickSigninButton} hideText />
         <div className={classes.forgotPassword} onClick={this.handleClickForgotButton}>
           Forgot Password?
         </div>
@@ -178,7 +186,7 @@ export default class Signin extends React.Component {
         </div>
         <ErrorMessage message={this.state.message} />
         <TextField label='New Password' text={this.state.password} rows={1}
-          onChange={this.handleChangePassword} hideText />
+          onChange={this.handleChangePassword} onEnterKey={this.handleSetNewPasswordButton} hideText />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleSetNewPasswordButton} name='DONE'
@@ -197,7 +205,8 @@ export default class Signin extends React.Component {
           Enter your email address. A verification code will be sent to the address.
         </div>
         <ErrorMessage message={this.state.message} />
-        <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername} />
+        <TextField label='Email Address' text={this.state.username} rows={1} onChange={this.handleChangeUsername}
+          onEnterKey={this.handleClickSendCodeButton} />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSendCodeButton} name='Send verification code'
@@ -219,7 +228,7 @@ export default class Signin extends React.Component {
         <ErrorMessage message={this.state.message} />
         <TextField label='Verification code' text={this.state.code} rows={1} onChange={this.handleChangeCode} />
         <TextField label='Password' text={this.state.password} rows={1}
-          onChange={this.handleChangePassword} hideText />
+          onChange={this.handleChangePassword} onEnterKey={this.handleClickSetCodeButton} hideText />
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={this.handleClickSetCodeButton} name='Done'

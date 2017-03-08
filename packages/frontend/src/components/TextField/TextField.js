@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import classes from './TextField.scss'
 
+const ENTER_KEY_CODE = 13
+
 class TextField extends React.Component {
   componentDidMount () {
     let jsElem = ReactDOM.findDOMNode(this.refs.textfield)
@@ -11,6 +13,13 @@ class TextField extends React.Component {
 
   handleChange = (e) => {
     this.props.onChange(e.target.value)
+  }
+
+  handleKeyDown = (e) => {
+    if (e.keyCode === ENTER_KEY_CODE && this.props.onEnterKey) {
+      this.props.onEnterKey(e.target.value)
+      e.preventDefault()
+    }
   }
 
   render () {
@@ -22,10 +31,10 @@ class TextField extends React.Component {
     let textfield
     if (!this.props.rows || this.props.rows === 1) {
       textfield = (<input className='mdl-textfield__input' type={textfieldType} id='textfield'
-        value={this.props.text} onChange={this.handleChange} />)
+        value={this.props.text} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />)
     } else {
       textfield = (<textarea className='mdl-textfield__input' type='text' rows={this.props.rows} id='textfield'
-        value={this.props.text} onChange={this.handleChange} />)
+        value={this.props.text} onChange={this.handleChange} onKeyDown={this.handleKeyDown} />)
     }
 
     return (
@@ -40,6 +49,7 @@ class TextField extends React.Component {
 
 TextField.propTypes = {
   onChange: PropTypes.func.isRequired,
+  onEnterKey: PropTypes.func,
   label: PropTypes.string.isRequired,
   text: PropTypes.string,
   rows: PropTypes.number,
