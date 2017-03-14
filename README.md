@@ -13,17 +13,19 @@ The demo pages are available:
 * [Status page](https://lambstatus.github.io/demo-status/) (the page to tell your service's status to your users)
 * [Admin page](https://lambstatus.github.io/demo-admin/) (the page to change your service's status)
 
+## Goals of this project
+
+* Offer an open source status page system
+* Enable users to easily build and update the status page system (by fully utilizing the CloudFormation)
+* Serverless architectures
+
 ## Why Serverless?
 
-Status page system is able to utilize the benefits of Serverless architectures, because:
+Status page system is able to make use of the benefits of Serverless architectures, because:
 
 * It dramatically eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
 
 * It reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
-
-## Requirement
-
-* AWS Account
 
 ## Installation
 
@@ -56,6 +58,26 @@ Click the link in the email, and sign in to admin console.
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
 
 See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
+
+## TODO
+
+* Service status
+  * [x] Show status by functional components
+  * [ ] Grouping functional components ([#10](https://github.com/ks888/LambStatus/issues/10))
+* Incidents
+  * [x] Show incidents
+  * [ ] Scheduled maintenance
+* Metrics
+  * [x] Show metrics
+  * Import metrics data from other monitoring SaaS
+    * [x] CloudWatch
+    * [ ] New Relic
+    * [ ] Datadog
+    * [ ] ...
+* Notifications
+  * [ ] Email
+  * [ ] Twitter
+  * [ ] ...
 
 *Note: LambStatus is still under development, and not ready for production use. Opening an issue for feature request / bug report is welcome!*
 
