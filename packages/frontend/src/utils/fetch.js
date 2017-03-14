@@ -14,9 +14,15 @@ export const checkStatus = (response) => {
     if (response.status >= 200 && response.status < 300) {
       resolve(response)
     } else {
-      response.json().then(json => {
-        reject(new HTTPError(json.errorMessage))
-      })
+      if (response.headers.get('Content-Type').includes('application/json')) {
+        response.json().then(json => {
+          reject(new HTTPError(json.errorMessage))
+        })
+      } else {
+        response.text().then(body => {
+          reject(new HTTPError(`Error: ${response.statusText}`))
+        })
+      }
     }
   })
 }
