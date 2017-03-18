@@ -14,23 +14,26 @@ update_stack() {
 
 put_stack() {
   ACTION=$1
-  TEMPLATE_FILE="$(dirname $0)/../lamb-status.yml"
-  PACKAGE_JSON="$(dirname $0)/../../package.json"
-  VERSION=$(cat "${PACKAGE_JSON}" | sed -n 's/.*\"version\": \"\(.*\)\".*/\1/p')
 
-  if [ "${USER_EMAIL}" == "" ]; then
-    echo "Error: set USER_EMAIL at .env file"
-    exit 1
+  if [ "${CF_TEMPLATE_BUCKET}" != "" -a "${CF_TEMPLATE_KEY}" != "" ]; then
+    TEMPLATE_FILE="$(dirname $0)/../lamb-status.yml"
+    CF_TEMPLATE_S3_URI="s3://${CF_TEMPLATE_BUCKET}/${CF_TEMPLATE_KEY}"
+    aws s3 cp "${TEMPLATE_FILE}" "${CF_TEMPLATE_S3_URI}"
+
+    CF_TEMPLATE_URL="https://${CF_TEMPLATE_BUCKET}.s3.amazonaws.com/${CF_TEMPLATE_KEY}"
+  else
+    PACKAGE_JSON="$(dirname $0)/../../package.json"
+    VERSION=$(cat "${PACKAGE_JSON}" | sed -n 's/.*\"version\": \"\(.*\)\".*/\1/p')
+    CF_TEMPLATE_URL="https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/${VERSION}/lamb-status.yml"
   fi
 
   aws cloudformation ${ACTION} \
       --region ${AWS_REGION} \
       --stack-name ${STACK_NAME} \
-      --template-body file://${TEMPLATE_FILE} \
+      --template-url ${CF_TEMPLATE_URL} \
       --capabilities CAPABILITY_IAM \
       --parameters \
         ParameterKey=ServiceName,ParameterValue=${SERVICE_NAME},UsePreviousValue=false \
-        ParameterKey=Version,ParameterValue=${VERSION},UsePreviousValue=false \
         ParameterKey=UserName,ParameterValue=${USER_NAME},UsePreviousValue=false \
         ParameterKey=UserEmail,ParameterValue=${USER_EMAIL},UsePreviousValue=false
 }

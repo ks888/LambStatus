@@ -84,6 +84,8 @@ See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage exam
 
    The command will return immediately, but it may take 20-25 minutes to actually create the stack, mainly due to the settings of CloudFront Distribution.
 
+   If the command returns an error, make sure you properly configured [the AWS credentials](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence).
+
 ### Server-side development
 
 1. Go to the `lambda` directory
