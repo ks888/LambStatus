@@ -16,7 +16,7 @@ The demo pages are available:
 ## Goals of this project
 
 * Offer an open source status page system
-* Enable users to easily build and update the status page system (by fully utilizing the CloudFormation)
+* Enable users to easily build and update the system (by fully utilizing the CloudFormation)
 * Serverless architectures
 
 ## Why Serverless?
@@ -59,29 +59,9 @@ Click the link in the email, and sign in to admin console.
 
 See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
 
-## TODO
-
-* Service status
-  * [x] Show status by functional components
-  * [ ] Grouping functional components ([#10](https://github.com/ks888/LambStatus/issues/10))
-* Incidents
-  * [x] Show incidents
-  * [ ] Scheduled maintenance
-* Metrics
-  * [x] Show metrics
-  * Import metrics data from other monitoring SaaS
-    * [x] CloudWatch
-    * [ ] New Relic
-    * [ ] Datadog
-    * [ ] ...
-* Notifications
-  * [ ] Email
-  * [ ] Twitter
-  * [ ] ...
+## Development
 
 *Note: LambStatus is still under development, and not ready for production use. Opening an issue for feature request / bug report is welcome!*
-
-## Development
 
 Here is the rough architecture:
 
@@ -116,3 +96,29 @@ To build and deploy them, follow these steps:
   `npm run deploy`
 
 Now, the email will be sent to the email address you specified. Click the link in the email, and sign in to admin console.
+
+## TODO
+
+* Service status
+  * [x] Show status by functional components
+  * [ ] Grouping functional components ([#14](https://github.com/ks888/LambStatus/issues/14))
+* Incidents
+  * [x] Show incidents
+  * [ ] Scheduled maintenance
+* Metrics
+  * [x] Show metrics
+  * Import metrics data from other monitoring SaaS
+    * [x] CloudWatch
+    * [ ] New Relic
+    * [ ] Datadog
+    * [ ] ...
+* User accounts
+  * [x] Basic operations (create/delete account, sign in/out, etc.)
+  * [ ] Two factor authentication ([#14](https://github.com/ks888/LambStatus/issues/14))
+  * [ ] Single sign-on ([#14](https://github.com/ks888/LambStatus/issues/14))
+* Notifications
+  * [ ] Email
+  * [ ] Twitter
+  * [ ] ...
+* Settings
+  * [ ] Custom colors / styling ([#14](https://github.com/ks888/LambStatus/issues/14))
