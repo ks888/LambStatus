@@ -104,21 +104,20 @@ Now, the email will be sent to the email address you specified. Click the link i
   * [ ] Grouping functional components ([#14](https://github.com/ks888/LambStatus/issues/14))
 * Incidents
   * [x] Show incidents
-  * [ ] Scheduled maintenance
+  * [ ] Scheduled maintenance ([#15](https://github.com/ks888/LambStatus/issues/15))
 * Metrics
   * [x] Show metrics
   * Import metrics data from other monitoring SaaS
     * [x] CloudWatch
-    * [ ] New Relic
-    * [ ] Datadog
+    * [ ] New Relic ([#16](https://github.com/ks888/LambStatus/issues/16))
     * [ ] ...
 * User accounts
   * [x] Basic operations (create/delete account, sign in/out, etc.)
   * [ ] Two factor authentication ([#14](https://github.com/ks888/LambStatus/issues/14))
   * [ ] Single sign-on ([#14](https://github.com/ks888/LambStatus/issues/14))
 * Notifications
-  * [ ] Email
-  * [ ] Twitter
+  * [ ] Email ([#17](https://github.com/ks888/LambStatus/issues/17))
+  * [ ] Twitter ([#18](https://github.com/ks888/LambStatus/issues/18))
   * [ ] ...
 * Settings
   * [ ] Custom colors / styling ([#14](https://github.com/ks888/LambStatus/issues/14))
