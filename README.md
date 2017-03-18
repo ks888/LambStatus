@@ -62,41 +62,65 @@ See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage exam
 
 ## Development
 
-*Note: LambStatus is still under development, and not ready for production use. Opening an issue for feature request / bug report is welcome!*
-
-Here is the rough architecture:
+*LambStatus is still under development, and not ready for production use. All kinds of contributions including feature requests / bug reports / pull requests are welcome!*
 
 ![Architecture](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/Architecture.png)
 
-To build and deploy them, follow these steps:
+### Set up
 
-1. Clone the repository
+1. Clone the repository and go to the cloned directory
 
-  `git clone https://github.com/ks888/LambStatus`
+   `git clone https://github.com/ks888/LambStatus && cd LambStatus`
 
 2. Install all dependencies
 
-  `npm run install`
+   `npm run install`
 
-3. Set configuration values at the `.env` file, just like you do on the launch of CloudFormation stack.
+3. Configure the `.env` file. At least, you need to write your email address to the `USER_EMAIL` line because the initial login information will be sent to the address.
 
-4. Launch cloudFormation stack
+4. Launch CloudFormation stack
 
-  `npm run cloudformation:create`
+   `npm run cloudformation:create`
 
-  Wait until the stack is created.
+   The command will return immediately, but it may take 20-25 minutes to actually create the stack, mainly due to the settings of CloudFront Distribution.
 
-5. Build
+### Server-side development
 
-  `npm run lambda:build && npm run frontend:build`
+1. Go to the `lambda` directory
 
-  `npm run lambda:build` builds the lambda functions and `npm run frontend:build` builds the frontend which will be uploaded to S3 bucket.
+   `cd packages/lambda`
 
-5. Deploy
+2. Build
 
-  `npm run deploy`
+   `npm run build`
 
-Now, the email will be sent to the email address you specified. Click the link in the email, and sign in to admin console.
+3. Test
+
+   `npm run test`
+
+4. Deploy
+
+   `npm run deploy`
+
+### Client-side development
+
+1. Go to the `frontend` directory
+
+   `cd packages/frontend`
+
+2. Build
+
+   `npm run build`
+
+3. Test
+
+   `npm run test`
+
+4. Run the local server
+
+   `npm run start`
+
+Now, visit http://localhost:3000 and sign in to the admin console. Get the login information from the email you received.
 
 ## TODO
 

@@ -8,12 +8,12 @@ Parameters:
     Default: MyService
     MinLength: 1
   UserName:
-    Description: The name of an initial user
+    Description: Your user name
     Type: String
     Default: admin
     MinLength: 1
   UserEmail:
-    Description: The email address of an initial user. The verification email will be sent to the address.
+    Description: Your email address. The initial login information will be sent to the address.
     Type: String
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
