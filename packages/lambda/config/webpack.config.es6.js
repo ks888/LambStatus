@@ -20,28 +20,28 @@ export default {
     DeleteComponents: [
       'babel-polyfill',
       './src/api/deleteComponents/index.js'
-    ]
-    /*
-    PatchIncidents: [
-      'babel-polyfill',
-      './src/patchIncidents/index.js'
-    ],
-    DeleteIncidents: [
-      'babel-polyfill',
-      './src/deleteIncidents/index.js'
     ],
     GetIncidents: [
       'babel-polyfill',
-      './src/getIncidents/index.js'
+      './src/api/getIncidents/index.js'
     ],
     GetIncidentUpdates: [
       'babel-polyfill',
-      './src/getIncidentUpdates/index.js'
+      './src/api/getIncidentUpdates/index.js'
     ],
     PostIncidents: [
       'babel-polyfill',
-      './src/postIncidents/index.js'
+      './src/api/postIncidents/index.js'
     ],
+    PatchIncidents: [
+      'babel-polyfill',
+      './src/api/patchIncidents/index.js'
+    ],
+    DeleteIncidents: [
+      'babel-polyfill',
+      './src/api/deleteIncidents/index.js'
+    ]
+    /*
     CollectMetricsData: [
       'babel-polyfill',
       './src/collectMetricsData/index.js'

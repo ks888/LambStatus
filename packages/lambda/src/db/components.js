@@ -3,13 +3,13 @@ import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
-export default class ComponentsDB {
+export default class ComponentsStore {
   constructor () {
     const { AWS_REGION: region } = process.env
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getComponents = () => {
+  getAll () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: ServiceComponentTable,
@@ -33,7 +33,7 @@ export default class ComponentsDB {
     })
   }
 
-  getComponentsByID = (componentID) => {
+  getByID (componentID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: ServiceComponentTable,
@@ -62,7 +62,7 @@ export default class ComponentsDB {
     })
   }
 
-  updateComponent = (id, name, description, status, order) => {
+  update (id, name, description, status, order) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
         name, description, status, order
@@ -85,7 +85,7 @@ export default class ComponentsDB {
     })
   }
 
-  updateComponentStatus = (id, status) => {
+  updateStatus (id, status) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({ status })
       const params = {
@@ -103,12 +103,12 @@ export default class ComponentsDB {
           return reject(new VError(err, 'DynamoDB'))
         }
         fillInsufficientProps({description: ''}, data.Attributes)
-        resolve(data)
+        resolve(data.Attributes)
       })
     })
   }
 
-  deleteComponent = (id) => {
+  delete (id) {
     return new Promise((resolve, reject) => {
       const params = {
         Key: {

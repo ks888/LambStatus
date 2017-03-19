@@ -1,12 +1,10 @@
-import { Component } from 'model/components'
+import { Incidents } from 'model/incidents'
 
 export async function handle (event, context, callback) {
   try {
-    const comp = new Component(event.params.componentid, event.body.name,
-                               event.body.description, event.body.status)
-    await comp.validate()
-    await comp.save()
-    callback(null, JSON.stringify(comp.objectify()))
+    const incidents = new Incidents()
+    const incident = await incidents.lookup(event.params.incidentid)
+    await incident.delete()
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
@@ -18,7 +16,7 @@ export async function handle (event, context, callback) {
         callback('Error: an item not found')
         break
       default:
-        callback('Error: failed to update the component')
+        callback('Error: failed to delete the incident')
     }
   }
 }

@@ -16,7 +16,7 @@ export async function handle (event, context, callback) {
         callback('Error: an item not found')
         break
       default:
-        callback('Error: failed to delete a component')
+        callback('Error: failed to delete the component')
     }
   }
 }

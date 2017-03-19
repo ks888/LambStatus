@@ -1,4 +1,4 @@
-import ComponentsDB from 'db/components'
+import ComponentsStore from 'db/components'
 import generateID from 'utils/generateID'
 import { componentStatuses } from 'utils/const'
 import { NotFoundError, ValidationError } from 'utils/errors'
@@ -51,13 +51,13 @@ export class Component {
   }
 
   async save () {
-    const db = new ComponentsDB()
-    await db.updateComponent(this.componentID, this.name, this.description, this.status, this.order)
+    const store = new ComponentsStore()
+    await store.update(this.componentID, this.name, this.description, this.status, this.order)
   }
 
   async delete () {
-    const db = new ComponentsDB()
-    await db.deleteComponent(this.componentID)
+    const store = new ComponentsStore()
+    await store.delete(this.componentID)
   }
 
   objectify () {
@@ -73,16 +73,16 @@ export class Component {
 
 export class Components {
   async all () {
-    const db = new ComponentsDB()
-    const components = await db.getComponents()
+    const store = new ComponentsStore()
+    const components = await store.getAll()
     return components.map(comp => {
       return new Component(comp.componentID, comp.name, comp.description, comp.status, comp.order)
     })
   }
 
   async lookup (componentID) {
-    const db = new ComponentsDB()
-    const comps = await db.getComponentsByID(componentID)
+    const store = new ComponentsStore()
+    const comps = await store.getByID(componentID)
     if (comps.length === 0) {
       throw new NotFoundError('no matched item')
     } else if (comps.length === 1) {
