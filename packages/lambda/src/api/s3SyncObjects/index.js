@@ -1,8 +1,9 @@
 import response from 'cfn-response'
-import { listObjects, copyObject } from 'utils/s3'
+import S3 from 'aws/s3'
 
-export async function handler (event, context, callback) {
+export async function handle (event, context, callback) {
   if (event.RequestType === 'Delete') {
+    // TODO: handle delete request
     response.send(event, context, response.SUCCESS)
     return
   }
@@ -20,10 +21,11 @@ export async function handler (event, context, callback) {
     DestinationBucket
   } = params
   try {
-    const objects = await listObjects(region, SourceBucket, SourceKey)
+    const s3 = new S3()
+    const objects = await s3.listObjects(region, SourceBucket, SourceKey)
     await Promise.all(objects.map(async (obj) => {
       const destKey = obj.Key.replace(SourceKey + '/', '')
-      await copyObject(region, SourceBucket, obj.Key, DestinationBucket, destKey)
+      await s3.copyObject(region, SourceBucket, obj.Key, DestinationBucket, destKey)
     }))
     response.send(event, context, response.SUCCESS)
   } catch (error) {

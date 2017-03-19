@@ -3,7 +3,7 @@ import MetricsDB from 'db/metrics'
 import generateID from 'utils/generateID'
 import { ParameterError } from 'utils/errors'
 import { metricStatuses, metricStatusVisible, monitoringServices, region } from 'utils/const'
-import { getObject, putObject } from 'utils/s3'
+import S3 from 'aws/s3'
 
 export class Metrics {
   constructor () {
@@ -103,7 +103,8 @@ export class MetricsData {
   async getDataObject (date) {
     const objectName = `metrics/${this.metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
     try {
-      const obj = await getObject(region, this.dataBucket, objectName)
+      const s3 = new S3()
+      const obj = await s3.getObject(region, this.dataBucket, objectName)
       return new DataObject(objectName, JSON.parse(obj.Body.toString()))
     } catch (error) {
       // There will be no existing object at first.
@@ -113,7 +114,8 @@ export class MetricsData {
 
   async putDataObject (object) {
     const body = JSON.stringify(object.body)
-    return await putObject(region, this.dataBucket, object.objectName, body)
+    const s3 = new S3()
+    return await s3.putObject(region, this.dataBucket, object.objectName, body)
   }
 
   async calculateUncollectedDates (curr) {

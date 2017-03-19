@@ -40,7 +40,7 @@ export default {
     DeleteIncidents: [
       'babel-polyfill',
       './src/api/deleteIncidents/index.js'
-    ]
+    ],
     /*
     CollectMetricsData: [
       'babel-polyfill',
@@ -70,14 +70,16 @@ export default {
       'babel-polyfill',
       './src/deleteMetrics/index.js'
     ],
+    */
     S3PutObject: [
       'babel-polyfill',
-      './src/s3PutObjects/index.js'
+      './src/api/s3PutObjects/index.js'
     ],
     S3SyncObjects: [
       'babel-polyfill',
-      './src/s3SyncObjects/index.js'
-    ],
+      './src/api/s3SyncObjects/index.js'
+    ]
+    /*
     CognitoCreateUserPool: [
       'babel-polyfill',
       './src/cognitoCreateUserPool/index.js'
