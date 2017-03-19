@@ -1,14 +1,15 @@
-import ComponentService from 'service/component'
+import { Components } from 'model/components'
 
-export async function handler (event, context, callback) {
-  const service = new ComponentService()
+export async function handle (event, context, callback) {
   try {
-    await service.deleteComponent(event.params.componentid)
+    const components = new Components()
+    const component = await components.lookup(event.params.componentid)
+    await component.delete()
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
     switch (error.name) {
-      case 'ParameterError':
+      case 'ValidationError':
         callback('Error: ' + error.message)
         break
       case 'NotFoundError':

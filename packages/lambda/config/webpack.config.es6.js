@@ -7,23 +7,24 @@ export default {
   entry: {
     GetComponents: [
       'babel-polyfill',
-      './src/getComponents/index.js'
+      './src/api/getComponents/index.js'
     ],
     PostComponents: [
       'babel-polyfill',
-      './src/postComponents/index.js'
+      './src/api/postComponents/index.js'
     ],
     PatchComponents: [
       'babel-polyfill',
-      './src/patchComponents/index.js'
-    ],
-    PatchIncidents: [
-      'babel-polyfill',
-      './src/patchIncidents/index.js'
+      './src/api/patchComponents/index.js'
     ],
     DeleteComponents: [
       'babel-polyfill',
-      './src/deleteComponents/index.js'
+      './src/api/deleteComponents/index.js'
+    ]
+    /*
+    PatchIncidents: [
+      'babel-polyfill',
+      './src/patchIncidents/index.js'
     ],
     DeleteIncidents: [
       'babel-polyfill',
@@ -89,6 +90,7 @@ export default {
       'babel-polyfill',
       './src/cognitoCreateUser/index.js'
     ]
+    */
   },
   output: {
     path: './build/functions',

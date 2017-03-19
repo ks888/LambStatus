@@ -32,8 +32,7 @@ const apexProjectTemplate = {
   runtime: 'nodejs4.3',
   shim: false,
   role: lambdaRoleArn,
-  nameTemplate: '{{.Project.Name}}-{{.Function.Name}}',
-  handler: 'index.handler'
+  nameTemplate: '{{.Project.Name}}-{{.Function.Name}}'
 }
 const json = JSON.stringify(apexProjectTemplate, null, 2)
 const buildDir = path.normalize(`${__dirname}/../build`)
@@ -50,7 +49,7 @@ const createFunctionJSON = (role, timeout, memory, targetDirs) => {
     console.log(`${dir}/function.json created`)
   })
 }
-
+/*
 const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
 createFunctionJSON(metricsFunctionRoleArn, 60, 512, [
   buildDir + '/functions/CollectMetricsData'
@@ -69,3 +68,4 @@ createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/CognitoCreateUserPool',
   buildDir + '/functions/CognitoCreateUserPoolClient'
 ])
+*/
