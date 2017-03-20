@@ -151,7 +151,8 @@ class IncidentDialog extends React.Component {
     const statusDOMs = incidentStatuses.map((status) => {
       let checked = status === this.state.incidentStatus
       return (
-        <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status} checked={checked} groupName='status' />
+        <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status}
+          checked={checked} groupName='status' />
       )
     })
     return (

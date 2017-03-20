@@ -18,7 +18,7 @@
   },
   "rules": {
     "semi" : [2, "never"],
-    "max-len": [2, 120, 2],
+    "max-len": [2, { "code": 120, "tabWidth": 2, "ignoreTemplateLiterals": true }],
     "generator-star-spacing": 0,
     "babel/generator-star-spacing": 1,
     "jsx-quotes": [2, "prefer-single"]

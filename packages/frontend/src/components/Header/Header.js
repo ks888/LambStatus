@@ -23,7 +23,7 @@ export default class Header extends React.Component {
       <div>
         <button id='header-user-menu'
           className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)}>
-           {this.props.username}
+          {this.props.username}
           <i className='material-icons'>keyboard_arrow_down</i>
         </button>
 

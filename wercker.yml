@@ -9,10 +9,20 @@ build:
     - npm-install:
         cwd: packages/frontend
     - script:
-      name: test lambda package
-      cwd: packages/lambda
-      code: |
-        npm run test
+        name: lint lambda package
+        cwd: packages/lambda
+        code: |
+          npm run lint
+    - script:
+        name: lint frontend package
+        cwd: packages/frontend
+        code: |
+          npm run lint
+    - script:
+        name: test lambda package
+        cwd: packages/lambda
+        code: |
+          npm run test
     - script:
         name: test frontend package
         cwd: packages/frontend
