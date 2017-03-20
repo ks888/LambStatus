@@ -1,7 +1,7 @@
 import response from 'cfn-response'
-import { createUser } from 'utils/cognito'
+import Cognito from 'aws/cognito'
 
-export async function handler (event, context, callback) {
+export async function handle (event, context, callback) {
   if (event.RequestType === 'Delete') {
     // UserPool will be deleted too, so do nothing here.
     response.send(event, context, response.SUCCESS)
@@ -27,7 +27,7 @@ export async function handler (event, context, callback) {
   } = event.ResourceProperties
 
   try {
-    await createUser(region, userPoolId, userName, email)
+    await new Cognito().createUser(region, userPoolId, userName, email)
     response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)

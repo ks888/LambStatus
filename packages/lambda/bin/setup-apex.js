@@ -61,11 +61,9 @@ createFunctionJSON(s3HandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/S3PutObject',
   buildDir + '/functions/S3SyncObjects'
 ])
-/*
 const cognitoHandleFunctionRoleArn = getArn(awsResourceIDs, 'CognitoHandleFunctionRoleArn')
 createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/CognitoCreateUser',
   buildDir + '/functions/CognitoCreateUserPool',
   buildDir + '/functions/CognitoCreateUserPoolClient'
 ])
-*/

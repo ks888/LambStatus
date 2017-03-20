@@ -76,21 +76,19 @@ export default {
     S3SyncObjects: [
       'babel-polyfill',
       './src/api/s3SyncObjects/index.js'
-    ]
-    /*
+    ],
     CognitoCreateUserPool: [
       'babel-polyfill',
-      './src/cognitoCreateUserPool/index.js'
+      './src/api/cognitoCreateUserPool/index.js'
     ],
     CognitoCreateUserPoolClient: [
       'babel-polyfill',
-      './src/cognitoCreateUserPoolClient/index.js'
+      './src/api/cognitoCreateUserPoolClient/index.js'
     ],
     CognitoCreateUser: [
       'babel-polyfill',
-      './src/cognitoCreateUser/index.js'
+      './src/api/cognitoCreateUser/index.js'
     ]
-    */
   },
   output: {
     path: './build/functions',
