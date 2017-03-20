@@ -1,4 +1,11 @@
 {
   "presets": ["es2015", "stage-0"],
-  "plugins": ["transform-runtime"]
+  "plugins": ["transform-runtime"],
+  "env": {
+    "development": {
+      "presets": [
+        "power-assert"
+      ]
+    }
+  }
 }

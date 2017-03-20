@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { execSync } from 'child_process'
-import { putObject, listObjects } from '../src/utils/s3'
+import S3 from '../src/aws/s3'
 import packageJSON from '../package.json'
 
 const stopIfObjectsExist = (process.argv[2] !== '--force')
@@ -45,7 +45,7 @@ const release = async () => {
     await Promise.all(regions.map(async (region) => {
       const bucketName = 'lambstatus-' + region
       const keyName = `fn/${packageJSON.version}`
-      const objectKeys = await listObjects(region, bucketName, keyName)
+      const objectKeys = await new S3().listObjects(region, bucketName, keyName)
       if (objectKeys.length !== 0) {
         throw new Error(`objects already exist under ${bucketName}/${keyName}`)
       }
@@ -56,7 +56,7 @@ const release = async () => {
     const body = fs.readFileSync(`${buildDir}/${func}.zip`)
     await Promise.all(regions.map(async (region) => {
       const bucketName = 'lambstatus-' + region
-      await putObject(region, bucketName, objectName, body)
+      await new S3().putObject(region, bucketName, objectName, body)
     }))
     console.log(`uploaded: ${func}.zip`)
   }))
