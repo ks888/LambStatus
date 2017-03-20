@@ -1,11 +1,11 @@
-import { Metrics, MetricsData } from 'metrics'
+import { Metrics, MetricsData } from 'model/metrics'
 
-export async function handler (event, context, callback) {
+export async function handle (event, context, callback) {
   try {
-    const metrics = await new Metrics().listMetrics()
+    const metrics = await new Metrics().list()
     await Promise.all(metrics.map(async (metric) => {
       const metricsData = new MetricsData(metric.metricID, metric.type, metric.props, event.StatusPageS3BucketName)
-      await metricsData.collectData()
+      await metricsData.collect()
     }))
     callback(null)
   } catch (error) {

@@ -100,7 +100,6 @@ export class Incidents {
   async all () {
     const store = new IncidentsStore()
     const incidents = await store.getAll()
-    console.log(incidents)
     return incidents.map(incident => {
       return new Incident(incident.incidentID, incident.name, incident.status, '', [],
                           incident.updatedAt)

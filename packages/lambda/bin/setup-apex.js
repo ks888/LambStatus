@@ -49,7 +49,6 @@ const createFunctionJSON = (role, timeout, memory, targetDirs) => {
     console.log(`${dir}/function.json created`)
   })
 }
-/*
 const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
 createFunctionJSON(metricsFunctionRoleArn, 60, 512, [
   buildDir + '/functions/CollectMetricsData'
@@ -62,6 +61,7 @@ createFunctionJSON(s3HandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/S3PutObject',
   buildDir + '/functions/S3SyncObjects'
 ])
+/*
 const cognitoHandleFunctionRoleArn = getArn(awsResourceIDs, 'CognitoHandleFunctionRoleArn')
 createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/CognitoCreateUser',

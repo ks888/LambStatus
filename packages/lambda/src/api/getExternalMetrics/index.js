@@ -1,8 +1,8 @@
-import { Metrics } from 'metrics'
+import { Metrics } from 'model/metrics'
 
-export async function handler (event, context, callback) {
+export async function handle (event, context, callback) {
   try {
-    const externalMetrics = await new Metrics().listExternalMetrics(event.type)
+    const externalMetrics = await new Metrics().listExternal(event.type)
     callback(null, JSON.stringify(externalMetrics))
   } catch (error) {
     console.log(error.message)

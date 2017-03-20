@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk'
 
-export default class CloudWatchService {
+export default class CloudWatch {
   async listMetrics () {
     let metrics = []
     let nextToken = null

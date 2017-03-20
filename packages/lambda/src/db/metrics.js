@@ -4,13 +4,13 @@ import { MetricsTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
-export default class Metrics {
+export default class MetricsStore {
   constructor () {
     const { AWS_REGION: region } = process.env
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  listMetrics () {
+  getAll () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
@@ -37,7 +37,7 @@ export default class Metrics {
     })
   }
 
-  getMetric = (metricID) => {
+  getByID (metricID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
@@ -70,7 +70,7 @@ export default class Metrics {
     })
   }
 
-  postMetric (id, type, title, unit, description, status, props) {
+  update (id, type, title, unit, description, status, props) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({
       type, title, unit, description, status, props: JSON.stringify(props)
     })
@@ -96,7 +96,7 @@ export default class Metrics {
     })
   }
 
-  deleteMetric (id) {
+  delete (id) {
     return new Promise((resolve, reject) => {
       const params = {
         Key: {

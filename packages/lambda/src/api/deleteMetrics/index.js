@@ -1,13 +1,15 @@
-import { Metrics } from 'metrics'
+import { Metrics } from 'model/metrics'
 
 export async function handler (event, context, callback) {
   try {
-    await new Metrics().deleteMetric(event.params.metricid)
+    const metrics = new Metrics()
+    const metric = await metrics.lookup(event.params.metricid)
+    await metric.delete()
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
     switch (error.name) {
-      case 'ParameterError':
+      case 'ValidationError':
         callback('Error: ' + error.message)
         break
       case 'NotFoundError':

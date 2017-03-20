@@ -41,36 +41,34 @@ export default {
       'babel-polyfill',
       './src/api/deleteIncidents/index.js'
     ],
-    /*
     CollectMetricsData: [
       'babel-polyfill',
-      './src/collectMetricsData/index.js'
+      './src/api/collectMetricsData/index.js'
     ],
     GetExternalMetrics: [
       'babel-polyfill',
-      './src/getExternalMetrics/index.js'
+      './src/api/getExternalMetrics/index.js'
     ],
     GetPublicMetrics: [
       'babel-polyfill',
-      './src/getPublicMetrics/index.js'
+      './src/api/getPublicMetrics/index.js'
     ],
     GetMetrics: [
       'babel-polyfill',
-      './src/getMetrics/index.js'
+      './src/api/getMetrics/index.js'
     ],
     PostMetrics: [
       'babel-polyfill',
-      './src/postMetrics/index.js'
+      './src/api/postMetrics/index.js'
     ],
     PatchMetrics: [
       'babel-polyfill',
-      './src/patchMetrics/index.js'
+      './src/api/patchMetrics/index.js'
     ],
     DeleteMetrics: [
       'babel-polyfill',
-      './src/deleteMetrics/index.js'
+      './src/api/deleteMetrics/index.js'
     ],
-    */
     S3PutObject: [
       'babel-polyfill',
       './src/api/s3PutObjects/index.js'
