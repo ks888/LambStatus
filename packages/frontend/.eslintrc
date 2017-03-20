@@ -2,12 +2,14 @@
   "parser"  : "babel-eslint",
   "extends" : [
     "standard",
-    "standard-react"
+    "standard-react",
+    "standard-jsx"
   ],
   "plugins": [
     "babel",
     "react",
-    "promise"
+    "promise",
+    "standard"
   ],
   "env"     : {
     "browser" : true
