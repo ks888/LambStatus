@@ -82,6 +82,8 @@ export class Incident {
   async delete () {
     const store = new IncidentsStore()
     await store.delete(this.incidentID)
+
+    // TODO: delete IncidentUpdates
   }
 
   objectify () {
