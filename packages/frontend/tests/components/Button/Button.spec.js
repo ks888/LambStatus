@@ -1,6 +1,6 @@
 import React from 'react'
-import Button from 'components/Button/Button'
-import ButtonCss from 'components/Button/Button.scss'
+import Button from 'components/common/Button'
+import ButtonCss from 'components/common/Button/Button.scss'
 import { shallow } from 'enzyme'
 
 describe('(Component) Button', () => {

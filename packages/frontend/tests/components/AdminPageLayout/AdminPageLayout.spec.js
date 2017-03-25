@@ -1,8 +1,8 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import AdminPageLayout from 'components/AdminPageLayout'
-import Header from 'containers/Header'
-import Drawer from 'components/Drawer'
+import AdminPageLayout from 'components/adminPage/AdminPageLayout'
+import Header from 'components/adminPage/Header'
+import Drawer from 'components/adminPage/Drawer'
 
 describe('(Layout) AdminPage', function () {
   let component, props, child

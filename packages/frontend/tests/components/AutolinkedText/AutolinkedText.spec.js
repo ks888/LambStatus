@@ -1,6 +1,5 @@
 import React from 'react'
-import AutolinkedText from 'components/AutolinkedText'
-import AutolinkedTextCss from 'components/AutolinkedText/AutolinkedText.scss'
+import AutolinkedText from 'components/common/AutolinkedText'
 import { mount } from 'enzyme'
 
 describe('(Component) AutolinkedText', () => {

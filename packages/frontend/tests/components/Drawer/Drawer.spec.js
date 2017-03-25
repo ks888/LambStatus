@@ -1,8 +1,7 @@
 import React from 'react'
-import { Drawer } from 'components/Drawer/Drawer'
-import classes from 'components/Drawer/Drawer.scss'
 import { Link } from 'react-router'
 import { shallow } from 'enzyme'
+import Drawer from 'components/adminPage/Drawer'
 
 describe('(Component) Drawer', () => {
   let _wrapper

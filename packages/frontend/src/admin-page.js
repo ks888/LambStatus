@@ -5,9 +5,9 @@ import { Router, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
 
-import createStore from 'store/createStore'
+import routes from 'components/adminPage/Routes'
+import { buildStore } from 'utils/store'
 import * as settings from 'utils/settings'
-import routes from 'routes/admin'
 
 // ========================================================
 // Browser History Setup
@@ -24,7 +24,7 @@ const browserHistory = useRouterHistory(createBrowserHistory)({
 // so we need to provide a custom `selectLocationState` to inform
 // react-router-redux of its location.
 const initialState = window.___INITIAL_STATE__
-const store = createStore(initialState, browserHistory)
+const store = buildStore(initialState, browserHistory)
 const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: (state) => state.router
 })
@@ -75,10 +75,10 @@ if (__DEV__) {
     }
 
     // Setup hot module replacement
-    module.hot.accept('./routes/admin', () => {
+    module.hot.accept('./components/adminPage/Routes', () => {
       setTimeout(() => {
         ReactDOM.unmountComponentAtNode(MOUNT_NODE)
-        const newRoutes = require('./routes/admin').default
+        const newRoutes = require('./components/adminPage/Routes').default
         render(newRoutes)
       })
     })

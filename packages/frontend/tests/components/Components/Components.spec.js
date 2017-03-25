@@ -1,12 +1,11 @@
 import React from 'react'
-import Components from 'components/Components'
+import Components from 'components/adminPage/Components/Components'
 import { shallow } from 'enzyme'
 
 describe('(Component) Components', () => {
-  let props, spies, component
+  let props, component
 
   beforeEach(() => {
-    spies = {}
     props = {
       components: [],
       fetchComponents: () => {},
