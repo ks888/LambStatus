@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
+import { sendRequest, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_INCIDENTS = 'LIST_INCIDENTS'
@@ -45,95 +45,84 @@ export function removeIncident (incidentID) {
 }
 
 export const fetchIncidents = (callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'incidents')
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listIncidents(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'incidents', {}, callbacks)
+      dispatch(listIncidents(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'incidents/' + incidentID + '/incidentupdates')
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listIncidentUpdates(json, incidentID))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'incidents/' + incidentID + '/incidentupdates', {}, callbacks)
+      dispatch(listIncidentUpdates(json, incidentID))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const postIncident = (name, incidentStatus, message, components, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = {
-      name: name,
-      incidentStatus: incidentStatus,
-      message: message,
-      components: components
+  return async dispatch => {
+    try {
+      const body = {
+        name: name,
+        incidentStatus: incidentStatus,
+        message: message,
+        components: components
+      }
+      const json = await sendRequest(apiURL + 'incidents', {
+        headers: buildHeaders(),
+        method: 'POST',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(addIncident(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
     }
-    return fetch(apiURL + 'incidents', {
-      headers: buildHeaders(),
-      method: 'POST',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(addIncident(json))
-      })
-      .catch(handleError(onFailure))
   }
 }
 
 export const updateIncident = (incidentID, name, incidentStatus, message, components, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = {
-      name: name,
-      incidentStatus: incidentStatus,
-      message: message,
-      components: components
+  return async dispatch => {
+    try {
+      const body = {
+        name: name,
+        incidentStatus: incidentStatus,
+        message: message,
+        components: components
+      }
+      const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
+        headers: buildHeaders(),
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(editIncident(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
     }
-    return fetch(apiURL + 'incidents/' + incidentID, {
-      headers: buildHeaders(),
-      method: 'PATCH',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(editIncident(json))
-      })
-      .catch(handleError(onFailure))
   }
 }
 
 export const deleteIncident = (incidentID, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'incidents/' + incidentID, {
-      headers: buildHeaders(),
-      method: 'DELETE'
-    }).then(checkStatus)
-      .then(response => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(removeIncident(incidentID))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      await sendRequest(apiURL + 'incidents/' + incidentID, {
+        headers: buildHeaders(),
+        method: 'DELETE'
+      }, callbacks)
+      dispatch(removeIncident(incidentID))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }

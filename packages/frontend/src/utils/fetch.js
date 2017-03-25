@@ -9,32 +9,24 @@ export class HTTPError extends Error {
   }
 }
 
-export const checkStatus = (response) => {
-  return new Promise((resolve, reject) => {
-    if (response.status >= 200 && response.status < 300) {
-      resolve(response)
-    } else {
-      if (response.headers.get('Content-Type').includes('application/json')) {
-        response.json().then(json => {
-          reject(new HTTPError(json.errorMessage))
-        })
-      } else {
-        response.text().then(body => {
-          reject(new HTTPError(`Error: ${response.statusText}`))
-        })
-      }
-    }
-  })
-}
+export const sendRequest = async (url, params = {}, callbacks = {}) => {
+  const { onLoad, onSuccess, onFailure } = callbacks
+  if (onLoad && typeof onLoad === 'function') onLoad()
 
-export const handleError = (onHTTPError) => {
-  return (error) => {
-    console.error(error.message)
-    console.error(error.stack)
-    if (error.name === 'HTTPError') {
-      if (onHTTPError && typeof onHTTPError === 'function') onHTTPError(error.message)
-    }
+  const resp = await fetch(url, params)
+  let body
+  if (resp.headers.get('Content-Type').includes('application/json')) {
+    body = await resp.json()
+  } else {
+    body = await resp.text()
   }
+
+  if (200 <= resp.status && resp.status < 300) {
+    if (onSuccess && typeof onSuccess === 'function') onSuccess()
+    return body
+  }
+  if (onFailure && typeof onFailure === 'function') onSuccess()
+  throw new HTTPError(body.errorMessage)
 }
 
 export const buildHeaders = () => {

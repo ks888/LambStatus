@@ -1,6 +1,6 @@
 import 'whatwg-fetch'
+import { sendRequest, buildHeaders } from 'utils/fetch'
 import { apiURL, statusPageURL } from 'utils/settings'
-import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
 
 export const LIST_METRICS = 'LIST_METRICS'
 export const LIST_EXTERNAL_METRICS = 'LIST_EXTERNAL_METRICS'
@@ -57,118 +57,103 @@ export function removeMetric (metricID) {
 }
 
 export const fetchMetrics = (callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'metrics', {
-      headers: buildHeaders()
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listMetrics(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'metrics', {
+        headers: buildHeaders()
+      }, callbacks)
+      dispatch(listMetrics(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const fetchPublicMetrics = (callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'public-metrics')
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listMetrics(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'public-metrics', {}, callbacks)
+      dispatch(listMetrics(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'external-metrics?type=' + metricsType, {
-      headers: buildHeaders()
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listExternalMetrics(metricsType, json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'external-metrics?type=' + metricsType, {
+        headers: buildHeaders()
+      }, callbacks)
+      dispatch(listExternalMetrics(metricsType, json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const postMetric = (type, props, title, status, unit, description, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = { type, props, title, status, unit, description }
-    return fetch(apiURL + 'metrics', {
-      headers: buildHeaders(),
-      method: 'POST',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(addMetric(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const body = { type, props, title, status, unit, description }
+      const json = await sendRequest(apiURL + 'metrics', {
+        headers: buildHeaders(),
+        method: 'POST',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(addMetric(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const updateMetric = (metricID, type, props, title, status, unit, description, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = { type, props, title, status, unit, description }
-    return fetch(apiURL + 'metrics/' + metricID, {
-      headers: buildHeaders(),
-      method: 'PATCH',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(editMetric(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const body = { type, props, title, status, unit, description }
+      const json = await sendRequest(apiURL + 'metrics/' + metricID, {
+        headers: buildHeaders(),
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(editMetric(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const deleteMetric = (metricID, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'metrics/' + metricID, {
-      headers: buildHeaders(),
-      method: 'DELETE'
-    }).then(checkStatus)
-      .then(response => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(removeMetric(metricID))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      await sendRequest(apiURL + 'metrics/' + metricID, {
+        headers: buildHeaders(),
+        method: 'DELETE'
+      }, callbacks)
+      dispatch(removeMetric(metricID))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
-                {cache: 'no-cache'})
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listMetricsData(metricID, year, month, date, json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
+                                     {cache: 'no-cache'}, callbacks)
+      dispatch(listMetricsData(metricID, year, month, date, json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }

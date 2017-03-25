@@ -1,5 +1,5 @@
 import 'whatwg-fetch'
-import { checkStatus, handleError, buildHeaders } from 'utils/fetch'
+import { sendRequest, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_COMPONENTS = 'LIST_COMPONENTS'
@@ -36,70 +36,62 @@ export function removeComponent (componentID) {
 }
 
 export const fetchComponents = (callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'components')
-      .then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(listComponents(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'components', {}, callbacks)
+      dispatch(listComponents(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const postComponent = (name, description, status, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = { name, description, status }
-    return fetch(apiURL + 'components', {
-      headers: buildHeaders(),
-      method: 'POST',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(addComponent(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const body = { name, description, status }
+      const json = await sendRequest(apiURL + 'components', {
+        headers: buildHeaders(),
+        method: 'POST',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(addComponent(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const updateComponent = (componentID, name, description, status, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    let body = { name, description, status }
-    return fetch(apiURL + 'components/' + componentID, {
-      headers: buildHeaders(),
-      method: 'PATCH',
-      body: JSON.stringify(body)
-    }).then(checkStatus)
-      .then(response => response.json())
-      .then(json => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(editComponent(json))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      const body = { name, description, status }
+      const json = await sendRequest(apiURL + 'components/' + componentID, {
+        headers: buildHeaders(),
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(editComponent(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
 
 export const deleteComponent = (componentID, callbacks = {}) => {
-  const { onLoad, onSuccess, onFailure } = callbacks
-  return dispatch => {
-    if (onLoad && typeof onLoad === 'function') onLoad()
-    return fetch(apiURL + 'components/' + componentID, {
-      headers: buildHeaders(),
-      method: 'DELETE'
-    }).then(checkStatus)
-      .then(response => {
-        if (onSuccess && typeof onSuccess === 'function') onSuccess()
-        dispatch(removeComponent(componentID))
-      })
-      .catch(handleError(onFailure))
+  return async dispatch => {
+    try {
+      await sendRequest(apiURL + 'components/' + componentID, {
+        headers: buildHeaders(),
+        method: 'DELETE'
+      }, callbacks)
+      dispatch(removeComponent(componentID))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
   }
 }
