@@ -10,6 +10,8 @@ import {
   deleteComponent
 } from 'actions/components'
 
+fetchMock = fetchMock.mock({headers: {'Content-Type': 'application/json'}})
+
 describe('(Action) components', () => {
   const comp1 = {
     componentID: 'compID1',

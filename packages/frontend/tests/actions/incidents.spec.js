@@ -12,6 +12,8 @@ import {
   deleteIncident
 } from 'actions/incidents'
 
+fetchMock = fetchMock.mock({headers: {'Content-Type': 'application/json'}})
+
 describe('(Action) incidents', () => {
   const incident1 = {
     incidentID: 'id'

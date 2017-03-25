@@ -1,4 +1,3 @@
-import fetchMock from 'fetch-mock'
 import { CognitoUserPool, CognitoUser } from 'amazon-cognito-identity-js'
 import { CALL_HISTORY_METHOD } from 'react-router-redux'
 import {

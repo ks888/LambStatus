@@ -21,11 +21,12 @@ export const sendRequest = async (url, params = {}, callbacks = {}) => {
     body = await resp.text()
   }
 
+  // eslint-disable-next-line yoda
   if (200 <= resp.status && resp.status < 300) {
     if (onSuccess && typeof onSuccess === 'function') onSuccess()
     return body
   }
-  if (onFailure && typeof onFailure === 'function') onSuccess()
+  if (onFailure && typeof onFailure === 'function') onFailure()
   throw new HTTPError(body.errorMessage)
 }
 
