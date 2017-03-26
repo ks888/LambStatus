@@ -25,7 +25,7 @@ describe('(Action) users', () => {
 
   describe('signin', () => {
     it('Should return a function.', () => {
-      expect(signin()).to.be.a('function')
+      assert(typeof signin() === 'function')
     })
 
     it('Should sign in.', () => {
@@ -34,14 +34,14 @@ describe('(Action) users', () => {
       })
       signin('inami', undefined, callbacks)(dispatchSpy)
 
-      expect(callbacks.onLoad.calledOnce).to.be.true
-      expect(callbacks.onSuccess.calledOnce).to.be.true
-      expect(callbacks.onFailure.called).to.be.false
-      expect(callbacks.onNewPasswordRequested.called).to.be.false
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
+      assert(!callbacks.onNewPasswordRequested.called)
 
-      expect(dispatchSpy.firstCall.args[0].type).to.equal(GET_USER)
-      expect(dispatchSpy.firstCall.args[0].user).to.deep.equal({username: 'inami'})
-      expect(dispatchSpy.secondCall.args[0].type).to.equal(CALL_HISTORY_METHOD)
+      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
+      assert.deepEqual({username: 'inami'}, dispatchSpy.firstCall.args[0].user)
+      assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
 
       CognitoUser.prototype.authenticateUser.restore()
     })
@@ -52,11 +52,11 @@ describe('(Action) users', () => {
       })
       signin('inami', undefined, callbacks)(dispatchSpy)
 
-      expect(callbacks.onLoad.calledOnce).to.be.true
-      expect(callbacks.onSuccess.called).to.be.false
-      expect(callbacks.onFailure.calledOnce).to.be.true
+      assert(callbacks.onLoad.calledOnce)
+      assert(!callbacks.onSuccess.called)
+      assert(callbacks.onFailure.calledOnce)
 
-      expect(dispatchSpy.called).to.be.false
+      assert(!dispatchSpy.called)
 
       CognitoUser.prototype.authenticateUser.restore()
     })
@@ -75,13 +75,13 @@ describe('(Action) users', () => {
         onNewPasswordRequested: (cb) => { cb(undefined, callbacks) }
       })(dispatchSpy)
 
-      expect(callbacks.onLoad.calledTwice).to.be.true
-      expect(callbacks.onSuccess.calledOnce).to.be.true
-      expect(callbacks.onFailure.called).to.be.false
+      assert(callbacks.onLoad.calledTwice)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
 
-      expect(dispatchSpy.firstCall.args[0].type).to.equal(GET_USER)
-      expect(dispatchSpy.firstCall.args[0].user).to.deep.equal({username: 'inami'})
-      expect(dispatchSpy.secondCall.args[0].type).to.equal(CALL_HISTORY_METHOD)
+      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
+      assert.deepEqual({username: 'inami'}, dispatchSpy.firstCall.args[0].user)
+      assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
 
       CognitoUser.prototype.completeNewPasswordChallenge.restore()
       CognitoUser.prototype.authenticateUser.restore()
@@ -90,7 +90,7 @@ describe('(Action) users', () => {
 
   describe('fetchUser', () => {
     it('Should return a function.', () => {
-      expect(fetchUser()).to.be.a('function')
+      assert(typeof fetchUser() === 'function')
     })
 
     it('Should fetch a user.', () => {
@@ -101,8 +101,8 @@ describe('(Action) users', () => {
 
       fetchUser()(dispatchSpy)
 
-      expect(dispatchSpy.firstCall.args[0].type).to.equal(GET_USER)
-      expect(dispatchSpy.firstCall.args[0].user).to.deep.equal(user)
+      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
+      assert.deepEqual(user, dispatchSpy.firstCall.args[0].user)
 
       CognitoUserPool.prototype.getCurrentUser.restore()
     })
@@ -111,12 +111,12 @@ describe('(Action) users', () => {
   describe('isAuthorized', () => {
     it('Should authorize a right user.', () => {
       sinon.stub(CognitoUserPool.prototype, 'getCurrentUser', () => {
-        return {username: 'inami', getSession: (cb) => { cb() } }
+        return { username: 'inami', getSession: (cb) => { cb() } }
       })
 
       const callback = sinon.spy()
       isAuthorized(callback)
-      expect(callback.firstCall.args[0]).to.equal(true)
+      assert(callback.firstCall.args[0])
 
       CognitoUserPool.prototype.getCurrentUser.restore()
     })
@@ -124,7 +124,7 @@ describe('(Action) users', () => {
 
   describe('signout', () => {
     it('Should return a function.', () => {
-      expect(signout()).to.be.a('function')
+      assert(typeof signout() === 'function')
     })
 
     it('Should sign out.', () => {
@@ -136,9 +136,9 @@ describe('(Action) users', () => {
 
       signout()(dispatchSpy)
 
-      expect(dispatchSpy.firstCall.args[0].type).to.equal(GET_USER)
-      expect(dispatchSpy.firstCall.args[0].user).to.deep.equal({username: ''})
-      expect(dispatchSpy.secondCall.args[0].type).to.equal(CALL_HISTORY_METHOD)
+      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
+      assert.deepEqual({username: ''}, dispatchSpy.firstCall.args[0].user)
+      assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
 
       signOutMock.verify()
       signOutMock.restore()
@@ -148,7 +148,7 @@ describe('(Action) users', () => {
 
   describe('forgotPassword', () => {
     it('Should return a function.', () => {
-      expect(forgotPassword()).to.be.a('function')
+      assert(typeof forgotPassword() === 'function')
     })
 
     it('Should forgot password.', () => {
@@ -157,9 +157,9 @@ describe('(Action) users', () => {
       })
       forgotPassword('inami', callbacks)(dispatchSpy)
 
-      expect(callbacks.onLoad.calledOnce).to.be.true
-      expect(callbacks.onSuccess.calledOnce).to.be.true
-      expect(callbacks.onFailure.called).to.be.false
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
 
       CognitoUser.prototype.forgotPassword.restore()
     })
@@ -167,7 +167,7 @@ describe('(Action) users', () => {
 
   describe('setCodeAndPassword', () => {
     it('Should return a function.', () => {
-      expect(setCodeAndPassword()).to.be.a('function')
+      assert(typeof setCodeAndPassword() === 'function')
     })
 
     it('Should set code and new password.', () => {
@@ -176,9 +176,9 @@ describe('(Action) users', () => {
       })
       setCodeAndPassword(undefined, 'inami', undefined, callbacks)(dispatchSpy)
 
-      expect(callbacks.onLoad.calledOnce).to.be.true
-      expect(callbacks.onSuccess.calledOnce).to.be.true
-      expect(callbacks.onFailure.called).to.be.false
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
 
       CognitoUser.prototype.confirmPassword.restore()
     })

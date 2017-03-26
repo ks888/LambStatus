@@ -12,8 +12,6 @@ import {
   deleteIncident
 } from 'actions/incidents'
 
-fetchMock = fetchMock.mock({headers: {'Content-Type': 'application/json'}})
-
 describe('(Action) incidents', () => {
   const incident1 = {
     incidentID: 'id'
@@ -40,20 +38,20 @@ describe('(Action) incidents', () => {
 
   describe('fetchIncidents', () => {
     it('Should return a function.', () => {
-      expect(fetchIncidents()).to.be.a('function')
+      assert(typeof fetchIncidents() === 'function')
     })
 
     it('Should fetch incidents.', () => {
-      fetchMock.get(/.*\/incidents/, { body: [incident1] })
+      fetchMock.get(/.*\/incidents/, { body: [incident1], headers: {'Content-Type': 'application/json'} })
 
       return fetchIncidents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(LIST_INCIDENTS)
-          expect(dispatchSpy.firstCall.args[0].incidents).to.deep.equal([incident1])
+          assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENTS)
+          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].incidents)
         })
     })
 
@@ -62,32 +60,33 @@ describe('(Action) incidents', () => {
 
       return fetchIncidents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('fetchIncidentUpdates', () => {
     it('Should return a function.', () => {
-      expect(fetchIncidentUpdates()).to.be.a('function')
+      assert(typeof fetchIncidentUpdates() === 'function')
     })
 
     it('Should fetch incidents.', () => {
-      fetchMock.get(/.*\/incidents\/.*\/incidentupdates/, { body: [incidentUpdate1] })
+      fetchMock.get(/.*\/incidents\/.*\/incidentupdates/,
+                    { body: [incidentUpdate1], headers: {'Content-Type': 'application/json'} })
 
       return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(LIST_INCIDENT_UPDATES)
-          expect(dispatchSpy.firstCall.args[0].incidentUpdates).to.deep.equal([incidentUpdate1])
-          expect(dispatchSpy.firstCall.args[0].incidentID).to.equal('id')
+          assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENT_UPDATES)
+          assert.deepEqual([incidentUpdate1], dispatchSpy.firstCall.args[0].incidentUpdates)
+          assert(dispatchSpy.firstCall.args[0].incidentID === 'id')
         })
     })
 
@@ -96,31 +95,31 @@ describe('(Action) incidents', () => {
 
       return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('postIncident', () => {
     it('Should return a function.', () => {
-      expect(postIncident()).to.be.a('function')
+      assert(typeof postIncident() === 'function')
     })
 
     it('Should post a new incident.', () => {
-      fetchMock.post(/.*\/incidents/, { body: [incident1] })
+      fetchMock.post(/.*\/incidents/, { body: [incident1], headers: {'Content-Type': 'application/json'} })
 
       return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(ADD_INCIDENT)
-          expect(dispatchSpy.firstCall.args[0].response).to.deep.equal([incident1])
+          assert(dispatchSpy.firstCall.args[0].type === ADD_INCIDENT)
+          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].response)
         })
     })
 
@@ -129,31 +128,32 @@ describe('(Action) incidents', () => {
 
       return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('updateIncident', () => {
     it('Should return a function.', () => {
-      expect(updateIncident()).to.be.a('function')
+      assert(typeof updateIncident() === 'function')
     })
 
     it('Should post a new incident.', () => {
-      fetchMock.patch(/.*\/incidents\/.*/, { body: [incident1] })
+      fetchMock.patch(/.*\/incidents\/.*/,
+                      { body: [incident1], headers: {'Content-Type': 'application/json'} })
 
       return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(EDIT_INCIDENT)
-          expect(dispatchSpy.firstCall.args[0].response).to.deep.equal([incident1])
+          assert(dispatchSpy.firstCall.args[0].type === EDIT_INCIDENT)
+          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].response)
         })
     })
 
@@ -162,31 +162,31 @@ describe('(Action) incidents', () => {
 
       return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('deleteIncident', () => {
     it('Should return a function.', () => {
-      expect(deleteIncident()).to.be.a('function')
+      assert(typeof deleteIncident() === 'function')
     })
 
     it('Should post a new incident.', () => {
-      fetchMock.delete(/.*\/incidents\/.*/, { body: [incident1] })
+      fetchMock.delete(/.*\/incidents\/.*/, 204)
 
       return deleteIncident('id', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(REMOVE_INCIDENT)
-          expect(dispatchSpy.firstCall.args[0].incidentID).to.deep.equal('id')
+          assert(dispatchSpy.firstCall.args[0].type === REMOVE_INCIDENT)
+          assert.deepEqual('id', dispatchSpy.firstCall.args[0].incidentID)
         })
     })
 
@@ -195,11 +195,11 @@ describe('(Action) incidents', () => {
 
       return deleteIncident('id', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })

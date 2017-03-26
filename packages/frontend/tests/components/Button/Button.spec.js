@@ -21,31 +21,31 @@ describe('(Component) Button', () => {
   })
 
   it('Should render with the name of button.', () => {
-    expect(_wrapper.text()).to.equal(buttonName)
+    assert(_wrapper.text() === buttonName)
   })
 
   it('Should render with the given css class.', () => {
-    expect(_wrapper.hasClass(buttonClass)).to.be.true
+    assert(_wrapper.hasClass(buttonClass))
   })
 
   it('Should render with the plain design.', () => {
-    expect(_wrapper.hasClass(ButtonCss.plain)).to.not.be.true
+    assert(!_wrapper.hasClass(ButtonCss.plain))
 
     _props.plain = true
     _wrapper = shallow(<Button {..._props} />)
-    expect(_wrapper.hasClass(ButtonCss.plain)).to.be.true
+    assert(_wrapper.hasClass(ButtonCss.plain))
   })
 
   it('Should call onClick callback.', () => {
-    _spies.onClick.should.have.not.been.called
+    _spies.onClick.notCalled
 
     _wrapper.simulate('click')
 
-    _spies.onClick.should.have.been.called
+    _spies.onClick.calledOnce
   })
 
   it('Should render with the disabled button.', () => {
     _wrapper = shallow(<Button {..._props} disabled />)
-    expect(_wrapper.find('button').prop('disabled')).to.be.true
+    assert(_wrapper.find('button').prop('disabled'))
   })
 })

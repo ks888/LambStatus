@@ -25,7 +25,7 @@ describe('(Reducer) incidents', () => {
   describe('listIncidentsHandler', () => {
     it('Should update the `incidents` state.', () => {
       const state = incidentsReducer(undefined, listIncidents(JSON.stringify([incident1])))
-      expect(state.incidents).to.deep.equal([incident1])
+      assert.deepEqual([incident1], state.incidents)
     })
   })
 
@@ -33,16 +33,16 @@ describe('(Reducer) incidents', () => {
     it('Should update the `incidents` state.', () => {
       const state = incidentsReducer({incidents: [incident1]},
         listIncidentUpdates(JSON.stringify([incidentUpdate1]), '1'))
-      expect(state.incidents).to.deep.equal([Object.assign({}, incident1, {
+      assert.deepEqual([Object.assign({}, incident1, {
         incidentUpdates: [incidentUpdate1]
-      })])
+      })], state.incidents)
     })
   })
 
   describe('addIncidentHandler', () => {
     it('Should update the `incidents` state.', () => {
       const state = incidentsReducer({incidents: [incident1]}, addIncident(JSON.stringify({incident: incident2})))
-      expect(state.incidents).to.deep.equal([incident2, incident1])
+      assert.deepEqual([incident2, incident1], state.incidents)
     })
   })
 
@@ -52,14 +52,14 @@ describe('(Reducer) incidents', () => {
         name: 'newname'
       })
       const state = incidentsReducer({incidents: [incident1]}, editIncident(JSON.stringify({incident: newIncident1})))
-      expect(state.incidents).to.deep.equal([newIncident1])
+      assert.deepEqual([newIncident1], state.incidents)
     })
   })
 
   describe('removeIncidentHandler', () => {
     it('Should update the `incidents` state.', () => {
       const state = incidentsReducer({incidents: [incident1]}, removeIncident('1'))
-      expect(state.incidents).to.deep.equal([])
+      assert.deepEqual([], state.incidents)
     })
   })
 })
