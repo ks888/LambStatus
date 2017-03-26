@@ -67,6 +67,14 @@ Resources:
           - Effect: "Allow"
             Action: "dynamodb:*"
             Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceUpdateTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
               arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
       Roles:
         - Ref: "LambdaRole"
@@ -367,6 +375,171 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates
+  GetMaintenancesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/GetMaintenances.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Get a list of maintenances"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetMaintenances
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetMaintenancesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetMaintenancesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/maintenances
+  PostMaintenancesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/PostMaintenances.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Create a new maintenance"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PostMaintenances
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PostMaintenancesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PostMaintenancesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/maintenances
+  PatchMaintenancesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/PatchMaintenances.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Update an existing maintenance"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchMaintenances
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PatchMaintenancesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PatchMaintenancesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/maintenances/{maintenanceid}
+  DeleteMaintenancesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/DeleteMaintenances.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Delete an maintenance"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-DeleteMaintenances
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  DeleteMaintenancesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "DeleteMaintenancesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/maintenances/{maintenanceid}
+  GetMaintenanceUpdatesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/GetMaintenanceUpdates.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Get maintenance updates"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetMaintenanceUpdates
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetMaintenanceUpdatesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetMaintenanceUpdatesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/maintenances/{maintenanceid}/maintenanceupdates
   GetExternalMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1253,6 +1426,320 @@ Resources:
             method.response.header.Access-Control-Allow-Headers: true
             method.response.header.Access-Control-Allow-Methods: true
             method.response.header.Access-Control-Allow-Origin: true
+  MaintenancesApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "RestApi"
+          - "RootResourceId"
+      PathPart: "maintenances"
+  GetMaintenancesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenancesApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  PostMaintenancesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenancesApiResource"
+      HttpMethod: "POST"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMaintenancesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenancesApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  MaintenanceApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "MaintenancesApiResource"
+      PathPart: "{maintenanceid}"
+  PatchMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  DeleteMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "204"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+  MaintenanceUpdatesApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "MaintenanceApiResource"
+      PathPart: "maintenanceupdates"
+  GetMaintenanceUpdatesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceUpdatesApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenanceUpdatesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMaintenanceUpdatesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceUpdatesApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
   ExternalMetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -1786,6 +2273,40 @@ Resources:
         - AttributeName: "incidentID"
           KeyType: "HASH"
         - AttributeName: "incidentUpdateID"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+  MaintenanceTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-MaintenanceTable
+      AttributeDefinitions:
+        - AttributeName: "maintenanceID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "maintenanceID"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+  MaintenanceUpdateTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-MaintenanceUpdateTable
+      AttributeDefinitions:
+        - AttributeName: "maintenanceID"
+          AttributeType: "S"
+        - AttributeName: "maintenanceUpdateID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "maintenanceID"
+          KeyType: "HASH"
+        - AttributeName: "maintenanceUpdateID"
           KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
