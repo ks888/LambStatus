@@ -10,7 +10,7 @@ describe('MaintenancesStore', () => {
 
     it('should return a list of maintenances', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: ''}]})
+        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}]})
       })
       const maints = await new MaintenancesStore().getAll()
       assert(maints.length === 1)
@@ -39,7 +39,7 @@ describe('MaintenancesStore', () => {
 
     it('should return a maintenance', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: ''}]})
+        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}]})
       })
       const maints = await new MaintenancesStore().getByID('1')
       assert(maints.length === 1)
@@ -73,15 +73,19 @@ describe('MaintenancesStore', () => {
           name: params.ExpressionAttributeValues[':n'],
           status: params.ExpressionAttributeValues[':s'],
           startAt: params.ExpressionAttributeValues[':startAt'],
-          endAt: params.ExpressionAttributeValues[':endAt']
+          endAt: params.ExpressionAttributeValues[':endAt'],
+          updatedAt: params.ExpressionAttributeValues[':updatedAt'],
+          updating: params.ExpressionAttributeValues[':updating']
         }})
       })
-      const maint = await new MaintenancesStore().update('1', 'name', 'status', 'startAt', 'endAt')
+      const maint = await new MaintenancesStore().update('1', 'name', 'status', 'startAt', 'endAt', 'updatedAt', false)
       assert(maint.maintenanceID === '1')
       assert(maint.name === 'name')
       assert(maint.status === 'status')
       assert(maint.startAt === 'startAt')
       assert(maint.endAt === 'endAt')
+      assert(maint.updatedAt === 'updatedAt')
+      assert(maint.updating === false)
     })
 
     it('should return error on exception thrown', async () => {

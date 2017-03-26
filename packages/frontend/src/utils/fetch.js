@@ -14,18 +14,25 @@ export const sendRequest = async (url, params = {}, callbacks = {}) => {
   if (onLoad && typeof onLoad === 'function') onLoad()
 
   const resp = await fetch(url, params)
-  let body
-  if (resp.headers.get('Content-Type').includes('application/json')) {
-    body = await resp.json()
-  } else {
-    body = await resp.text()
+  const receiveBody = async (resp) => {
+    if (resp.headers.get('Content-Type').includes('application/json')) {
+      return await resp.json()
+    } else {
+      return await resp.text()
+    }
   }
 
   // eslint-disable-next-line yoda
   if (200 <= resp.status && resp.status < 300) {
+    let body
+    if (resp.status !== 204) {
+      body = await receiveBody(resp)
+    }
     if (onSuccess && typeof onSuccess === 'function') onSuccess()
     return body
   }
+
+  const body = await receiveBody(resp)
   if (onFailure && typeof onFailure === 'function') onFailure()
   throw new HTTPError(body.errorMessage)
 }

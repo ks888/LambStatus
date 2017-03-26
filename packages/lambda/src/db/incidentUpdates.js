@@ -61,16 +61,9 @@ export default class IncidentUpdatesStore {
     })
   }
 
-  delete (incidentID, incidentUpdates) {
-    let requests = incidentUpdates.map((incidentUpdate) => {
-      return {
-        DeleteRequest: {
-          Key: {
-            incidentID: incidentID,
-            incidentUpdateID: incidentUpdate.incidentUpdateID
-          }
-        }
-      }
+  delete (incidentID, incidentUpdateIDs) {
+    let requests = incidentUpdateIDs.map((incidentUpdateID) => {
+      return { DeleteRequest: { Key: { incidentID, incidentUpdateID } }}
     })
 
     return new Promise((resolve, reject) => {

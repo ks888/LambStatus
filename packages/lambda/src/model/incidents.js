@@ -55,9 +55,9 @@ export class Incident {
       throw new ValidationError('invalid components parameter')
     }
 
-    this.components.forEach(comp => {
-      comp.validate()
-    })
+    await Promise.all(this.components.map(async comp => {
+      await comp.validate()
+    }))
   }
 
   async getIncidentUpdates () {
@@ -80,10 +80,13 @@ export class Incident {
   }
 
   async delete () {
-    const store = new IncidentsStore()
-    await store.delete(this.incidentID)
+    const incidentsStore = new IncidentsStore()
+    await incidentsStore.delete(this.incidentID)
 
-    // TODO: delete IncidentUpdates
+    const incidentUpdates = await this.getIncidentUpdates()
+    const incidentUpdateIDs = incidentUpdates.map(incidentUpdate => incidentUpdate.incidentUpdateID)
+    const incidentUpdatesStore = new IncidentsStore()
+    await incidentUpdatesStore.delete(this.incidentID, incidentUpdateIDs)
   }
 
   objectify () {

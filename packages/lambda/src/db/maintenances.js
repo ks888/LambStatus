@@ -56,13 +56,13 @@ export default class MaintenanceStore {
     })
   }
 
-  update (id, name, status, startAt, endAt) {
+  update (id, name, status, startAt, endAt, updatedAt, updating) {
     return new Promise((resolve, reject) => {
       const params = {
         Key: {
           maintenanceID: id
         },
-        UpdateExpression: 'set #n = :n, #s = :s, startAt = :startAt, endAt = :endAt',
+        UpdateExpression: `set #n = :n, #s = :s, startAt = :startAt, endAt = :endAt, updatedAt = :updatedAt, updating = :updating`,
         ExpressionAttributeNames: {
           '#n': 'name',
           '#s': 'status'
@@ -71,7 +71,9 @@ export default class MaintenanceStore {
           ':n': name,
           ':s': status,
           ':startAt': startAt,
-          ':endAt': endAt
+          ':endAt': endAt,
+          ':updatedAt': updatedAt,
+          ':updating': updating
         },
         TableName: MaintenanceTable,
         ReturnValues: 'ALL_NEW'
