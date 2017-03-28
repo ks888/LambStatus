@@ -57,7 +57,7 @@ describe('(Reducer) incidents', () => {
   })
 
   describe('removeIncidentHandler', () => {
-    it('Should update the `incidents` state.', () => {
+    it('Should delete the `incidents` state.', () => {
       const state = incidentsReducer({incidents: [incident1]}, removeIncident('1'))
       assert.deepEqual([], state.incidents)
     })
