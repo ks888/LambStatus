@@ -5,6 +5,7 @@ import MetricsGraph from 'components/common/MetricsGraph'
 import Button from 'components/common/Button'
 import RadioButton from 'components/common/RadioButton'
 import { timeframes } from 'utils/status'
+import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricPreviewDialog.scss'
 
 export default class MetricPreviewDialog extends React.Component {
@@ -19,17 +20,7 @@ export default class MetricPreviewDialog extends React.Component {
   }
 
   componentDidMount () {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      dialog.showModal()
-    }
+    mountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   handleChangeTimeframe = (value) => {
@@ -37,11 +28,7 @@ export default class MetricPreviewDialog extends React.Component {
   }
 
   handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      dialog.close()
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-    }
+    unmountDialog(ReactDOM.findDOMNode(this.refs.dialog))
     this.props.onClosed()
   }
 

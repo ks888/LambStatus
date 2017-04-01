@@ -9,6 +9,7 @@ import DropdownList from 'components/common/DropdownList'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { componentStatuses, maintenanceStatuses } from 'utils/status'
 import { getDateTimeFormat } from 'utils/datetime'
+import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MaintenanceDialog.scss'
 
 export const dialogType = {
@@ -73,17 +74,7 @@ export default class MaintenanceDialog extends React.Component {
       this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID, fetchCallbacks)
     }
 
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      dialog.showModal()
-    }
+    mountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -139,11 +130,7 @@ export default class MaintenanceDialog extends React.Component {
   }
 
   handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      dialog.close()
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-    }
+    unmountDialog(ReactDOM.findDOMNode(this.refs.dialog))
     this.props.onClosed()
   }
 
@@ -240,7 +227,7 @@ export default class MaintenanceDialog extends React.Component {
     const maintenanceUpdates = this.renderMaintenanceUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h4 className={classnames('mdl-dialog__title', classes.title)}>
-        {actionName} Maintenance
+        {actionName} Scheduled Maintenance
       </h4>
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />

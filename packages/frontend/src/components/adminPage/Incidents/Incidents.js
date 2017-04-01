@@ -5,6 +5,7 @@ import IncidentItem from 'components/adminPage/IncidentItem'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
+import { innerDialogID } from 'utils/dialog'
 import classes from './Incidents.scss'
 
 const dialogType = {
@@ -125,7 +126,7 @@ export default class Incidents extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {incidentItems}
       </ul>
-      <div id='inner-dialog-container'>
+      <div id={innerDialogID}>
         {dialog}
       </div>
     </div>)

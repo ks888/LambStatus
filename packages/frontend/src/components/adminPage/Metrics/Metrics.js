@@ -6,6 +6,7 @@ import MetricDialog, { metricDialogType } from 'components/adminPage/MetricDialo
 import MetricPreviewDialog from 'components/adminPage/MetricPreviewDialog'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import { getMetricColor } from 'utils/status'
+import { innerDialogID } from 'utils/dialog'
 import classes from './Metrics.scss'
 
 const dialogType = {
@@ -159,7 +160,7 @@ export default class Metrics extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {metricItems}
       </ul>
-      <div id='inner-dialog-container'>
+      <div id={innerDialogID}>
         {dialog}
       </div>
     </div>)

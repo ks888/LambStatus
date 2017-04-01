@@ -5,6 +5,7 @@ import IncidentItem from 'components/adminPage/IncidentItem'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
+import { innerDialogID } from 'utils/dialog'
 import classes from './Maintenances.scss'
 
 const dialogType = {
@@ -110,7 +111,7 @@ export default class Maintenances extends React.Component {
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
-      Maintenance
+      Scheduled Maintenance
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
@@ -127,7 +128,7 @@ export default class Maintenances extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {maintenanceItems}
       </ul>
-      <div id='inner-dialog-container'>
+      <div id={innerDialogID}>
         {dialog}
       </div>
     </div>)

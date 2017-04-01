@@ -7,6 +7,7 @@ import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
 import { monitoringServices, metricStatuses } from 'utils/status'
+import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricDialog.scss'
 
 export const dialogType = {
@@ -58,17 +59,7 @@ export default class MetricDialog extends React.Component {
   }
 
   componentDidMount () {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      dialog.showModal()
-    }
+    mountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   handleChangeType = (value) => {
@@ -130,11 +121,7 @@ export default class MetricDialog extends React.Component {
   }
 
   handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      dialog.close()
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-    }
+    unmountDialog(ReactDOM.findDOMNode(this.refs.dialog))
     this.props.onClosed()
   }
 

@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import TextField from 'components/common/TextField'
+import { mountDialog, unmountDialog, innerDialogID } from 'utils/dialog'
 import classes from './Signin.scss'
 
 const dialogType = {
@@ -34,17 +35,7 @@ export default class Signin extends React.Component {
   }
 
   componentDidMount () {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      dialog.showModal()
-    }
+    mountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   handleChangeUsername = (value) => {
@@ -147,11 +138,7 @@ export default class Signin extends React.Component {
   }
 
   handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      dialog.close()
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-    }
+    unmountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   renderSigninDialog = () => {
@@ -255,7 +242,7 @@ export default class Signin extends React.Component {
 
   render () {
     const dialog = this.renderDialog()
-    return (<div id='inner-dialog-container'>
+    return (<div id={innerDialogID}>
       {dialog}
     </div>)
   }
