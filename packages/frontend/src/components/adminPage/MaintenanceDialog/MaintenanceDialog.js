@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
-import AutolinkedText from 'components/common/AutolinkedText'
 import Button from 'components/common/Button'
-import RadioButton from 'components/common/RadioButton'
+import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
-import DropdownList from 'components/common/DropdownList'
 import ErrorMessage from 'components/common/ErrorMessage'
-import { componentStatuses, maintenanceStatuses } from 'utils/status'
-import { getDateTimeFormat } from 'utils/datetime'
+import ComponentStatusSelector from 'components/adminPage/ComponentStatusSelector'
+import IncidentUpdateItem from 'components/adminPage/IncidentUpdateItem'
+import { maintenanceStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MaintenanceDialog.scss'
 
@@ -134,72 +133,18 @@ export default class MaintenanceDialog extends React.Component {
     this.props.onClosed()
   }
 
-  renderMaintenanceStatuses = () => {
-    const statusDOMs = maintenanceStatuses.map((status) => {
-      let checked = status === this.state.maintenanceStatus
-      return (
-        <RadioButton key={status} onChange={this.handleChangeMaintenanceStatus} label={status}
-          checked={checked} groupName='status' />
-      )
-    })
-    return (
-      <div>
-        <label className={classes.label} htmlFor='statuses'>
-          Maintenance Status
-        </label>
-        <div className={classes.maintenance_status} id='statuses'>
-          {statusDOMs}
-        </div>
-      </div>
-    )
-  }
-
-  renderComponentStatuses = () => {
-    const components = this.state.components.map((component) => {
-      return (
-        <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
-          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>
-            {component.name}
-          </span>
-          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
-            <DropdownList onChange={this.handleChangeComponentStatus(component.componentID)}
-              list={componentStatuses} initialValue={component.status} />
-          </span>
-        </div>
-      )
-    })
-    return (
-      <div>
-        <label className={classes.label} htmlFor='components'>Component Status</label>
-        {components}
-      </div>
-    )
-  }
-
-  renderMaintenanceUpdateItem = (maintenanceUpdate) => {
-    return (
-      <li key={maintenanceUpdate.maintenanceUpdateID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.maintenance_update_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.maintenance_update_item_content)}>
-          <span>{maintenanceUpdate.maintenanceStatus} - updated at {getDateTimeFormat(maintenanceUpdate.updatedAt)}</span>
-          <span className='mdl-list__item-sub-title'>
-            <AutolinkedText text={maintenanceUpdate.message} />
-          </span>
-        </span>
-      </li>
-    )
-  }
-
   renderMaintenanceUpdates = () => {
     if (!this.props.maintenance || !this.props.maintenance.maintenanceUpdates) {
       return
     }
-    const updates = this.props.maintenance.maintenanceUpdates.map(this.renderMaintenanceUpdateItem)
+    const updates = this.props.maintenance.maintenanceUpdates.map((maintenanceUpdate) => {
+      return (
+        <IncidentUpdateItem key={maintenanceUpdate.maintenanceUpdateID} maintenanceUpdate={maintenanceUpdate} />
+      )
+    })
     return (
       <div>
-        <h4>
-          Previous Updates
-        </h4>
+        <h4>Previous Updates</h4>
         <ul className='mdl-cell mdl-cell--12-col mdl-list'>
           {updates}
         </ul>
@@ -222,8 +167,23 @@ export default class MaintenanceDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
-    const maintenanceStatuses = this.renderMaintenanceStatuses()
-    const componentStatuses = this.renderComponentStatuses()
+    const maintenanceStatusSelector = (
+      <RadioButtonGroup title='Maintenance Status' candidates={maintenanceStatuses}
+        checkedCandidate={this.state.maintenanceStatus} onClicked={this.handleChangeMaintenanceStatus} />
+    )
+
+    const componentStatusSelectors = (
+      <div>
+        <label className={classes.label} htmlFor='components'>Component Status</label>
+        {this.state.components.map((component) => {
+          return (
+            <ComponentStatusSelector key={component.componentID} component={component}
+              onSelected={this.handleChangeComponentStatus(component.componentID)} />
+          )
+        })}
+      </div>
+    )
+
     const maintenanceUpdates = this.renderMaintenanceUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h4 className={classnames('mdl-dialog__title', classes.title)}>
@@ -232,10 +192,10 @@ export default class MaintenanceDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
-        {maintenanceStatuses}
+        {maintenanceStatusSelector}
         <TextField label='Message' text={this.state.maintenanceMessage} rows={2}
           onChange={this.handleChangeMaintenanceMessage} />
-        {componentStatuses}
+        {componentStatusSelectors}
         {maintenanceUpdates}
       </div>
       <div className='mdl-dialog__actions'>

@@ -1,14 +1,13 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
-import AutolinkedText from 'components/common/AutolinkedText'
 import Button from 'components/common/Button'
-import RadioButton from 'components/common/RadioButton'
+import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
-import DropdownList from 'components/common/DropdownList'
 import ErrorMessage from 'components/common/ErrorMessage'
-import { componentStatuses, incidentStatuses } from 'utils/status'
-import { getDateTimeFormat } from 'utils/datetime'
+import ComponentStatusSelector from 'components/adminPage/ComponentStatusSelector'
+import IncidentUpdateItem from 'components/adminPage/IncidentUpdateItem'
+import { incidentStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './IncidentDialog.scss'
 
@@ -134,72 +133,18 @@ export default class IncidentDialog extends React.Component {
     this.props.onClosed()
   }
 
-  renderIncidentStatuses = () => {
-    const statusDOMs = incidentStatuses.map((status) => {
-      let checked = status === this.state.incidentStatus
-      return (
-        <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status}
-          checked={checked} groupName='status' />
-      )
-    })
-    return (
-      <div>
-        <label className={classes.label} htmlFor='statuses'>
-          Incident Status
-        </label>
-        <div className={classes.incident_status} id='statuses'>
-          {statusDOMs}
-        </div>
-      </div>
-    )
-  }
-
-  renderComponentStatuses = () => {
-    const components = this.state.components.map((component) => {
-      return (
-        <div id='components' className={classnames('mdl-grid', classes.components)} key={component.componentID}>
-          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_name)}>
-            {component.name}
-          </span>
-          <span className={classnames('mdl-cell', 'mdl-cell--6-col', 'mdl-cell--middle', classes.component_dropdown)}>
-            <DropdownList onChange={this.handleChangeComponentStatus(component.componentID)}
-              list={componentStatuses} initialValue={component.status} />
-          </span>
-        </div>
-      )
-    })
-    return (
-      <div>
-        <label className={classes.label} htmlFor='components'>Component Status</label>
-        {components}
-      </div>
-    )
-  }
-
-  renderIncidentUpdateItem = (incidentUpdate) => {
-    return (
-      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
-          <span>{incidentUpdate.incidentStatus} - updated at {getDateTimeFormat(incidentUpdate.updatedAt)}</span>
-          <span className='mdl-list__item-sub-title'>
-            <AutolinkedText text={incidentUpdate.message} />
-          </span>
-        </span>
-      </li>
-    )
-  }
-
   renderIncidentUpdates = () => {
     if (!this.props.incident || !this.props.incident.incidentUpdates) {
       return
     }
-    const updates = this.props.incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+    const updates = this.props.incident.incidentUpdates.map((incidentUpdate) => {
+      return (
+        <IncidentUpdateItem key={incidentUpdate.incidentUpdateID} incidentUpdate={incidentUpdate} />
+      )
+    })
     return (
       <div>
-        <h4>
-          Previous Updates
-        </h4>
+        <h4>Previous Updates</h4>
         <ul className='mdl-cell mdl-cell--12-col mdl-list'>
           {updates}
         </ul>
@@ -222,8 +167,23 @@ export default class IncidentDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
-    const incidentStatuses = this.renderIncidentStatuses()
-    const componentStatuses = this.renderComponentStatuses()
+    const incidentStatusSelector = (
+      <RadioButtonGroup title='Incident Status' candidates={incidentStatuses}
+        checkedCandidate={this.state.incidentStatus} onClicked={this.handleChangeIncidentStatus} />
+    )
+
+    const componentStatusSelectors = (
+      <div>
+        <label className={classes.label} htmlFor='components'>Component Status</label>
+        {this.state.components.map((component) => {
+          return (
+            <ComponentStatusSelector key={component.componentID} component={component}
+              onSelected={this.handleChangeComponentStatus(component.componentID)} />
+          )
+        })}
+      </div>
+    )
+
     const incidentUpdates = this.renderIncidentUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h4 className={classnames('mdl-dialog__title', classes.title)}>
@@ -232,10 +192,10 @@ export default class IncidentDialog extends React.Component {
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
-        {incidentStatuses}
+        {incidentStatusSelector}
         <TextField label='Message' text={this.state.incidentMessage} rows={2}
           onChange={this.handleChangeIncidentMessage} />
-        {componentStatuses}
+        {componentStatusSelectors}
         {incidentUpdates}
       </div>
       <div className='mdl-dialog__actions'>
