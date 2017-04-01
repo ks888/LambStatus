@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import IncidentDialog, { incidentDialogType } from 'components/adminPage/IncidentDialog'
+import MaintenanceDialog, { maintenanceDialogType } from 'components/adminPage/MaintenanceDialog'
 import IncidentItem from 'components/adminPage/IncidentItem'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
-import classes from './Incidents.scss'
+import classes from './Maintenances.scss'
 
 const dialogType = {
   none: 0,
@@ -14,30 +14,32 @@ const dialogType = {
   delete: 3
 }
 
-export default class Incidents extends React.Component {
+export default class Maintenances extends React.Component {
   static propTypes = {
-    incidents: PropTypes.arrayOf(PropTypes.shape({
-      incidentID: PropTypes.string.isRequired,
+    maintenances: PropTypes.arrayOf(PropTypes.shape({
+      maintenanceID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
+      startAt: PropTypes.string.isRequired,
+      endAt: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    fetchIncidents: PropTypes.func.isRequired,
-    deleteIncident: PropTypes.func.isRequired
+    fetchMaintenances: PropTypes.func.isRequired,
+    deleteMaintenance: PropTypes.func.isRequired
   }
 
   constructor () {
     super()
     this.state = {
       dialogType: dialogType.none,
-      incidentID: null,
+      maintenanceID: null,
       isFetching: false,
       message: ''
     }
   }
 
   componentDidMount () {
-    this.props.fetchIncidents({
+    this.props.fetchMaintenances({
       onLoad: () => { this.setState({isFetching: true}) },
       onSuccess: () => { this.setState({isFetching: false}) },
       onFailure: (msg) => {
@@ -46,24 +48,24 @@ export default class Incidents extends React.Component {
     })
   }
 
-  handleShowDialog = (type, incidentID) => {
-    this.setState({ incidentID, dialogType: type })
+  handleShowDialog = (type, maintenanceID) => {
+    this.setState({ maintenanceID, dialogType: type })
   }
 
   handleShowAddDialog = () => {
     return () => this.handleShowDialog(dialogType.add)
   }
 
-  handleShowUpdateDialog = (incidentID) => {
-    return () => this.handleShowDialog(dialogType.update, incidentID)
+  handleShowUpdateDialog = (maintenanceID) => {
+    return () => this.handleShowDialog(dialogType.update, maintenanceID)
   }
 
-  handleShowDeleteDialog = (incidentID) => {
-    return () => this.handleShowDialog(dialogType.delete, incidentID)
+  handleShowDeleteDialog = (maintenanceID) => {
+    return () => this.handleShowDialog(dialogType.delete, maintenanceID)
   }
 
   handleCloseDialog = () => {
-    this.setState({ incidentID: null, dialogType: dialogType.none })
+    this.setState({ maintenanceID: null, dialogType: dialogType.none })
   }
 
   renderDialog = () => {
@@ -73,23 +75,23 @@ export default class Incidents extends React.Component {
         dialog = null
         break
       case dialogType.add:
-        dialog = <IncidentDialog onClosed={this.handleCloseDialog}
-          dialogType={incidentDialogType.add} />
+        dialog = <MaintenanceDialog onClosed={this.handleCloseDialog}
+          dialogType={maintenanceDialogType.add} />
         break
       case dialogType.update:
-        dialog = <IncidentDialog onClosed={this.handleCloseDialog}
-          incidentID={this.state.incidentID} dialogType={incidentDialogType.update} />
+        dialog = <MaintenanceDialog onClosed={this.handleCloseDialog}
+          maintenanceID={this.state.maintenanceID} dialogType={maintenanceDialogType.update} />
         break
       case dialogType.delete:
-        let incidentName
-        this.props.incidents.forEach((incident) => {
-          if (incident.incidentID === this.state.incidentID) {
-            incidentName = incident.name
+        let maintenanceName
+        this.props.maintenances.forEach((maintenance) => {
+          if (maintenance.maintenanceID === this.state.maintenanceID) {
+            maintenanceName = maintenance.name
           }
         })
         dialog = <FoolproofDialog onClosed={this.handleCloseDialog}
-          name={incidentName} ID={this.state.incidentID}
-          deleteFunction={this.props.deleteIncident} />
+          name={maintenanceName} ID={this.state.maintenanceID}
+          deleteFunction={this.props.deleteMaintenance} />
         break
       default:
         console.warn('unknown dialog type: ', this.state.dialogType)
@@ -98,8 +100,8 @@ export default class Incidents extends React.Component {
   }
 
   render () {
-    const { incidents } = this.props
-    const incidentItems = incidents.map((incident) => {
+    const { maintenances } = this.props
+    const maintenanceItems = maintenances.map((incident) => {
       return (
         <IncidentItem key={incident.incidentID} onUpdateClicked={this.handleShowUpdateDialog(incident.incidentID)}
           onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident} />
@@ -108,13 +110,13 @@ export default class Incidents extends React.Component {
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
-      Incident
+      Maintenance
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
       <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
-        <h4>Incidents</h4>
+        <h4>Scheduled Maintenances</h4>
       </div>
       <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--2-col mdl-cell--middle')}>
         <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
@@ -123,7 +125,7 @@ export default class Incidents extends React.Component {
         <ErrorMessage message={this.state.message} />
       </div>
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-        {incidentItems}
+        {maintenanceItems}
       </ul>
       <div id='inner-dialog-container'>
         {dialog}

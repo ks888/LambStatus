@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import moment from 'moment-timezone'
 import ModestLink from 'components/common/ModestLink'
 import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
+import { getDateTimeFormat } from 'utils/datetime'
 import classes from './History.scss'
 
 export default class History extends React.Component {
@@ -69,10 +69,9 @@ export default class History extends React.Component {
   }
 
   renderIncidentsByMonth = (incidents) => {
-    const dateFormat = 'MMMM YYYY'
     let months = {}
     incidents.forEach((incident) => {
-      const updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format(dateFormat)
+      const updatedAt = getDateTimeFormat(incident.updatedAt, 'MMMM YYYY')
       if (!months.hasOwnProperty(updatedAt)) {
         months[updatedAt] = [incident]
       } else {

@@ -7,27 +7,27 @@ import RadioButton from 'components/common/RadioButton'
 import TextField from 'components/common/TextField'
 import DropdownList from 'components/common/DropdownList'
 import ErrorMessage from 'components/common/ErrorMessage'
-import { componentStatuses, incidentStatuses } from 'utils/status'
+import { componentStatuses, maintenanceStatuses } from 'utils/status'
 import { getDateTimeFormat } from 'utils/datetime'
-import classes from './IncidentDialog.scss'
+import classes from './MaintenanceDialog.scss'
 
 export const dialogType = {
   add: 1,
   update: 2
 }
 
-export default class IncidentDialog extends React.Component {
+export default class MaintenanceDialog extends React.Component {
   static propTypes = {
     onClosed: PropTypes.func.isRequired,
-    incidentID: PropTypes.string,
+    maintenanceID: PropTypes.string,
     dialogType: PropTypes.number.isRequired,
-    incident: PropTypes.shape({
-      incidentID: PropTypes.string.isRequired,
+    maintenance: PropTypes.shape({
+      maintenanceID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
-      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-        incidentUpdateID: PropTypes.string.isRequired,
-        incidentStatus: PropTypes.string.isRequired,
+      maintenanceUpdates: PropTypes.arrayOf(PropTypes.shape({
+        maintenanceUpdateID: PropTypes.string.isRequired,
+        maintenanceStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
@@ -38,27 +38,27 @@ export default class IncidentDialog extends React.Component {
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
-    fetchIncidentUpdates: PropTypes.func.isRequired,
-    postIncident: PropTypes.func.isRequired,
-    updateIncident: PropTypes.func.isRequired
+    fetchMaintenanceUpdates: PropTypes.func.isRequired,
+    postMaintenance: PropTypes.func.isRequired,
+    updateMaintenance: PropTypes.func.isRequired
   }
 
   constructor (props) {
     super(props)
-    if (props.incident) {
+    if (props.maintenance) {
       this.state = {
-        name: props.incident.name,
-        incidentStatus: props.incident.status
+        name: props.maintenance.name,
+        maintenanceStatus: props.maintenance.status
       }
     } else {
       this.state = {
         name: '',
-        incidentStatus: incidentStatuses[0]
+        maintenanceStatus: maintenanceStatuses[0]
       }
     }
     this.state.components = props.components
     this.state.isUpdating = false
-    this.state.incidentMessage = ''
+    this.state.maintenanceMessage = ''
     this.state.message = ''
   }
 
@@ -69,8 +69,8 @@ export default class IncidentDialog extends React.Component {
       }
     }
     this.props.fetchComponents(fetchCallbacks)
-    if (this.props.incident) {
-      this.props.fetchIncidentUpdates(this.props.incident.incidentID, fetchCallbacks)
+    if (this.props.maintenance) {
+      this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID, fetchCallbacks)
     }
 
     const dialog = ReactDOM.findDOMNode(this.refs.dialog)
@@ -108,12 +108,12 @@ export default class IncidentDialog extends React.Component {
     }
   }
 
-  handleChangeIncidentStatus = (value) => {
-    this.setState({incidentStatus: value})
+  handleChangeMaintenanceStatus = (value) => {
+    this.setState({maintenanceStatus: value})
   }
 
-  handleChangeIncidentMessage = (value) => {
-    this.setState({incidentMessage: value})
+  handleChangeMaintenanceMessage = (value) => {
+    this.setState({maintenanceMessage: value})
   }
 
   updateCallbacks = {
@@ -128,13 +128,13 @@ export default class IncidentDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postIncident(this.state.name, this.state.incidentStatus,
-      this.state.incidentMessage, this.state.components, this.updateCallbacks)
+    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus,
+      this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
   }
 
   handleClickUpdateButton = (e) => {
-    this.props.updateIncident(this.props.incident.incidentID, this.state.name,
-      this.state.incidentStatus, this.state.incidentMessage, this.state.components,
+    this.props.updateMaintenance(this.props.maintenance.maintenanceID, this.state.name,
+      this.state.maintenanceStatus, this.state.maintenanceMessage, this.state.components,
       this.updateCallbacks)
   }
 
@@ -147,20 +147,20 @@ export default class IncidentDialog extends React.Component {
     this.props.onClosed()
   }
 
-  renderIncidentStatuses = () => {
-    const statusDOMs = incidentStatuses.map((status) => {
-      let checked = status === this.state.incidentStatus
+  renderMaintenanceStatuses = () => {
+    const statusDOMs = maintenanceStatuses.map((status) => {
+      let checked = status === this.state.maintenanceStatus
       return (
-        <RadioButton key={status} onChange={this.handleChangeIncidentStatus} label={status}
+        <RadioButton key={status} onChange={this.handleChangeMaintenanceStatus} label={status}
           checked={checked} groupName='status' />
       )
     })
     return (
       <div>
         <label className={classes.label} htmlFor='statuses'>
-          Incident Status
+          Maintenance Status
         </label>
-        <div className={classes.incident_status} id='statuses'>
+        <div className={classes.maintenance_status} id='statuses'>
           {statusDOMs}
         </div>
       </div>
@@ -189,25 +189,25 @@ export default class IncidentDialog extends React.Component {
     )
   }
 
-  renderIncidentUpdateItem = (incidentUpdate) => {
+  renderMaintenanceUpdateItem = (maintenanceUpdate) => {
     return (
-      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
-          <span>{incidentUpdate.incidentStatus} - updated at {getDateTimeFormat(incidentUpdate.updatedAt)}</span>
+      <li key={maintenanceUpdate.maintenanceUpdateID} className={classnames('mdl-list__item',
+        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.maintenance_update_item)}>
+        <span className={classnames('mdl-list__item-primary-content', classes.maintenance_update_item_content)}>
+          <span>{maintenanceUpdate.maintenanceStatus} - updated at {getDateTimeFormat(maintenanceUpdate.updatedAt)}</span>
           <span className='mdl-list__item-sub-title'>
-            <AutolinkedText text={incidentUpdate.message} />
+            <AutolinkedText text={maintenanceUpdate.message} />
           </span>
         </span>
       </li>
     )
   }
 
-  renderIncidentUpdates = () => {
-    if (!this.props.incident || !this.props.incident.incidentUpdates) {
+  renderMaintenanceUpdates = () => {
+    if (!this.props.maintenance || !this.props.maintenance.maintenanceUpdates) {
       return
     }
-    const updates = this.props.incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+    const updates = this.props.maintenance.maintenanceUpdates.map(this.renderMaintenanceUpdateItem)
     return (
       <div>
         <h4>
@@ -235,21 +235,21 @@ export default class IncidentDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
-    const incidentStatuses = this.renderIncidentStatuses()
+    const maintenanceStatuses = this.renderMaintenanceStatuses()
     const componentStatuses = this.renderComponentStatuses()
-    const incidentUpdates = this.renderIncidentUpdates()
+    const maintenanceUpdates = this.renderMaintenanceUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h4 className={classnames('mdl-dialog__title', classes.title)}>
-        {actionName} Incident
+        {actionName} Maintenance
       </h4>
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
-        {incidentStatuses}
-        <TextField label='Message' text={this.state.incidentMessage} rows={2}
-          onChange={this.handleChangeIncidentMessage} />
+        {maintenanceStatuses}
+        <TextField label='Message' text={this.state.maintenanceMessage} rows={2}
+          onChange={this.handleChangeMaintenanceMessage} />
         {componentStatuses}
-        {incidentUpdates}
+        {maintenanceUpdates}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={clickHandler} name={actionName}

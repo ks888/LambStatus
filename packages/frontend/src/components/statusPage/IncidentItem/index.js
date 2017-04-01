@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import moment from 'moment-timezone'
 import Button from 'components/common/Button'
 import AutolinkedText from 'components/common/AutolinkedText'
 import { getIncidentColor } from 'utils/status'
+import { getDateTimeFormat } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
 export default class IncidentItem extends React.Component {
@@ -20,8 +20,6 @@ export default class IncidentItem extends React.Component {
   }
 
   renderIncidentUpdateItem = (incidentUpdate) => {
-    const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
-
     return (
       <div className={classnames(classes.inner_item)} key={incidentUpdate.incidentUpdateID}>
         <div>
@@ -30,7 +28,7 @@ export default class IncidentItem extends React.Component {
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {updatedAt}
+          {getDateTimeFormat(incidentUpdate.updatedAt)}
         </div>
       </div>
     )
@@ -45,10 +43,9 @@ export default class IncidentItem extends React.Component {
     }
     let updatedAt, detailButton
     if (this.state.showDetailButton) {
-      const date = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
       updatedAt = (
         <span className='mdl-list__item-sub-title'>
-          {date}
+          {getDateTimeFormat(incident.updatedAt)}
         </span>
       )
       detailButton = (

@@ -17,10 +17,17 @@ describe('(Component) Drawer', () => {
     assert(incidentNode.prop('to') === '/incidents')
   })
 
+  it('Should render a Link to Maintenances route', () => {
+    const maintenanceNode = _wrapper.find(Link).at(0)
+    assert(maintenanceNode.key() === 'maintenances')
+    assert(maintenanceNode.childAt(0).text() === 'Scheduled Maintenances')
+    assert(maintenanceNode.prop('to') === '/maintenances')
+  })
+
   it('Should render a Link to Components route', () => {
-    const incidentNode = _wrapper.find(Link).at(1)
-    assert(incidentNode.key() === 'components')
-    assert(incidentNode.childAt(0).text() === 'Components')
-    assert(incidentNode.prop('to') === '/components')
+    const componentNode = _wrapper.find(Link).at(2)
+    assert(componentNode.key() === 'components')
+    assert(componentNode.childAt(0).text() === 'Components')
+    assert(componentNode.prop('to') === '/components')
   })
 })

@@ -7,6 +7,7 @@ import MetricsGraph from 'components/common/MetricsGraph'
 import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import { serviceName } from 'utils/settings'
+import { getDateTimeFormat } from 'utils/datetime'
 import { timeframes, getComponentColor } from 'utils/status'
 import classes from './Statuses.scss'
 
@@ -103,8 +104,7 @@ export default class Statuses extends React.Component {
       dateItems = <div>No incidents reported</div>
     } else {
       const filteredIncidents = incidents.filter((incident) => {
-        const lastUpdatedDate = moment.tz(incident.updatedAt, moment.tz.guess()).format(this.dateFormat)
-        return date === lastUpdatedDate
+        return getDateTimeFormat(incident.updatedAt, this.dateFormat) === date
       })
       if (filteredIncidents.length === 0) {
         return null
@@ -142,8 +142,7 @@ export default class Statuses extends React.Component {
 
       let updatedDates = new Set()
       incident.incidentUpdates.map((incidentUpdate) => {
-        const updatedAt = moment.tz(incidentUpdate.updatedAt, moment.tz.guess()).format(this.dateFormat)
-        updatedDates.add(updatedAt)
+        updatedDates.add(getDateTimeFormat(incidentUpdate.updatedAt, this.dateFormat))
       })
       updatedDates.forEach((updatedDate) => {
         if (dates.hasOwnProperty(updatedDate)) {
