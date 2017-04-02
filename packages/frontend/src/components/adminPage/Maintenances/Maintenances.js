@@ -111,7 +111,7 @@ export default class Maintenances extends React.Component {
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
-      Scheduled Maintenance
+      Maintenance
     </div>)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}

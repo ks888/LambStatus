@@ -6,6 +6,7 @@ import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import ComponentStatusSelector from 'components/adminPage/ComponentStatusSelector'
+import TimeSelector from 'components/adminPage/TimeSelector'
 import IncidentUpdateItem from 'components/adminPage/IncidentUpdateItem'
 import { maintenanceStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
@@ -25,6 +26,8 @@ export default class MaintenanceDialog extends React.Component {
       maintenanceID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
+      startAt: PropTypes.string.isRequired,
+      endAt: PropTypes.string.isRequired,
       maintenanceUpdates: PropTypes.arrayOf(PropTypes.shape({
         maintenanceUpdateID: PropTypes.string.isRequired,
         maintenanceStatus: PropTypes.string.isRequired,
@@ -48,12 +51,16 @@ export default class MaintenanceDialog extends React.Component {
     if (props.maintenance) {
       this.state = {
         name: props.maintenance.name,
-        maintenanceStatus: props.maintenance.status
+        maintenanceStatus: props.maintenance.status,
+        startAt: props.maintenance.startAt,
+        endAt: props.maintenance.endAt
       }
     } else {
       this.state = {
         name: '',
-        maintenanceStatus: maintenanceStatuses[0]
+        maintenanceStatus: maintenanceStatuses[0],
+        startAt: undefined,
+        endAt: undefined
       }
     }
     this.state.components = props.components
@@ -96,6 +103,14 @@ export default class MaintenanceDialog extends React.Component {
       })
       this.setState({components: newComponents})
     }
+  }
+
+  handleChangeStartAt = (value) => {
+    this.setState({startAt: value})
+  }
+
+  handleChangeEndAt = (value) => {
+    this.setState({endAt: value})
   }
 
   handleChangeMaintenanceStatus = (value) => {
@@ -167,22 +182,35 @@ export default class MaintenanceDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
-    const maintenanceStatusSelector = (
-      <RadioButtonGroup title='Maintenance Status' candidates={maintenanceStatuses}
-        checkedCandidate={this.state.maintenanceStatus} onClicked={this.handleChangeMaintenanceStatus} />
+    const startTimeSelector = (
+      <TimeSelector title='Maintenance Start Time' default={this.state.startAt}
+        onSelected={this.handleChangeStartAt} className={classes.timeselector} />
+    )
+    const endTimeSelector = (
+      <TimeSelector title='Maintenance End Time' default={this.state.endAt}
+        onSelected={this.handleChangeEndAt} />
     )
 
-    const componentStatusSelectors = (
-      <div>
-        <label className={classes.label} htmlFor='components'>Component Status</label>
-        {this.state.components.map((component) => {
-          return (
-            <ComponentStatusSelector key={component.componentID} component={component}
-              onSelected={this.handleChangeComponentStatus(component.componentID)} />
-          )
-        })}
-      </div>
+    const maintenanceStatusSelector = (
+      <RadioButtonGroup title='Maintenance Status' candidates={maintenanceStatuses}
+        checkedCandidate={this.state.maintenanceStatus} onClicked={this.handleChangeMaintenanceStatus}
+        className={classes.status} />
     )
+
+    let componentStatusSelectors
+    if (this.props.dialogType !== dialogType.add) {
+      componentStatusSelectors = (
+        <div>
+          <label className={classes.label} htmlFor='components'>Component Status</label>
+          {this.state.components.map((component) => {
+            return (
+              <ComponentStatusSelector key={component.componentID} component={component}
+                onSelected={this.handleChangeComponentStatus(component.componentID)} />
+            )
+          })}
+        </div>
+      )
+    }
 
     const maintenanceUpdates = this.renderMaintenanceUpdates()
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
@@ -193,6 +221,8 @@ export default class MaintenanceDialog extends React.Component {
         <ErrorMessage message={this.state.message} />
         <TextField label='Name' text={this.state.name} rows={1} onChange={this.handleChangeName} />
         {maintenanceStatusSelector}
+        {startTimeSelector}
+        {endTimeSelector}
         <TextField label='Message' text={this.state.maintenanceMessage} rows={2}
           onChange={this.handleChangeMaintenanceMessage} />
         {componentStatusSelectors}

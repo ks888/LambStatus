@@ -7,7 +7,8 @@ export default class RadioBoxGroup extends React.Component {
     title: PropTypes.string.isRequired,
     candidates: PropTypes.array.isRequired,
     checkedCandidate: PropTypes.string.isRequired,
-    onClicked: PropTypes.func.isRequired
+    onClicked: PropTypes.func.isRequired,
+    className: PropTypes.string
   }
 
   render () {
@@ -22,7 +23,7 @@ export default class RadioBoxGroup extends React.Component {
 
     const itemID = this.props.title
     return (
-      <div>
+      <div className={this.props.className}>
         <label className={classes.label} htmlFor={itemID}>
           {this.props.title}
         </label>
