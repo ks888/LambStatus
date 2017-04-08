@@ -1,0 +1,25 @@
+.label {
+  color: #607D8B;
+  font-size: 14px;
+}
+
+.container {
+  display: flex;
+  padding: 4px 0;
+}
+
+.date {
+  width: 100%;
+}
+
+.datepicker {
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  padding: 4px;
+  color: rgba(0,0,0,.54);
+  font-size: 16px;
+}
+
+.time {
+  width: 100%;
+}

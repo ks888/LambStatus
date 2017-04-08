@@ -5,6 +5,7 @@ import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { getComponentColor } from 'utils/status'
+import { innerDialogID } from 'utils/dialog'
 import classes from './Components.scss'
 
 const dialogType = {
@@ -140,7 +141,7 @@ export default class Components extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
-      <div id='inner-dialog-container'>
+      <div id={innerDialogID}>
         {dialog}
       </div>
     </div>)

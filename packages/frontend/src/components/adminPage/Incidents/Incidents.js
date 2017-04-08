@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import moment from 'moment-timezone'
 import IncidentDialog, { incidentDialogType } from 'components/adminPage/IncidentDialog'
+import IncidentItem from 'components/adminPage/IncidentItem'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
+import { innerDialogID } from 'utils/dialog'
 import { getIncidentColor } from 'utils/status'
 import classes from './Incidents.scss'
 
@@ -67,39 +68,6 @@ export default class Incidents extends React.Component {
     this.setState({ incidentID: null, dialogType: dialogType.none })
   }
 
-  renderListItem = (incident) => {
-    let statusColor = getIncidentColor(incident.status)
-    let bgColor = '#ffffff'
-    let updatedAt = moment.tz(incident.updatedAt, moment.tz.guess()).format('MMM DD, YYYY - HH:mm (z)')
-    return (
-      <li key={incident.incidentID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.incident_item_content)}>
-          <i className='material-icons mdl-list__item-avatar'
-            style={{ color: statusColor, backgroundColor: bgColor }}>brightness_1</i>
-          <div>
-            <span>{incident.name}</span>
-            <span className='mdl-list__item-sub-title'>
-              updated at {updatedAt}
-            </span>
-          </div>
-        </span>
-        <span className='mdl-list__item-secondary-content'>
-          <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Update'
-                onClick={this.handleShowUpdateDialog(incident.incidentID)} />
-            </div>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(incident.incidentID)} />
-            </div>
-          </div>
-        </span>
-      </li>
-    )
-  }
-
   renderDialog = () => {
     let dialog
     switch (this.state.dialogType) {
@@ -133,7 +101,13 @@ export default class Incidents extends React.Component {
 
   render () {
     const { incidents } = this.props
-    const incidentItems = incidents.map(this.renderListItem)
+    const incidentItems = incidents.map((incident) => {
+      return (
+        <IncidentItem key={incident.incidentID} onUpdateClicked={this.handleShowUpdateDialog(incident.incidentID)}
+          onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident}
+          getIncidentColor={getIncidentColor} />
+      )
+    })
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
@@ -154,7 +128,7 @@ export default class Incidents extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {incidentItems}
       </ul>
-      <div id='inner-dialog-container'>
+      <div id={innerDialogID}>
         {dialog}
       </div>
     </div>)

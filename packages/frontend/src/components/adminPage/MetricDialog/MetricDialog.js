@@ -2,11 +2,12 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
-import RadioButton from 'components/common/RadioButton'
+import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
 import { monitoringServices, metricStatuses } from 'utils/status'
+import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricDialog.scss'
 
 export const dialogType = {
@@ -58,17 +59,7 @@ export default class MetricDialog extends React.Component {
   }
 
   componentDidMount () {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      // dialog polyfill has a limitation that the dialog should have a child of parents without parents.
-      // Here is a workaround for this limitation.
-      document.getElementById('dialog-container').appendChild(dialog)
-
-      if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog)
-      }
-      dialog.showModal()
-    }
+    mountDialog(ReactDOM.findDOMNode(this.refs.dialog))
   }
 
   handleChangeType = (value) => {
@@ -130,55 +121,12 @@ export default class MetricDialog extends React.Component {
   }
 
   handleHideDialog = () => {
-    const dialog = ReactDOM.findDOMNode(this.refs.dialog)
-    if (dialog) {
-      dialog.close()
-      document.getElementById('inner-dialog-container').appendChild(dialog)
-    }
+    unmountDialog(ReactDOM.findDOMNode(this.refs.dialog))
     this.props.onClosed()
-  }
-
-  renderTypes = () => {
-    const types = monitoringServices.map((type) => {
-      let checked = type === this.state.type
-      return (
-        <RadioButton key={type} onChange={this.handleChangeType} label={type} checked={checked} groupName='types' />
-      )
-    })
-    return (
-      <div className={classes['metric-type']}>
-        <label className={classes.label} htmlFor='types'>
-          Metrics Type
-        </label>
-        <div className={classes.status} id='types'>
-          {types}
-        </div>
-      </div>
-    )
   }
 
   renderMetrics = () => {
     return (<CloudWatchMetricsSelector onChange={this.handleChangeProps} props={this.state.props} />)
-  }
-
-  renderMetricStatuses = () => {
-    const statusDOMs = metricStatuses.map((status) => {
-      let checked = status === this.state.status
-      return (
-        <RadioButton key={status} onChange={this.handleChangeStatus} label={status}
-          checked={checked} groupName='status' />
-      )
-    })
-    return (
-      <div className={classes['metric-statuses']}>
-        <label className={classes.label} htmlFor='statuses'>
-          Metric Status
-        </label>
-        <div className={classes.status} id='statuses'>
-          {statusDOMs}
-        </div>
-      </div>
-    )
   }
 
   render () {
@@ -196,24 +144,35 @@ export default class MetricDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
-    const types = this.renderTypes()
+    const typeSelector = (
+      <div className={classes['metric-type']}>
+        <RadioButtonGroup title='Metrics Type' candidates={monitoringServices}
+          checkedCandidate={this.state.type} onClicked={this.handleChangeType} />
+      </div>
+    )
     const metrics = this.renderMetrics()
-    const metricStatuses = this.renderMetricStatuses()
+
+    const metricStatusSelector = (
+      <div className={classes['metric-status']}>
+        <RadioButtonGroup title='Metric Status' candidates={metricStatuses}
+          checkedCandidate={this.state.status} onClicked={this.handleChangeStatus} />
+      </div>
+    )
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
         {actionName} Metric
       </h2>
       <div className='mdl-dialog__content'>
         <ErrorMessage message={this.state.message} />
-        {types}
-        <div className={classes.metrics}>
+        {typeSelector}
+        <div>
           {metrics}
         </div>
         <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
         <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
         <TextField label='Description (optional)' text={this.state.description} rows={2}
           onChange={this.handleChangeDescription} />
-        {metricStatuses}
+        {metricStatusSelector}
       </div>
       <div className='mdl-dialog__actions'>
         <Button onClick={clickHandler} name={actionName}

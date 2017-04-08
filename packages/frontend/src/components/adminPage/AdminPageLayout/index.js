@@ -2,6 +2,8 @@ import React from 'react'
 import classnames from 'classnames'
 import Header from 'components/adminPage/Header'
 import Drawer from 'components/adminPage/Drawer'
+import { dialogID } from 'utils/dialog'
+
 import classes from './AdminPageLayout.scss'
 
 export const AdminPageLayout = ({ children }) => (
@@ -12,7 +14,7 @@ export const AdminPageLayout = ({ children }) => (
     <main className='mdl-layout__content'>
       {children}
     </main>
-    <div id='dialog-container' />
+    <div id={dialogID} />
   </div>
 )
 

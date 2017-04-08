@@ -17,6 +17,6 @@ describe('(Component) Components', () => {
   })
 
   it('Renders a headline', () => {
-    expect(component.find('h4').text()).to.equal('Components')
+    assert(component.find('h4').text() === 'Components')
   })
 })

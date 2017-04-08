@@ -41,6 +41,26 @@ export default {
       'babel-polyfill',
       './src/api/deleteIncidents/index.js'
     ],
+    GetMaintenances: [
+      'babel-polyfill',
+      './src/api/getMaintenances/index.js'
+    ],
+    GetMaintenanceUpdates: [
+      'babel-polyfill',
+      './src/api/getMaintenanceUpdates/index.js'
+    ],
+    PostMaintenances: [
+      'babel-polyfill',
+      './src/api/postMaintenances/index.js'
+    ],
+    PatchMaintenances: [
+      'babel-polyfill',
+      './src/api/patchMaintenances/index.js'
+    ],
+    DeleteMaintenances: [
+      'babel-polyfill',
+      './src/api/deleteMaintenances/index.js'
+    ],
     CollectMetricsData: [
       'babel-polyfill',
       './src/api/collectMetricsData/index.js'

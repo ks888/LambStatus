@@ -17,14 +17,14 @@ describe('(Layout) AdminPage', function () {
   })
 
   it('Should render with Header Component.', function () {
-    expect(component.find(Header)).to.have.length(1)
+    assert(component.find(Header).length === 1)
   })
 
   it('Should render with Drawer Component.', function () {
-    expect(component.find(Drawer)).to.have.length(1)
+    assert(component.find(Drawer).length === 1)
   })
 
   it('Should render with children.', function () {
-    expect(component.contains(child)).to.be.true
+    assert(component.contains(child))
   })
 })

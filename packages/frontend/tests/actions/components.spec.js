@@ -10,8 +10,6 @@ import {
   deleteComponent
 } from 'actions/components'
 
-fetchMock = fetchMock.mock({headers: {'Content-Type': 'application/json'}})
-
 describe('(Action) components', () => {
   const comp1 = {
     componentID: 'compID1',
@@ -38,20 +36,20 @@ describe('(Action) components', () => {
 
   describe('fetchComponents', () => {
     it('Should return a function.', () => {
-      expect(fetchComponents()).to.be.a('function')
+      assert(typeof fetchComponents() === 'function')
     })
 
     it('Should fetch components.', () => {
-      fetchMock.get(/.*\/components/, { body: [comp1] })
+      fetchMock.get(/.*\/components/, { body: [comp1], headers: {'Content-Type': 'application/json'} })
 
       return fetchComponents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(LIST_COMPONENTS)
-          expect(dispatchSpy.firstCall.args[0].components).to.deep.equal([comp1])
+          assert(dispatchSpy.firstCall.args[0].type === LIST_COMPONENTS)
+          assert.deepEqual([comp1], dispatchSpy.firstCall.args[0].components)
         })
     })
 
@@ -60,31 +58,31 @@ describe('(Action) components', () => {
 
       return fetchComponents(callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('postComponent', () => {
     it('Should return a function.', () => {
-      expect(postComponent()).to.be.a('function')
+      assert(typeof postComponent() === 'function')
     })
 
     it('Should post a new component.', () => {
-      fetchMock.post(/.*\/components/, { body: comp1 })
+      fetchMock.post(/.*\/components/, { body: comp1, headers: {'Content-Type': 'application/json'} })
 
       return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(ADD_COMPONENT)
-          expect(dispatchSpy.firstCall.args[0].component).to.deep.equal(comp1)
+          assert(dispatchSpy.firstCall.args[0].type === ADD_COMPONENT)
+          assert.deepEqual(comp1, dispatchSpy.firstCall.args[0].component)
         })
     })
 
@@ -93,31 +91,31 @@ describe('(Action) components', () => {
 
       return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('updateComponent', () => {
     it('Should return a function.', () => {
-      expect(updateComponent()).to.be.a('function')
+      assert(typeof updateComponent() === 'function')
     })
 
     it('Should update the existing component.', () => {
-      fetchMock.patch(/.*\/components\/.*/, { body: comp1 })
+      fetchMock.patch(/.*\/components\/.*/, { body: comp1, headers: {'Content-Type': 'application/json'} })
 
       return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(EDIT_COMPONENT)
-          expect(dispatchSpy.firstCall.args[0].component).to.deep.equal(comp1)
+          assert(dispatchSpy.firstCall.args[0].type === EDIT_COMPONENT)
+          assert.deepEqual(comp1, dispatchSpy.firstCall.args[0].component)
         })
     })
 
@@ -126,31 +124,31 @@ describe('(Action) components', () => {
 
       return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })
 
   describe('deleteComponent', () => {
     it('Should return a function.', () => {
-      expect(deleteComponent()).to.be.a('function')
+      assert(typeof deleteComponent() === 'function')
     })
 
     it('Should delete the component.', () => {
-      fetchMock.delete(/.*\/components\/.*/, {})
+      fetchMock.delete(/.*\/components\/.*/, 204)
 
       return deleteComponent('c1', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.calledOnce).to.be.true
-          expect(callbacks.onFailure.called).to.be.false
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
 
-          expect(dispatchSpy.firstCall.args[0].type).to.equal(REMOVE_COMPONENT)
-          expect(dispatchSpy.firstCall.args[0].componentID).to.equal('c1')
+          assert(dispatchSpy.firstCall.args[0].type === REMOVE_COMPONENT)
+          assert.deepEqual('c1', dispatchSpy.firstCall.args[0].componentID)
         })
     })
 
@@ -159,11 +157,11 @@ describe('(Action) components', () => {
 
       return deleteComponent('c1', callbacks)(dispatchSpy)
         .then(() => {
-          expect(callbacks.onLoad.calledOnce).to.be.true
-          expect(callbacks.onSuccess.called).to.be.false
-          expect(callbacks.onFailure.calledOnce).to.be.true
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
 
-          expect(dispatchSpy.called).to.be.false
+          assert(!dispatchSpy.called)
         })
     })
   })

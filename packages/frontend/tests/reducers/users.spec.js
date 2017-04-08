@@ -8,7 +8,7 @@ describe('(Reducer) users', () => {
   describe('getUserHandler', () => {
     it('Should update the `user` state.', () => {
       const state = userReducer(undefined, getUser(user))
-      expect(state.user).to.deep.equal(user)
+      assert.deepEqual(user, state.user)
     })
   })
 })

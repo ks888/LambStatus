@@ -20,7 +20,7 @@ describe('(Reducer) components', () => {
   describe('listComponentsHandler', () => {
     it('Should update the `components` state.', () => {
       const state = componentsReducer(undefined, listComponents(JSON.stringify([comp1])))
-      expect(state.components).to.deep.equal([comp1])
+      assert.deepEqual([comp1], state.components)
     })
   })
 
@@ -29,7 +29,7 @@ describe('(Reducer) components', () => {
       const state = componentsReducer({
         components: [comp1]
       }, addComponent(JSON.stringify(comp2)))
-      expect(state.components).to.deep.equal([comp1, comp2])
+      assert.deepEqual([comp1, comp2], state.components)
     })
   })
 
@@ -41,7 +41,7 @@ describe('(Reducer) components', () => {
       const state = componentsReducer({
         components: [comp1]
       }, editComponent(JSON.stringify(newComp1)))
-      expect(state.components).to.deep.equal([newComp1])
+      assert.deepEqual([newComp1], state.components)
     })
   })
 
@@ -50,7 +50,7 @@ describe('(Reducer) components', () => {
       const state = componentsReducer({
         components: [comp1]
       }, removeComponent(comp1.componentID))
-      expect(state.components).to.deep.equal([])
+      assert.deepEqual([], state.components)
     })
   })
 })

@@ -14,7 +14,7 @@ describe('(Component) AutolinkedText', () => {
   })
 
   it('Should render with linked text.', () => {
-    expect(_wrapper.find({href: 'http://' + text})).to.have.length(1)
-    expect(_wrapper.find('a').text()).to.equal(text)
+    assert(_wrapper.find({href: 'http://' + text}).length === 1)
+    assert(_wrapper.find('a').text() === text)
   })
 })

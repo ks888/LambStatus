@@ -49,6 +49,23 @@ export const getMetricColor = (impact) => {
   }
 }
 
+export const maintenanceStatuses = ['Scheduled', 'In Progress', 'Verifying', 'Completed']
+
+export const getMaintenanceColor = (impact) => {
+  switch (impact) {
+    case 'Scheduled':
+      return '#0277bd'
+    case 'In Progress':
+      return '#ef6c00'
+    case 'Verifying':
+      return '#0277bd'
+    case 'Completed':
+      return '#388e3c'
+    default:
+      return '#9e9e9e'
+  }
+}
+
 export const timeframes = ['Day', 'Week', 'Month']
 
 export const getXAxisFormat = (timeframe) => {
