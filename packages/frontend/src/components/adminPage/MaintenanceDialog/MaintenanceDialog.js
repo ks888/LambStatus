@@ -8,6 +8,7 @@ import ErrorMessage from 'components/common/ErrorMessage'
 import ComponentStatusSelector from 'components/adminPage/ComponentStatusSelector'
 import TimeSelector from 'components/adminPage/TimeSelector'
 import IncidentUpdateItem from 'components/adminPage/IncidentUpdateItem'
+import { getDateTime } from 'utils/datetime'
 import { maintenanceStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MaintenanceDialog.scss'
@@ -52,15 +53,17 @@ export default class MaintenanceDialog extends React.Component {
       this.state = {
         name: props.maintenance.name,
         maintenanceStatus: props.maintenance.status,
-        startAt: props.maintenance.startAt,
+        startAt: getDateTime(props.maintenance.startAt),
         endAt: props.maintenance.endAt
       }
     } else {
+      const currDateTime = getDateTime(new Date().toISOString())
+      currDateTime.add(1, 'days').startOf('day')
       this.state = {
         name: '',
         maintenanceStatus: maintenanceStatuses[0],
-        startAt: undefined,
-        endAt: undefined
+        startAt: currDateTime,
+        endAt: currDateTime
       }
     }
     this.state.components = props.components
@@ -133,14 +136,14 @@ export default class MaintenanceDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus,
-      this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
+    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus, this.state.startAt,
+      this.state.endAt, this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
   }
 
   handleClickUpdateButton = (e) => {
     this.props.updateMaintenance(this.props.maintenance.maintenanceID, this.state.name,
-      this.state.maintenanceStatus, this.state.maintenanceMessage, this.state.components,
-      this.updateCallbacks)
+      this.state.maintenanceStatus, this.state.startAt, this.state.endAt, this.state.maintenanceMessage,
+      this.state.components, this.updateCallbacks)
   }
 
   handleHideDialog = () => {
@@ -153,8 +156,10 @@ export default class MaintenanceDialog extends React.Component {
       return
     }
     const updates = this.props.maintenance.maintenanceUpdates.map((maintenanceUpdate) => {
+      maintenanceUpdate.updateID = maintenanceUpdate.maintenanceUpdateID
+      maintenanceUpdate.status = maintenanceUpdate.maintenanceStatus
       return (
-        <IncidentUpdateItem key={maintenanceUpdate.maintenanceUpdateID} maintenanceUpdate={maintenanceUpdate} />
+        <IncidentUpdateItem key={maintenanceUpdate.updateID} incidentUpdate={maintenanceUpdate} />
       )
     })
     return (

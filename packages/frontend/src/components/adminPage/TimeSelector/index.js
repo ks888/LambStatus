@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import classnames from 'classnames'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import DropdownList from 'components/common/DropdownList'
@@ -17,30 +16,40 @@ for (let i = 0; i < 24; i++) {
 export default class TimeSelector extends React.Component {
   static propTypes = {
     onSelected: PropTypes.func.isRequired,
-    default: PropTypes.string,
+    default: PropTypes.object.isRequired,
     title: PropTypes.string.isRequired,
     className: PropTypes.string
   }
 
+  constructor (props) {
+    super(props)
+    const curr = getDateTime(this.props.default)
+    const hour = curr.hour() < 10 ? `0${curr.hour()}` : `${curr.hour()}`
+    const minute = curr.minute() < 10 ? `0${curr.minute()}` : `${curr.minute()}`
+    this.state = {
+      date: curr,
+      time: `${hour}:${minute}`
+    }
+  }
+
+  calcCurrentValue = (date, time) => {
+    const [hour, minute] = time.split(':', 2)
+    date.hour(hour)
+    date.minute(minute)
+    return date.toISOString()
+  }
+
   handleChangeDate = (value) => {
-    this.props.onSelected()
+    this.setState({date: value})
+    this.props.onSelected(this.calcCurrentValue(value, this.state.time))
   }
 
   handleChangeTime = (value) => {
-    this.props.onSelected()
+    this.setState({time: value})
+    this.props.onSelected(this.calcCurrentValue(this.state.date, value))
   }
 
   render () {
-    let currTime, time
-    if (this.props.default) {
-      currTime = getDateTime(this.props.default)
-      time = `${currTime.hour()}:${currTime.minute()}`
-    } else {
-      currTime = getDateTime(new Date().toISOString())
-      time = timeCandidates[0]
-    }
-
-    console.log(this.props.className)
     return (
       <div className={this.props.className}>
         <label className={classes.label} htmlFor={this.props.title}>
@@ -48,12 +57,12 @@ export default class TimeSelector extends React.Component {
         </label>
         <div className={classes.container}>
           <div className={classes.date}>
-            <DatePicker dateFormat={'YYYY-MM-DD'} selected={currTime} onChange={this.handleChangeDate}
+            <DatePicker dateFormat={'YYYY-MM-DD'} selected={this.state.date} onChange={this.handleChangeDate}
               className={classes.datepicker} />
           </div>
           <span className={classes.time}>
             <DropdownList onChange={this.handleChangeTime}
-              list={timeCandidates} initialValue={time} />
+              list={timeCandidates} initialValue={this.state.time} />
           </span>
         </div>
       </div>

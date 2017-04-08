@@ -2,7 +2,7 @@ import { Maintenance } from 'model/maintenances'
 
 export async function handle (event, context, callback) {
   try {
-    const maintenance = new Maintenance(event.params.maintenanceid, event.body.name, event.body.status,
+    const maintenance = new Maintenance(event.params.maintenanceid, event.body.name, event.body.maintenanceStatus,
                                         event.body.startAt, event.body.endAt, event.body.message,
                                         event.body.components)
     await maintenance.validate()

@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
-import { getIncidentColor } from 'utils/status'
 import { getDateTimeFormat } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
@@ -9,6 +8,7 @@ export default class IncidentItem extends React.Component {
   static propTypes = {
     onUpdateClicked: PropTypes.func.isRequired,
     onDeleteClicked: PropTypes.func.isRequired,
+    getIncidentColor: PropTypes.func.isRequired,
     incident: PropTypes.shape({
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
@@ -26,7 +26,7 @@ export default class IncidentItem extends React.Component {
   }
 
   render () {
-    const { incident } = this.props
+    const { incident, getIncidentColor } = this.props
     let statusColor = getIncidentColor(incident.status)
     return (
       <li className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>

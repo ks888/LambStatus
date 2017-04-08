@@ -18,7 +18,7 @@ describe('(Component) Drawer', () => {
   })
 
   it('Should render a Link to Maintenances route', () => {
-    const maintenanceNode = _wrapper.find(Link).at(0)
+    const maintenanceNode = _wrapper.find(Link).at(1)
     assert(maintenanceNode.key() === 'maintenances')
     assert(maintenanceNode.childAt(0).text() === 'Scheduled Maintenances')
     assert(maintenanceNode.prop('to') === '/maintenances')

@@ -6,6 +6,7 @@ import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { innerDialogID } from 'utils/dialog'
+import { getIncidentColor } from 'utils/status'
 import classes from './Incidents.scss'
 
 const dialogType = {
@@ -103,7 +104,8 @@ export default class Incidents extends React.Component {
     const incidentItems = incidents.map((incident) => {
       return (
         <IncidentItem key={incident.incidentID} onUpdateClicked={this.handleShowUpdateDialog(incident.incidentID)}
-          onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident} />
+          onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident}
+          getIncidentColor={getIncidentColor} />
       )
     })
     const dialog = this.renderDialog()

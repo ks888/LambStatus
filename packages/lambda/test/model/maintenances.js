@@ -27,7 +27,7 @@ describe('Maintenance', () => {
   })
 
   describe('validate', () => {
-    const genMock = () => new Maintenance(undefined, 'name', 'Scheduled', 'start', 'end', 'msg', [], undefined)
+    const genMock = () => new Maintenance(undefined, 'name', 'Scheduled', '1', '2', 'msg', [], undefined)
     it('should return no error when input is valid', async () => {
       const maint = genMock()
       let error

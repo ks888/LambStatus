@@ -57,6 +57,10 @@ export class Maintenance {
       throw new ValidationError('invalid endAt parameter')
     }
 
+    if (this.startAt > this.endAt) {
+      throw new ValidationError('startAt is later than endAt')
+    }
+
     if (this.message === undefined) {
       throw new ValidationError('invalid message parameter')
     }
@@ -78,7 +82,8 @@ export class Maintenance {
   async save () {
     // TODO: retry
     const maintenancesStore = new MaintenancesStore()
-    await maintenancesStore.update(this.maintenanceID, this.name, this.status, this.startAt, this.endAt, false)
+    await maintenancesStore.update(this.maintenanceID, this.name, this.status, this.startAt, this.endAt,
+                                   this.updatedAt, false)
 
     const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
     await maintenanceUpdatesStore.update(this.maintenanceID, this.status, this.message, this.updatedAt)
