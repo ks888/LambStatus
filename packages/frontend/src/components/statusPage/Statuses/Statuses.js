@@ -6,6 +6,7 @@ import ModestLink from 'components/common/ModestLink'
 import MetricsGraph from 'components/common/MetricsGraph'
 import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
+import ScheduledMaintenances from 'components/statusPage/ScheduledMaintenances'
 import { serviceName } from 'utils/settings'
 import { getDateTimeFormat } from 'utils/datetime'
 import { timeframes, getComponentColor } from 'utils/status'
@@ -181,6 +182,7 @@ export default class Statuses extends React.Component {
     const componentItems = components.map(this.renderComponentItem)
     const timeframeSelector = this.renderTimeframeSelector()
     const dateItems = this.renderDateItems(incidents)
+    const maintenanceItems = (<ScheduledMaintenances classNames='mdl-cell mdl-cell--12-col mdl-list' />)
 
     let metricsTitle, metricsContent
     if (metrics.length !== 0) {
@@ -210,6 +212,7 @@ export default class Statuses extends React.Component {
       <ul className='mdl-cell mdl-cell--12-col mdl-list'>
         {componentItems}
       </ul>
+      {maintenanceItems}
       {metricsTitle}
       {metricsContent}
       <div className='mdl-cell mdl-cell--12-col'>

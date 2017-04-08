@@ -54,7 +54,7 @@ export default class MaintenanceDialog extends React.Component {
         name: props.maintenance.name,
         maintenanceStatus: props.maintenance.status,
         startAt: getDateTime(props.maintenance.startAt),
-        endAt: props.maintenance.endAt
+        endAt: getDateTime(props.maintenance.endAt)
       }
     } else {
       const currDateTime = getDateTime(new Date().toISOString())
@@ -136,14 +136,14 @@ export default class MaintenanceDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus, this.state.startAt,
-      this.state.endAt, this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
+    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus, this.state.startAt.toISOString(),
+      this.state.endAt.toISOString(), this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
   }
 
   handleClickUpdateButton = (e) => {
     this.props.updateMaintenance(this.props.maintenance.maintenanceID, this.state.name,
-      this.state.maintenanceStatus, this.state.startAt, this.state.endAt, this.state.maintenanceMessage,
-      this.state.components, this.updateCallbacks)
+      this.state.maintenanceStatus, this.state.startAt.toISOString(), this.state.endAt.toISOString(),
+      this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

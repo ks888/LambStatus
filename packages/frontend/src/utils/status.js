@@ -54,7 +54,7 @@ export const maintenanceStatuses = ['Scheduled', 'In Progress', 'Verifying', 'Co
 export const getMaintenanceColor = (impact) => {
   switch (impact) {
     case 'Scheduled':
-      return '#c62828'
+      return '#0277bd'
     case 'In Progress':
       return '#ef6c00'
     case 'Verifying':

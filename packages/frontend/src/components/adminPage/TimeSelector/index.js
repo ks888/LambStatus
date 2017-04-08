@@ -36,7 +36,7 @@ export default class TimeSelector extends React.Component {
     const [hour, minute] = time.split(':', 2)
     date.hour(hour)
     date.minute(minute)
-    return date.toISOString()
+    return date
   }
 
   handleChangeDate = (value) => {

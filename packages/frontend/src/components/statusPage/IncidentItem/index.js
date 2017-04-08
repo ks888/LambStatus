@@ -7,6 +7,22 @@ import { getDateTimeFormat } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
 export default class IncidentItem extends React.Component {
+  static propTypes = {
+    onDetailClicked: PropTypes.func,
+    incident: PropTypes.shape({
+      incidentID: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      status: PropTypes.string,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
+    }).isRequired,
+    showDetailButton: PropTypes.bool.isRequired
+  }
+
   constructor (props) {
     super(props)
     this.state = {
@@ -69,20 +85,4 @@ export default class IncidentItem extends React.Component {
       </li>
     )
   }
-}
-
-IncidentItem.propTypes = {
-  onDetailClicked: PropTypes.func,
-  incident: PropTypes.shape({
-    incidentID: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    status: PropTypes.string,
-    incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-      incidentUpdateID: PropTypes.string.isRequired,
-      incidentStatus: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
-    }).isRequired)
-  }).isRequired,
-  showDetailButton: PropTypes.bool.isRequired
 }
