@@ -13,27 +13,65 @@ export default class Incidents extends React.Component {
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
+      updatedAt: PropTypes.string.isRequired,
+      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
+        incidentUpdateID: PropTypes.string.isRequired,
+        incidentStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
     }).isRequired).isRequired,
     maintenances: PropTypes.arrayOf(PropTypes.shape({
       maintenanceID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired
+      updatedAt: PropTypes.string.isRequired,
+      maintenanceUpdates: PropTypes.arrayOf(PropTypes.shape({
+        maintenanceUpdateID: PropTypes.string.isRequired,
+        maintenanceStatus: PropTypes.string.isRequired,
+        message: PropTypes.string.isRequired,
+        updatedAt: PropTypes.string.isRequired
+      }).isRequired)
     }).isRequired).isRequired,
     classNames: PropTypes.string,
     fetchIncidents: PropTypes.func.isRequired,
-    fetchMaintenances: PropTypes.func.isRequired
+    fetchIncidentUpdates: PropTypes.func.isRequired,
+    fetchMaintenances: PropTypes.func.isRequired,
+    fetchMaintenanceUpdates: PropTypes.func.isRequired
   }
 
   constructor () {
     super()
     this.dateFormat = 'MMM DD, YYYY'
+    this.numDisplayDates = 14
+    this.state = {
+      needIncidentUpdates: false,
+      needMaintenanceUpdates: false
+    }
   }
 
   componentDidMount () {
-    this.props.fetchIncidents()
-    this.props.fetchMaintenances()
+    this.props.fetchIncidents({ onSuccess: () => { this.setState({needIncidentUpdates: true}) } })
+    this.props.fetchMaintenances({ onSuccess: () => { this.setState({needMaintenanceUpdates: true}) } })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const firstDateToShow = moment().subtract(this.numDisplayDates, 'days').toISOString()
+    if (this.state.needIncidentUpdates) {
+      nextProps.incidents.forEach(incident => {
+        if (incident.updatedAt < firstDateToShow) return
+        this.props.fetchIncidentUpdates(incident.incidentID)
+      })
+      this.setState({needIncidentUpdates: false})
+    }
+
+    if (this.state.needMaintenanceUpdates) {
+      nextProps.maintenances.forEach(maintenance => {
+        if (maintenance.updatedAt < firstDateToShow) return
+        this.props.fetchMaintenanceUpdates(maintenance.maintenanceID)
+      })
+      this.setState({needMaintenanceUpdates: false})
+    }
   }
 
   renderDateItem = (date, incidents) => {
@@ -63,8 +101,7 @@ export default class Incidents extends React.Component {
 
   render () {
     const { incidents, maintenances } = this.props
-    const numDays = 14
-    const dates = [...Array(numDays).keys()].reduce((dates, index) => {
+    const dates = [...Array(this.numDisplayDates).keys()].reduce((dates, index) => {
       const date = moment().subtract(index, 'days').format(this.dateFormat)
       dates[date] = {
         incidents: [],
@@ -88,6 +125,7 @@ export default class Incidents extends React.Component {
 
     return (
       <div className={this.props.classNames}>
+        <h4 className={classnames(classes.title)}>Incidents</h4>
         {Object.keys(dates).map((date) =>
           this.renderDateItem(date, dates[date])
         )}
