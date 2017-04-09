@@ -12,40 +12,29 @@ export default class CloudWatchMetricsSelector extends React.Component {
 
   constructor (props) {
     super(props)
+
+    let namespace = props.props ? props.props.Namespace : ''
+    let metric = props.props ? this.buildMetricExpression(props.props) : ''
     this.state = {
-      message: ''
+      namespace,
+      metric
     }
   }
 
   componentDidMount () {
-    const fetchCallbacks = {
-      onFailure: (msg) => {
-        this.setState({message: msg})
-      }
-    }
-    this.props.fetchExternalMetrics('CloudWatch', fetchCallbacks)
+    this.props.fetchExternalMetrics('CloudWatch')
   }
 
   handleChangeNamespace = (value) => {
-    this.props.onChange({
-      Namespace: value
-    })
+    this.setState({namespace: value})
   }
 
   handleChangeMetric = (value) => {
-    const splitStr = ' - ['
-    const splitIndex = value.indexOf(splitStr)
-    const metricName = value.substr(0, splitIndex)
+    this.setState({metric: value})
 
-    const rawDims = value.slice(splitIndex + splitStr.length, -1)
-    const dimensions = rawDims.split(', ').map((rawDim) => {
-      const splitStr = ': '
-      const splitIndex = rawDim.indexOf(splitStr)
-      const dimName = rawDim.substr(0, splitIndex)
-      const dimValue = rawDim.substr(splitIndex + splitStr.length)
-      return {Name: dimName, Value: dimValue}
-    })
+    const { metricName, dimensions } = this.parseMetricExpression(value)
     this.props.onChange({
+      Namespace: this.state.namespace,
       MetricName: metricName,
       Dimensions: dimensions
     })
@@ -58,37 +47,42 @@ export default class CloudWatchMetricsSelector extends React.Component {
     return `${metric.MetricName} - [${dimensions.join(', ')}]`
   }
 
-  render () {
-    let initialNamespace = ''
-    let initialMetric = ''
-    if (this.props.props) {
-      const props = this.props.props
-      initialNamespace = props.Namespace
-      if (props.Dimensions) {
-        initialMetric = this.buildMetricExpression(props)
-      }
-    }
+  parseMetricExpression = (value) => {
+    const splitStr = ' - ['
+    const splitIndex = value.indexOf(splitStr)
+    const metricName = value.substr(0, splitIndex)
 
-    let namespaces = []
-    const metrics = []
+    const rawDims = value.slice(splitIndex + splitStr.length, -1)
+    const dimensions = rawDims.split(', ').map((rawDim) => {
+      const splitStr = ': '
+      const splitIndex = rawDim.indexOf(splitStr)
+      const dimName = rawDim.substr(0, splitIndex)
+      const dimValue = rawDim.substr(splitIndex + splitStr.length)
+      return {Name: dimName, Value: dimValue}
+    })
+
+    return { metricName, dimensions }
+  }
+
+  render () {
+    let namespaces = ['']
+    let metrics = ['']
     if (this.props.metrics) {
-      const namespaceSet = new Set([''])
+      const namespaceSet = new Set()
       this.props.metrics.forEach((metric) => {
         namespaceSet.add(metric.Namespace)
       })
-      namespaces = Array.from(namespaceSet).sort()
+      namespaces = namespaces.concat(Array.from(namespaceSet).sort())
 
-      if (this.props.props && this.props.props.Namespace) {
-        this.props.metrics.forEach((metric) => {
-          if (metric.Namespace === this.props.props.Namespace) {
-            metrics.push(this.buildMetricExpression(metric))
-          }
-        })
-      }
+      this.props.metrics.forEach((metric) => {
+        if (metric.Namespace === this.state.namespace) {
+          metrics.push(this.buildMetricExpression(metric))
+        }
+      })
       metrics.sort()
     } else {
-      namespaces.push(initialNamespace)
-      metrics.push(initialMetric)
+      namespaces = [this.state.namespace]
+      metrics = [this.state.metric]
     }
 
     return (
@@ -98,14 +92,14 @@ export default class CloudWatchMetricsSelector extends React.Component {
         </label>
         <div id='metric' className={classes['dropdown-list']}>
           <DropdownList onChange={this.handleChangeNamespace}
-            list={namespaces} initialValue={initialNamespace} />
+            list={namespaces} initialValue={this.state.namespace} />
         </div>
         <label className={classes.label} htmlFor='metric'>
           CloudWatch MetricName & Dimensions
         </label>
         <div id='metric' className={classes['dropdown-list']}>
           <DropdownList onChange={this.handleChangeMetric}
-            list={metrics} initialValue={initialMetric} />
+            list={metrics} initialValue={this.state.metric} />
         </div>
       </div>
     )

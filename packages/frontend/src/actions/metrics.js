@@ -148,9 +148,11 @@ export const deleteMetric = (metricID, callbacks = {}) => {
 export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
-                                     {cache: 'no-cache'}, callbacks)
-      dispatch(listMetricsData(metricID, year, month, date, json))
+      const respBody = await sendRequest(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
+                                         {cache: 'no-cache'}, callbacks)
+      if (typeof respBody === 'object') {
+        dispatch(listMetricsData(metricID, year, month, date, respBody))
+      }
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

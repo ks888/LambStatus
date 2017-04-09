@@ -1,6 +1,6 @@
 import { Metrics } from 'model/metrics'
 
-export async function handler (event, context, callback) {
+export async function handle (event, context, callback) {
   try {
     const metrics = new Metrics()
     const metric = await metrics.lookup(event.params.metricid)
