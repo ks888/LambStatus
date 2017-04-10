@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
+import Tooltip from 'components/common/Tooltip'
 import { getDateTimeFormat } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
@@ -32,7 +33,8 @@ export default class IncidentItem extends React.Component {
       <li className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{ color: statusColor }}>brightness_1</i>
+            style={{ color: statusColor }} data-tip={incident.status}>report</i>
+          <Tooltip />
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>
             updated at {getDateTimeFormat(incident.updatedAt)}

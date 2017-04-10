@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import ComponentDialog, { componentDialogType } from 'components/adminPage/ComponentDialog'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
+import Tooltip from 'components/common/Tooltip'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { getComponentColor } from 'utils/status'
 import { innerDialogID } from 'utils/dialog'
@@ -73,7 +74,8 @@ export default class Components extends React.Component {
       <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{color: statusColor}}>web</i>
+            style={{color: statusColor}} data-tip={component.status}>web</i>
+          <Tooltip />
           <span>{component.name}</span>
           <span className='mdl-list__item-sub-title'>{component.description}</span>
         </span>

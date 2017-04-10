@@ -1,0 +1,8 @@
+.tooltip {
+  background-color: #777 !important;
+  padding: 5px 10px !important;
+}
+
+.tooltip::after {
+  border-top-color: #777 !important;
+}

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
+import Tooltip from 'components/common/Tooltip'
 import MetricDialog, { metricDialogType } from 'components/adminPage/MetricDialog'
 import MetricPreviewDialog from 'components/adminPage/MetricPreviewDialog'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
@@ -79,7 +80,8 @@ export default class Metrics extends React.Component {
       <li key={metric.metricID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
         <span className='mdl-list__item-primary-content'>
           <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
-            style={{color: statusColor}}>insert_chart</i>
+            style={{color: statusColor}} data-tip={metric.status}>insert_chart</i>
+          <Tooltip />
           <span>{metric.title}</span>
           <span className='mdl-list__item-sub-title'>{metric.description}</span>
         </span>
