@@ -842,24 +842,49 @@ Resources:
     DependsOn:
       - "RestApi"
       - "ComponentsApiResource"
-      - "GetComponentsApiMethod"
-      - "OptionsComponentsApiMethod"
-      - "PostComponentsApiMethod"
       - "ComponentApiResource"
+      - "IncidentsApiResource"
+      - "IncidentApiResource"
+      - "IncidentUpdatesApiResource"
+      - "MaintenancesApiResource"
+      - "MaintenanceApiResource"
+      - "MaintenanceUpdatesApiResource"
+      - "ExternalMetricsApiResource"
+      - "PublicMetricsApiResource"
+      - "MetricsApiResource"
+      - "MetricApiResource"
+      - "GetComponentsApiMethod"
+      - "PostComponentsApiMethod"
+      - "OptionsComponentsApiMethod"
       - "PatchComponentApiMethod"
       - "DeleteComponentApiMethod"
       - "OptionsComponentApiMethod"
-      - "IncidentsApiResource"
       - "GetIncidentsApiMethod"
-      - "OptionsIncidentsApiMethod"
       - "PostIncidentsApiMethod"
-      - "IncidentApiResource"
+      - "OptionsIncidentsApiMethod"
       - "PatchIncidentApiMethod"
       - "DeleteIncidentApiMethod"
       - "OptionsIncidentApiMethod"
-      - "IncidentUpdatesApiResource"
       - "GetIncidentUpdatesApiMethod"
       - "OptionsIncidentUpdatesApiMethod"
+      - "GetMaintenancesApiMethod"
+      - "PostMaintenancesApiMethod"
+      - "OptionsMaintenancesApiMethod"
+      - "PatchMaintenanceApiMethod"
+      - "DeleteMaintenanceApiMethod"
+      - "OptionsMaintenanceApiMethod"
+      - "GetMaintenanceUpdatesApiMethod"
+      - "OptionsMaintenanceUpdatesApiMethod"
+      - "GetExternalMetricsApiMethod"
+      - "OptionsExternalMetricsApiMethod"
+      - "GetPublicMetricsApiMethod"
+      - "OptionsPublicMetricsApiMethod"
+      - "GetMetricsApiMethod"
+      - "PostMetricsApiMethod"
+      - "OptionsMetricsApiMethod"
+      - "PatchMetricApiMethod"
+      - "DeleteMetricApiMethod"
+      - "OptionsMetricApiMethod"
   RestApi:
     Type: "AWS::ApiGateway::RestApi"
     Properties:
@@ -2378,8 +2403,6 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-    DependsOn:
-      - S3HandleFunctionRole
   S3SyncObjectsFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2401,8 +2424,6 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-    DependsOn:
-      - S3HandleFunctionRole
   CognitoHandleFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -2453,8 +2474,6 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-    DependsOn:
-      - CognitoHandleFunctionRole
   CognitoCreateUserPoolClientFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2476,8 +2495,6 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-    DependsOn:
-      - CognitoHandleFunctionRole
   CognitoCreateUserFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2499,8 +2516,6 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-    DependsOn:
-      - CognitoHandleFunctionRole
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -2515,9 +2530,6 @@ Resources:
       Key: settings.json
       Body: !Sub |-
         {"InvocationURL": "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/", "ServiceName": "${ServiceName}", "StatusPageURL": "https://${StatusPageDistribution.DomainName}"}
-    DependsOn:
-      - StatusPageDistribution
-      - CognitoUserPoolClient
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -2600,9 +2612,6 @@ Resources:
         https://${AdminPageDistribution.DomainName}
       SnsCallerArn: !Sub |-
         ${CognitoSMSCallerRole.Arn}
-    DependsOn:
-      - CognitoSMSCallerRole
-      - AdminPageDistribution
   CognitoUserPoolClient:
     Type: Custom::CognitoUserPoolClient
     Properties:
@@ -2615,8 +2624,6 @@ Resources:
       ClientName: Browser
       UserPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}
-    DependsOn:
-      - CognitoUserPool
   CognitoInitialUser:
     Type: Custom::CognitoInitialUser
     Properties:
@@ -2628,8 +2635,6 @@ Resources:
         ${UserEmail}
       UserName: !Sub |-
         ${UserName}
-    DependsOn:
-      - CognitoUserPool
 Outputs:
   LambdaRoleArn:
     Value:
@@ -2676,3 +2681,6 @@ Outputs:
   UserPoolClientID:
     Value: !Sub |-
       ${CognitoUserPoolClient.UserPoolClientID}
+  Version:
+    Value:
+      Fn::FindInMap: [ Constants, LambStatus, Version ]
