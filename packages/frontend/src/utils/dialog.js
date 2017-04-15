@@ -7,9 +7,12 @@ export const mountDialog = (dialog) => {
   if (dialog) {
     document.getElementById(dialogID).appendChild(dialog)
 
-    if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog)
+    if (typeof HTMLDialogElement === 'function' || !dialog.showModal) {
+      // There is some difference between dialog and its polyfill, and it breaks our layout.
+      // To avoid this issue, always use polyfill.
+      dialogPolyfill.forceRegisterDialog(dialog)
     }
+
     dialog.showModal()
   }
 }
