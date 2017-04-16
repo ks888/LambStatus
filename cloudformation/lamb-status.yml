@@ -839,6 +839,8 @@ Resources:
         Ref: "RestApi"
       Description: "Production deployment"
       StageName: "prod"
+    # The deployment resource must depend on the RestApi's methods.
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-deployment.html#aws-resource-apigateway-deployment-examples
     DependsOn:
       - "RestApi"
       - "ComponentsApiResource"
