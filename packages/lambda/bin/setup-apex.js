@@ -67,3 +67,7 @@ createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
   buildDir + '/functions/CognitoCreateUserPool',
   buildDir + '/functions/CognitoCreateUserPoolClient'
 ])
+const apiGatewayHandleFunctionRoleArn = getArn(awsResourceIDs, 'APIGatewayHandleFunctionRoleArn')
+createFunctionJSON(apiGatewayHandleFunctionRoleArn, 30, 128, [
+  buildDir + '/functions/APIGatewayDeploy'
+])

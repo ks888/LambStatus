@@ -108,6 +108,10 @@ export default {
     CognitoCreateUser: [
       'babel-polyfill',
       './src/api/cognitoCreateUser/index.js'
+    ],
+    APIGatewayDeploy: [
+      'babel-polyfill',
+      './src/api/apiGatewayDeploy/index.js'
     ]
   },
   output: {
