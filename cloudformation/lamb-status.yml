@@ -2518,6 +2518,56 @@ Resources:
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
+  APIGatewayDeployFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/APIGatewayDeploy.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: Deploy the APIGateway.
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-APIGatewayDeploy
+      Handler: "_apex_index.handle"
+      Role:
+        Fn::GetAtt:
+          - APIGatewayHandleFunctionRole
+          - Arn
+      Runtime: nodejs4.3
+      Timeout: 30
+  APIGatewayHandleFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: WriteCloudWatchLogs
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: APIGateway
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - apigateway:POST
+                Resource: !Sub |-
+                  arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -2637,6 +2687,19 @@ Resources:
         ${UserEmail}
       UserName: !Sub |-
         ${UserName}
+  APIGatewayDeploy:
+    Type: Custom::APIGatewayDeploy
+    Properties:
+      ServiceToken: !Sub |-
+        ${APIGatewayDeployFunction.Arn}
+      RestApiId: !Sub |-
+        ${RestApi}
+      StageName: prod
+      # this custom resource is updated when this parameter is changed.
+      Version: !Sub
+        - ${Version}
+        - Version:
+            Fn::FindInMap: [ Constants, LambStatus, Version ]
 Outputs:
   LambdaRoleArn:
     Value:
@@ -2650,6 +2713,9 @@ Outputs:
   CognitoHandleFunctionRoleArn:
     Value:
       !GetAtt CognitoHandleFunctionRole.Arn
+  APIGatewayHandleFunctionRoleArn:
+    Value:
+      !GetAtt APIGatewayHandleFunctionRole.Arn
   AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:
