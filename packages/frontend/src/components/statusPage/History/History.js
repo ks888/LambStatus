@@ -12,16 +12,9 @@ export default class History extends React.Component {
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired,
-      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-        incidentUpdateID: PropTypes.string.isRequired,
-        incidentStatus: PropTypes.string.isRequired,
-        message: PropTypes.string.isRequired,
-        updatedAt: PropTypes.string.isRequired
-      }).isRequired)
+      updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    fetchIncidents: PropTypes.func.isRequired,
-    fetchIncidentUpdates: PropTypes.func.isRequired
+    fetchIncidents: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -43,14 +36,9 @@ export default class History extends React.Component {
     this.props.fetchIncidents(this.fetchCallbacks)
   }
 
-  handleShowDetail = (incidentID) => {
-    this.props.fetchIncidentUpdates(incidentID, this.fetchCallbacks)
-  }
-
   renderIncidentItems = (month, incidents) => {
     const incidentItems = incidents.map((incident) =>
-      <IncidentItem key={incident.incidentID} onDetailClicked={this.handleShowDetail}
-        incident={incident} showDetailButton />
+      <IncidentItem key={incident.incidentID} incidentID={incident.incidentID} />
     )
 
     return (
