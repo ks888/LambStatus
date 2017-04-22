@@ -12,7 +12,7 @@
   <script>
     try {
       x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-      x.open('GET', 'settings.json', 1);
+      x.open('GET', '/settings.json', 1);
       x.onreadystatechange = function () {
         if (x.readyState === 4 && x.status === 200) {
           j = JSON.parse(x.responseText);
@@ -28,8 +28,8 @@
       window.console && console.log(e);
     }
   </script>
-  <script src="dialog-polyfill.js"></script>
-  <link rel="stylesheet" type="text/css" href="dialog-polyfill.css" />
+  <script src="/dialog-polyfill.js"></script>
+  <link rel="stylesheet" type="text/css" href="/dialog-polyfill.css" />
 </head>
 <body style="height: 100%">
   <div id="root" style="height: 100%"></div>
