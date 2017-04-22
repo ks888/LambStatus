@@ -76,7 +76,7 @@ export default class Incidents extends React.Component {
 
   renderDateItem = (date, incidents) => {
     const dateItems = incidents.incidents.map(incident =>
-      <IncidentItem key={incident.incidentID} incident={incident} showDetailButton={false} />
+      <IncidentItem key={incident.incidentID} incident={incident} />
     )
 
     incidents.maintenances.forEach(maint => {

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Link } from 'react-router'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
 import AutolinkedText from 'components/common/AutolinkedText'
@@ -55,6 +56,8 @@ export default class IncidentItem extends React.Component {
     let incidentUpdateItems, updatedAt, detailButton
     if (incident.hasOwnProperty('incidentUpdates')) {
       incidentUpdateItems = incident.incidentUpdates.map(this.renderIncidentUpdateItem)
+    } else if (this.props.autoloadDetail) {
+      // now loading...
     } else {
       updatedAt = (
         <span className='mdl-list__item-sub-title'>
@@ -69,12 +72,13 @@ export default class IncidentItem extends React.Component {
     }
 
     return (
-      <li id={this.props.incidentID}
-        className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.item)}>
+      <li className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.item)}>
         <div className={classes.item_headline}>
-          <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}
-            style={{color: statusColor}}>
-            {incident.status} - {incident.name}
+          <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}>
+            <Link to={`/incidents/${this.props.incidentID}`} className={classes.item_primary_link}
+              style={{color: statusColor}}>
+              {incident.status} - {incident.name}
+            </Link>
             {updatedAt}
           </span>
           {detailButton}

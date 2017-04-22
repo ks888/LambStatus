@@ -4,6 +4,7 @@ import ModestLink from 'components/common/ModestLink'
 import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import { getDateTimeFormat } from 'utils/datetime'
+import { serviceName } from 'utils/settings'
 import classes from './History.scss'
 
 export default class History extends React.Component {
@@ -78,7 +79,7 @@ export default class History extends React.Component {
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <Title service_name='Service' />
+      <Title service_name={serviceName} />
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incident History</h4>
       </div>
