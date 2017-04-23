@@ -11,13 +11,7 @@ export default class Incident extends React.Component {
     incident: PropTypes.shape({
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      status: PropTypes.string,
-      incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
-        incidentUpdateID: PropTypes.string.isRequired,
-        incidentStatus: PropTypes.string.isRequired,
-        message: PropTypes.string.isRequired,
-        updatedAt: PropTypes.string.isRequired
-      }).isRequired)
+      status: PropTypes.string
     }),
     fetchIncidents: PropTypes.func.isRequired
   }

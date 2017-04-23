@@ -80,7 +80,7 @@ export default class Incidents extends React.Component {
     )
 
     incidents.maintenances.forEach(maint => {
-      const item = (<MaintenanceItem key={maint.maintenanceID} maintenance={maint} />)
+      const item = (<MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} />)
       dateItems.push(item)
     })
 

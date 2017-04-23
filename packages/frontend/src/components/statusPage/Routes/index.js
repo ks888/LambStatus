@@ -4,6 +4,7 @@ import StatusPageLayout from 'components/statusPage/StatusPageLayout'
 import Statuses from 'components/statusPage/Statuses'
 import History from 'components/statusPage/History'
 import Incident from 'components/statusPage/Incident'
+import Maintenance from 'components/statusPage/Maintenance'
 
 const routes = (
   <Route path='/' component={StatusPageLayout}>
@@ -11,6 +12,7 @@ const routes = (
     <Route path='statuses' component={Statuses} />
     <Route path='history' component={History} />
     <Route path='incidents/:id' component={Incident} />
+    <Route path='maintenances/:id' component={Maintenance} />
   </Route>
 )
 
