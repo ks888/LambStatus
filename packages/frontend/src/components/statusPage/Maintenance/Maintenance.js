@@ -26,7 +26,7 @@ export default class Maintenance extends React.Component {
   }
 
   render () {
-    const { maintenanceID } = this.props
+    const { maintenanceID: id } = this.props
 
     return (
       <div className={classnames(classes.layout, 'mdl-grid')}>
@@ -34,7 +34,7 @@ export default class Maintenance extends React.Component {
           <h4>Scheduled Maintenance Report for {serviceName}</h4>
         </div>
         <div className='mdl-cell mdl-cell--12-col mdl-list'>
-          {(this.props.maintenance) ? <MaintenanceItem key={maintenanceID} maintenanceID={maintenanceID} autoloadDetail /> : ''}
+          {(this.props.maintenance) ? <MaintenanceItem key={id} maintenanceID={id} autoloadDetail /> : ''}
         </div>
         <ModestLink link='/' text='Current Incidents' />
       </div>

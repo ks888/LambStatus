@@ -38,16 +38,16 @@ export default class MaintenanceItem extends React.Component {
     this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID)
   }
 
-  renderMaintenanceUpdateItem = (maintenanceUpdate) => {
+  renderMaintenanceUpdateItem = (maintUpdate) => {
     return (
-      <div className={classnames(classes.inner_item)} key={maintenanceUpdate.maintenanceUpdateID}>
+      <div className={classnames(classes.inner_item)} key={maintUpdate.maintenanceUpdateID}>
         <div>
-          {maintenanceUpdate.maintenanceStatus}
-          <span className={classnames(classes.inner_item_message)}> - <AutolinkedText text={maintenanceUpdate.message} />
+          {maintUpdate.maintenanceStatus}
+          <span className={classnames(classes.inner_item_message)}> - <AutolinkedText text={maintUpdate.message} />
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {getDateTimeFormat(maintenanceUpdate.updatedAt)}
+          {getDateTimeFormat(maintUpdate.updatedAt)}
         </div>
       </div>
     )
