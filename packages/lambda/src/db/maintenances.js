@@ -12,7 +12,7 @@ export default class MaintenanceStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MaintenanceTable,
-        ProjectionExpression: 'maintenanceID, #nm, #st, startAt, endAt',
+        ProjectionExpression: 'maintenanceID, #nm, #st, startAt, endAt, updatedAt',
         ExpressionAttributeNames: {
           '#nm': 'name',
           '#st': 'status'
@@ -40,7 +40,7 @@ export default class MaintenanceStore {
         ExpressionAttributeValues: {
           ':hkey': maintenanceID
         },
-        ProjectionExpression: 'maintenanceID, #nm, #st, startAt, endAt',
+        ProjectionExpression: 'maintenanceID, #nm, #st, startAt, endAt, updatedAt',
         ExpressionAttributeNames: {
           '#nm': 'name',
           '#st': 'status'

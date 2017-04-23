@@ -3,18 +3,23 @@ import classnames from 'classnames'
 import ModestLink from 'components/common/ModestLink'
 import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
+import MaintenanceItem from 'components/statusPage/MaintenanceItem'
 import { getDateTimeFormat } from 'utils/datetime'
+import { serviceName } from 'utils/settings'
 import classes from './History.scss'
 
 export default class History extends React.Component {
   static propTypes = {
     incidents: PropTypes.arrayOf(PropTypes.shape({
       incidentID: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
-    fetchIncidents: PropTypes.func.isRequired
+    maintenances: PropTypes.arrayOf(PropTypes.shape({
+      maintenanceID: PropTypes.string.isRequired,
+      updatedAt: PropTypes.string.isRequired
+    }).isRequired).isRequired,
+    fetchIncidents: PropTypes.func.isRequired,
+    fetchMaintenances: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -34,12 +39,19 @@ export default class History extends React.Component {
 
   componentDidMount () {
     this.props.fetchIncidents(this.fetchCallbacks)
+    this.props.fetchMaintenances(this.fetchCallbacks)
   }
 
-  renderIncidentItems = (month, incidents) => {
-    const incidentItems = incidents.map((incident) =>
-      <IncidentItem key={incident.incidentID} incidentID={incident.incidentID} />
-    )
+  renderEventItems = (month, events) => {
+    const eventItems = events.map(event => {
+      if (event.hasOwnProperty('incidentID')) {
+        return (<IncidentItem key={event.incidentID} incidentID={event.incidentID} />)
+      } else if (event.hasOwnProperty('maintenanceID')) {
+        return (<MaintenanceItem key={event.maintenanceID} maintenanceID={event.maintenanceID} />)
+      } else {
+        throw new Error('Unknown event: ', event)
+      }
+    })
 
     return (
       <li key={month} className={classnames('mdl-list__item',
@@ -48,7 +60,7 @@ export default class History extends React.Component {
           <div className={classnames(classes.border)}>{month}</div>
           <span className='mdl-list__item-sub-title'>
             <ul className='mdl-list'>
-              {incidentItems}
+              {eventItems}
             </ul>
           </span>
         </span>
@@ -56,34 +68,35 @@ export default class History extends React.Component {
     )
   }
 
-  renderIncidentsByMonth = (incidents) => {
+  renderEventsByMonth = (events) => {
     let months = {}
-    incidents.forEach((incident) => {
-      const updatedAt = getDateTimeFormat(incident.updatedAt, 'MMMM YYYY')
+    events.forEach(event => {
+      const updatedAt = getDateTimeFormat(event.updatedAt, 'MMMM YYYY')
       if (!months.hasOwnProperty(updatedAt)) {
-        months[updatedAt] = [incident]
+        months[updatedAt] = [event]
       } else {
-        months[updatedAt].push(incident)
+        months[updatedAt].push(event)
       }
     })
 
-    return Object.keys(months).map((month) =>
-      this.renderIncidentItems(month, months[month])
+    return Object.keys(months).map(month =>
+      this.renderEventItems(month, months[month])
     )
   }
 
   render () {
-    const { incidents } = this.props
-    const incidentsByMonth = this.renderIncidentsByMonth(incidents)
+    const { incidents, maintenances } = this.props
+    const events = incidents.concat(maintenances)
+    const eventsByMonth = this.renderEventsByMonth(events)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <Title service_name='Service' />
+      <Title service_name={serviceName} />
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incident History</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col mdl-list'>
-        {incidentsByMonth}
+        {eventsByMonth}
       </div>
       <ModestLink link='/' text='Current Incidents' />
     </div>)
