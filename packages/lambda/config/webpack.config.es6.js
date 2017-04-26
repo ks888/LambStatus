@@ -112,6 +112,18 @@ export default {
     APIGatewayDeploy: [
       'babel-polyfill',
       './src/api/apiGatewayDeploy/index.js'
+    ],
+    GetPublicSettings: [
+      'babel-polyfill',
+      './src/api/getPublicSettings/index.js'
+    ],
+    GetSettings: [
+      'babel-polyfill',
+      './src/api/getSettings/index.js'
+    ],
+    PatchSettings: [
+      'babel-polyfill',
+      './src/api/patchSettings/index.js'
     ]
   },
   output: {
