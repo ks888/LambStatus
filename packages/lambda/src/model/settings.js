@@ -1,5 +1,5 @@
 import SettingsStore from 'db/settings'
-import { ValidationError } from 'utils/errors'
+import { ValidationError, NotFoundError } from 'utils/errors'
 
 const settingsKeyServiceName = 'ServiceName'
 const settingsKeyStatusPageURL = 'StatusPageURL'
@@ -18,7 +18,14 @@ export class Settings {
   }
 
   async getServiceName () {
-    return await this.store.get(settingsKeyServiceName)
+    try {
+      return await this.store.get(settingsKeyServiceName)
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return ''
+      }
+      throw err
+    }
   }
 
   async setServiceName (value) {
@@ -26,7 +33,14 @@ export class Settings {
   }
 
   async getStatusPageURL () {
-    return await this.store.get(settingsKeyStatusPageURL)
+    try {
+      return await this.store.get(settingsKeyStatusPageURL)
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return ''
+      }
+      throw err
+    }
   }
 
   async setStatusPageURL (value) {
@@ -37,7 +51,14 @@ export class Settings {
   }
 
   async getAdminPageURL () {
-    return await this.store.get(settingsKeyAdminPageURL)
+    try {
+      return await this.store.get(settingsKeyAdminPageURL)
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        return ''
+      }
+      throw err
+    }
   }
 
   async setAdminPageURL (value) {

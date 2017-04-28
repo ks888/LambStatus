@@ -2,9 +2,9 @@ import { Settings } from 'model/settings'
 
 export async function handle (event, context, callback) {
   try {
-    const settings = await new Settings()
-    const serviceName = settings.getServiceName()
-    const statusPageURL = settings.getStatusPageURL()
+    const settings = new Settings()
+    const serviceName = await settings.getServiceName()
+    const statusPageURL = await settings.getStatusPageURL()
     callback(null, JSON.stringify({serviceName, statusPageURL}))
   } catch (error) {
     console.log(error.message)

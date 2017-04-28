@@ -124,6 +124,10 @@ export default {
     PatchSettings: [
       'babel-polyfill',
       './src/api/patchSettings/index.js'
+    ],
+    DBCreateItems: [
+      'babel-polyfill',
+      './src/api/dbCreateItems/index.js'
     ]
   },
   output: {

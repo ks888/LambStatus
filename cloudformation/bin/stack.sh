@@ -33,7 +33,6 @@ put_stack() {
       --template-url ${CF_TEMPLATE_URL} \
       --capabilities CAPABILITY_IAM \
       --parameters \
-        ParameterKey=ServiceName,ParameterValue=${SERVICE_NAME},UsePreviousValue=false \
         ParameterKey=UserName,ParameterValue=${USER_NAME},UsePreviousValue=false \
         ParameterKey=UserEmail,ParameterValue=${USER_EMAIL},UsePreviousValue=false
 }
