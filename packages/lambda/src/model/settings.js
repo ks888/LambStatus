@@ -21,7 +21,7 @@ export class Settings {
     try {
       return await this.store.get(settingsKeyServiceName)
     } catch (err) {
-      if (err instanceof NotFoundError) {
+      if (err.name === NotFoundError.name) {
         return ''
       }
       throw err
@@ -29,14 +29,14 @@ export class Settings {
   }
 
   async setServiceName (value) {
-    return await this.store.set(settingsKeyServiceName, value)
+    return await this.store.update(settingsKeyServiceName, value)
   }
 
   async getStatusPageURL () {
     try {
       return await this.store.get(settingsKeyStatusPageURL)
     } catch (err) {
-      if (err instanceof NotFoundError) {
+      if (err.name === NotFoundError.name) {
         return ''
       }
       throw err
@@ -47,14 +47,14 @@ export class Settings {
     if (!this.validateURL(value)) {
       throw new ValidationError('invalid url')
     }
-    return await this.store.set(settingsKeyStatusPageURL, value)
+    return await this.store.update(settingsKeyStatusPageURL, value)
   }
 
   async getAdminPageURL () {
     try {
       return await this.store.get(settingsKeyAdminPageURL)
     } catch (err) {
-      if (err instanceof NotFoundError) {
+      if (err.name === NotFoundError.name) {
         return ''
       }
       throw err
@@ -65,6 +65,6 @@ export class Settings {
     if (!this.validateURL(value)) {
       throw new ValidationError('invalid url')
     }
-    return await this.store.set(settingsKeyAdminPageURL, value)
+    return await this.store.update(settingsKeyAdminPageURL, value)
   }
 }

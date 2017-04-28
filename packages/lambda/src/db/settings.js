@@ -35,12 +35,12 @@ export default class SettingsStore {
           return reject(new Error('matched too many items'))
         }
 
-        resolve(queryResult.Items[0][key])
+        resolve(queryResult.Items[0].value)
       })
     })
   }
 
-  set (key, value) {
+  update (key, value) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({ value })
     return new Promise((resolve, reject) => {
       const params = {
@@ -55,7 +55,7 @@ export default class SettingsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        resolve(data.Attributes)
+        resolve(data.Attributes.value)
       })
     })
   }
