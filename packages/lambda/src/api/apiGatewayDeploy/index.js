@@ -2,7 +2,7 @@ import response from 'cfn-response'
 import APIGateway from 'aws/apiGateway'
 
 export async function handle (event, context, callback) {
-  if (event.RequestType === 'Delete') {
+  if (event.RequestType === 'Create' || event.RequestType === 'Delete') {
     response.send(event, context, response.SUCCESS)
     return
   }

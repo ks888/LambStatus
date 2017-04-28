@@ -20,6 +20,10 @@ const components = {
     name: 'Metrics',
     path: '/metrics'
   },
+  settings: {
+    name: 'Settings',
+    path: '/settings'
+  },
   users: {
     name: 'Users',
     path: '/users'
