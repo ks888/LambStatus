@@ -2,20 +2,8 @@ import response from 'cfn-response'
 import Cognito from 'aws/cognito'
 
 export async function handle (event, context, callback) {
-  if (event.RequestType === 'Delete') {
-    // UserPool will be deleted too, so do nothing here.
+  if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
     response.send(event, context, response.SUCCESS)
-    return
-  }
-
-  if (event.RequestType === 'Update') {
-    if (event.ResourceProperties.UserName !== event.OldResourceProperties.UserName ||
-      event.ResourceProperties.Email !== event.OldResourceProperties.Email) {
-      console.log('can\'t update parameters of user')
-      response.send(event, context, response.FAILED)
-    } else {
-      response.send(event, context, response.SUCCESS)
-    }
     return
   }
 

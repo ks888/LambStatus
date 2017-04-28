@@ -1,29 +1,29 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import TextField from 'components/common/TextField'
-import Button from 'settings/common/Button'
-import ErrorMessage from 'settings/common/ErrorMessage'
+import Button from 'components/common/Button'
+import ErrorMessage from 'components/common/ErrorMessage'
 import classes from './Settings.scss'
 
 export default class Settings extends React.Component {
   static propTypes = {
     settings: PropTypes.shape({
-      adminPageURL: PropTypes.string.isRequired,
-      statusPageURL: PropTypes.string.isRequired,
-      serviceName: PropTypes.string.isRequired
+      adminPageURL: PropTypes.string,
+      statusPageURL: PropTypes.string,
+      serviceName: PropTypes.string
     }).isRequired,
     fetchSettings: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired
   }
 
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       isFetching: false,
       message: '',
-      adminPageURL: this.props.settings.adminPageURL,
-      statusPageURL: this.props.settings.statusPageURL,
-      serviceName: this.props.settings.serviceName
+      adminPageURL: props.settings.adminPageURL,
+      statusPageURL: props.settings.statusPageURL,
+      serviceName: props.settings.serviceName
     }
   }
 
@@ -39,9 +39,17 @@ export default class Settings extends React.Component {
     this.props.fetchSettings(this.callbacks)
   }
 
+  componentWillReceiveProps (nextProps) {
+    this.setState({
+      adminPageURL: nextProps.settings.adminPageURL,
+      statusPageURL: nextProps.settings.statusPageURL,
+      serviceName: nextProps.settings.serviceName
+    })
+  }
+
   handleChangeValue = (key) => {
     return (value) => {
-      this.setState({key: value})
+      this.setState({[key]: value})
     }
   }
 
@@ -50,12 +58,27 @@ export default class Settings extends React.Component {
                               this.callbacks)
   }
 
+  renderItem = (key) => {
+    const text = key.charAt(0).toUpperCase() + key.slice(1)
+    return (
+      <ul key={key} className={classnames(classes.item, 'mdl-cell', 'mdl-cell--7-col', 'mdl-list')}>
+        <TextField label={text} text={this.state[key]} rows={1} onChange={this.handleChangeValue(key)} />
+      </ul>
+    )
+  }
+
   render () {
-    const settingItems = Object.keys(this.props.settings).map(key => {
-      return (
-        <TextField label={key} text={this.state.settings[key]} rows={1} onChange={this.handleChangeValue(key)} />
+    const settingKeys = ['serviceName', 'statusPageURL', 'adminPageURL']  // want to specify the order
+    const settingItems = settingKeys.map(this.renderItem)
+
+    let errMsg
+    if (this.state.message) {
+      errMsg = (
+        <div className='mdl-cell mdl-cell--12-col mdl-cell--middle'>
+          <ErrorMessage message={this.state.message} />
+        </div>
       )
-    })
+    }
 
     return (
       <div className={classnames(classes.layout, 'mdl-grid')}
@@ -63,14 +86,13 @@ export default class Settings extends React.Component {
         <div className='mdl-cell mdl-cell--12-col mdl-cell--middle'>
           <h4>Settings</h4>
         </div>
-        <div className='mdl-cell mdl-cell--12-col mdl-list'>
-          <ErrorMessage message={this.state.message} />
+        {errMsg}
+        {settingItems}
+        <div className='mdl-cell mdl-cell--6-col mdl-cell--middle' />
+        <div className='mdl-cell mdl-cell--1-col'>
+          <Button onClick={this.handleClickSaveButton} name='Save'
+            class='mdl-button--accent' disabled={this.state.isUpdating} />
         </div>
-        <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-          {settingItems}
-        </ul>
-        <Button onClick={this.handleClickSaveButton} name='Save'
-          class='mdl-button--accent' disabled={this.state.isUpdating} />
       </div>
     )
   }

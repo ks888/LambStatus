@@ -6,15 +6,17 @@ import classes from './Header.scss'
 export default class Header extends React.Component {
   static propTypes = {
     username: PropTypes.string,
-    fetchUser: PropTypes.func.isRequired,
     signout: PropTypes.func.isRequired,
     settings: PropTypes.shape({
-      statusPageURL: PropTypes.string.isRequired
-    }).isRequired
+      statusPageURL: PropTypes.string
+    }).isRequired,
+    fetchUser: PropTypes.func.isRequired,
+    fetchSettings: PropTypes.func.isRequired
   }
 
   componentDidMount () {
     this.props.fetchUser()
+    this.props.fetchSettings()
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)

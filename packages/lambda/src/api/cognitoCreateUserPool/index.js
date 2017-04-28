@@ -24,15 +24,8 @@ export async function handle (event, context, callback) {
   }
 
   if (event.RequestType === 'Update') {
-    const oldProps = event.OldResourceProperties
-    if (poolName !== oldProps.PoolName || snsCallerArn !== oldProps.SnsCallerArn ||
-      adminPageURL !== oldProps.AdminPageURL) {
-      console.log(`can't update parameters of user pool`)
-      response.send(event, context, response.FAILED)
-    } else {
-      const poolID = event.PhysicalResourceId
-      response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
-    }
+    const poolID = event.PhysicalResourceId
+    response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
     return
   }
 
