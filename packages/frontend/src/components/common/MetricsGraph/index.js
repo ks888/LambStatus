@@ -11,12 +11,14 @@ const mapStateToProps = (state, ownProps) => {
     }
   })
   return {
-    metric: focusedMetric
+    metric: focusedMetric,
+    settings: state.settings.settings
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchData: fetchMetricsData}, dispatch)
+function mapDispatchToProps (dispatch, ownProps) {
+  const fetchData = fetchMetricsData.bind(null, ownProps.settings.StatusPageURL)
+  return bindActionCreators({fetchData}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MetricsGraph)

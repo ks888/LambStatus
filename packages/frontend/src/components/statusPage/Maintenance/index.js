@@ -12,7 +12,8 @@ const mapStateToProps = (state, ownProps) => {
   })
   return {
     maintenanceID: ownProps.params.id,
-    maintenance: focusedMaintenance
+    maintenance: focusedMaintenance,
+    settings: state.settings.settings
   }
 }
 

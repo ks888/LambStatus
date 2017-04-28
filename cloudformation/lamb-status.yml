@@ -71,6 +71,10 @@ Resources:
             Action: "dynamodb:*"
             Resource: !Sub |-
               arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
+          - Effect: "Allow"
+            Action: "dynamodb:*"
+            Resource: !Sub |-
+              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SettingsTable}
       Roles:
         - Ref: "LambdaRole"
   GetComponentsLambdaFunction:
@@ -2637,6 +2641,21 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
+  SettingsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      # The prefix of table name must be stack name
+      TableName: !Sub |-
+        ${AWS::StackName}-SettingsTable
+      AttributeDefinitions:
+        - AttributeName: "key"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "key"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
   S3HandleFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -3015,6 +3034,8 @@ Resources:
         - ${Version}
         - Version:
             Fn::FindInMap: [ Constants, LambStatus, Version ]
+    DependsOn:
+      - ApiDeployment
 Outputs:
   LambdaRoleArn:
     Value:

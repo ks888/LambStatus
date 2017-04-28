@@ -17,8 +17,6 @@
         if (x.readyState === 4 && x.status === 200) {
           j = JSON.parse(x.responseText);
           __LAMBSTATUS_API_URL__ = j.InvocationURL;
-          __LAMBSTATUS_STATUS_PAGE_URL__ = j.StatusPageURL;
-          __LAMBSTATUS_SERVICE_NAME__ = j.ServiceName;
           __LAMBSTATUS_USER_POOL_ID__ = j.UserPoolID;
           __LAMBSTATUS_CLIENT_ID__ = j.ClientID;
         }

@@ -96,8 +96,6 @@ const timer = setInterval(() => {
     clearInterval(timer)
 
     settings.apiURL = __LAMBSTATUS_API_URL__
-    settings.serviceName = __LAMBSTATUS_SERVICE_NAME__
-    settings.statusPageURL = __LAMBSTATUS_STATUS_PAGE_URL__
     settings.userPoolId = __LAMBSTATUS_USER_POOL_ID__
     settings.clientId = __LAMBSTATUS_CLIENT_ID__
     render(routes)

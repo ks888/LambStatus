@@ -5,7 +5,8 @@ import Header from './Header'
 
 const mapStateToProps = (state) => {
   return {
-    username: state.user.user.username
+    username: state.user.user.username,
+    settings: state.settings.settings
   }
 }
 

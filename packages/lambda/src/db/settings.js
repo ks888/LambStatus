@@ -14,11 +14,15 @@ export default class SettingsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: SettingsTable,
-        KeyConditionExpression: 'key = :hkey',
+        KeyConditionExpression: '#k = :hkey',
+        ExpressionAttributeNames: {
+          '#k': 'key',
+          '#v': 'value'
+        },
         ExpressionAttributeValues: {
           ':hkey': key
         },
-        ProjectionExpression: 'value'
+        ProjectionExpression: '#v'
       }
       this.awsDynamoDb.query(params, (err, queryResult) => {
         if (err) {

@@ -1,6 +1,6 @@
 import 'whatwg-fetch'
 import { sendRequest, buildHeaders } from 'utils/fetch'
-import { apiURL, statusPageURL } from 'utils/settings'
+import { apiURL } from 'utils/settings'
 
 export const LIST_METRICS = 'LIST_METRICS'
 export const LIST_EXTERNAL_METRICS = 'LIST_EXTERNAL_METRICS'
@@ -145,7 +145,7 @@ export const deleteMetric = (metricID, callbacks = {}) => {
   }
 }
 
-export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) => {
+export const fetchMetricsData = (statusPageURL, metricID, year, month, date, callbacks = {}) => {
   return async dispatch => {
     try {
       const respBody = await sendRequest(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
