@@ -58,18 +58,25 @@ export default class Settings extends React.Component {
                               this.callbacks)
   }
 
-  renderItem = (key) => {
+  renderItem = (setting) => {
+    const { key, info } = setting
     const text = key.charAt(0).toUpperCase() + key.slice(1)
     return (
       <ul key={key} className={classnames(classes.item, 'mdl-cell', 'mdl-cell--7-col', 'mdl-list')}>
-        <TextField label={text} text={this.state[key]} rows={1} onChange={this.handleChangeValue(key)} />
+        <TextField label={text} text={this.state[key]} rows={1} onChange={this.handleChangeValue(key)}
+          information={info} />
       </ul>
     )
   }
 
   render () {
-    const settingKeys = ['serviceName', 'statusPageURL', 'adminPageURL']  // want to specify the order
-    const settingItems = settingKeys.map(this.renderItem)
+    const urlSettingInfo = 'Affects the links in email notifications, RSS feeds, and so on. It doesn\'t change your DNS setting.'
+    const settings = [
+      {key: 'serviceName'},
+      {key: 'statusPageURL', info: urlSettingInfo},
+      {key: 'adminPageURL', info: urlSettingInfo}
+    ]
+    const settingItems = settings.map(this.renderItem)
 
     let errMsg
     if (this.state.message) {
