@@ -9,7 +9,8 @@ export async function handle (event, context, callback) {
 
   const {
     AdminPageURL: adminPageURL,
-    StatusPageURL: statusPageURL
+    StatusPageURL: statusPageURL,
+    CognitoPoolID: cognitoPoolID
   } = event.ResourceProperties
   try {
     const settings = new Settings()
@@ -18,6 +19,9 @@ export async function handle (event, context, callback) {
     }
     if (statusPageURL) {
       await settings.setStatusPageURL(statusPageURL)
+    }
+    if (cognitoPoolID) {
+      await settings.setCognitoPoolID(cognitoPoolID)
     }
     response.send(event, context, response.SUCCESS)
   } catch (error) {

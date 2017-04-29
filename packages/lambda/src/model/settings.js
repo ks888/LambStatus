@@ -1,9 +1,11 @@
 import SettingsStore from 'db/settings'
+import Cognito from 'aws/cognito'
 import { ValidationError, NotFoundError } from 'utils/errors'
 
 const settingsKeyServiceName = 'ServiceName'
 const settingsKeyStatusPageURL = 'StatusPageURL'
 const settingsKeyAdminPageURL = 'AdminPageURL'
+const settingsKeyCognitoPoolID = 'CognitoPoolID'
 
 // InvocationURL, UserPoolID, ClientID are bootstrap set. Do not store here.
 
@@ -29,7 +31,8 @@ export class Settings {
   }
 
   async setServiceName (value) {
-    return await this.store.update(settingsKeyServiceName, value)
+    await this.store.update(settingsKeyServiceName, value)
+    await this.updateUserPool()
   }
 
   async getStatusPageURL () {
@@ -47,7 +50,7 @@ export class Settings {
     if (!this.validateURL(value)) {
       throw new ValidationError('invalid url')
     }
-    return await this.store.update(settingsKeyStatusPageURL, value)
+    await this.store.update(settingsKeyStatusPageURL, value)
   }
 
   async getAdminPageURL () {
@@ -65,6 +68,33 @@ export class Settings {
     if (!this.validateURL(value)) {
       throw new ValidationError('invalid url')
     }
-    return await this.store.update(settingsKeyAdminPageURL, value)
+    await this.store.update(settingsKeyAdminPageURL, value)
+    await this.updateUserPool()
+  }
+
+  async getCognitoPoolID () {
+    try {
+      return await this.store.get(settingsKeyCognitoPoolID)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setCognitoPoolID (value) {
+    await this.store.update(settingsKeyCognitoPoolID, value)
+  }
+
+  async updateUserPool () {
+    const cognitoPoolID = await this.getCognitoPoolID()
+    if (cognitoPoolID) {
+      const serviceName = await this.getServiceName()
+      const adminPageURL = await this.getAdminPageURL()
+      await new Cognito().updateUserPool(cognitoPoolID, serviceName, adminPageURL)
+    } else {
+      console.warn('CognitoPoolID not found')
+    }
   }
 }

@@ -623,8 +623,8 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "LambdaRole"
-          - "Arn"
+          - CognitoHandleFunctionRole
+          - Arn
       Runtime: "nodejs4.3"
       Timeout: 30
   PatchSettingsLambdaInvokePermission:
@@ -2896,7 +2896,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - LambdaRole
+          - CognitoHandleFunctionRole
           - Arn
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -2935,6 +2935,8 @@ Resources:
         Fn::GetAtt:
           - DBCreateItemsLambdaFunction
           - Arn
+      CognitoPoolID: !Sub |-
+        ${CognitoUserPool.UserPoolID}
       AdminPageURL: !Sub |-
         https://${AdminPageDistribution.DomainName}
       StatusPageURL: !Sub |-

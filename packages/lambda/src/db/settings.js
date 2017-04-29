@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { NotFoundError } from 'utils/errors'
 import { SettingsTable } from 'utils/const'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import { buildUpdateExpression } from './utils'
 
 export default class SettingsStore {
   constructor () {
