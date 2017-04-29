@@ -18,11 +18,10 @@ export default class History extends React.Component {
       updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
     settings: PropTypes.shape({
-      serviceName: PropTypes.string.isRequired
+      serviceName: PropTypes.string
     }).isRequired,
     fetchIncidents: PropTypes.func.isRequired,
-    fetchMaintenances: PropTypes.func.isRequired,
-    fetchPublicSettings: PropTypes.func.isRequired
+    fetchMaintenances: PropTypes.func.isRequired
   }
 
   constructor () {
@@ -43,7 +42,6 @@ export default class History extends React.Component {
   componentDidMount () {
     this.props.fetchIncidents(this.fetchCallbacks)
     this.props.fetchMaintenances(this.fetchCallbacks)
-    this.props.fetchPublicSettings()
   }
 
   renderEventItems = (month, events) => {

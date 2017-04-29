@@ -15,12 +15,17 @@ export default class MetricsGraph extends React.Component {
       unit: PropTypes.string.isRequired,
       data: PropTypes.object
     }),
+    settings: PropTypes.shape({
+      statusPageURL: PropTypes.string
+    }).isRequired,
     timeframe: PropTypes.oneOf(timeframes).isRequired,
     fetchData: PropTypes.func.isRequired
   }
 
   componentDidMount () {
-    this.fetchMetricData()
+    if (this.props.settings.statusPageURL) {
+      this.fetchMetricData()
+    }
 
     if (this.props.metric.data) {
       this.updateGraph()
@@ -28,7 +33,14 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
+    if (!prevProps.settings.statusPageURL && this.props.settings.statusPageURL) {
+      // On componentDidMount, url was unknown. So fetch the data now.
+      this.fetchMetricData()
+      return
+    }
+
     if (!this.props.metric.data) {
+      // now fetching...
       return
     }
 
@@ -47,7 +59,7 @@ export default class MetricsGraph extends React.Component {
     const currDate = new Date()
     currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
-      this.props.fetchData(this.props.metricID, currDate.getFullYear(),
+      this.props.fetchData(this.props.settings.statusPageURL, this.props.metricID, currDate.getFullYear(),
         currDate.getMonth() + 1, currDate.getDate())
       currDate.setDate(currDate.getDate() - 1)
     }

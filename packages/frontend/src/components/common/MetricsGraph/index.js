@@ -17,8 +17,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 function mapDispatchToProps (dispatch, ownProps) {
-  const fetchData = fetchMetricsData.bind(null, ownProps.settings.StatusPageURL)
-  return bindActionCreators({fetchData}, dispatch)
+  return bindActionCreators({fetchData: fetchMetricsData}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MetricsGraph)

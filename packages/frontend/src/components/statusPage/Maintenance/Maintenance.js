@@ -16,7 +16,7 @@ export default class Maintenance extends React.Component {
       endAt: PropTypes.string.isRequired
     }),
     settings: PropTypes.shape({
-      serviceName: PropTypes.string.isRequired
+      serviceName: PropTypes.string
     }).isRequired,
     fetchMaintenances: PropTypes.func.isRequired
   }

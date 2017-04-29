@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { fetchComponents } from 'actions/components'
 import { fetchPublicMetrics } from 'actions/metrics'
-import { fetchPublicSettings } from 'actions/settings'
 import Statuses from './Statuses'
 
 const mapStateToProps = (state) => {
@@ -14,7 +13,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchComponents, fetchPublicMetrics, fetchPublicSettings}, dispatch)
+  return bindActionCreators({fetchComponents, fetchPublicMetrics}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Statuses)

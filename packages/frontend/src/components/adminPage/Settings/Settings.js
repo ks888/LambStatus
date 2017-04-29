@@ -29,7 +29,7 @@ export default class Settings extends React.Component {
 
   callbacks = {
     onLoad: () => { this.setState({isUpdating: true}) },
-    onSuccess: () => { this.setState({isUpdating: false}) },
+    onSuccess: () => { this.setState({isUpdating: false, message: ''}) },
     onFailure: (msg) => {
       this.setState({isUpdating: false, message: msg})
     }

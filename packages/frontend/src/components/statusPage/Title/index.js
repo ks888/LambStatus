@@ -9,6 +9,6 @@ export const Title = (props) => (
 )
 
 Title.propTypes = {
-  service_name: PropTypes.string.isRequired
+  service_name: PropTypes.string
 }
 export default Title

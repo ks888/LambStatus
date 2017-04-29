@@ -13,7 +13,7 @@ export default class Incident extends React.Component {
       status: PropTypes.string
     }),
     settings: PropTypes.shape({
-      serviceName: PropTypes.string.isRequired
+      serviceName: PropTypes.string
     }).isRequired,
     fetchIncidents: PropTypes.func.isRequired
   }

@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { fetchIncidents } from 'actions/incidents'
 import { fetchMaintenances } from 'actions/maintenances'
-import { fetchPublicSettings } from 'actions/settings'
 import History from './History'
 
 const mapStateToProps = (state) => {
@@ -14,7 +13,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchIncidents, fetchMaintenances, fetchPublicSettings}, dispatch)
+  return bindActionCreators({fetchIncidents, fetchMaintenances}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(History)
