@@ -2758,6 +2758,13 @@ Resources:
                   - cognito-idp:*
                   - iam:PassRole
                 Resource: '*'
+        - PolicyName: HandleSettings
+          PolicyDocument:
+            Statement:
+              - Effect: "Allow"
+                Action: "dynamodb:*"
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SettingsTable}
   CognitoCreateUserPoolFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2929,9 +2936,9 @@ Resources:
           - DBCreateItemsLambdaFunction
           - Arn
       AdminPageURL: !Sub |-
-        "https://${AdminPageDistribution.DomainName}"
+        https://${AdminPageDistribution.DomainName}
       StatusPageURL: !Sub |-
-        "https://${StatusPageDistribution.DomainName}"
+        https://${StatusPageDistribution.DomainName}
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:

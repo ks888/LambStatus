@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { NotFoundError } from 'utils/errors'
 import { SettingsTable } from 'utils/const'
-import { buildUpdateExpression } from './utils'
+import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export default class SettingsStore {
   constructor () {
@@ -54,6 +54,11 @@ export default class SettingsStore {
       this.awsDynamoDb.update(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
+        }
+        if (data.Attributes === undefined) {
+          // No item matching the given key
+          resolve('')
+          return
         }
         resolve(data.Attributes.value)
       })

@@ -21,9 +21,9 @@ export default class Settings extends React.Component {
     this.state = {
       isFetching: false,
       message: '',
-      adminPageURL: props.settings.adminPageURL,
-      statusPageURL: props.settings.statusPageURL,
-      serviceName: props.settings.serviceName
+      adminPageURL: props.settings.adminPageURL || '',
+      statusPageURL: props.settings.statusPageURL || '',
+      serviceName: props.settings.serviceName || ''
     }
   }
 
@@ -70,6 +70,7 @@ export default class Settings extends React.Component {
   }
 
   render () {
+    // eslint-disable-next-line max-len
     const urlSettingInfo = 'Affects the links in email notifications, RSS feeds, and so on. It doesn\'t change your DNS setting.'
     const settings = [
       {key: 'serviceName'},
