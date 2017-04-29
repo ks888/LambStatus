@@ -59,12 +59,16 @@ describe('Settings', () => {
       SettingsStore.prototype.update.restore()
     })
 
-    it('should return one component', async () => {
+    it('should update the service name and user pool', async () => {
       const expected = 'value'
-      sinon.stub(SettingsStore.prototype, 'update').returns(expected)
+      const updateStub = sinon.stub(SettingsStore.prototype, 'update')
+      updateStub.returns(expected)
+      const updateUserPoolStub = sinon.stub(Settings.prototype, 'updateUserPool')
 
-      const actual = await new Settings().setServiceName(expected)
-      assert(actual === expected)
+      await new Settings().setServiceName(expected)
+      assert(updateStub.called)
+      assert(updateUserPoolStub.called)
+      Settings.prototype.updateUserPool.restore()
     })
 
     it('should throw error when error returned', async () => {
