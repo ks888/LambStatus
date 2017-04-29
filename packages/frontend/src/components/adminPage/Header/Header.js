@@ -8,7 +8,8 @@ export default class Header extends React.Component {
     username: PropTypes.string,
     signout: PropTypes.func.isRequired,
     settings: PropTypes.shape({
-      statusPageURL: PropTypes.string
+      statusPageURL: PropTypes.string,
+      serviceName: PropTypes.string
     }).isRequired,
     fetchUser: PropTypes.func.isRequired,
     fetchSettings: PropTypes.func.isRequired
@@ -20,6 +21,12 @@ export default class Header extends React.Component {
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)
+  }
+
+  componentWillUpdate (nextProps) {
+    if (nextProps.settings.serviceName) {
+      document.title = `${nextProps.settings.serviceName}Status Admin`
+    }
   }
 
   renderUserMenu = () => {

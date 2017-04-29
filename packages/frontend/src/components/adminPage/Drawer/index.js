@@ -4,6 +4,10 @@ import classes from './Drawer.scss'
 import { Link } from 'react-router'
 
 const components = {
+  components: {
+    name: 'Components',
+    path: '/components'
+  },
   incidents: {
     name: 'Incidents',
     path: '/incidents'
@@ -11,10 +15,6 @@ const components = {
   maintenances: {
     name: 'Scheduled Maintenances',
     path: '/maintenances'
-  },
-  components: {
-    name: 'Components',
-    path: '/components'
   },
   metrics: {
     name: 'Metrics',

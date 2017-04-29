@@ -8,13 +8,13 @@ export async function handle (event, context, callback) {
   } = event.body
   try {
     const settings = new Settings()
-    if (serviceName !== undefined) {
+    if (serviceName !== undefined && serviceName !== await settings.getServiceName()) {
       await settings.setServiceName(serviceName)
     }
-    if (adminPageURL !== undefined) {
+    if (adminPageURL !== undefined && adminPageURL !== await settings.getAdminPageURL()) {
       await settings.setAdminPageURL(adminPageURL)
     }
-    if (statusPageURL !== undefined) {
+    if (statusPageURL !== undefined && statusPageURL !== await settings.getStatusPageURL()) {
       await settings.setStatusPageURL(statusPageURL)
     }
     callback(null, JSON.stringify({serviceName, adminPageURL, statusPageURL}))

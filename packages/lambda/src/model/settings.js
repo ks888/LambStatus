@@ -92,7 +92,9 @@ export class Settings {
     if (cognitoPoolID) {
       const serviceName = await this.getServiceName()
       const adminPageURL = await this.getAdminPageURL()
-      await new Cognito().updateUserPool(cognitoPoolID, serviceName, adminPageURL)
+      const userPool = await new Cognito().describeUserPool(cognitoPoolID)
+      const snsCallerArn = userPool.SmsConfiguration.SnsCallerArn
+      await new Cognito().updateUserPool(cognitoPoolID, serviceName, adminPageURL, snsCallerArn)
     } else {
       console.warn('CognitoPoolID not found')
     }

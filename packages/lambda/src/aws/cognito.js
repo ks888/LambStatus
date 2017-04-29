@@ -7,8 +7,56 @@ export default class Cognito {
   }
 
   createUserPool (region, poolName, serviceName, adminPageURL, snsCallerArn) {
-    const params = {
-      PoolName: poolName,
+    const params = this.buildUserPoolParameters(serviceName, adminPageURL, snsCallerArn)
+    params.PoolName = poolName
+    params.Schema = [{
+      Name: 'email',
+      StringAttributeConstraints: {
+        MinLength: '0',
+        MaxLength: '2048'
+      },
+      DeveloperOnlyAttribute: false,
+      Required: true,
+      AttributeDataType: 'String',
+      Mutable: true
+    }]
+    params.AliasAttributes = ['email']
+    return new Promise((resolve, reject) => {
+      this.awsCognito.createUserPool(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  describeUserPool (poolID) {
+    return new Promise((resolve, reject) => {
+      this.awsCognito.describeUserPool({UserPoolId: poolID}, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result.UserPool)
+      })
+    })
+  }
+
+  updateUserPool (poolID, serviceName, adminPageURL, snsCallerArn) {
+    const params = this.buildUserPoolParameters(serviceName, adminPageURL, snsCallerArn)
+    params.UserPoolId = poolID
+    return new Promise((resolve, reject) => {
+      this.awsCognito.updateUserPool(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  buildUserPoolParameters (serviceName, adminPageURL, snsCallerArn) {
+    return {
       AdminCreateUserConfig: {
         AllowAdminCreateUserOnly: true,
         UnusedAccountValidityDays: 7,
@@ -17,7 +65,6 @@ export default class Cognito {
           EmailMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`
         }
       },
-      AliasAttributes: ['email'],
       AutoVerifiedAttributes: ['email'],
       EmailVerificationSubject: `${serviceName} StatusPage - Your verification code`,
       MfaConfiguration: 'OPTIONAL',
@@ -30,53 +77,11 @@ export default class Cognito {
           RequireUppercase: true
         }
       },
-      Schema: [{
-        Name: 'email',
-        StringAttributeConstraints: {
-          MinLength: '0',
-          MaxLength: '2048'
-        },
-        DeveloperOnlyAttribute: false,
-        Required: true,
-        AttributeDataType: 'String',
-        Mutable: true
-      }],
       SmsConfiguration: {
         SnsCallerArn: snsCallerArn,
         ExternalId: snsCallerArn
       }
     }
-    return new Promise((resolve, reject) => {
-      this.awsCognito.createUserPool(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result)
-      })
-    })
-  }
-
-  updateUserPool (poolID, serviceName, adminPageURL) {
-    const params = {
-      UserPoolId: poolID,
-      AdminCreateUserConfig: {
-        AllowAdminCreateUserOnly: true,
-        UnusedAccountValidityDays: 7,
-        InviteMessageTemplate: {
-          EmailSubject: `${serviceName} StatusPage - Your temporary password`,
-          EmailMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`
-        }
-      },
-      EmailVerificationSubject: `${serviceName} StatusPage - Your verification code`
-    }
-    return new Promise((resolve, reject) => {
-      this.awsCognito.updateUserPool(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result)
-      })
-    })
   }
 
   deleteUserPool (region, userPoolID) {
