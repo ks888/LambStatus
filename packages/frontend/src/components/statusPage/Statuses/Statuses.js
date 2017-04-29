@@ -7,7 +7,6 @@ import Title from 'components/statusPage/Title'
 import Components from 'components/statusPage/Components'
 import Incidents from 'components/statusPage/Incidents'
 import ScheduledMaintenances from 'components/statusPage/ScheduledMaintenances'
-import { serviceName } from 'utils/settings'
 import { timeframes } from 'utils/status'
 import classes from './Statuses.scss'
 
@@ -16,6 +15,9 @@ export default class Statuses extends React.Component {
     metrics: PropTypes.arrayOf(PropTypes.shape({
       metricID: PropTypes.string.isRequired
     }).isRequired).isRequired,
+    settings: PropTypes.shape({
+      serviceName: PropTypes.string
+    }).isRequired,
     fetchPublicMetrics: PropTypes.func.isRequired
   }
 
@@ -65,7 +67,7 @@ export default class Statuses extends React.Component {
   }
 
   render () {
-    const { metrics } = this.props
+    const { metrics, settings } = this.props
     const components = (<Components classNames='mdl-cell mdl-cell--12-col mdl-list' />)
     const timeframeSelector = this.renderTimeframeSelector()
     const incidents = (<Incidents classNames='mdl-cell mdl-cell--12-col mdl-list' />)
@@ -95,7 +97,7 @@ export default class Statuses extends React.Component {
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <Title service_name={serviceName} />
+      <Title service_name={settings.serviceName} />
       {components}
       {maintenances}
       {metricsTitle}

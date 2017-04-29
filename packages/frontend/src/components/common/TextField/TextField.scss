@@ -7,3 +7,18 @@
   color: #607D8B;
   font-size: 14px;
 }
+
+.icon {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tooltip {
+  background-color: #777 !important;
+  padding: 3px 10px !important;
+  width: 25rem;
+}
+
+.tooltip::after {
+  border-right-color: #777 !important;
+}

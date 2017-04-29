@@ -1,18 +1,22 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
-import { statusPageURL } from 'utils/settings'
 import classes from './Header.scss'
 
 export default class Header extends React.Component {
   static propTypes = {
     username: PropTypes.string,
+    signout: PropTypes.func.isRequired,
+    settings: PropTypes.shape({
+      statusPageURL: PropTypes.string
+    }).isRequired,
     fetchUser: PropTypes.func.isRequired,
-    signout: PropTypes.func.isRequired
+    fetchSettings: PropTypes.func.isRequired
   }
 
   componentDidMount () {
     this.props.fetchUser()
+    this.props.fetchSettings()
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)
@@ -36,13 +40,14 @@ export default class Header extends React.Component {
   }
 
   render () {
+    const { settings } = this.props
     const userMenu = this.renderUserMenu()
     return (<header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
       <div className='mdl-layout__header-row'>
-        <span className='mdl-layout-title'>LambStatus Admin</span>
+        <span className='mdl-layout-title'>{settings.serviceName}Status Admin</span>
         <div className='mdl-layout-spacer' />
         <nav className='mdl-navigation'>
-          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={statusPageURL}>
+          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={settings.statusPageURL}>
             View Status Page
           </a>
           {userMenu}

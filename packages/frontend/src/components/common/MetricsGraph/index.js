@@ -11,11 +11,12 @@ const mapStateToProps = (state, ownProps) => {
     }
   })
   return {
-    metric: focusedMetric
+    metric: focusedMetric,
+    settings: state.settings.settings
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps (dispatch, ownProps) {
   return bindActionCreators({fetchData: fetchMetricsData}, dispatch)
 }
 

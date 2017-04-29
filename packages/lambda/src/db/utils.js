@@ -2,7 +2,7 @@ export const buildUpdateExpression = (values) => {
   const setExps = []
   const removeExps = []
   const attrNames = {}
-  const attrValues = {}
+  let attrValues = {}
   Object.keys(values).forEach((key) => {
     const value = values[key]
     const attrName = `#${key}`
@@ -22,6 +22,10 @@ export const buildUpdateExpression = (values) => {
   }
   if (removeExps.length !== 0) {
     exps += `REMOVE ${removeExps.join(', ')} `
+  }
+  if (Object.keys(attrValues).length === 0) {
+    // empty attrValues fails at the validation
+    attrValues = undefined
   }
   return [exps, attrNames, attrValues]
 }

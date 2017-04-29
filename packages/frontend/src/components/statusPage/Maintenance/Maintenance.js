@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import ModestLink from 'components/common/ModestLink'
 import MaintenanceItem from 'components/statusPage/MaintenanceItem'
-import { serviceName } from 'utils/settings'
 import classes from './Maintenance.scss'
 
 export default class Maintenance extends React.Component {
@@ -16,6 +15,9 @@ export default class Maintenance extends React.Component {
       startAt: PropTypes.string.isRequired,
       endAt: PropTypes.string.isRequired
     }),
+    settings: PropTypes.shape({
+      serviceName: PropTypes.string
+    }).isRequired,
     fetchMaintenances: PropTypes.func.isRequired
   }
 
@@ -26,12 +28,12 @@ export default class Maintenance extends React.Component {
   }
 
   render () {
-    const { maintenanceID: id } = this.props
+    const { maintenanceID: id, settings } = this.props
 
     return (
       <div className={classnames(classes.layout, 'mdl-grid')}>
         <div className='mdl-cell mdl-cell--12-col'>
-          <h4>Scheduled Maintenance Report for {serviceName}</h4>
+          <h4>Scheduled Maintenance Report for {settings.serviceName}</h4>
         </div>
         <div className='mdl-cell mdl-cell--12-col mdl-list'>
           {(this.props.maintenance) ? <MaintenanceItem key={id} maintenanceID={id} autoloadDetail /> : ''}

@@ -41,20 +41,6 @@ const findOutputKey = (outputs, outputKey) => {
   return outputValue
 }
 
-const findParameterKey = (params, paramKey) => {
-  let paramValue
-  params.forEach((param) => {
-    if (param.ParameterKey === paramKey) {
-      paramValue = param.ParameterValue
-      return
-    }
-  })
-  if (paramValue === undefined) {
-    throw new Error(paramKey + ' not found')
-  }
-  return paramValue
-}
-
 const getSettings = async () => {
   try {
     const { STACK_NAME: stackName, AWS_REGION: region } = process.env
@@ -62,12 +48,10 @@ const getSettings = async () => {
     const stack = await describeStack(cloudFormation, stackName)
 
     const invocationURL = findOutputKey(stack.Outputs, 'InvocationURL')
-    const statusPageURL = findOutputKey(stack.Outputs, 'StatusPageCloudFrontURL')
-    const serviceName = findParameterKey(stack.Parameters, 'ServiceName')
     const userPoolID = findOutputKey(stack.Outputs, 'UserPoolID')
     const clientID = findOutputKey(stack.Outputs, 'UserPoolClientID')
 
-    return { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
+    return { invocationURL, userPoolID, clientID }
   } catch (error) {
     console.error(error, error.stack)
     throw error
@@ -93,12 +77,10 @@ const getBucketInfo = async () => {
 }
 
 getSettings().then((
-  { invocationURL, statusPageURL, serviceName, userPoolID, clientID }
+  { invocationURL, userPoolID, clientID }
 ) => {
   const apiInfo = {
     InvocationURL: invocationURL,
-    StatusPageURL: statusPageURL,
-    ServiceName: serviceName,
     UserPoolID: userPoolID,
     ClientID: clientID
   }

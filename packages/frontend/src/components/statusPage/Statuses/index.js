@@ -7,7 +7,8 @@ import Statuses from './Statuses'
 const mapStateToProps = (state) => {
   return {
     components: state.components.components,
-    metrics: state.metrics.metrics
+    metrics: state.metrics.metrics,
+    settings: state.settings.settings
   }
 }
 

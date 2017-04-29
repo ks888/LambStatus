@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
+import ReactTooltip from 'react-tooltip'
 import classes from './TextField.scss'
 
 const ENTER_KEY_CODE = 13
@@ -12,7 +13,8 @@ export default class TextField extends React.Component {
     label: PropTypes.string.isRequired,
     text: PropTypes.string,
     rows: PropTypes.number,
-    hideText: PropTypes.bool
+    hideText: PropTypes.bool,
+    information: PropTypes.string
   }
 
   componentDidMount () {
@@ -37,6 +39,16 @@ export default class TextField extends React.Component {
       textfieldType = 'password'
     }
 
+    let infoIcon, tooltip
+    if (this.props.information) {
+      infoIcon = (
+        <i className={classnames(classes.icon, 'material-icons')} data-tip={this.props.information}>info_outline</i>
+      )
+      tooltip = (
+        <ReactTooltip effect='solid' place='right' className={classes.tooltip} />
+      )
+    }
+
     let textfield
     if (!this.props.rows || this.props.rows === 1) {
       textfield = (<input className='mdl-textfield__input' type={textfieldType} id='textfield'
@@ -49,7 +61,8 @@ export default class TextField extends React.Component {
     return (
       <div className={classnames('mdl-textfield', 'mdl-js-textfield',
         classes.textfield)} ref='textfield'>
-        <label className={classes.label} htmlFor='textfield'>{this.props.label}</label>
+        <label className={classes.label} htmlFor='textfield'>{this.props.label}{infoIcon}</label>
+        {tooltip}
         {textfield}
       </div>
     )

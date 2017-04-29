@@ -5,7 +5,6 @@ import Title from 'components/statusPage/Title'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import MaintenanceItem from 'components/statusPage/MaintenanceItem'
 import { getDateTimeFormat } from 'utils/datetime'
-import { serviceName } from 'utils/settings'
 import classes from './History.scss'
 
 export default class History extends React.Component {
@@ -18,6 +17,9 @@ export default class History extends React.Component {
       maintenanceID: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
+    settings: PropTypes.shape({
+      serviceName: PropTypes.string
+    }).isRequired,
     fetchIncidents: PropTypes.func.isRequired,
     fetchMaintenances: PropTypes.func.isRequired
   }
@@ -85,13 +87,13 @@ export default class History extends React.Component {
   }
 
   render () {
-    const { incidents, maintenances } = this.props
+    const { incidents, maintenances, settings } = this.props
     const events = incidents.concat(maintenances)
     const eventsByMonth = this.renderEventsByMonth(events)
 
     return (<div className={classnames(classes.layout, 'mdl-grid')}
       style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <Title service_name={serviceName} />
+      <Title service_name={settings.serviceName} />
       <div className='mdl-cell mdl-cell--12-col'>
         <h4>Incident History</h4>
       </div>

@@ -7,7 +7,8 @@ import History from './History'
 const mapStateToProps = (state) => {
   return {
     incidents: state.incidents.incidents,
-    maintenances: state.maintenances.maintenances
+    maintenances: state.maintenances.maintenances,
+    settings: state.settings.settings
   }
 }
 

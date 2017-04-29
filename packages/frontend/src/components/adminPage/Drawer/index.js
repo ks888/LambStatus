@@ -23,6 +23,10 @@ const components = {
   users: {
     name: 'Users',
     path: '/users'
+  },
+  settings: {
+    name: 'Settings',
+    path: '/settings'
   }
 }
 

@@ -1,5 +1,5 @@
 import response from 'cfn-response'
-import Cognito from 'aws/cognito'
+import { Settings } from 'model/settings'
 
 export async function handle (event, context, callback) {
   if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
@@ -8,14 +8,21 @@ export async function handle (event, context, callback) {
   }
 
   const {
-    Region: region,
-    UserPoolID: userPoolId,
-    UserName: userName,
-    Email: email
+    AdminPageURL: adminPageURL,
+    StatusPageURL: statusPageURL,
+    CognitoPoolID: cognitoPoolID
   } = event.ResourceProperties
-
   try {
-    await new Cognito().createUser(region, userPoolId, userName, email)
+    const settings = new Settings()
+    if (adminPageURL) {
+      await settings.setAdminPageURL(adminPageURL)
+    }
+    if (statusPageURL) {
+      await settings.setStatusPageURL(statusPageURL)
+    }
+    if (cognitoPoolID) {
+      await settings.setCognitoPoolID(cognitoPoolID)
+    }
     response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)

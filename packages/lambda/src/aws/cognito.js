@@ -1,8 +1,12 @@
 import AWS from 'aws-sdk'
 
 export default class Cognito {
+  constructor () {
+    const { AWS_REGION: region } = process.env
+    this.awsCognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
+  }
+
   createUserPool (region, poolName, serviceName, adminPageURL, snsCallerArn) {
-    const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
     const params = {
       PoolName: poolName,
       AdminCreateUserConfig: {
@@ -43,7 +47,30 @@ export default class Cognito {
       }
     }
     return new Promise((resolve, reject) => {
-      cognito.createUserPool(params, (err, result) => {
+      this.awsCognito.createUserPool(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  updateUserPool (poolID, serviceName, adminPageURL) {
+    const params = {
+      UserPoolId: poolID,
+      AdminCreateUserConfig: {
+        AllowAdminCreateUserOnly: true,
+        UnusedAccountValidityDays: 7,
+        InviteMessageTemplate: {
+          EmailSubject: `${serviceName} StatusPage - Your temporary password`,
+          EmailMessage: `Your username is {username} and temporary password is {####}. Access ${adminPageURL} and sign in to admin console.`
+        }
+      },
+      EmailVerificationSubject: `${serviceName} StatusPage - Your verification code`
+    }
+    return new Promise((resolve, reject) => {
+      this.awsCognito.updateUserPool(params, (err, result) => {
         if (err) {
           return reject(err)
         }
@@ -53,12 +80,11 @@ export default class Cognito {
   }
 
   deleteUserPool (region, userPoolID) {
-    const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
     const params = {
       UserPoolId: userPoolID
     }
     return new Promise((resolve, reject) => {
-      cognito.deleteUserPool(params, (err, result) => {
+      this.awsCognito.deleteUserPool(params, (err, result) => {
         if (err) {
           return reject(err)
         }
@@ -68,13 +94,12 @@ export default class Cognito {
   }
 
   createUserPoolClient (region, userPoolID, clientName) {
-    const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
     const params = {
       UserPoolId: userPoolID,
       ClientName: clientName
     }
     return new Promise((resolve, reject) => {
-      cognito.createUserPoolClient(params, (err, result) => {
+      this.awsCognito.createUserPoolClient(params, (err, result) => {
         if (err) {
           return reject(err)
         }
@@ -84,7 +109,6 @@ export default class Cognito {
   }
 
   createUser (region, userPoolId, userName, email) {
-    const cognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
     const params = {
       UserPoolId: userPoolId,
       Username: userName,
@@ -95,7 +119,7 @@ export default class Cognito {
       ]
     }
     return new Promise((resolve, reject) => {
-      cognito.adminCreateUser(params, (err, result) => {
+      this.awsCognito.adminCreateUser(params, (err, result) => {
         if (err) {
           return reject(err)
         }

@@ -6,6 +6,7 @@ export const MetricsTable = `${stackName}-MetricsTable`
 export const MetricsDataTable = `${stackName}-MetricsDataTable`
 export const MaintenanceTable = `${stackName}-MaintenanceTable`
 export const MaintenanceUpdateTable = `${stackName}-MaintenanceUpdateTable`
+export const SettingsTable = `${stackName}-SettingsTable`
 
 export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded Performance', 'Partial Outage',
   'Major Outage']

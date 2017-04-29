@@ -12,7 +12,8 @@ const mapStateToProps = (state, ownProps) => {
   })
   return {
     incidentID: ownProps.params.id,
-    incident: focusedIncident
+    incident: focusedIncident,
+    settings: state.settings.settings
   }
 }
 
