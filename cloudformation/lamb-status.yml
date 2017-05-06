@@ -18,65 +18,117 @@ Mappings:
       Version: 0.2.1
 Resources:
   LambdaRole:
-    Type: "AWS::IAM::Role"
+    Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-          - Effect: "Allow"
+          - Effect: Allow
             Principal:
               Service:
-                - "lambda.amazonaws.com"
+                - lambda.amazonaws.com
             Action:
-              - "sts:AssumeRole"
-      Path: "/"
-  LambdaRoleInstanceProfile:
-    Type: "AWS::IAM::InstanceProfile"
-    Properties:
-      Path: "/"
-      Roles:
-        - Ref: "LambdaRole"
-  LambStatusIAMPolicy:
-    Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: "LambStatus"
-      PolicyDocument:
-        Statement:
-          - Action:
-              - "logs:CreateLogGroup"
-              - "logs:CreateLogStream"
-              - "logs:PutLogEvents"
-            Effect: "Allow"
-            Resource: "arn:aws:logs:*:*:*"
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceComponentTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentUpdateTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceUpdateTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
-          - Effect: "Allow"
-            Action: "dynamodb:*"
-            Resource: !Sub |-
-              arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SettingsTable}
-      Roles:
-        - Ref: "LambdaRole"
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Statement:
+              - Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                Effect: Allow
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: DynamoDB
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ServiceComponentTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${IncidentUpdateTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MaintenanceUpdateTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: !Sub |-
+                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SettingsTable}
+        - PolicyName: CloudFormation
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: cloudformation:DescribeStacks
+                Resource: !Sub |-
+                  arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*
+        - PolicyName: S3
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource:
+                  - !Sub |-
+                    arn:aws:s3:::${StatusPageS3}
+                  - !Sub |-
+                    arn:aws:s3:::${AdminPageS3}
+              - Effect: Allow
+                Action:
+                  - s3:DeleteObject
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource:
+                  - !Sub |-
+                    arn:aws:s3:::${StatusPageS3}/*
+                  - !Sub |-
+                    arn:aws:s3:::${AdminPageS3}/*
+        - PolicyName: CloudWatch
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudwatch:GetMetricData
+                  - cloudwatch:GetMetricStatistics
+                  - cloudwatch:ListMetrics
+                Resource: "*"
+        - PolicyName: Cognito
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cognito-idp:*
+                  - iam:PassRole
+                Resource: '*'
+        - PolicyName: APIGateway
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - apigateway:POST
+                Resource: !Sub |-
+                  arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
+        - PolicyName: SNS
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: sns:publish
+                Resource:
+                  Ref: IncidentNotificationTopic
   GetComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -623,7 +675,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - CognitoHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -656,7 +708,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -788,7 +840,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -821,7 +873,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -854,7 +906,7 @@ Resources:
       MemorySize: 512
       Role:
         Fn::GetAtt:
-          - "MetricsFunctionRole"
+          - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
       Timeout: 60
@@ -869,54 +921,6 @@ Resources:
       Principal: "events.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/*
-  MetricsFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: WriteS3
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:DeleteObject
-                  - s3:ListBucket
-                  - s3:PutObject
-                  - s3:GetObject
-                Resource: arn:aws:s3:::*
-        - PolicyName: WriteCloudWatchLogs
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
-        - PolicyName: ReadMetricsTable
-          PolicyDocument:
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "dynamodb:*"
-                Resource: !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${MetricsTable}
-        - PolicyName: ReadMetricData
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cloudwatch:GetMetricData
-                  - cloudwatch:GetMetricStatistics
-                  - cloudwatch:ListMetrics
-                Resource: "*"
   CollectMetricsDataEvent:
     Type: AWS::Events::Rule
     Properties:
@@ -930,6 +934,52 @@ Resources:
           Id: CollectMetricsDataFunction
           Input: !Sub |-
             {"StatusPageS3BucketName": "${StatusPageS3}"}
+  UpdateFeedsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/UpdateFeeds.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Update feeds"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-UpdateFeeds
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  UpdateFeedsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "UpdateFeedsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: "IncidentNotificationTopic"
+  IncidentNotificationTopic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      TopicName: !Sub |-
+        ${AWS::StackName}-IncidentNotification
+  IncidentSubscriptionByUpdateFeeds:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Sub |-
+        ${UpdateFeedsLambdaFunction.Arn}
+      Protocol: "lambda"
+      TopicArn:
+        Ref: "IncidentNotificationTopic"
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
@@ -2656,37 +2706,6 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
-  S3HandleFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: WriteS3
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:DeleteObject
-                  - s3:ListBucket
-                  - s3:PutObject
-                  - s3:GetObject
-                Resource: arn:aws:s3:::*
-        - PolicyName: WriteCloudWatchLogs
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
   S3PutObjectFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2704,7 +2723,7 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - S3HandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
@@ -2725,46 +2744,10 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - S3HandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-  CognitoHandleFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: WriteCloudWatchLogs
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
-        - PolicyName: CreateUserPool
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cognito-idp:*
-                  - iam:PassRole
-                Resource: '*'
-        - PolicyName: HandleSettings
-          PolicyDocument:
-            Statement:
-              - Effect: "Allow"
-                Action: "dynamodb:*"
-                Resource: !Sub |-
-                  arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SettingsTable}
   CognitoCreateUserPoolFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -2782,7 +2765,7 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - CognitoHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
@@ -2803,7 +2786,7 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - CognitoHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
@@ -2824,7 +2807,7 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - CognitoHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
@@ -2845,39 +2828,10 @@ Resources:
       Handler: "_apex_index.handle"
       Role:
         Fn::GetAtt:
-          - APIGatewayHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: nodejs4.3
       Timeout: 30
-  APIGatewayHandleFunctionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: WriteCloudWatchLogs
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
-        - PolicyName: APIGateway
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - apigateway:POST
-                Resource: !Sub |-
-                  arn:aws:apigateway:${AWS::Region}::/restapis/${RestApi}/deployments
   DBCreateItemsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -2896,7 +2850,7 @@ Resources:
       MemorySize: 128
       Role:
         Fn::GetAtt:
-          - CognitoHandleFunctionRole
+          - LambdaRole
           - Arn
       Runtime: "nodejs4.3"
       Timeout: 30
@@ -3049,18 +3003,6 @@ Outputs:
   LambdaRoleArn:
     Value:
       !GetAtt LambdaRole.Arn
-  MetricsFunctionRoleArn:
-    Value:
-      !GetAtt MetricsFunctionRole.Arn
-  S3HandleFunctionRoleArn:
-    Value:
-      !GetAtt S3HandleFunctionRole.Arn
-  CognitoHandleFunctionRoleArn:
-    Value:
-      !GetAtt CognitoHandleFunctionRole.Arn
-  APIGatewayHandleFunctionRoleArn:
-    Value:
-      !GetAtt APIGatewayHandleFunctionRole.Arn
   AdminPageS3BucketURL:
     Value:
       Fn::GetAtt:
