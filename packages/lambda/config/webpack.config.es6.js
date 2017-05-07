@@ -128,6 +128,10 @@ export default {
     DBCreateItems: [
       'babel-polyfill',
       './src/api/dbCreateItems/index.js'
+    ],
+    UpdateFeeds: [
+      'babel-polyfill',
+      './src/api/updateFeeds/index.js'
     ]
   },
   output: {

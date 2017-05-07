@@ -49,27 +49,6 @@ const createFunctionJSON = (role, timeout, memory, targetDirs) => {
     console.log(`${dir}/function.json created`)
   })
 }
-const metricsFunctionRoleArn = getArn(awsResourceIDs, 'MetricsFunctionRoleArn')
-createFunctionJSON(metricsFunctionRoleArn, 60, 512, [
+createFunctionJSON(lambdaRoleArn, 60, 512, [
   buildDir + '/functions/CollectMetricsData'
-])
-createFunctionJSON(metricsFunctionRoleArn, 30, 128, [
-  buildDir + '/functions/GetExternalMetrics'
-])
-const s3HandleFunctionRoleArn = getArn(awsResourceIDs, 'S3HandleFunctionRoleArn')
-createFunctionJSON(s3HandleFunctionRoleArn, 30, 128, [
-  buildDir + '/functions/S3PutObject',
-  buildDir + '/functions/S3SyncObjects'
-])
-const cognitoHandleFunctionRoleArn = getArn(awsResourceIDs, 'CognitoHandleFunctionRoleArn')
-createFunctionJSON(cognitoHandleFunctionRoleArn, 30, 128, [
-  buildDir + '/functions/CognitoCreateUser',
-  buildDir + '/functions/CognitoCreateUserPool',
-  buildDir + '/functions/CognitoCreateUserPoolClient',
-  buildDir + '/functions/DBCreateItems',
-  buildDir + '/functions/PatchSettings'
-])
-const apiGatewayHandleFunctionRoleArn = getArn(awsResourceIDs, 'APIGatewayHandleFunctionRoleArn')
-createFunctionJSON(apiGatewayHandleFunctionRoleArn, 30, 128, [
-  buildDir + '/functions/APIGatewayDeploy'
 ])

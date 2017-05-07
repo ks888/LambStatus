@@ -4,6 +4,7 @@ import Button from 'components/common/Button'
 import ModestLink from 'components/common/ModestLink'
 import MetricsGraph from 'components/common/MetricsGraph'
 import Title from 'components/statusPage/Title'
+import SubscribeButton from 'components/statusPage/SubscribeButton'
 import Components from 'components/statusPage/Components'
 import Incidents from 'components/statusPage/Incidents'
 import ScheduledMaintenances from 'components/statusPage/ScheduledMaintenances'
@@ -95,15 +96,20 @@ export default class Statuses extends React.Component {
       )
     }
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <Title service_name={settings.serviceName} />
-      {components}
-      {maintenances}
-      {metricsTitle}
-      {metricsContent}
-      {incidents}
-      <ModestLink link='/history' text='Incident History' />
-    </div>)
+    return (
+      <div className={classnames(classes.layout, 'mdl-grid')}
+        style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
+        <div className={classnames(classes.top)}>
+          <Title service_name={settings.serviceName} />
+          <SubscribeButton />
+        </div>
+        {components}
+        {maintenances}
+        {metricsTitle}
+        {metricsContent}
+        {incidents}
+        <ModestLink link='/history' text='Incident History' />
+      </div>
+    )
   }
 }
