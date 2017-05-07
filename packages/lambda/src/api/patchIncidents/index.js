@@ -1,4 +1,5 @@
 import { Incident } from 'model/incidents'
+import SNS from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
@@ -6,6 +7,8 @@ export async function handle (event, context, callback) {
                                   event.body.message, event.body.components)
     await incident.validate()
     await incident.save()
+
+    await new SNS().notifyIncident(incident)
 
     const obj = incident.objectify()
     const comps = obj.components

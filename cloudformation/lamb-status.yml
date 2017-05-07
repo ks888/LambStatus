@@ -3039,3 +3039,6 @@ Outputs:
   Version:
     Value:
       Fn::FindInMap: [ Constants, LambStatus, Version ]
+  IncidentNotificationTopic:
+    Value:
+      Ref: "IncidentNotificationTopic"

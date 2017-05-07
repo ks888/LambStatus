@@ -54,4 +54,9 @@ export default class CloudFormation {
     const key = 'StatusPageS3BucketName'
     return await this.getOutputValue(key)
   }
+
+  async getIncidentNotificationTopic () {
+    const key = 'IncidentNotificationTopic'
+    return await this.getOutputValue(key)
+  }
 }
