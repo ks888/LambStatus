@@ -26,7 +26,19 @@ const funcsDir = path.normalize(`${buildDir}/functions`)
 const buildFunc = (funcName) => {
   const cmd = `apex build ${funcName}`
   try {
-    const stdout = execSync(cmd, { cwd: buildDir })
+    const numRetries = 3
+    let stdout
+    for (let i = 0; i < numRetries; i++) {
+      stdout = execSync(cmd, { cwd: buildDir, maxBuffer: 100 * 1024 * 1024 })
+      // sometimes 'apex build' writes nothing to stdout.
+      if (stdout.length !== 0) {
+        break
+      }
+      console.log('retry...')
+    }
+    if (stdout.length === 0) {
+      throw new Error('failed to create zip file')
+    }
     fs.writeFileSync(`${buildDir}/${funcName}.zip`, stdout)
     console.log(`${funcName}.zip created`)
   } catch (error) {

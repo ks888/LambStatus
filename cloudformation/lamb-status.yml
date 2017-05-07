@@ -87,6 +87,7 @@ Resources:
                     arn:aws:s3:::${StatusPageS3}
                   - !Sub |-
                     arn:aws:s3:::${AdminPageS3}
+                  - arn:aws:s3:::lambstatus
               - Effect: Allow
                 Action:
                   - s3:DeleteObject
@@ -97,6 +98,7 @@ Resources:
                     arn:aws:s3:::${StatusPageS3}/*
                   - !Sub |-
                     arn:aws:s3:::${AdminPageS3}/*
+                  - arn:aws:s3:::lambstatus/*
         - PolicyName: CloudWatch
           PolicyDocument:
             Statement:
