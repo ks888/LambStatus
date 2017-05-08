@@ -146,10 +146,15 @@ export const deleteMetric = (metricID, callbacks = {}) => {
 }
 
 export const fetchMetricsData = (statusPageURL, metricID, year, month, date, callbacks = {}) => {
+  let url = statusPageURL
+  if (url.length > 0 && statusPageURL[statusPageURL.length - 1] === '/') {
+    url = url.slice(0, url.length - 1)
+  }
+
   return async dispatch => {
     try {
-      const respBody = await sendRequest(`${statusPageURL}/metrics/${metricID}/${year}/${month}/${date}.json`,
-                                         {cache: 'no-cache'}, callbacks)
+      const respBody = await sendRequest(`${url}/metrics/${metricID}/${year}/${month}/${date}.json`,
+                                         {cache: 'no-cache', mode: 'cors'}, callbacks)
       if (typeof respBody === 'object') {
         dispatch(listMetricsData(metricID, year, month, date, respBody))
       }

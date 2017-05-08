@@ -9,6 +9,9 @@ export default class SNS {
   }
 
   async notifyIncident (message) {
+    // TODO: this method is called even when the metadata like service name is updated.
+    // In such a case, no need to publish to all subscribers including SES.
+    // Maybe it's better to categorize the messages.
     const topic = await new CloudFormation(stackName).getIncidentNotificationTopic()
     return await this.publish(topic, message)
   }

@@ -24,7 +24,7 @@ export async function handle (event, context, callback) {
     let events = (await new Incidents().all()).concat(await new Maintenances().all())
     events.sort(latestToOldest)
     const maxItems = 25
-    for (let i = 0; i < maxItems; i++) {
+    for (let i = 0; i < Math.min(events.length, maxItems); i++) {
       feed.addItem(await buildItem(events[i], statusPageURL))
     }
 
@@ -48,13 +48,18 @@ const latestToOldest = (a, b) => {
 }
 
 const buildItem = async (event, statusPageURL) => {
+  let url = statusPageURL
+  if (url.length > 0 && statusPageURL[statusPageURL.length - 1] === '/') {
+    url = url.slice(0, url.length - 1)
+  }
+
   let id, link, eventUpdates
   if (event.hasOwnProperty('incidentID')) {
     const incidentUpdates = await event.getIncidentUpdates()
     incidentUpdates.sort(latestToOldest)
 
     id = `tag:${statusPageURL},2017:Incident/${event.incidentID}`
-    link = `${statusPageURL}/incidents/${event.incidentID}`
+    link = `${url}/incidents/${event.incidentID}`
     eventUpdates = incidentUpdates.map(update => {
       update.status = update.incidentStatus
       return update
@@ -64,7 +69,7 @@ const buildItem = async (event, statusPageURL) => {
     maintenanceUpdates.sort(latestToOldest)
 
     id = `tag:${statusPageURL},2017:Maintenance/${event.maintenanceID}`
-    link = `${statusPageURL}/maintenances/${event.maintenanceID}`
+    link = `${url}/maintenances/${event.maintenanceID}`
     eventUpdates = maintenanceUpdates.map(update => {
       update.status = update.maintenanceStatus
       return update

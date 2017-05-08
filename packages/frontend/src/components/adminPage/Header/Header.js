@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Link } from 'react-router'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import classes from './Header.scss'
@@ -24,7 +25,11 @@ export default class Header extends React.Component {
   }
 
   componentWillUpdate (nextProps) {
-    if (nextProps.settings.serviceName) {
+    if (nextProps.username !== this.props.username) {
+      this.props.fetchSettings()
+    }
+
+    if (nextProps.settings.serviceName !== this.props.settings.serviceName) {
       document.title = `${nextProps.settings.serviceName}Status Admin`
     }
   }
@@ -49,17 +54,21 @@ export default class Header extends React.Component {
   render () {
     const { settings } = this.props
     const userMenu = this.renderUserMenu()
-    return (<header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
-      <div className='mdl-layout__header-row'>
-        <span className='mdl-layout-title'>{settings.serviceName}Status Admin</span>
-        <div className='mdl-layout-spacer' />
-        <nav className='mdl-navigation'>
-          <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={settings.statusPageURL}>
-            View Status Page
-          </a>
-          {userMenu}
-        </nav>
-      </div>
-    </header>)
+    return (
+      <header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
+        <div className='mdl-layout__header-row'>
+          <span className='mdl-layout-title'>
+            <Link to='/' className={classes.title}>{settings.serviceName}Status Admin</Link>
+          </span>
+          <div className='mdl-layout-spacer' />
+          <nav className='mdl-navigation'>
+            <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={settings.statusPageURL}>
+              View Status Page
+            </a>
+            {userMenu}
+          </nav>
+        </div>
+      </header>
+    )
   }
 }

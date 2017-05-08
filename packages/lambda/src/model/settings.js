@@ -1,5 +1,6 @@
 import SettingsStore from 'db/settings'
 import Cognito from 'aws/cognito'
+import SNS from 'aws/sns'
 import { ValidationError, NotFoundError } from 'utils/errors'
 
 const settingsKeyServiceName = 'ServiceName'
@@ -33,6 +34,8 @@ export class Settings {
   async setServiceName (value) {
     await this.store.update(settingsKeyServiceName, value)
     await this.updateUserPool()
+
+    await new SNS().notifyIncident()
   }
 
   async getStatusPageURL () {
@@ -51,6 +54,8 @@ export class Settings {
       throw new ValidationError('invalid url')
     }
     await this.store.update(settingsKeyStatusPageURL, value)
+
+    await new SNS().notifyIncident()
   }
 
   async getAdminPageURL () {
