@@ -10,7 +10,7 @@
     "clean": "rimraf build",
     "lint": "eslint src",
     "build": "npm run clean && babel-node ./bin/fetch-aws-ids.js && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-exclude --display-modules --display-chunks --display-error-details --display-origins --display-cached --display-cached-assets --bail",
-    "deploy": "npm run build && . $(dirname $0)/../../.env && cd build && AWS_REGION=${AWS_REGION} apex deploy",
+    "deploy": "npm run build && babel-node ./bin/deploy.js",
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
     "test:dev": "npm run test -- --watch",
     "release": "npm run build && babel-node ./bin/release.js",

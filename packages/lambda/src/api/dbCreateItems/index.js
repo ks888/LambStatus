@@ -1,4 +1,5 @@
 import response from 'cfn-response'
+import SNS from 'aws/sns'
 import { Settings } from 'model/settings'
 
 export async function handle (event, context, callback) {
@@ -10,15 +11,25 @@ export async function handle (event, context, callback) {
   const {
     AdminPageURL: adminPageURL,
     StatusPageURL: statusPageURL,
-    CognitoPoolID: cognitoPoolID
+    CognitoPoolID: cognitoPoolID,
+    IncidentNotificationTopic: incidentNotificationTopic
   } = event.ResourceProperties
+
+  const settings = new Settings()
   try {
-    const settings = new Settings()
-    if (adminPageURL) {
-      await settings.setAdminPageURL(adminPageURL)
-    }
     if (statusPageURL) {
       await settings.setStatusPageURL(statusPageURL)
+    }
+  } catch (error) {
+    // failed due to the unknown SNS topic.
+    console.warn(error.message)
+  }
+
+  try {
+    await new SNS().notifyIncidentToTopic(incidentNotificationTopic)
+
+    if (adminPageURL) {
+      await settings.setAdminPageURL(adminPageURL)
     }
     if (cognitoPoolID) {
       await settings.setCognitoPoolID(cognitoPoolID)

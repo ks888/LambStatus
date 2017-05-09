@@ -1,10 +1,8 @@
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
 import { execSync } from 'child_process'
 import S3 from '../src/aws/s3'
 import packageJSON from '../package.json'
-
-const stopIfObjectsExist = (process.argv[2] !== '--force')
 
 const regions = [
   'us-east-1',
@@ -20,6 +18,7 @@ const regions = [
   'ap-south-1',
   'sa-east-1'
 ]
+
 const buildDir = path.normalize(`${__dirname}/../build`)
 const funcsDir = path.normalize(`${buildDir}/functions`)
 
@@ -48,7 +47,7 @@ const buildFunc = (funcName) => {
   }
 }
 
-const release = async () => {
+const release = async (stopIfObjectsExist) => {
   const funcs = fs.readdirSync(funcsDir)
   funcs.forEach((func) => {
     buildFunc(func)
@@ -63,18 +62,20 @@ const release = async () => {
       }
     }))
   }
-  await Promise.all(funcs.map(async (func) => {
-    const objectName = `fn/${packageJSON.version}/${func}.zip`
-    const body = fs.readFileSync(`${buildDir}/${func}.zip`)
-    await Promise.all(regions.map(async (region) => {
-      const bucketName = 'lambstatus-' + region
+
+  await Promise.all(regions.map(async region => {
+    const bucketName = 'lambstatus-' + region
+    for (let i = 0; i < funcs.length; i++) {
+      const func = funcs[i]
+      const objectName = `fn/${packageJSON.version}/${func}.zip`
+      const body = fs.readFileSync(`${buildDir}/${func}.zip`)
       await new S3().putObject(region, bucketName, objectName, body)
-    }))
-    console.log(`uploaded: ${func}.zip`)
+    }
+    console.log(`uploaded to ${region}`)
   }))
 }
 
-release().catch((error) => {
+release(process.argv[2] !== '--force').catch((error) => {
   console.log(error.message)
   console.log(error.stack)
 })

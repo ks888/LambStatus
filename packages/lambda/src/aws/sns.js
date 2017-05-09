@@ -8,11 +8,15 @@ export default class SNS {
     this.sns = new AWS.SNS({ apiVersion: '2010-03-31', region })
   }
 
-  async notifyIncident (message) {
+  async notifyIncident (message = '') {
+    const topic = await new CloudFormation(stackName).getIncidentNotificationTopic()
+    return await this.notifyIncidentToTopic(topic, message)
+  }
+
+  async notifyIncidentToTopic (topic, message = '') {
     // TODO: this method is called even when the metadata like service name is updated.
     // In such a case, no need to publish to all subscribers including SES.
     // Maybe it's better to categorize the messages.
-    const topic = await new CloudFormation(stackName).getIncidentNotificationTopic()
     return await this.publish(topic, message)
   }
 

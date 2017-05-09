@@ -2897,6 +2897,8 @@ Resources:
         https://${AdminPageDistribution.DomainName}
       StatusPageURL: !Sub |-
         https://${StatusPageDistribution.DomainName}
+      IncidentNotificationTopic:
+        Ref: "IncidentNotificationTopic"
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
