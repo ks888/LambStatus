@@ -15,7 +15,7 @@ Parameters:
 Mappings:
   Constants:
     LambStatus:
-      Version: 0.2.1
+      Version: 0.3.0
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
