@@ -1,13 +1,19 @@
 # Change Log
 
+## [v0.3.0](https://github.com/ks888/LambStatus/tree/v0.3.0) (2017-05-09)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.2.1...v0.3.0)
+
+
+
+- Publish rss feeds [\#26](https://github.com/ks888/LambStatus/pull/26) ([ks888](https://github.com/ks888))
+- Support custom domain settings [\#25](https://github.com/ks888/LambStatus/pull/25) ([ks888](https://github.com/ks888))
+- Add Incident Page to easily share the specific incident [\#24](https://github.com/ks888/LambStatus/pull/24) ([ks888](https://github.com/ks888))
+- Auto-deploy APIGateway on updating the stack [\#23](https://github.com/ks888/LambStatus/pull/23) ([ks888](https://github.com/ks888))
+
 ## [v0.2.1](https://github.com/ks888/LambStatus/tree/v0.2.1) (2017-04-11)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v2.0.0...v0.2.1)
 
-**Implemented enhancements:**
 
-- Support scheduled maintenance [\#15](https://github.com/ks888/LambStatus/issues/15)
-
-**Merged pull requests:**
 
 - Show tooltip to tell the meaning of the item color [\#21](https://github.com/ks888/LambStatus/pull/21) ([ks888](https://github.com/ks888))
 - Support scheduled maintenance [\#19](https://github.com/ks888/LambStatus/pull/19) ([ks888](https://github.com/ks888))
@@ -15,16 +21,7 @@
 ## [v2.0.0](https://github.com/ks888/LambStatus/tree/v2.0.0) (2017-03-07)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.3...v2.0.0)
 
-**Implemented enhancements:**
 
-- Integrate with CloudWatch Metrics [\#8](https://github.com/ks888/LambStatus/issues/8)
-- Add 'Allowed Pattern' property to User Parameters of CloudFormation template [\#7](https://github.com/ks888/LambStatus/issues/7)
-
-**Fixed bugs:**
-
-- Launch Stack failed [\#6](https://github.com/ks888/LambStatus/issues/6)
-
-**Merged pull requests:**
 
 - Show cloudwatch metrics [\#9](https://github.com/ks888/LambStatus/pull/9) ([ks888](https://github.com/ks888))
 
@@ -37,18 +34,14 @@
 ## [v0.1.1](https://github.com/ks888/LambStatus/tree/v0.1.1) (2016-12-27)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.0...v0.1.1)
 
-**Merged pull requests:**
+
 
 - Improve incident error message [\#5](https://github.com/ks888/LambStatus/pull/5) ([ks888](https://github.com/ks888))
 
 ## [v0.1.0](https://github.com/ks888/LambStatus/tree/v0.1.0) (2016-12-18)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.0.3...v0.1.0)
 
-**Implemented enhancements:**
 
-- Support user authentication [\#3](https://github.com/ks888/LambStatus/issues/3)
-
-**Merged pull requests:**
 
 - Support user management [\#4](https://github.com/ks888/LambStatus/pull/4) ([ks888](https://github.com/ks888))
 
@@ -56,11 +49,7 @@
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.0.2...v0.0.3)
 
 ## [v0.0.2](https://github.com/ks888/LambStatus/tree/v0.0.2) (2016-11-23)
-**Implemented enhancements:**
 
-- Introduce Wercker for testing [\#1](https://github.com/ks888/LambStatus/issues/1)
-
-**Merged pull requests:**
 
 - Introduce wercker [\#2](https://github.com/ks888/LambStatus/pull/2) ([ks888](https://github.com/ks888))
 
