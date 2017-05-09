@@ -1,5 +1,6 @@
 import assert from 'assert'
 import sinon from 'sinon'
+import SNS from 'aws/sns'
 import { Settings } from 'model/settings'
 import SettingsStore from 'db/settings'
 import { NotFoundError } from 'utils/errors'
@@ -64,11 +65,14 @@ describe('Settings', () => {
       const updateStub = sinon.stub(SettingsStore.prototype, 'update')
       updateStub.returns(expected)
       const updateUserPoolStub = sinon.stub(Settings.prototype, 'updateUserPool')
+      const snsStub = sinon.stub(SNS.prototype, 'notifyIncident')
 
       await new Settings().setServiceName(expected)
       assert(updateStub.called)
       assert(updateUserPoolStub.called)
+      assert(snsStub.called)
       Settings.prototype.updateUserPool.restore()
+      SNS.prototype.notifyIncident.restore()
     })
 
     it('should throw error when error returned', async () => {
