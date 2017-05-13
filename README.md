@@ -8,7 +8,7 @@ LambStatus is a status page system inspired by [StatusPage.io](https://www.statu
 
 With a few clicks, You can build a status page like this:
 
-![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo_v2.0.0.png)
+![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo.png)
 
 The demo pages are available:
 * [Status page](https://lambstatus.github.io/demo-status/) (the page to tell your service's status to your users)
@@ -38,7 +38,7 @@ When a window to create a new CloudFormation stack is opened (like below), click
 
 ![CloudFormationWizard1](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard1.png)
 
-Then, enter your service name and initial user's info and click Next.
+Then, enter your email address and click Next.
 
 ![CloudFormationWizard2](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard2.png)
 
