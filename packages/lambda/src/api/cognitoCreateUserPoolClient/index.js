@@ -5,7 +5,7 @@ export async function handle (event, context, callback) {
   if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
     // UserPool will be deleted too, so do nothing here.
     const clientID = event.PhysicalResourceId
-    response.send(event, context, response.SUCCESS, {UserPoolClientID: clientID})
+    response.send(event, context, response.SUCCESS, {UserPoolClientID: clientID}, clientID)
     return
   }
 

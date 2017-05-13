@@ -14,7 +14,7 @@ export async function handle (event, context, callback) {
     try {
       const poolID = event.PhysicalResourceId
       await new Cognito().deleteUserPool(region, poolID)
-      response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
+      response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
     } catch (error) {
       console.log(error.message)
       console.log(error.stack)
@@ -25,7 +25,8 @@ export async function handle (event, context, callback) {
 
   if (event.RequestType === 'Update') {
     const poolID = event.PhysicalResourceId
-    response.send(event, context, response.SUCCESS, {UserPoolID: poolID})
+    // If `physicalResourceId` is changed, the custom resource will be deleted.
+    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
     return
   }
 

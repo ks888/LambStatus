@@ -143,8 +143,10 @@ Now, visit http://localhost:3000 and sign in to the admin console. Get the login
   * [ ] Two factor authentication ([#14](https://github.com/ks888/LambStatus/issues/14))
   * [ ] Single sign-on ([#14](https://github.com/ks888/LambStatus/issues/14))
 * Notifications
+  * [x] RSS feed
   * [ ] Email ([#17](https://github.com/ks888/LambStatus/issues/17))
   * [ ] Twitter ([#18](https://github.com/ks888/LambStatus/issues/18))
   * [ ] ...
 * Settings
+  * [x] Custom domain
   * [ ] Custom colors / styling ([#14](https://github.com/ks888/LambStatus/issues/14))
