@@ -9,6 +9,7 @@ import Users from 'components/adminPage/Users'
 import Metrics from 'components/adminPage/Metrics'
 import Settings from 'components/adminPage/Settings'
 import Signin from 'components/adminPage/Signin'
+import NotFound from 'components/adminPage/NotFound'
 import { isAuthorized } from 'actions/users'
 
 function requireAuth (nextState, replace) {
@@ -37,6 +38,7 @@ const routes = (
     <Route path='metrics' component={Metrics} onEnter={requireAuth} />
     <Route path='settings' component={Settings} onEnter={requireAuth} />
     <Route path='signin' component={Signin} onEnter={guestOnly} />
+    <Route path='*' component={NotFound} />
   </Route>
 )
 
