@@ -16,17 +16,20 @@ The demo pages are available:
 
 ## Goals of this project
 
-* Offer an open source status page system
-* Enable users to easily build and update the system (by fully utilizing the CloudFormation)
-* Serverless architectures
+* Offers an open source and serverless status page system.
+* Enables you to deploy and maintain the status page system at minimum effort.
 
 ## Why Serverless?
 
-Status page system is able to make use of the benefits of Serverless architectures, because:
+Status page system is great with the Serverless architecture, because:
 
 * It dramatically eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
-
 * It reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
+
+Apart from the Serverless architecture, LambStatus enables you to:
+
+* Easily build and update the system (by the power of the CloudFormation)
+* Choose the AWS region different from your service's region. If both your service and its status page rely on the same region, [the region outage](https://aws.amazon.com/message/41926/) may stop both.
 
 ## Installation
 
@@ -60,9 +63,38 @@ Click the link in the email, and sign in to admin console.
 
 See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
 
+## TODO
+
+*LambStatus is still under development, and YOUR feature requests and bug reports are very welcome. Feel free to open a new issue or join [our gitter room](https://gitter.im/ks888/LambStatus).*
+
+* Service status
+  * [x] Show status by functional components
+  * [ ] Grouping functional components ([#14](https://github.com/ks888/LambStatus/issues/14))
+* Incidents
+  * [x] Show incidents
+  * [x] Scheduled maintenance
+* Metrics
+  * [x] Show metrics
+  * Import metrics data from other monitoring SaaS
+    * [x] CloudWatch
+    * [ ] New Relic ([#16](https://github.com/ks888/LambStatus/issues/16))
+    * [ ] ...
+* User accounts
+  * [x] Basic operations (create/delete account, sign in/out, etc.)
+  * [ ] Two factor authentication ([#14](https://github.com/ks888/LambStatus/issues/14))
+  * [ ] Single sign-on ([#14](https://github.com/ks888/LambStatus/issues/14))
+* Notifications
+  * [x] RSS feed
+  * [ ] Email ([#17](https://github.com/ks888/LambStatus/issues/17))
+  * [ ] Twitter ([#18](https://github.com/ks888/LambStatus/issues/18))
+  * [ ] ...
+* Settings
+  * [x] Custom domain
+  * [ ] Custom colors / styling ([#14](https://github.com/ks888/LambStatus/issues/14))
+
 ## Development
 
-*LambStatus is still under development, and not ready for production use. All kinds of contributions including feature requests / bug reports / pull requests are welcome!*
+Here is the rough architecture:
 
 ![Architecture](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/Architecture.png)
 
@@ -123,30 +155,3 @@ See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage exam
    `npm run start`
 
 Now, visit http://localhost:3000 and sign in to the admin console. Get the login information from the email you received.
-
-## TODO
-
-* Service status
-  * [x] Show status by functional components
-  * [ ] Grouping functional components ([#14](https://github.com/ks888/LambStatus/issues/14))
-* Incidents
-  * [x] Show incidents
-  * [x] Scheduled maintenance
-* Metrics
-  * [x] Show metrics
-  * Import metrics data from other monitoring SaaS
-    * [x] CloudWatch
-    * [ ] New Relic ([#16](https://github.com/ks888/LambStatus/issues/16))
-    * [ ] ...
-* User accounts
-  * [x] Basic operations (create/delete account, sign in/out, etc.)
-  * [ ] Two factor authentication ([#14](https://github.com/ks888/LambStatus/issues/14))
-  * [ ] Single sign-on ([#14](https://github.com/ks888/LambStatus/issues/14))
-* Notifications
-  * [x] RSS feed
-  * [ ] Email ([#17](https://github.com/ks888/LambStatus/issues/17))
-  * [ ] Twitter ([#18](https://github.com/ks888/LambStatus/issues/18))
-  * [ ] ...
-* Settings
-  * [x] Custom domain
-  * [ ] Custom colors / styling ([#14](https://github.com/ks888/LambStatus/issues/14))
