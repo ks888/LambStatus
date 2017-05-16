@@ -63,6 +63,10 @@ Click the link in the email, and sign in to admin console.
 
 See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
 
+## Update
+
+If the newer version of LambStatus is available, you can easily update the existing CloudFormation stack by applying [this template](https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.0/lamb-status.yml). Visit [the wiki page](https://github.com/ks888/LambStatus/wiki/Update-the-CloudFromation-stack) to see the step-by-step instructions.
+
 ## TODO
 
 *LambStatus is still under development, and YOUR feature requests and bug reports are very welcome. Feel free to open a new issue or join [our gitter room](https://gitter.im/ks888/LambStatus).*
