@@ -3,7 +3,7 @@ import { Component } from 'model/components'
 export async function handle (event, context, callback) {
   try {
     const comp = new Component(event.params.componentid, event.body.name,
-                               event.body.description, event.body.status)
+                               event.body.description, event.body.status, event.body.order)
     await comp.validate()
     await comp.save()
     callback(null, JSON.stringify(comp.objectify()))

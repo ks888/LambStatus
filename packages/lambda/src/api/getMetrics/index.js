@@ -2,7 +2,8 @@ import { Metrics } from 'model/metrics'
 
 export async function handle (event, context, callback) {
   try {
-    const metrics = await new Metrics().list()
+    let metrics = await new Metrics().list()
+    metrics = metrics.sort((a, b) => a.order - b.order)
     callback(null, JSON.stringify(metrics.map(metric => metric.objectify())))
   } catch (error) {
     console.log(error.message)

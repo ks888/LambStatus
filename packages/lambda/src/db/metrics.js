@@ -14,11 +14,12 @@ export default class MetricsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
-        ProjectionExpression: 'metricID, #t, title, #u, description, #s, props',
+        ProjectionExpression: 'metricID, #t, title, #u, description, #s, #or, props',
         ExpressionAttributeNames: {
           '#t': 'type',
+          '#u': 'unit',
           '#s': 'status',
-          '#u': 'unit'
+          '#or': 'order'
         }
       }
       this.awsDynamoDb.scan(params, (err, scanResult) => {
@@ -27,7 +28,7 @@ export default class MetricsStore {
         }
         let metrics = []
         scanResult.Items.forEach((metric) => {
-          fillInsufficientProps({type: '', title: '', unit: '', description: '', status: '', props: null}, metric)
+          fillInsufficientProps({unit: '', description: ''}, metric)
           metric['props'] = JSON.parse(metric['props'])
           metrics.push(metric)
         })

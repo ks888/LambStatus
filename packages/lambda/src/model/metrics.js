@@ -6,7 +6,7 @@ import { NotFoundError, ValidationError } from 'utils/errors'
 import { metricStatuses, metricStatusVisible, monitoringServices, region } from 'utils/const'
 
 export class Metric {
-  constructor (metricID, type, title, unit, description, status, props) {
+  constructor (metricID, type, title, unit, description, status, order, props) {
     if (!metricID) {
       this.metricID = generateID()
       this.needIDValidation = false
@@ -20,6 +20,11 @@ export class Metric {
     this.unit = unit
     this.description = description
     this.status = status
+    if (!order) {
+      this.order = Math.floor(new Date().getTime() / 1000)
+    } else {
+      this.order = order
+    }
     this.props = props
   }
 
@@ -53,6 +58,10 @@ export class Metric {
       throw new ValidationError('invalid status parameter')
     }
 
+    if (this.order === undefined || (typeof this.order !== 'number') || Math.floor(this.order) !== this.order) {
+      throw new ValidationError('invalid order parameter')
+    }
+
     if (this.props === undefined || this.props === null || typeof this.props !== 'object') {
       throw new ValidationError('invalid metrics parameter')
     }
@@ -60,7 +69,8 @@ export class Metric {
 
   async save () {
     const store = new MetricsStore()
-    await store.update(this.metricID, this.type, this.title, this.unit, this.description, this.status, this.props)
+    await store.update(this.metricID, this.type, this.title, this.unit, this.description, this.status,
+                       this.order, this.props)
   }
 
   async delete () {
@@ -76,6 +86,7 @@ export class Metric {
       unit: this.unit,
       description: this.description,
       status: this.status,
+      order: this.order,
       props: this.props
     }
   }
@@ -98,7 +109,7 @@ export class Metrics {
     const metrics = await new MetricsStore().getAll()
     return metrics.map(metric => {
       return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.status, metric.props)
+                        metric.status, metric.order, metric.props)
     })
   }
 
@@ -110,7 +121,7 @@ export class Metrics {
     } else if (metrics.length === 1) {
       const metric = metrics[0]
       return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.status, metric.props)
+                        metric.status, metric.order, metric.props)
     } else {
       throw new Error('matched too many items')
     }
