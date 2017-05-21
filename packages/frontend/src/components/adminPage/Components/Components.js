@@ -22,19 +22,21 @@ export default class Components extends React.Component {
       componentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired
+      status: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
     deleteComponent: PropTypes.func.isRequired
   }
 
-  constructor () {
+  constructor (props) {
     super()
     this.state = {
       dialogType: dialogType.none,
       component: null,
       isFetching: false,
-      message: ''
+      message: '',
+      order: [...Array(props.components.length).keys()]
     }
   }
 
@@ -46,6 +48,10 @@ export default class Components extends React.Component {
         this.setState({isFetching: false, message: msg})
       }
     })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.setState({order: [...Array(nextProps.components.length).keys()]})
   }
 
   handleShowDialog = (type, component) => {
@@ -122,7 +128,10 @@ export default class Components extends React.Component {
 
   render () {
     const { components } = this.props
-    const componentItems = components.map(this.renderListItem)
+    let orderedComponents = []
+    this.state.order.forEach(i => orderedComponents.push(components[i]))
+    const componentItems = orderedComponents.map(this.renderListItem)
+
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>
