@@ -73,19 +73,21 @@ export default class Components extends React.Component {
   }
 
   handleClickArrowUpward = (i) => {
-    return () => {
-      if (i === 0) { return }
-      const clickedComp = this.props.components[i]
-      const prevComp = this.props.components[i - 1]
-      const newOrder = Math.floor((prevComp.order + (i - 2 >= 0 ? this.props.components[i - 2].order : 0)) / 2)
-      this.props.updateComponent(clickedComp.componentID, clickedComp.name, clickedComp.description,
-                                 clickedComp.status, newOrder, this.callbacks)
-    }
+    if (i === 0) { return () => {} }
+    return this.handleClickArrowDownward(i - 1)
   }
 
   handleClickArrowDownward = (i) => {
-    if (i === this.props.components.length - 1) { return () => {} }
-    return this.handleClickArrowUpward(i + 1)
+    return () => {
+      if (i === this.props.components.length - 1) { return }
+      const { components } = this.props
+      const clickedComp = components[i]
+      const orderA = components[i + 1].order
+      const orderB = (i + 2 < components.length ? components[i + 2].order : Math.floor(new Date().getTime() / 1000))
+      const newOrder = Math.floor((orderA + orderB) / 2)
+      this.props.updateComponent(clickedComp.componentID, clickedComp.name, clickedComp.description,
+                                 clickedComp.status, newOrder, this.callbacks)
+    }
   }
 
   renderListItem = (component, i) => {

@@ -9,6 +9,24 @@
   background-color: #FFFFFF !important;
 }
 
+.buttons {
+  flex-direction: row !important;
+}
+
+.order-buttons {
+  padding-right: 16px;
+  padding-left: 16px;
+}
+
+.order-icon {
+  background-color: #FFFFFF !important;
+  color: #757575;
+  font-size: 18px;
+  height: 36px;
+  line-height: 36px;
+  cursor: pointer;
+}
+
 .showDialogButton {
   text-align: right;
 }
