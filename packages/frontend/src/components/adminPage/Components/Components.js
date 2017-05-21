@@ -26,6 +26,7 @@ export default class Components extends React.Component {
       order: PropTypes.number.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
+    updateComponent: PropTypes.func.isRequired,
     deleteComponent: PropTypes.func.isRequired
   }
 
@@ -35,23 +36,20 @@ export default class Components extends React.Component {
       dialogType: dialogType.none,
       component: null,
       isFetching: false,
-      message: '',
-      order: [...Array(props.components.length).keys()]
+      message: ''
+    }
+  }
+
+  callbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: (msg) => {
+      this.setState({isFetching: false, message: msg})
     }
   }
 
   componentDidMount () {
-    this.props.fetchComponents({
-      onLoad: () => { this.setState({isFetching: true}) },
-      onSuccess: () => { this.setState({isFetching: false}) },
-      onFailure: (msg) => {
-        this.setState({isFetching: false, message: msg})
-      }
-    })
-  }
-
-  componentWillReceiveProps (nextProps) {
-    this.setState({order: [...Array(nextProps.components.length).keys()]})
+    this.props.fetchComponents(this.callbacks)
   }
 
   handleShowDialog = (type, component) => {
@@ -74,7 +72,23 @@ export default class Components extends React.Component {
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
-  renderListItem = (component) => {
+  handleClickArrowUpward = (i) => {
+    return () => {
+      if (i === 0) { return }
+      const clickedComp = this.props.components[i]
+      const prevComp = this.props.components[i - 1]
+      const newOrder = Math.floor((prevComp.order + (i - 2 >= 0 ? this.props.components[i - 2].order : 0)) / 2)
+      this.props.updateComponent(clickedComp.componentID, clickedComp.name, clickedComp.description,
+                                 clickedComp.status, newOrder, this.callbacks)
+    }
+  }
+
+  handleClickArrowDownward = (i) => {
+    if (i === this.props.components.length - 1) { return () => {} }
+    return this.handleClickArrowUpward(i + 1)
+  }
+
+  renderListItem = (component, i) => {
     let statusColor = getComponentColor(component.status)
     return (
       <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
@@ -85,16 +99,16 @@ export default class Components extends React.Component {
           <span>{component.name}</span>
           <span className='mdl-list__item-sub-title'>{component.description}</span>
         </span>
-        <span className='mdl-list__item-secondary-content'>
-          <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(component)} />
-            </div>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(component)} />
-            </div>
+        <span className={classnames('mdl-list__item-secondary-content', classes['buttons'])}>
+          <Button plain name='Edit' onClick={this.handleShowEditDialog(component)} />
+          <Button plain name='Delete' onClick={this.handleShowDeleteDialog(component)} />
+          <div className={classnames(classes['order-buttons'])}>
+            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
+              arrow_upward
+            </i>
+            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowDownward(i)}>
+              arrow_downward
+            </i>
           </div>
         </span>
       </li>
@@ -127,10 +141,7 @@ export default class Components extends React.Component {
   }
 
   render () {
-    const { components } = this.props
-    let orderedComponents = []
-    this.state.order.forEach(i => orderedComponents.push(components[i]))
-    const componentItems = orderedComponents.map(this.renderListItem)
+    const componentItems = this.props.components.map(this.renderListItem)
 
     const dialog = this.renderDialog()
     const textInButton = (<div>
