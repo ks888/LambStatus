@@ -30,7 +30,7 @@ export default class Components extends React.Component {
     deleteComponent: PropTypes.func.isRequired
   }
 
-  constructor (props) {
+  constructor () {
     super()
     this.state = {
       dialogType: dialogType.none,
