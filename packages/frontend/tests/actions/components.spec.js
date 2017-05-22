@@ -108,7 +108,7 @@ describe('(Action) components', () => {
     it('Should update the existing component.', () => {
       fetchMock.patch(/.*\/components\/.*/, { body: comp1, headers: {'Content-Type': 'application/json'} })
 
-      return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -122,7 +122,7 @@ describe('(Action) components', () => {
     it('Should handle error properly.', () => {
       fetchMock.patch(/.*\/components\/.*/, { status: 400, body: {} })
 
-      return updateComponent('c1', undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
