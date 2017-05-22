@@ -22,9 +22,11 @@ export default class Components extends React.Component {
       componentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired
+      status: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
+    updateComponent: PropTypes.func.isRequired,
     deleteComponent: PropTypes.func.isRequired
   }
 
@@ -38,14 +40,16 @@ export default class Components extends React.Component {
     }
   }
 
+  callbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: (msg) => {
+      this.setState({isFetching: false, message: msg})
+    }
+  }
+
   componentDidMount () {
-    this.props.fetchComponents({
-      onLoad: () => { this.setState({isFetching: true}) },
-      onSuccess: () => { this.setState({isFetching: false}) },
-      onFailure: (msg) => {
-        this.setState({isFetching: false, message: msg})
-      }
-    })
+    this.props.fetchComponents(this.callbacks)
   }
 
   handleShowDialog = (type, component) => {
@@ -68,7 +72,25 @@ export default class Components extends React.Component {
     this.setState({ component: null, dialogType: dialogType.none })
   }
 
-  renderListItem = (component) => {
+  handleClickArrowUpward = (i) => {
+    if (i === 0) { return () => {} }
+    return this.handleClickArrowDownward(i - 1)
+  }
+
+  handleClickArrowDownward = (i) => {
+    return () => {
+      if (i === this.props.components.length - 1) { return }
+      const { components } = this.props
+      const clickedComp = components[i]
+      const orderA = components[i + 1].order
+      const orderB = (i + 2 < components.length ? components[i + 2].order : Math.floor(new Date().getTime() / 1000))
+      const newOrder = Math.floor((orderA + orderB) / 2)
+      this.props.updateComponent(clickedComp.componentID, clickedComp.name, clickedComp.description,
+                                 clickedComp.status, newOrder, this.callbacks)
+    }
+  }
+
+  renderListItem = (component, i) => {
     let statusColor = getComponentColor(component.status)
     return (
       <li key={component.componentID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
@@ -79,16 +101,17 @@ export default class Components extends React.Component {
           <span>{component.name}</span>
           <span className='mdl-list__item-sub-title'>{component.description}</span>
         </span>
-        <span className='mdl-list__item-secondary-content'>
-          <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(component)} />
-            </div>
-            <div className='mdl-cell mdl-cell--6-col'>
-              <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(component)} />
-            </div>
+        <span className={classnames('mdl-list__item-secondary-content', classes['buttons'])}>
+          <Button plain name='Edit' onClick={this.handleShowEditDialog(component)} />
+          <Button plain name='Delete' onClick={this.handleShowDeleteDialog(component)} />
+          <div className={classnames(classes['order-buttons'])}>
+            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
+              arrow_upward
+            </i>
+            <i className={classnames(classes['order-icon'], 'material-icons')}
+              onClick={this.handleClickArrowDownward(i)}>
+              arrow_downward
+            </i>
           </div>
         </span>
       </li>
@@ -121,8 +144,8 @@ export default class Components extends React.Component {
   }
 
   render () {
-    const { components } = this.props
-    const componentItems = components.map(this.renderListItem)
+    const componentItems = this.props.components.map(this.renderListItem)
+
     const dialog = this.renderDialog()
     const textInButton = (<div>
       <i className='material-icons'>add</i>

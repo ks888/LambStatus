@@ -113,10 +113,10 @@ export const postMetric = (type, props, title, status, unit, description, callba
   }
 }
 
-export const updateMetric = (metricID, type, props, title, status, unit, description, callbacks = {}) => {
+export const updateMetric = (metricID, type, props, title, status, unit, description, order, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { type, props, title, status, unit, description }
+      const body = { type, props, title, status, unit, description, order }
       const json = await sendRequest(apiURL + 'metrics/' + metricID, {
         headers: buildHeaders(),
         method: 'PATCH',

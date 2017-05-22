@@ -4,8 +4,8 @@ import classnames from 'classnames'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import TextField from 'components/common/TextField'
-import { componentStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
+import { componentStatuses } from 'utils/status'
 import classes from './ComponentDialog.scss'
 
 export const dialogType = {
@@ -20,7 +20,8 @@ export default class ComponentDialog extends React.Component {
       componentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired
+      status: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired
     }),
     dialogType: PropTypes.number.isRequired,
     postComponent: PropTypes.func.isRequired,
@@ -75,7 +76,7 @@ export default class ComponentDialog extends React.Component {
 
   handleClickEditButton = (e) => {
     this.props.updateComponent(this.props.component.componentID, this.state.name, this.state.description,
-      this.state.status, this.updateCallbacks)
+                               this.state.status, this.props.component.order, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

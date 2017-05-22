@@ -26,7 +26,8 @@ export default class MetricDialog extends React.Component {
       title: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired
+      description: PropTypes.string.isRequired,
+      order: PropTypes.number.isRequired
     }),
     dialogType: PropTypes.number.isRequired,
     postMetric: PropTypes.func.isRequired,
@@ -100,24 +101,14 @@ export default class MetricDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postMetric(this.state.type,
-                          this.state.props,
-                          this.state.title,
-                          this.state.status,
-                          this.state.unit,
-                          this.state.description,
-                          this.updateCallbacks)
+    this.props.postMetric(this.state.type, this.state.props, this.state.title, this.state.status,
+                          this.state.unit, this.state.description, this.updateCallbacks)
   }
 
   handleClickEditButton = (e) => {
-    this.props.updateMetric(this.props.metric.metricID,
-                            this.state.type,
-                            this.state.props,
-                            this.state.title,
-                            this.state.status,
-                            this.state.unit,
-                            this.state.description,
-                            this.updateCallbacks)
+    this.props.updateMetric(this.props.metric.metricID, this.state.type, this.state.props,
+                            this.state.title, this.state.status, this.state.unit,
+                            this.state.description, this.props.metric.order, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

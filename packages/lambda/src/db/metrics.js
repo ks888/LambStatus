@@ -14,11 +14,12 @@ export default class MetricsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
-        ProjectionExpression: 'metricID, #t, title, #u, description, #s, props',
+        ProjectionExpression: 'metricID, #t, title, #u, description, #s, #or, props',
         ExpressionAttributeNames: {
           '#t': 'type',
+          '#u': 'unit',
           '#s': 'status',
-          '#u': 'unit'
+          '#or': 'order'
         }
       }
       this.awsDynamoDb.scan(params, (err, scanResult) => {
@@ -27,7 +28,7 @@ export default class MetricsStore {
         }
         let metrics = []
         scanResult.Items.forEach((metric) => {
-          fillInsufficientProps({type: '', title: '', unit: '', description: '', status: '', props: null}, metric)
+          fillInsufficientProps({unit: '', description: ''}, metric)
           metric['props'] = JSON.parse(metric['props'])
           metrics.push(metric)
         })
@@ -45,11 +46,12 @@ export default class MetricsStore {
         ExpressionAttributeValues: {
           ':hkey': metricID
         },
-        ProjectionExpression: 'metricID, #t, title, #u, description, #s, props',
+        ProjectionExpression: 'metricID, #t, title, #u, description, #s, #or, props',
         ExpressionAttributeNames: {
           '#t': 'type',
+          '#u': 'unit',
           '#s': 'status',
-          '#u': 'unit'
+          '#or': 'order'
         }
       }
       this.awsDynamoDb.query(params, (err, queryResult) => {
@@ -62,7 +64,8 @@ export default class MetricsStore {
         }
 
         queryResult.Items.forEach(item => {
-          fillInsufficientProps({type: '', title: '', unit: '', description: '', status: '', props: null}, item)
+          fillInsufficientProps({unit: '', description: ''}, item)
+          item['props'] = JSON.parse(item['props'])
         })
 
         resolve(queryResult.Items)
@@ -70,9 +73,9 @@ export default class MetricsStore {
     })
   }
 
-  update (id, type, title, unit, description, status, props) {
+  update (id, type, title, unit, description, status, order, props) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-      type, title, unit, description, status, props: JSON.stringify(props)
+      type, title, unit, description, status, order, props: JSON.stringify(props)
     })
     return new Promise((resolve, reject) => {
       const params = {
@@ -89,8 +92,8 @@ export default class MetricsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({type, title, unit, description, status, props}, data.Attributes)
-        data.Attributes['props'] = props  // object representation
+        fillInsufficientProps({unit, description}, data.Attributes)
+        data.Attributes['props'] = props  // string -> object
         resolve(data.Attributes)
       })
     })

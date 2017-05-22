@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchMetrics, deleteMetric } from 'actions/metrics'
+import { fetchMetrics, updateMetric, deleteMetric } from 'actions/metrics'
 import Metrics from './Metrics'
 
 const mapStateToProps = (state) => {
@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchMetrics, deleteMetric}, dispatch)
+  return bindActionCreators({fetchMetrics, updateMetric, deleteMetric}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Metrics)

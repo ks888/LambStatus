@@ -22,11 +22,16 @@ export default class Metrics extends React.Component {
   static propTypes = {
     metrics: PropTypes.arrayOf(PropTypes.shape({
       metricID: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      props: PropTypes.object.isRequired,
       title: PropTypes.string.isRequired,
+      status: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      status: PropTypes.string.isRequired
+      order: PropTypes.number.isRequired
     }).isRequired).isRequired,
     fetchMetrics: PropTypes.func.isRequired,
+    updateMetric: PropTypes.func.isRequired,
     deleteMetric: PropTypes.func.isRequired
   }
 
@@ -40,14 +45,16 @@ export default class Metrics extends React.Component {
     }
   }
 
+  callbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: (msg) => {
+      this.setState({isFetching: false, message: msg})
+    }
+  }
+
   componentDidMount () {
-    this.props.fetchMetrics({
-      onLoad: () => { this.setState({isFetching: true}) },
-      onSuccess: () => { this.setState({isFetching: false}) },
-      onFailure: (msg) => {
-        this.setState({isFetching: false, message: msg})
-      }
-    })
+    this.props.fetchMetrics(this.callbacks)
   }
 
   handleShowDialog = (type, metricID) => {
@@ -74,7 +81,26 @@ export default class Metrics extends React.Component {
     this.setState({ metricID: null, dialogType: dialogType.none })
   }
 
-  renderListItem = (metric) => {
+  handleClickArrowUpward = (i) => {
+    if (i === 0) { return () => {} }
+    return this.handleClickArrowDownward(i - 1)
+  }
+
+  handleClickArrowDownward = (i) => {
+    return () => {
+      if (i === this.props.metrics.length - 1) { return }
+      const { metrics } = this.props
+      const clickedMetric = metrics[i]
+      const orderA = metrics[i + 1].order
+      const orderB = (i + 2 < metrics.length ? metrics[i + 2].order : Math.floor(new Date().getTime() / 1000))
+      const newOrder = Math.floor((orderA + orderB) / 2)
+      this.props.updateMetric(clickedMetric.metricID, clickedMetric.type, clickedMetric.props,
+                              clickedMetric.title, clickedMetric.status, clickedMetric.unit,
+                              clickedMetric.description, newOrder, this.callbacks)
+    }
+  }
+
+  renderListItem = (metric, i) => {
     let statusColor = getMetricColor(metric.status)
     return (
       <li key={metric.metricID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
@@ -85,20 +111,18 @@ export default class Metrics extends React.Component {
           <span>{metric.title}</span>
           <span className='mdl-list__item-sub-title'>{metric.description}</span>
         </span>
-        <span className='mdl-list__item-secondary-content'>
-          <div className='mdl-grid'>
-            <div className='mdl-cell mdl-cell--4-col'>
-              <Button plain name='Preview'
-                onClick={this.handleShowPreviewDialog(metric.metricID)} />
-            </div>
-            <div className='mdl-cell mdl-cell--3-col'>
-              <Button plain name='Edit'
-                onClick={this.handleShowEditDialog(metric.metricID)} />
-            </div>
-            <div className='mdl-cell mdl-cell--5-col'>
-              <Button plain name='Delete'
-                onClick={this.handleShowDeleteDialog(metric.metricID)} />
-            </div>
+        <span className={classnames('mdl-list__item-secondary-content', classes['buttons'])}>
+          <Button plain name='Preview' onClick={this.handleShowPreviewDialog(metric.metricID)} />
+          <Button plain name='Edit' onClick={this.handleShowEditDialog(metric.metricID)} />
+          <Button plain name='Delete' onClick={this.handleShowDeleteDialog(metric.metricID)} />
+          <div className={classnames(classes['order-buttons'])}>
+            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
+              arrow_upward
+            </i>
+            <i className={classnames(classes['order-icon'], 'material-icons')}
+              onClick={this.handleClickArrowDownward(i)}>
+              arrow_downward
+            </i>
           </div>
         </span>
       </li>

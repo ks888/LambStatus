@@ -3,7 +3,7 @@ import { Metric } from 'model/metrics'
 export async function handle (event, context, callback) {
   try {
     const metric = new Metric(undefined, event.type, event.title, event.unit,
-                              event.description, event.status, event.props)
+                              event.description, event.status, event.order, event.props)
     await metric.validate()
     await metric.save()
     callback(null, JSON.stringify(metric.objectify()))
