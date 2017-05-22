@@ -119,7 +119,8 @@ export default class Metrics extends React.Component {
             <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
               arrow_upward
             </i>
-            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowDownward(i)}>
+            <i className={classnames(classes['order-icon'], 'material-icons')}
+              onClick={this.handleClickArrowDownward(i)}>
               arrow_downward
             </i>
           </div>
