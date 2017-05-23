@@ -45,10 +45,11 @@ export default class MetricsGraph extends React.Component {
 
     if (prevProps.timeframe !== this.props.timeframe) {
       this.fetchMetricData()
+      this.updateGraph()
+      return
     }
 
-    if (prevProps.metric.data !== this.props.metric.data ||
-      prevProps.timeframe !== this.props.timeframe) {
+    if (!this.areAllDataFetched(prevProps.metric.data) && this.areAllDataFetched(this.props.metric.data)) {
       this.updateGraph()
     }
   }
@@ -62,6 +63,21 @@ export default class MetricsGraph extends React.Component {
         currDate.getMonth() + 1, currDate.getDate())
       currDate.setDate(currDate.getDate() - 1)
     }
+  }
+
+  areAllDataFetched = (data) => {
+    if (!data) {
+      return false
+    }
+
+    let currDate = new Date()
+    const numDates = getNumDates(this.props.timeframe)
+    for (let i = 0; i < numDates + 1; i++) {
+      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      if (!data[date]) { return false }
+      currDate.setDate(currDate.getDate() - 1)
+    }
+    return true
   }
 
   updateGraph = () => {
@@ -239,7 +255,7 @@ export default class MetricsGraph extends React.Component {
   render () {
     let graph = (<div className={classnames(classes.loading)} >Fetching...</div>)
     let average = 0
-    if (this.props.metric.data) {
+    if (this.areAllDataFetched(this.props.metric.data)) {
       if (!this.hasDatapoints()) {
         graph = (<div className={classnames(classes.loading)} >No data for this time period yet.</div>)
       } else {
