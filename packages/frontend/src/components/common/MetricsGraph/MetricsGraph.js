@@ -1,9 +1,8 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import c3 from 'c3'
-import moment from 'moment-timezone'
 import 'c3/c3.css'
-import { timeframes, getXAxisFormat, getTooltipTitleFormat, getNeedFlushFunc, getNumDates } from 'utils/status'
+import { timeframes, getXAxisFormat, getTooltipTitleFormat, getIncrementTimestampFunc, getNumDates } from 'utils/status'
 import classes from './MetricsGraph.scss'
 import './MetricsGraph.global.scss'
 
@@ -67,7 +66,8 @@ export default class MetricsGraph extends React.Component {
 
   updateGraph = () => {
     const numDates = getNumDates(this.props.timeframe)
-    const currDate = new Date()
+    let now = new Date()  // do not edit
+    let currDate = new Date(now.getTime())
     const endDateStr = currDate.toISOString()
     currDate.setDate(currDate.getDate() - numDates)
     const beginDateStr = currDate.toISOString()
@@ -93,30 +93,33 @@ export default class MetricsGraph extends React.Component {
 
     const timestamps = []
     const values = []
-    const needFlush = getNeedFlushFunc(this.props.timeframe)
     let minValue, maxValue
-    let sum = data[0].value
-    let count = 1
-    let currTimestamp = data[0].timestamp
-    // dummy data to flush the last points
-    data.push({timestamp: '', value: 0})
-    for (let i = 1; i < data.length; i++) {
-      if (needFlush(currTimestamp, data[i].timestamp)) {
-        const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
-        timestamps.push(timestamp.toDate())
+    currDate = new Date(now.getTime())
+    currDate.setDate(currDate.getDate() - numDates)
+    let currIndex = 0
+    const incrementTimestamp = getIncrementTimestampFunc(this.props.timeframe)
+    while (currDate.toISOString() <= endDateStr) {
+      const currDateStr = currDate.toISOString()
+      timestamps.push(currDateStr)
 
+      let sum = 0
+      let count = 0
+      while (data[currIndex] && data[currIndex].timestamp <= currDateStr) {
+        sum += data[currIndex].value
+        count++
+        currIndex++
+      }
+
+      if (count !== 0) {
         const avg = sum / count
         values.push(avg)
         if (!minValue || minValue > avg) minValue = avg
         if (!maxValue || maxValue < avg) maxValue = avg
-
-        currTimestamp = data[i].timestamp
-        sum = data[i].value
-        count = 1
       } else {
-        sum += data[i].value
-        count++
+        values.push(null)
       }
+
+      incrementTimestamp(currDate)
     }
 
     const ceil = (rawValue) => {
@@ -149,7 +152,13 @@ export default class MetricsGraph extends React.Component {
         ]
       },
       point: {
-        show: false
+        show: true,
+        r: 1,
+        focus: {
+          expand: {
+            r: 2.5
+          }
+        }
       },
       axis: {
         x: {
@@ -215,9 +224,16 @@ export default class MetricsGraph extends React.Component {
       return false
     }
 
-    return Object.keys(this.props.metric.data).reduce((prev, key) => {
-      return prev || (this.props.metric.data[key].length !== 0)
-    }, false)
+    let currDate = new Date()
+    const numDates = getNumDates(this.props.timeframe)
+    for (let i = 0; i < numDates + 1; i++) {
+      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      if (this.props.metric.data[date] && this.props.metric.data[date].length !== 0) {
+        return true
+      }
+      currDate.setDate(currDate.getDate() - 1)
+    }
+    return false
   }
 
   render () {

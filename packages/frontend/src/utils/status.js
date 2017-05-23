@@ -99,14 +99,14 @@ export const getTooltipTitleFormat = (timeframe) => {
   }
 }
 
-export const getNeedFlushFunc = (timeframe) => {
+export const getIncrementTimestampFunc = (timeframe) => {
   switch (timeframe) {
     case 'Day':
-      return () => { return true }
+      return timestamp => timestamp.setMinutes(timestamp.getMinutes() + 1)
+    case 'Week':
+      return timestamp => timestamp.setHours(timestamp.getHours() + 1)
     default:
-      return (currTimestamp, nextTimestamp) => {
-        return currTimestamp.substr(0, 13) !== nextTimestamp.substr(0, 13)
-      }
+      return timestamp => timestamp.setHours(timestamp.getHours() + 3)
   }
 }
 
