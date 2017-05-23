@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import c3 from 'c3'
 import moment from 'moment-timezone'
 import 'c3/c3.css'
-import { timeframes, getXAxisFormat, getTooltipTitleFormat, getFlushFunc, getNumDates } from 'utils/status'
+import { timeframes, getXAxisFormat, getTooltipTitleFormat, getNeedFlushFunc, getNumDates } from 'utils/status'
 import classes from './MetricsGraph.scss'
 import './MetricsGraph.global.scss'
 
@@ -76,7 +76,14 @@ export default class MetricsGraph extends React.Component {
     const data = []
     for (let i = 0; i < numDates + 1; i++) {
       const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
-      Array.prototype.push.apply(data, this.props.metric.data[date])
+      if (this.props.metric.data[date]) {
+        this.props.metric.data[date].forEach(dataPoint => {
+          if (beginDateStr > dataPoint.timestamp || dataPoint.timestamp > endDateStr) {
+            return
+          }
+          data.push(dataPoint)
+        })
+      }
 
       currDate.setDate(currDate.getDate() + 1)
     }
@@ -86,25 +93,22 @@ export default class MetricsGraph extends React.Component {
 
     const timestamps = []
     const values = []
-    let minValue = data[data.length - 1].value
-    let maxValue = minValue
-    const needFlush = getFlushFunc(this.props.timeframe)
-    let sum = 0
-    let count = 0
-    let currTimestamp
-    for (let i = 0; i < data.length; i++) {
-      if (beginDateStr > data[i].timestamp || data[i].timestamp > endDateStr) {
-        continue
-      }
-
-      if (minValue > data[i].value) minValue = data[i].value
-      if (maxValue < data[i].value) maxValue = data[i].value
-      if (!currTimestamp) currTimestamp = data[i].timestamp
-
+    const needFlush = getNeedFlushFunc(this.props.timeframe)
+    let minValue, maxValue
+    let sum = data[0].value
+    let count = 1
+    let currTimestamp = data[0].timestamp
+    // dummy data to flush the last points
+    data.push({timestamp: '', value: 0})
+    for (let i = 1; i < data.length; i++) {
       if (needFlush(currTimestamp, data[i].timestamp)) {
         const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
         timestamps.push(timestamp.toDate())
-        values.push(sum / count)
+
+        const avg = sum / count
+        values.push(avg)
+        if (!minValue || minValue > avg) minValue = avg
+        if (!maxValue || maxValue < avg) maxValue = avg
 
         currTimestamp = data[i].timestamp
         sum = data[i].value
@@ -113,11 +117,6 @@ export default class MetricsGraph extends React.Component {
         sum += data[i].value
         count++
       }
-    }
-    if (currTimestamp) {
-      const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
-      timestamps.push(timestamp.toDate())
-      values.push(sum / count)
     }
 
     const ceil = (rawValue) => {

@@ -99,7 +99,7 @@ export const getTooltipTitleFormat = (timeframe) => {
   }
 }
 
-export const getFlushFunc = (timeframe) => {
+export const getNeedFlushFunc = (timeframe) => {
   switch (timeframe) {
     case 'Day':
       return () => { return true }
