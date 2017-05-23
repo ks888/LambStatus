@@ -14,7 +14,6 @@ export default class CloudWatch {
     }
   }
 
-  // listMetrics operation returns up to 500 metrics.
   listSomeMetrics (nextToken) {
     const cloudWatch = new AWS.CloudWatch()
     return new Promise((resolve, reject) => {
@@ -22,6 +21,7 @@ export default class CloudWatch {
       if (nextToken) {
         params.NextToken = nextToken
       }
+      // returns up to 500 metrics.
       cloudWatch.listMetrics(params, (err, result) => {
         if (err) {
           return reject(err)
@@ -37,6 +37,14 @@ export default class CloudWatch {
       MetricName: metricName,
       Dimensions: dimensions
     } = props
+    let period = 60
+    let twoWeeksBefore = new Date()
+    twoWeeksBefore.setDate(twoWeeksBefore.getDate() - 14)
+    if (startTime <= twoWeeksBefore) {
+      // Data points with a period of 60 seconds are not available
+      period = 300
+    }
+
     const cloudWatch = new AWS.CloudWatch()
     return new Promise((resolve, reject) => {
       const params = {
@@ -45,7 +53,7 @@ export default class CloudWatch {
         Dimensions: dimensions,
         EndTime: endTime,
         StartTime: startTime,
-        Period: 60,
+        Period: period,
         Statistics: ['Average']
       }
       cloudWatch.getMetricStatistics(params, (err, result) => {

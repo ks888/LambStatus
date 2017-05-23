@@ -72,6 +72,7 @@ export default class MetricsGraph extends React.Component {
 
     let currDate = new Date()
     const numDates = getNumDates(this.props.timeframe)
+    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
       const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
       if (!data[date]) { return false }
@@ -83,12 +84,12 @@ export default class MetricsGraph extends React.Component {
   updateGraph = () => {
     const numDates = getNumDates(this.props.timeframe)
     let now = new Date()  // do not edit
+    now.setTime(now.getTime() + now.getTimezoneOffset() * 60 * 1000)  // UTC
     let currDate = new Date(now.getTime())
     const endDateStr = currDate.toISOString()
     currDate.setDate(currDate.getDate() - numDates)
     const beginDateStr = currDate.toISOString()
 
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     const data = []
     for (let i = 0; i < numDates + 1; i++) {
       const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
@@ -114,7 +115,7 @@ export default class MetricsGraph extends React.Component {
     currDate.setDate(currDate.getDate() - numDates)
     let currIndex = 0
     const incrementTimestamp = getIncrementTimestampFunc(this.props.timeframe)
-    while (currDate.toISOString() <= endDateStr) {
+    while (currDate <= now) {
       const currDateStr = currDate.toISOString()
       timestamps.push(currDateStr)
 
@@ -241,6 +242,7 @@ export default class MetricsGraph extends React.Component {
     }
 
     let currDate = new Date()
+    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     const numDates = getNumDates(this.props.timeframe)
     for (let i = 0; i < numDates + 1; i++) {
       const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
