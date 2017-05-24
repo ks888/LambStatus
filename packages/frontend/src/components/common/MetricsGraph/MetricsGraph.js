@@ -115,6 +115,7 @@ export default class MetricsGraph extends React.Component {
     currDate.setDate(currDate.getDate() - numDates)
     let currIndex = 0
     const incrementTimestamp = getIncrementTimestampFunc(this.props.timeframe)
+    // eslint-disable-next-line no-unmodified-loop-condition
     while (currDate <= now) {
       const currDateStr = currDate.toISOString()
       timestamps.push(currDateStr)
