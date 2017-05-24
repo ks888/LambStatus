@@ -49,7 +49,7 @@ export default class MetricsGraph extends React.Component {
       return
     }
 
-    if (!this.areAllDataFetched(prevProps.metric.data) && this.areAllDataFetched(this.props.metric.data)) {
+    if (this.areAllDataFetched(this.props.metric.data)) {
       this.updateGraph()
     }
   }
@@ -57,10 +57,9 @@ export default class MetricsGraph extends React.Component {
   fetchMetricData = () => {
     const numDates = getNumDates(this.props.timeframe)
     const currDate = new Date()
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
-      this.props.fetchData(this.props.settings.statusPageURL, this.props.metricID, currDate.getFullYear(),
-        currDate.getMonth() + 1, currDate.getDate())
+      this.props.fetchData(this.props.settings.statusPageURL, this.props.metricID, currDate.getUTCFullYear(),
+        currDate.getUTCMonth() + 1, currDate.getUTCDate())
       currDate.setDate(currDate.getDate() - 1)
     }
   }
@@ -72,9 +71,8 @@ export default class MetricsGraph extends React.Component {
 
     let currDate = new Date()
     const numDates = getNumDates(this.props.timeframe)
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
-      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
       if (!data[date]) { return false }
       currDate.setDate(currDate.getDate() - 1)
     }
@@ -83,8 +81,7 @@ export default class MetricsGraph extends React.Component {
 
   updateGraph = () => {
     const numDates = getNumDates(this.props.timeframe)
-    let now = new Date()  // do not edit
-    now.setTime(now.getTime() + now.getTimezoneOffset() * 60 * 1000)  // UTC
+    let now = new Date()
     let currDate = new Date(now.getTime())
     const endDateStr = currDate.toISOString()
     currDate.setDate(currDate.getDate() - numDates)
@@ -92,7 +89,7 @@ export default class MetricsGraph extends React.Component {
 
     const data = []
     for (let i = 0; i < numDates + 1; i++) {
-      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
       if (this.props.metric.data[date]) {
         this.props.metric.data[date].forEach(dataPoint => {
           if (beginDateStr > dataPoint.timestamp || dataPoint.timestamp > endDateStr) {
@@ -117,9 +114,9 @@ export default class MetricsGraph extends React.Component {
     const incrementTimestamp = getIncrementTimestampFunc(this.props.timeframe)
     // eslint-disable-next-line no-unmodified-loop-condition
     while (currDate <= now) {
-      const currDateStr = currDate.toISOString()
-      timestamps.push(currDateStr)
+      timestamps.push(new Date(currDate.getTime()))
 
+      const currDateStr = currDate.toISOString()
       let sum = 0
       let count = 0
       while (data[currIndex] && data[currIndex].timestamp <= currDateStr) {
@@ -243,10 +240,9 @@ export default class MetricsGraph extends React.Component {
     }
 
     let currDate = new Date()
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     const numDates = getNumDates(this.props.timeframe)
     for (let i = 0; i < numDates + 1; i++) {
-      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
       if (this.props.metric.data[date] && this.props.metric.data[date].length !== 0) {
         return true
       }
