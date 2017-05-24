@@ -2520,8 +2520,8 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Sub |-
-              ${StatusPageS3}.s3-website-${AWS::Region}.amazonaws.com
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt StatusPageS3.WebsiteURL ] ]
             Id:
               Ref: "StatusPageS3"
             CustomOriginConfig:
@@ -2569,8 +2569,8 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Sub |-
-              ${AdminPageS3}.s3-website-${AWS::Region}.amazonaws.com
+          - DomainName:
+              !Select [ 2, !Split [ /, !GetAtt AdminPageS3.WebsiteURL ] ]
             Id:
               Ref: "AdminPageS3"
             CustomOriginConfig:
