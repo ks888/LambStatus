@@ -21,36 +21,41 @@ export default class MetricsGraph extends React.Component {
     fetchData: PropTypes.func.isRequired
   }
 
+  constructor (props) {
+    super(props)
+    this.state = {
+      needUpdateGraph: false
+    }
+  }
+
   componentDidMount () {
-    if (this.props.settings.statusPageURL) {
-      this.fetchMetricData()
+    if (this.areAllDataFetched(this.props.metric.data)) {
+      // The chart width is wrong if update the graph here. Let componentDidUpdate update it instead.
+      this.setState({needUpdateGraph: true})
+      return
     }
 
-    if (this.props.metric.data) {
-      this.updateGraph()
+    if (this.props.settings.statusPageURL) {
+      this.fetchMetricData()
     }
   }
 
   componentDidUpdate (prevProps, prevState) {
     if (!prevProps.settings.statusPageURL && this.props.settings.statusPageURL) {
-      // On componentDidMount, url was unknown. So fetch the data now.
+      // When componentDidMount was called, url was unknown. So fetch the data now.
       this.fetchMetricData()
       return
     }
 
-    if (!this.props.metric.data) {
-      // now fetching...
+    if (this.areAllDataFetched(this.props.metric.data)) {
+      // all data were fetched. Just update the graph.
+      this.updateGraph()
       return
     }
 
     if (prevProps.timeframe !== this.props.timeframe) {
       this.fetchMetricData()
-      this.updateGraph()
       return
-    }
-
-    if (this.areAllDataFetched(this.props.metric.data)) {
-      this.updateGraph()
     }
   }
 
@@ -128,8 +133,8 @@ export default class MetricsGraph extends React.Component {
       if (count !== 0) {
         const avg = sum / count
         values.push(avg)
-        if (!minValue || minValue > avg) minValue = avg
-        if (!maxValue || maxValue < avg) maxValue = avg
+        if (minValue === undefined || minValue > avg) minValue = avg
+        if (maxValue === undefined || maxValue < avg) maxValue = avg
       } else {
         values.push(null)
       }

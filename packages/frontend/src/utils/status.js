@@ -102,7 +102,7 @@ export const getTooltipTitleFormat = (timeframe) => {
 export const getIncrementTimestampFunc = (timeframe) => {
   switch (timeframe) {
     case 'Day':
-      return timestamp => timestamp.setMinutes(timestamp.getMinutes() + 1)
+      return timestamp => timestamp.setMinutes(timestamp.getMinutes() + 5)
     case 'Week':
       return timestamp => timestamp.setHours(timestamp.getHours() + 1)
     default:
