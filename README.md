@@ -57,6 +57,8 @@ When the stack is created, the email will be sent to the email address of the in
 
 ![CloudFormationWizard5](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard5.png)
 
+&nbsp;&nbsp;_NOTE: if you don't receive the email after 30 minutes, check the spam folder. The email comes from `no-reply@verificationemail.com`._
+
 Click the link in the email, and sign in to admin console.
 
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
