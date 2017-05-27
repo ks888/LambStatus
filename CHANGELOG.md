@@ -1,5 +1,15 @@
 # Change Log
 
+## [v0.3.1](https://github.com/ks888/LambStatus/tree/v0.3.1) (2017-05-27)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.0...v0.3.1)
+
+
+
+- Support dot-type S3 website endpoints [\#35](https://github.com/ks888/LambStatus/pull/35) ([ks888](https://github.com/ks888))
+- Improve the appearance of the metrics chart [\#34](https://github.com/ks888/LambStatus/pull/34) ([ks888](https://github.com/ks888))
+- Add UI to change the order of components and metrics [\#30](https://github.com/ks888/LambStatus/pull/30) ([ks888](https://github.com/ks888))
+- Show 404 message if the path does not match any [\#27](https://github.com/ks888/LambStatus/pull/27) ([ks888](https://github.com/ks888))
+
 ## [v0.3.0](https://github.com/ks888/LambStatus/tree/v0.3.0) (2017-05-09)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.2.1...v0.3.0)
 
