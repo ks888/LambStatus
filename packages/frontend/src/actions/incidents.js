@@ -78,7 +78,7 @@ export const postIncident = (name, incidentStatus, message, components, callback
         components: components
       }
       const json = await sendRequest(apiURL + 'incidents', {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
       }, callbacks)
@@ -100,7 +100,7 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
         components: components
       }
       const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)
@@ -116,7 +116,7 @@ export const deleteIncident = (incidentID, callbacks = {}) => {
   return async dispatch => {
     try {
       await sendRequest(apiURL + 'incidents/' + incidentID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
       dispatch(removeIncident(incidentID))

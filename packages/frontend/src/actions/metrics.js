@@ -60,7 +60,7 @@ export const fetchMetrics = (callbacks = {}) => {
   return async dispatch => {
     try {
       const json = await sendRequest(apiURL + 'metrics', {
-        headers: buildHeaders()
+        headers: await buildHeaders()
       }, callbacks)
       dispatch(listMetrics(json))
     } catch (error) {
@@ -86,7 +86,7 @@ export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
   return async dispatch => {
     try {
       const json = await sendRequest(apiURL + 'external-metrics?type=' + metricsType, {
-        headers: buildHeaders()
+        headers: await buildHeaders()
       }, callbacks)
       dispatch(listExternalMetrics(metricsType, json))
     } catch (error) {
@@ -101,7 +101,7 @@ export const postMetric = (type, props, title, status, unit, description, callba
     try {
       const body = { type, props, title, status, unit, description }
       const json = await sendRequest(apiURL + 'metrics', {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
       }, callbacks)
@@ -118,7 +118,7 @@ export const updateMetric = (metricID, type, props, title, status, unit, descrip
     try {
       const body = { type, props, title, status, unit, description, order }
       const json = await sendRequest(apiURL + 'metrics/' + metricID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)
@@ -134,7 +134,7 @@ export const deleteMetric = (metricID, callbacks = {}) => {
   return async dispatch => {
     try {
       await sendRequest(apiURL + 'metrics/' + metricID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
       dispatch(removeMetric(metricID))

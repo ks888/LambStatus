@@ -23,7 +23,7 @@ export const fetchSettings = (callbacks = {}) => {
   return async dispatch => {
     try {
       const json = await sendRequest(apiURL + 'settings', {
-        headers: buildHeaders()
+        headers: await buildHeaders()
       }, callbacks)
       dispatch(listSettings(json))
     } catch (error) {
@@ -50,7 +50,7 @@ export const updateSettings = (serviceName, adminPageURL, statusPageURL, callbac
     try {
       const body = { serviceName, adminPageURL, statusPageURL }
       const json = await sendRequest(apiURL + 'settings', {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)

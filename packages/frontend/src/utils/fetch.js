@@ -44,16 +44,19 @@ export const buildHeaders = () => {
   }
   const userPool = new CognitoUserPool(poolData)
   const cognitoUser = userPool.getCurrentUser()
-  let token = ''
-  if (cognitoUser != null) {
-    cognitoUser.getSession((error, session) => {
-      if (error) {
-        console.warn('failed to get session: ' + error.message)
-        return
-      }
-      token = session.getIdToken().getJwtToken()
-    })
-  }
+  return new Promise((resolve, reject) => {
+    if (cognitoUser == null) {
+      resolve({ Authorization: '', 'Content-Type': 'application/json' })
+      return
+    }
 
-  return { Authorization: token, 'Content-Type': 'application/json' }
+    // Do network request if the token is expired.
+    cognitoUser.getSession((err, session) => {
+      if (err) {
+        return reject(new Error('failed to get session: ', err.message))
+      }
+      const token = session.getIdToken().getJwtToken()
+      resolve({ Authorization: token, 'Content-Type': 'application/json' })
+    })
+  })
 }

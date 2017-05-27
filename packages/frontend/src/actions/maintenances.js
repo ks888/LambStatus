@@ -73,7 +73,7 @@ export const postMaintenance = (name, maintenanceStatus, startAt, endAt, message
     try {
       const body = { name, maintenanceStatus, startAt, endAt, message, components }
       const json = await sendRequest(apiURL + 'maintenances', {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
       }, callbacks)
@@ -91,7 +91,7 @@ export const updateMaintenance = (maintenanceID, name, maintenanceStatus, startA
     try {
       const body = { name, maintenanceStatus, startAt, endAt, message, components }
       const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)
@@ -107,7 +107,7 @@ export const deleteMaintenance = (maintenanceID, callbacks = {}) => {
   return async dispatch => {
     try {
       await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
       dispatch(removeMaintenance(maintenanceID))
