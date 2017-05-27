@@ -21,15 +21,15 @@
 - Auto-deploy APIGateway on updating the stack [\#23](https://github.com/ks888/LambStatus/pull/23) ([ks888](https://github.com/ks888))
 
 ## [v0.2.1](https://github.com/ks888/LambStatus/tree/v0.2.1) (2017-04-11)
-[Full Changelog](https://github.com/ks888/LambStatus/compare/v2.0.0...v0.2.1)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.2.0...v0.2.1)
 
 
 
 - Show tooltip to tell the meaning of the item color [\#21](https://github.com/ks888/LambStatus/pull/21) ([ks888](https://github.com/ks888))
 - Support scheduled maintenance [\#19](https://github.com/ks888/LambStatus/pull/19) ([ks888](https://github.com/ks888))
 
-## [v2.0.0](https://github.com/ks888/LambStatus/tree/v2.0.0) (2017-03-07)
-[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.3...v2.0.0)
+## [v0.2.0](https://github.com/ks888/LambStatus/tree/v0.2.0) (2017-03-07)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.3...v0.2.0)
 
 
 
