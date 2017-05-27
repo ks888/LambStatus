@@ -1,6 +1,6 @@
 # LambStatus
 
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.0/lamb-status.yml)
+[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.1/lamb-status.yml)
 [![wercker status](https://app.wercker.com/status/fcb6fb7398629e934ae0538737021d14/s/master "wercker status")](https://app.wercker.com/project/byKey/fcb6fb7398629e934ae0538737021d14)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/ks888/LambStatus)
 
@@ -35,7 +35,7 @@ Apart from the Serverless architecture, LambStatus enables you to:
 
 Launch your cloudformation stack by clicking the button below:
 
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.0/lamb-status.yml)
+[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.1/lamb-status.yml)
 
 When a window to create a new CloudFormation stack is opened (like below), click Next.
 
@@ -65,7 +65,7 @@ See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage exam
 
 ## Update
 
-If the newer version of LambStatus is available, you can easily update the existing CloudFormation stack by applying [this template](https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.0/lamb-status.yml). Visit [the wiki page](https://github.com/ks888/LambStatus/wiki/Update-the-CloudFromation-stack) to see the step-by-step instructions.
+If the newer version of LambStatus is available, you can easily update the existing CloudFormation stack by applying [this template](https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.3.1/lamb-status.yml). Visit [the wiki page](https://github.com/ks888/LambStatus/wiki/Update-the-CloudFromation-stack) to see the step-by-step instructions.
 
 ## TODO
 
