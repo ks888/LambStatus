@@ -707,13 +707,13 @@ Resources:
       FunctionName: !Sub |-
         ${AWS::StackName}-GetExternalMetrics
       Handler: "_apex_index.handle"
-      MemorySize: 128
+      MemorySize: 512
       Role:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
-      Timeout: 30
+      Timeout: 60
   GetExternalMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
