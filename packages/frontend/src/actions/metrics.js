@@ -99,7 +99,7 @@ export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
         dispatch(listExternalMetrics(metricsType, json))
 
         const matched = json.match(cursorPattern)
-        if (matched) {
+        if (matched && matched.length === 2) {
           nextCursor = matched[1]
         } else {
           break

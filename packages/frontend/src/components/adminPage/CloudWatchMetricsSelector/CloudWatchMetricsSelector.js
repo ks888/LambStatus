@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import DropdownList from 'components/common/DropdownList'
+import { apiURL } from 'utils/settings'
 import classes from './CloudWatchMetricsSelector.scss'
 
 export default class CloudWatchMetricsSelector extends React.Component {
@@ -18,6 +19,13 @@ export default class CloudWatchMetricsSelector extends React.Component {
     this.state = {
       namespace,
       metric
+    }
+
+    const matched = apiURL.match(/execute-api.([a-z0-9-]+).amazonaws.com/)
+    if (matched && matched.length === 2) {
+      this.region = matched[1]
+    } else {
+      console.warn('failed to get region from', apiURL)
     }
   }
 
@@ -87,8 +95,17 @@ export default class CloudWatchMetricsSelector extends React.Component {
       metrics = [this.state.metric]
     }
 
+    const linkToMetricsPage = `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#metricsV2:`
+
     return (
       <div>
+        <div>
+          Access
+          <a href={linkToMetricsPage} className={classes.link} target='_blank'>
+            the CloudWatch Management Console
+          </a>
+          to check graphs.
+        </div>
         <label className={classes.label} htmlFor='metric'>
           CloudWatch Namespace
         </label>
