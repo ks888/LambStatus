@@ -22,7 +22,9 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   componentDidMount () {
-    this.props.fetchExternalMetrics('CloudWatch')
+    if (!this.props.metrics) {
+      this.props.fetchExternalMetrics('CloudWatch')
+    }
   }
 
   handleChangeNamespace = (value) => {
