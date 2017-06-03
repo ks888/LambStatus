@@ -16,8 +16,8 @@ export default class Users extends React.Component {
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
         Operations like creating a user are not supported. Access
-        <a href={linkToUsersPage} className={classes.link}>
-          Users page at Amazon Cognito
+        <a href={linkToUsersPage} className={classes.link} target='_blank'>
+          the Amazon Cognito Management Console
         </a>
         for these operations.
       </div>

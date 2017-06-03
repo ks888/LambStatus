@@ -1941,6 +1941,7 @@ Resources:
       ApiKeyRequired: false
       RequestParameters:
         method.request.querystring.type: false
+        method.request.querystring.cursor: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -1952,7 +1953,7 @@ Resources:
                 - "Arn"
         RequestTemplates:
           application/json: !Sub |-
-            {"type":"$input.params('type')"}
+            {"type":"$input.params('type')","cursor":"$input.params('cursor')"}
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:

@@ -40,7 +40,6 @@ mkdirp.sync(buildDir)
 fs.writeFileSync(`${buildDir}/project.json`, json)
 console.log('project.json created')
 
-// some lambda functions need a different role than default one.
 const createFunctionJSON = (role, timeout, memory, targetDirs) => {
   const functionJSON = JSON.stringify({role, timeout, memory}, null, 2)
   targetDirs.forEach((dir) => {
@@ -50,5 +49,6 @@ const createFunctionJSON = (role, timeout, memory, targetDirs) => {
   })
 }
 createFunctionJSON(lambdaRoleArn, 60, 512, [
-  buildDir + '/functions/CollectMetricsData'
+  buildDir + '/functions/CollectMetricsData',
+  buildDir + '/functions/GetExternalMetrics'
 ])

@@ -117,6 +117,7 @@ export default class MetricDialog extends React.Component {
   }
 
   renderMetrics = () => {
+    // TODO: should be instantiated based on 'type'
     return (<CloudWatchMetricsSelector onChange={this.handleChangeProps} props={this.state.props} />)
   }
 

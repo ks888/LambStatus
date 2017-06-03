@@ -85,10 +85,26 @@ export const fetchPublicMetrics = (callbacks = {}) => {
 export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'external-metrics?type=' + metricsType, {
-        headers: await buildHeaders()
-      }, callbacks)
-      dispatch(listExternalMetrics(metricsType, json))
+      const encodedMetricsType = encodeURIComponent(metricsType)
+      const cursorPattern = /"nextCursor":"([^"]*)"/
+      let nextCursor
+      while (true) {
+        let queryParam = `type=${encodedMetricsType}`
+        if (nextCursor) {
+          queryParam += `&cursor=${encodeURIComponent(nextCursor)}`
+        }
+        const json = await sendRequest(`${apiURL}external-metrics?${queryParam}`, {
+          headers: await buildHeaders()
+        }, callbacks)
+        dispatch(listExternalMetrics(metricsType, json))
+
+        const matched = json.match(cursorPattern)
+        if (matched && matched.length === 2) {
+          nextCursor = matched[1]
+        } else {
+          break
+        }
+      }
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)
