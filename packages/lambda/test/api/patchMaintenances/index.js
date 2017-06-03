@@ -18,9 +18,8 @@ describe('patchMaintenances', () => {
 
     await handle({ params: { maintenanceid: '1' }, body: { components: [] } }, null, (error, result) => {
       assert(error === null)
-      const obj = JSON.parse(result)
-      assert(obj.maintenance.maintenanceID === '1')
-      assert.deepEqual(obj.components, [])
+      assert(result.maintenance.maintenanceID === '1')
+      assert.deepEqual(result.components, [])
     })
     assert(validateStub.calledOnce)
     assert(saveStub.calledOnce)

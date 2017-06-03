@@ -13,11 +13,11 @@ describe('getComponents', () => {
       new Component('2', undefined, undefined, undefined, 2),
       new Component('1', undefined, undefined, undefined, 1)
     ]
-    sinon.stub(Components.prototype, 'all').returns(components)
+    sinon.stub(Components.prototype, 'all').returns(components.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
-      assert(result === JSON.stringify([{componentID: '1', order: 1}, {componentID: '2', order: 2}]))
+      assert.deepEqual(result, [components[1].objectify(), components[0].objectify()])
     })
   })
 

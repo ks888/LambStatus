@@ -12,11 +12,11 @@ describe('getMaintenances', () => {
     const maintenances = [
       new Maintenance('1', undefined, undefined, undefined, undefined, undefined, [], '1')
     ]
-    sinon.stub(Maintenances.prototype, 'all').returns(maintenances)
+    sinon.stub(Maintenances.prototype, 'all').returns(maintenances.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
-      assert(result === JSON.stringify([{maintenanceID: '1', components: [], updatedAt: '1'}]))
+      assert.deepEqual(result, [maintenances[0].objectify()])
     })
   })
 
