@@ -8,7 +8,22 @@
   padding-top: 4px;
 }
 
+.tooltip {
+  background-color: #777 !important;
+  padding: 3px 10px !important;
+}
+
+.tooltip::after {
+  border-right-color: #777 !important;
+}
+
 .link {
   margin: 0 0.25rem;
-  color: rgba(0,0,0,.54);
+  color: #e0e0e0;
+  pointer-events: auto;
+}
+
+.icon {
+  font-size: 12px;
+  font-weight: 700;
 }

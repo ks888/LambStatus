@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react'
+import ReactTooltip from 'react-tooltip'
+import classnames from 'classnames'
 import DropdownList from 'components/common/DropdownList'
 import { apiURL } from 'utils/settings'
 import classes from './CloudWatchMetricsSelector.scss'
@@ -99,15 +101,10 @@ export default class CloudWatchMetricsSelector extends React.Component {
 
     return (
       <div>
-        <div>
-          Access
-          <a href={linkToMetricsPage} className={classes.link} target='_blank'>
-            the CloudWatch Management Console
-          </a>
-          to check graphs.
-        </div>
         <label className={classes.label} htmlFor='metric'>
           CloudWatch Namespace
+          <i className={classnames(classes.icon, 'material-icons')}
+            data-tip data-for='cloudWatchInfo'>info_outline</i>
         </label>
         <div id='metric' className={classes['dropdown-list']}>
           <DropdownList onChange={this.handleChangeNamespace}
@@ -120,6 +117,15 @@ export default class CloudWatchMetricsSelector extends React.Component {
           <DropdownList onChange={this.handleChangeMetric}
             list={metrics} initialValue={this.state.metric} />
         </div>
+        <ReactTooltip id='cloudWatchInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
+          <div>
+            Access
+            <a href={linkToMetricsPage} className={classes.link} target='_blank'>
+              the CloudWatch Management Console
+            </a>
+            to check graphs.
+          </div>
+        </ReactTooltip>
       </div>
     )
   }
