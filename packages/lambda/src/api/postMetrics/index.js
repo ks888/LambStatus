@@ -6,7 +6,7 @@ export async function handle (event, context, callback) {
                               event.description, event.status, event.order, event.props)
     await metric.validate()
     await metric.save()
-    callback(null, JSON.stringify(metric.objectify()))
+    callback(null, metric.objectify())
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

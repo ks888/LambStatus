@@ -5,7 +5,7 @@ export async function handle (event, context, callback) {
     const maintenances = new Maintenances()
     const maintenance = await maintenances.lookup(event.params.maintenanceid)
     const maintenanceUpdates = await maintenance.getMaintenanceUpdates()
-    callback(null, JSON.stringify(maintenanceUpdates))
+    callback(null, maintenanceUpdates)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

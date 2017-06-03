@@ -13,10 +13,10 @@ export async function handle (event, context, callback) {
     const obj = incident.objectify()
     const comps = obj.components
     delete obj.components
-    callback(null, JSON.stringify({
+    callback(null, {
       incident: obj,
       components: comps
-    }))
+    })
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

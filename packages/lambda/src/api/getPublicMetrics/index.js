@@ -4,7 +4,7 @@ export async function handle (event, context, callback) {
   try {
     let metrics = await new Metrics().listPublic()
     metrics = metrics.sort((a, b) => a.order - b.order)
-    callback(null, JSON.stringify(metrics.map(metric => metric.objectify())))
+    callback(null, metrics.map(metric => metric.objectify()))
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
