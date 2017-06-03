@@ -2,7 +2,7 @@ import { LIST_MAINTENANCES, LIST_MAINTENANCE_UPDATES, ADD_MAINTENANCE, EDIT_MAIN
   REMOVE_MAINTENANCE } from 'actions/maintenances'
 
 function listMaintenancesHandler (state = { }, action) {
-  const maintenances = JSON.parse(action.maintenances)
+  const maintenances = action.maintenances
   maintenances.sort((a, b) => {
     return a.updatedAt < b.updatedAt
   })
@@ -13,7 +13,7 @@ function listMaintenancesHandler (state = { }, action) {
 }
 
 function listMaintenanceUpdatesHandler (state = { }, action) {
-  const maintenanceUpdates = JSON.parse(action.maintenanceUpdates)
+  const maintenanceUpdates = action.maintenanceUpdates
   maintenanceUpdates.sort((a, b) => {
     return a.updatedAt < b.updatedAt
   })
@@ -35,7 +35,7 @@ function listMaintenanceUpdatesHandler (state = { }, action) {
 function addMaintenanceHandler (state = { }, action) {
   const {
     maintenance
-  } = JSON.parse(action.response)
+  } = action.response
 
   return Object.assign({}, state, {
     maintenances: [
@@ -48,7 +48,7 @@ function addMaintenanceHandler (state = { }, action) {
 function editMaintenanceHandler (state = { }, action) {
   const {
     maintenance: updatedMaintenance
-  } = JSON.parse(action.response)
+  } = action.response
 
   const newMaintenances = state.maintenances.map((maintenance) => {
     if (maintenance.maintenanceID === updatedMaintenance.maintenanceID) {

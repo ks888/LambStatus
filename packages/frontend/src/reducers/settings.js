@@ -2,13 +2,13 @@ import { LIST_SETTINGS, EDIT_SETTINGS } from 'actions/settings'
 
 function listSettingsHandler (state = { }, action) {
   return Object.assign({}, state, {
-    settings: JSON.parse(action.settings)
+    settings: action.settings
   })
 }
 
 function editSettingsHandler (state = { }, action) {
   return Object.assign({}, state, {
-    settings: JSON.parse(action.settings)
+    settings: action.settings
   })
 }
 

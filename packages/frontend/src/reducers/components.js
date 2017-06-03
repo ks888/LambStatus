@@ -2,7 +2,7 @@ import { LIST_COMPONENTS, ADD_COMPONENT, EDIT_COMPONENT, REMOVE_COMPONENT } from
 
 function listComponentsHandler (state = { }, action) {
   return Object.assign({}, state, {
-    components: JSON.parse(action.components)
+    components: action.components
   })
 }
 
@@ -10,13 +10,13 @@ function addComponentHandler (state = { }, action) {
   return Object.assign({}, state, {
     components: [
       ...state.components,
-      JSON.parse(action.component)
+      action.component
     ]
   })
 }
 
 function editComponentHandler (state = { }, action) {
-  let editedComponent = JSON.parse(action.component)
+  let editedComponent = action.component
 
   const newComponents = state.components.map((component) => {
     if (component.componentID === editedComponent.componentID) {

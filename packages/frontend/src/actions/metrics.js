@@ -86,7 +86,6 @@ export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
   return async dispatch => {
     try {
       const encodedMetricsType = encodeURIComponent(metricsType)
-      const cursorPattern = /"nextCursor":"([^"]*)"/
       let nextCursor
       while (true) {
         let queryParam = `type=${encodedMetricsType}`
@@ -96,11 +95,10 @@ export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
         const json = await sendRequest(`${apiURL}external-metrics?${queryParam}`, {
           headers: await buildHeaders()
         }, callbacks)
-        dispatch(listExternalMetrics(metricsType, json))
+        dispatch(listExternalMetrics(metricsType, json.metrics))
 
-        const matched = json.match(cursorPattern)
-        if (matched && matched.length === 2) {
-          nextCursor = matched[1]
+        if (json.nextCursor) {
+          nextCursor = json.nextCursor
         } else {
           break
         }

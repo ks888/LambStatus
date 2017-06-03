@@ -2,7 +2,7 @@ import { LIST_METRICS, LIST_EXTERNAL_METRICS, ADD_METRIC, EDIT_METRIC,
          REMOVE_METRIC, LIST_METRICS_DATA } from 'actions/metrics'
 
 function listMetricsHandler (state = { }, action) {
-  const newMetrics = JSON.parse(action.metrics)
+  const newMetrics = action.metrics
   state.metrics.forEach((metric) => {
     newMetrics.forEach((newMetric) => {
       if (newMetric.metricID === metric.metricID) newMetric.data = metric.data
@@ -15,7 +15,7 @@ function listMetricsHandler (state = { }, action) {
 }
 
 function listExternalMetricsHandler (state = { }, action) {
-  const fetchedMetrics = JSON.parse(action.metrics).metrics
+  const fetchedMetrics = action.metrics
 
   const existingMetrics = (state.externalMetrics && state.externalMetrics[action.metricsType]
                            ? state.externalMetrics[action.metricsType] : [])
@@ -32,13 +32,13 @@ function addMetricHandler (state = { }, action) {
   return Object.assign({}, state, {
     metrics: [
       ...state.metrics,
-      JSON.parse(action.metric)
+      action.metric
     ]
   })
 }
 
 function editMetricHandler (state = { }, action) {
-  let editedMetric = JSON.parse(action.metric)
+  let editedMetric = action.metric
 
   const newMetrics = state.metrics.map((metric) => {
     if (metric.metricID === editedMetric.metricID) {
