@@ -19,7 +19,7 @@ describe('(Reducer) components', () => {
 
   describe('listComponentsHandler', () => {
     it('Should update the `components` state.', () => {
-      const state = componentsReducer(undefined, listComponents(JSON.stringify([comp1])))
+      const state = componentsReducer(undefined, listComponents([comp1]))
       assert.deepEqual([comp1], state.components)
     })
   })
@@ -28,7 +28,7 @@ describe('(Reducer) components', () => {
     it('Should update the `components` state.', () => {
       const state = componentsReducer({
         components: [comp1]
-      }, addComponent(JSON.stringify(comp2)))
+      }, addComponent(comp2))
       assert.deepEqual([comp1, comp2], state.components)
     })
   })
@@ -40,7 +40,7 @@ describe('(Reducer) components', () => {
       })
       const state = componentsReducer({
         components: [comp1]
-      }, editComponent(JSON.stringify(newComp1)))
+      }, editComponent(newComp1))
       assert.deepEqual([newComp1], state.components)
     })
   })
