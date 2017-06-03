@@ -15,15 +15,13 @@ function listMetricsHandler (state = { }, action) {
 }
 
 function listExternalMetricsHandler (state = { }, action) {
-  const fetchedMetrics = action.metrics
-
-  const existingMetrics = (state.externalMetrics && state.externalMetrics[action.metricsType]
-                           ? state.externalMetrics[action.metricsType] : [])
-  const mergedMetrics = fetchedMetrics.concat(existingMetrics)
   return Object.assign({}, state, {
     externalMetrics: {
       ...state.externalMetrics,
-      [action.metricsType]: mergedMetrics
+      [action.metricsType]: {
+        filters: action.filters,
+        metrics: action.metrics
+      }
     }
   })
 }

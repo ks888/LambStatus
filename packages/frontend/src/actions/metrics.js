@@ -16,11 +16,12 @@ export function listMetrics (json) {
   }
 }
 
-export function listExternalMetrics (metricsType, json) {
+export function listExternalMetrics (metricsType, filters, metrics) {
   return {
     type: LIST_EXTERNAL_METRICS,
     metricsType,
-    metrics: json
+    filters,
+    metrics
   }
 }
 
@@ -82,20 +83,25 @@ export const fetchPublicMetrics = (callbacks = {}) => {
   }
 }
 
-export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
+export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) => {
   return async dispatch => {
     try {
-      const encodedMetricsType = encodeURIComponent(metricsType)
+      let queryParam = `type=${encodeURIComponent(metricsType)}`
+      if (filters) {
+        queryParam += `${queryParam}&filters=${encodeURIComponent(JSON.stringify(filters))}`
+      }
       let nextCursor
+      let metrics = []
       while (true) {
-        let queryParam = `type=${encodedMetricsType}`
+        let url = `${apiURL}external-metrics?${queryParam}`
         if (nextCursor) {
-          queryParam += `&cursor=${encodeURIComponent(nextCursor)}`
+          url += `&cursor=${encodeURIComponent(nextCursor)}`
         }
-        const json = await sendRequest(`${apiURL}external-metrics?${queryParam}`, {
+        const json = await sendRequest(url, {
           headers: await buildHeaders()
         }, callbacks)
-        dispatch(listExternalMetrics(metricsType, json.metrics))
+        metrics = metrics.concat(json.metrics)
+        dispatch(listExternalMetrics(metricsType, filters, metrics))
 
         if (json.nextCursor) {
           nextCursor = json.nextCursor
