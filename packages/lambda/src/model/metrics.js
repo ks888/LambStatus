@@ -93,9 +93,9 @@ export class Metric {
 }
 
 export class Metrics {
-  async listExternal (type, cursor) {
+  async listExternal (type, cursor, filters) {
     // TODO: should be instantiated based on 'type'
-    return await new CloudWatch().listMetrics(cursor)
+    return await new CloudWatch().listMetrics(cursor, filters)
   }
 
   async listPublic () {

@@ -53,7 +53,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   handleChangeRegion = (value) => {
-    this.setState({region: value})
+    this.setState({regionName: value})
 
     const regionID = regions.find(r => r.name === value).id
     this.props.fetchExternalMetrics('CloudWatch', {region: regionID})

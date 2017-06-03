@@ -1,8 +1,12 @@
 import AWS from 'aws-sdk'
 
 export default class CloudWatch {
-  listMetrics (nextToken = undefined) {
-    const cloudWatch = new AWS.CloudWatch()
+  listMetrics (nextToken = undefined, filters = {}) {
+    let { AWS_REGION: region } = process.env
+    if (filters && filters.region) {
+      region = filters.region
+    }
+    const cloudWatch = new AWS.CloudWatch({region})
     return new Promise((resolve, reject) => {
       let params = {}
       if (nextToken) {
