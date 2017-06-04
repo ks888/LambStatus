@@ -85,7 +85,10 @@ export const fetchPublicMetrics = (callbacks = {}) => {
 
 export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) => {
   return async dispatch => {
+    const { onLoad, onSuccess, onFailure } = callbacks
     try {
+      if (onLoad && typeof onLoad === 'function') onLoad()
+
       let queryParam = `type=${encodeURIComponent(metricsType)}`
       if (filters) {
         queryParam += `${queryParam}&filters=${encodeURIComponent(JSON.stringify(filters))}`
@@ -99,7 +102,7 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
         }
         const json = await sendRequest(url, {
           headers: await buildHeaders()
-        }, callbacks)
+        })
         metrics = metrics.concat(json.metrics)
         dispatch(listExternalMetrics(metricsType, filters, metrics))
 
@@ -109,9 +112,11 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
           break
         }
       }
+      if (onSuccess && typeof onSuccess === 'function') onSuccess()
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)
+      if (onFailure && typeof onFailure === 'function') onFailure(error.message)
     }
   }
 }

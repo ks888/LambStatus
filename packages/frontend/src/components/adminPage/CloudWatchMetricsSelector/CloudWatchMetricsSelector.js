@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactTooltip from 'react-tooltip'
 import classnames from 'classnames'
 import DropdownList from 'components/common/DropdownList'
+import Spinner from 'components/common/Spinner'
 import { apiURL } from 'utils/settings'
 import { regions } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'
@@ -34,14 +35,23 @@ export default class CloudWatchMetricsSelector extends React.Component {
     this.state = {
       namespace,
       metric,
-      regionName
+      regionName,
+      isFetching: false
+    }
+  }
+
+  callbacks = {
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false}) },
+    onFailure: () => {
+      this.setState({isFetching: false})
     }
   }
 
   componentDidMount () {
     if (this.needFetching()) {
       const regionID = regions.find(r => r.name === this.state.regionName).id
-      this.props.fetchExternalMetrics('CloudWatch', {region: regionID})
+      this.props.fetchExternalMetrics('CloudWatch', {region: regionID}, this.callbacks)
     }
   }
 
@@ -56,7 +66,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
     this.setState({regionName: value})
 
     const regionID = regions.find(r => r.name === value).id
-    this.props.fetchExternalMetrics('CloudWatch', {region: regionID})
+    this.props.fetchExternalMetrics('CloudWatch', {region: regionID}, this.callbacks)
   }
 
   handleChangeNamespace = (value) => {
@@ -122,6 +132,10 @@ export default class CloudWatchMetricsSelector extends React.Component {
     }
 
     const linkToMetricsPage = `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#metricsV2:`
+    let spinner
+    if (this.state.isFetching) {
+      spinner = <Spinner enable class={classes['spinner']} />
+    }
 
     return (
       <div>
@@ -136,7 +150,10 @@ export default class CloudWatchMetricsSelector extends React.Component {
         </div>
 
         <label className={classes.label} htmlFor='namespace'>
-          CloudWatch Namespace
+          <div className={classes['spinner-box']}>
+            CloudWatch Namespace
+            {spinner}
+          </div>
         </label>
         <div id='namespace' className={classes['dropdown-list']}>
           <DropdownList onChange={this.handleChangeNamespace}
@@ -144,7 +161,10 @@ export default class CloudWatchMetricsSelector extends React.Component {
         </div>
 
         <label className={classes.label} htmlFor='name'>
-          CloudWatch MetricName & Dimensions
+          <div className={classes['spinner-box']}>
+            CloudWatch MetricName & Dimensions
+            {spinner}
+          </div>
         </label>
         <div id='name' className={classes['dropdown-list']}>
           <DropdownList onChange={this.handleChangeMetric}
