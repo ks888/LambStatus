@@ -104,7 +104,6 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
           headers: await buildHeaders()
         })
         metrics = metrics.concat(json.metrics)
-        dispatch(listExternalMetrics(metricsType, filters, metrics))
 
         if (json.nextCursor) {
           nextCursor = json.nextCursor
@@ -112,6 +111,7 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
           break
         }
       }
+      dispatch(listExternalMetrics(metricsType, filters, metrics))
       if (onSuccess && typeof onSuccess === 'function') onSuccess()
     } catch (error) {
       console.error(error.message)

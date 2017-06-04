@@ -28,14 +28,14 @@ export default class CloudWatchMetricsSelector extends React.Component {
 
     this.regionNames = regions.map(r => r.name)
 
-    const namespace = props.props ? props.props.Namespace : ''
-    const metric = props.props ? this.buildMetricExpression(props.props) : ''
     const region = (props.props && props.props.Region) ? props.props.Region : this.region
     const regionName = regions.find(r => r.id === region).name
+    const namespace = props.props ? props.props.Namespace : ''
+    const metric = props.props ? this.buildMetricExpression(props.props) : ''
     this.state = {
+      regionName,
       namespace,
       metric,
-      regionName,
       isFetching: false
     }
   }
@@ -63,14 +63,14 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   handleChangeRegion = (value) => {
-    this.setState({regionName: value})
+    this.setState({regionName: value, namespace: '', metric: ''})
 
     const regionID = regions.find(r => r.name === value).id
     this.props.fetchExternalMetrics('CloudWatch', {region: regionID}, this.callbacks)
   }
 
   handleChangeNamespace = (value) => {
-    this.setState({namespace: value})
+    this.setState({namespace: value, metric: ''})
   }
 
   handleChangeMetric = (value) => {
@@ -113,7 +113,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
   render () {
     let namespaces = ['']
     let metrics = ['']
-    if (this.props.metrics) {
+    if (!this.needFetching()) {
       const namespaceSet = new Set()
       this.props.metrics.forEach((metric) => {
         namespaceSet.add(metric.Namespace)
@@ -156,7 +156,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
           </div>
         </label>
         <div id='namespace' className={classes['dropdown-list']}>
-          <DropdownList onChange={this.handleChangeNamespace}
+          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeNamespace}
             list={namespaces} initialValue={this.state.namespace} />
         </div>
 
@@ -167,7 +167,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
           </div>
         </label>
         <div id='name' className={classes['dropdown-list']}>
-          <DropdownList onChange={this.handleChangeMetric}
+          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeMetric}
             list={metrics} initialValue={this.state.metric} />
         </div>
 

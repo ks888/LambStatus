@@ -8,7 +8,7 @@ export default class DropdownList extends React.Component {
     onChange: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
     initialValue: PropTypes.string.isRequired,
-    disabled: PropTypes.string
+    disabled: PropTypes.bool
   }
 
   constructor (props) {
