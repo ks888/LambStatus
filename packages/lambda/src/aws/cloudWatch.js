@@ -29,7 +29,8 @@ export default class CloudWatch {
     const {
       Namespace: namespace,
       MetricName: metricName,
-      Dimensions: dimensions
+      Dimensions: dimensions,
+      Region: region
     } = props
     let period = 60
     let twoWeeksBefore = new Date()
@@ -39,7 +40,7 @@ export default class CloudWatch {
       period = 300
     }
 
-    const cloudWatch = new AWS.CloudWatch()
+    const cloudWatch = new AWS.CloudWatch({region})
     return new Promise((resolve, reject) => {
       const params = {
         Namespace: namespace,
