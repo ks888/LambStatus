@@ -5,7 +5,7 @@ export async function handle (event, context, callback) {
     const incidents = new Incidents()
     const incident = await incidents.lookup(event.params.incidentid)
     const incidentUpdates = await incident.getIncidentUpdates()
-    callback(null, JSON.stringify(incidentUpdates))
+    callback(null, incidentUpdates)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

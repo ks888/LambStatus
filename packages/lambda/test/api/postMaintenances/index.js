@@ -18,9 +18,8 @@ describe('postMaintenances', () => {
 
     await handle({ components: [] }, null, (error, result) => {
       assert(error === null)
-      const obj = JSON.parse(result)
-      assert(obj.maintenance.maintenanceID.length === 12)
-      assert.deepEqual(obj.components, [])
+      assert(result.maintenance.maintenanceID.length === 12)
+      assert.deepEqual(result.components, [])
     })
     assert(validateStub.calledOnce)
     assert(saveStub.calledOnce)

@@ -17,7 +17,7 @@ export async function handle (event, context, callback) {
     if (statusPageURL !== undefined && statusPageURL !== await settings.getStatusPageURL()) {
       await settings.setStatusPageURL(statusPageURL)
     }
-    callback(null, JSON.stringify({serviceName, adminPageURL, statusPageURL}))
+    callback(null, {serviceName, adminPageURL, statusPageURL})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

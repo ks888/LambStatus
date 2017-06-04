@@ -17,7 +17,7 @@ describe('getMaintenanceUpdates', () => {
 
     return await handle({ params: { maintenanceid: '1' } }, null, (error, result) => {
       assert(error === null)
-      assert(result === JSON.stringify(maintenanceUpdates))
+      assert.deepEqual(result, maintenanceUpdates)
     })
   })
 

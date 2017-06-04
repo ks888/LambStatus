@@ -24,7 +24,7 @@ describe('(Reducer) maintenances', () => {
 
   describe('listMaintenancesHandler', () => {
     it('Should update the `maintenances` state.', () => {
-      const state = maintenancesReducer(undefined, listMaintenances(JSON.stringify([maintenance1])))
+      const state = maintenancesReducer(undefined, listMaintenances([maintenance1]))
       assert.deepEqual([maintenance1], state.maintenances)
     })
   })
@@ -32,7 +32,7 @@ describe('(Reducer) maintenances', () => {
   describe('listMaintenanceUpdatesHandler', () => {
     it('Should update the `maintenances` state.', () => {
       const state = maintenancesReducer({maintenances: [maintenance1]},
-        listMaintenanceUpdates(JSON.stringify([maintenanceUpdate1]), '1'))
+        listMaintenanceUpdates([maintenanceUpdate1], '1'))
       assert.deepEqual([Object.assign({}, maintenance1, {
         maintenanceUpdates: [maintenanceUpdate1]
       })], state.maintenances)
@@ -41,7 +41,7 @@ describe('(Reducer) maintenances', () => {
 
   describe('addMaintenanceHandler', () => {
     it('Should update the `maintenances` state.', () => {
-      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance(JSON.stringify({maintenance: maintenance2})))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance({maintenance: maintenance2}))
       assert.deepEqual([maintenance2, maintenance1], state.maintenances)
     })
   })
@@ -51,7 +51,7 @@ describe('(Reducer) maintenances', () => {
       const newMaintenance1 = Object.assign({}, maintenance1, {
         name: 'newname'
       })
-      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance(JSON.stringify({maintenance: newMaintenance1})))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance({maintenance: newMaintenance1}))
       assert.deepEqual([newMaintenance1], state.maintenances)
     })
   })

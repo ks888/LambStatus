@@ -2,7 +2,7 @@ import { LIST_INCIDENTS, LIST_INCIDENT_UPDATES, ADD_INCIDENT, EDIT_INCIDENT,
   REMOVE_INCIDENT } from 'actions/incidents'
 
 function listIncidentsHandler (state = { }, action) {
-  const incidents = JSON.parse(action.incidents)
+  const incidents = action.incidents
   incidents.sort((a, b) => {
     return a.updatedAt < b.updatedAt
   })
@@ -13,7 +13,7 @@ function listIncidentsHandler (state = { }, action) {
 }
 
 function listIncidentUpdatesHandler (state = { }, action) {
-  const incidentUpdates = JSON.parse(action.incidentUpdates)
+  const incidentUpdates = action.incidentUpdates
   incidentUpdates.sort((a, b) => {
     return a.updatedAt < b.updatedAt
   })
@@ -35,7 +35,7 @@ function listIncidentUpdatesHandler (state = { }, action) {
 function addIncidentHandler (state = { }, action) {
   const {
     incident
-  } = JSON.parse(action.response)
+  } = action.response
 
   return Object.assign({}, state, {
     incidents: [
@@ -48,7 +48,7 @@ function addIncidentHandler (state = { }, action) {
 function editIncidentHandler (state = { }, action) {
   const {
     incident: updatedIncident
-  } = JSON.parse(action.response)
+  } = action.response
 
   const newIncidents = state.incidents.map((incident) => {
     if (incident.incidentID === updatedIncident.incidentID) {

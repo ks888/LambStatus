@@ -1942,6 +1942,7 @@ Resources:
       RequestParameters:
         method.request.querystring.type: false
         method.request.querystring.cursor: false
+        method.request.querystring.filters: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -1953,7 +1954,11 @@ Resources:
                 - "Arn"
         RequestTemplates:
           application/json: !Sub |-
-            {"type":"$input.params('type')","cursor":"$input.params('cursor')"}
+            {
+              "type":"$input.params('type')",
+              "cursor":"$input.params('cursor')",
+              "filters":"$util.escapeJavaScript($input.params('filters'))"
+            }
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:

@@ -4,7 +4,7 @@ export async function handle (event, context, callback) {
   try {
     let comps = await new Components().all()
     comps = comps.sort((a, b) => a.order - b.order)
-    callback(null, JSON.stringify(comps.map(comp => comp.objectify())))
+    callback(null, comps.map(comp => comp.objectify()))
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

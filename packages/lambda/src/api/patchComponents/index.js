@@ -6,7 +6,7 @@ export async function handle (event, context, callback) {
                                event.body.description, event.body.status, event.body.order)
     await comp.validate()
     await comp.save()
-    callback(null, JSON.stringify(comp.objectify()))
+    callback(null, comp.objectify())
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

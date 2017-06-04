@@ -16,11 +16,12 @@ export function listMetrics (json) {
   }
 }
 
-export function listExternalMetrics (metricsType, json) {
+export function listExternalMetrics (metricsType, filters, metrics) {
   return {
     type: LIST_EXTERNAL_METRICS,
     metricsType,
-    metrics: json
+    filters,
+    metrics
   }
 }
 
@@ -82,32 +83,40 @@ export const fetchPublicMetrics = (callbacks = {}) => {
   }
 }
 
-export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
+export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) => {
   return async dispatch => {
+    const { onLoad, onSuccess, onFailure } = callbacks
     try {
-      const encodedMetricsType = encodeURIComponent(metricsType)
-      const cursorPattern = /"nextCursor":"([^"]*)"/
-      let nextCursor
-      while (true) {
-        let queryParam = `type=${encodedMetricsType}`
-        if (nextCursor) {
-          queryParam += `&cursor=${encodeURIComponent(nextCursor)}`
-        }
-        const json = await sendRequest(`${apiURL}external-metrics?${queryParam}`, {
-          headers: await buildHeaders()
-        }, callbacks)
-        dispatch(listExternalMetrics(metricsType, json))
+      if (onLoad && typeof onLoad === 'function') onLoad()
 
-        const matched = json.match(cursorPattern)
-        if (matched && matched.length === 2) {
-          nextCursor = matched[1]
+      let queryParam = `type=${encodeURIComponent(metricsType)}`
+      if (filters) {
+        queryParam += `${queryParam}&filters=${encodeURIComponent(JSON.stringify(filters))}`
+      }
+      let nextCursor
+      let metrics = []
+      while (true) {
+        let url = `${apiURL}external-metrics?${queryParam}`
+        if (nextCursor) {
+          url += `&cursor=${encodeURIComponent(nextCursor)}`
+        }
+        const json = await sendRequest(url, {
+          headers: await buildHeaders()
+        })
+        metrics = metrics.concat(json.metrics)
+
+        if (json.nextCursor) {
+          nextCursor = json.nextCursor
         } else {
           break
         }
       }
+      dispatch(listExternalMetrics(metricsType, filters, metrics))
+      if (onSuccess && typeof onSuccess === 'function') onSuccess()
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)
+      if (onFailure && typeof onFailure === 'function') onFailure(error.message)
     }
   }
 }

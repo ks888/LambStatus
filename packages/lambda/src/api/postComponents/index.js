@@ -5,7 +5,7 @@ export async function handle (event, context, callback) {
     const comp = new Component(undefined, event.name, event.description, event.status, event.order)
     await comp.validate()
     await comp.save()
-    callback(null, JSON.stringify(comp.objectify()))
+    callback(null, comp.objectify())
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
