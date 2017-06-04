@@ -7,7 +7,8 @@ export default class DropdownList extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     list: PropTypes.array.isRequired,
-    initialValue: PropTypes.string.isRequired
+    initialValue: PropTypes.string.isRequired,
+    disabled: PropTypes.string
   }
 
   constructor (props) {
@@ -29,8 +30,10 @@ export default class DropdownList extends React.Component {
       return (<option key={elem}>{elem}</option>)
     })
     return (
-      <span className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown)} ref='dropdown'>
-        <select className='mdl-textfield__input' onChange={this.handleChange} value={this.props.initialValue}>
+      <span ref='dropdown' className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown,
+            (this.props.disabled ? 'is-disabled' : ''))}>
+        <select className='mdl-textfield__input' onChange={this.handleChange} value={this.props.initialValue}
+          disabled={this.props.disabled}>
           {statusDOMs}
         </select>
       </span>

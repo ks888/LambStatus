@@ -145,7 +145,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
             data-tip data-for='cloudWatchInfo'>info_outline</i>
         </label>
         <div id='region' className={classes['dropdown-list']}>
-          <DropdownList onChange={this.handleChangeRegion}
+          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeRegion}
             list={this.regionNames} initialValue={this.state.regionName} />
         </div>
 
