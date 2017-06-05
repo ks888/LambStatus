@@ -38,7 +38,7 @@ export default class Header extends React.Component {
     return (
       <div>
         <button id='header-user-menu'
-          className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)}>
+          className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}>
           {this.props.username}
           <i className='material-icons'>keyboard_arrow_down</i>
         </button>
@@ -61,12 +61,15 @@ export default class Header extends React.Component {
             <Link to='/' className={classes.title}>{settings.serviceName}Status Admin</Link>
           </span>
           <div className='mdl-layout-spacer' />
-          <nav className='mdl-navigation'>
-            <a className={classnames('mdl-button', 'mdl-js-button', classes.nav_item)} href={settings.statusPageURL}>
-              View Status Page
-            </a>
+          <div className={classnames(classes['header-menu'])}>
+            <div>
+              <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])} href={settings.statusPageURL}
+                target='_blank'>
+                View Status Page
+              </a>
+            </div>
             {userMenu}
-          </nav>
+          </div>
         </div>
       </header>
     )

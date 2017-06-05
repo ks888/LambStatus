@@ -10,14 +10,20 @@
   font-weight: 400;
 }
 
-.nav_item {
+.header-menu {
+  display: flex;
+  position: absolute;
+  right: 40px;
+}
+
+.header-menu-item {
   color: #FFFFFF;
   font-weight: 400;
   text-transform: none;
-  padding-right: 0;
-  padding-left: 36px;
   opacity: 0.87;
   &:hover {
     background-color: rgb(96,125,139);
   }
+  padding-left: 32px;
+  padding-right: 0px;
 }
