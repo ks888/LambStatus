@@ -28,10 +28,10 @@ export default class Settings extends React.Component {
   }
 
   callbacks = {
-    onLoad: () => { this.setState({isUpdating: true}) },
-    onSuccess: () => { this.setState({isUpdating: false, message: ''}) },
+    onLoad: () => { this.setState({isFetching: true}) },
+    onSuccess: () => { this.setState({isFetching: false, message: ''}) },
     onFailure: (msg) => {
-      this.setState({isUpdating: false, message: msg})
+      this.setState({isFetching: false, message: msg})
     }
   }
 
@@ -99,7 +99,7 @@ export default class Settings extends React.Component {
         <div className='mdl-cell mdl-cell--6-col mdl-cell--middle' />
         <div className='mdl-cell mdl-cell--1-col'>
           <Button onClick={this.handleClickSaveButton} name='Save'
-            class='mdl-button--accent' disabled={this.state.isUpdating} />
+            class='mdl-button--accent' disabled={this.state.isFetching} />
         </div>
       </div>
     )
