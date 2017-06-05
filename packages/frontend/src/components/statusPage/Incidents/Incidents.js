@@ -33,8 +33,8 @@ export default class Incidents extends React.Component {
   }
 
   componentDidMount () {
-    this.props.fetchIncidents()
-    this.props.fetchMaintenances()
+    if (this.props.incidents.length === 0) { this.props.fetchIncidents() }
+    if (this.props.maintenances.length === 0) { this.props.fetchMaintenances() }
   }
 
   renderDateItem = (date, events) => {
