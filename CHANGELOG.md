@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.3.2](https://github.com/ks888/LambStatus/tree/v0.3.2) (2017-06-05)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.1...v0.3.2)
+
+### Added
+
+- [\#38](https://github.com/ks888/LambStatus/issues/38): The external-metrics API support the pagination
+- [\#39](https://github.com/ks888/LambStatus/issues/39): Fetch CloudWatch metrics from other regions (thanks @maximede)
+
+### Fixed
+
+- [\#36](https://github.com/ks888/LambStatus/issues/36): Endpoint request timed out - 504 on /prod/external-metrics?type=CloudWatch (thanks @ajohnstone)
+
 ## [v0.3.1](https://github.com/ks888/LambStatus/tree/v0.3.1) (2017-05-27)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.0...v0.3.1)
 
