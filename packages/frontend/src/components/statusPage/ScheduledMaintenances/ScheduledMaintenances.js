@@ -10,40 +10,16 @@ export default class ScheduledMaintenaces extends React.Component {
       maintenanceID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
-      updatedAt: PropTypes.string.isRequired,
-      maintenanceUpdates: PropTypes.arrayOf(PropTypes.shape({
-        maintenanceUpdateID: PropTypes.string.isRequired,
-        maintenanceStatus: PropTypes.string.isRequired,
-        message: PropTypes.string.isRequired,
-        updatedAt: PropTypes.string.isRequired
-      }).isRequired)
+      updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
     classNames: PropTypes.string,
-    fetchMaintenances: PropTypes.func.isRequired,
-    fetchMaintenanceUpdates: PropTypes.func.isRequired
+    fetchMaintenances: PropTypes.func.isRequired
   }
 
-  constructor () {
-    super()
-    this.state = {
-      needDetail: false
-    }
-  }
-
-  componentDidMount () {
-    this.props.fetchMaintenances({
-      onSuccess: () => { this.setState({needDetail: true}) }
-    })
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.state.needDetail) {
-      nextProps.maintenances.forEach((maintenance) => {
-        this.props.fetchMaintenanceUpdates(maintenance.maintenanceID, this.fetchCallbacks)
-      })
-      this.setState({needDetail: false})
-    }
-  }
+  // Do not load maintenances here, expecting Incidents component does it.
+  // componentDidMount () {
+  //   this.props.fetchMaintenances()
+  // }
 
   render () {
     const { maintenances } = this.props
@@ -51,7 +27,7 @@ export default class ScheduledMaintenaces extends React.Component {
       return null
     }
     const filteredMaintenances = maintenances.filter(maint => {
-      return maint.maintenanceUpdates && maint.status !== maintenanceStatuses[maintenanceStatuses.length - 1]
+      return maint.status !== maintenanceStatuses[maintenanceStatuses.length - 1]
     })
     if (filteredMaintenances.length === 0) {
       return null
@@ -62,7 +38,7 @@ export default class ScheduledMaintenaces extends React.Component {
         <h4 className={classnames(classes.title)}>Scheduled Maintenances</h4>
         {filteredMaintenances.map(maint => {
           return (
-            <MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} />
+            <MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} autoloadDetail />
           )
         })}
       </ul>
