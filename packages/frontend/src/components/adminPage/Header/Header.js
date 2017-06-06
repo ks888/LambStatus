@@ -63,8 +63,8 @@ export default class Header extends React.Component {
           <div className='mdl-layout-spacer' />
           <div className={classnames(classes['header-menu'])}>
             <div>
-              <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])} href={settings.statusPageURL}
-                target='_blank'>
+              <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}
+                href={settings.statusPageURL} target='_blank'>
                 View Status Page
               </a>
             </div>
