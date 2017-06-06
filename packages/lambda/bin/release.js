@@ -77,7 +77,9 @@ const release = async (stopIfObjectsExist) => {
   }))
 }
 
-release(process.argv[2] !== '--force').catch((error) => {
+release(process.argv[2] !== '--force').then(() => {
+  console.log('released lambda functions')
+}).catch((error) => {
   console.log(error.message)
   console.log(error.stack)
 })

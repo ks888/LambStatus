@@ -31,5 +31,10 @@ const adminPagePrefix = 'admin-page/' + packageJSON.version + '/'
 const statusPageDir = path.normalize(`${__dirname}/../dist/status-page`)
 const statusPagePrefix = 'status-page/' + packageJSON.version + '/'
 
-release(adminPageDir, adminPagePrefix)
-release(statusPageDir, statusPagePrefix)
+release(adminPageDir, adminPagePrefix).then(() => {
+  console.log('released admin page')
+})
+
+release(statusPageDir, statusPagePrefix).then(() => {
+  console.log('released status page')
+})

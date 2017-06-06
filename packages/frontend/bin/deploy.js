@@ -22,4 +22,6 @@ const upload = async () => {
   }
 }
 
-upload()
+upload().then(() => {
+  console.log('deployed admin & status page')
+})

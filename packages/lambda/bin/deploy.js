@@ -8,9 +8,9 @@ dotenv.config({path: `${__dirname}/../../../.env`})
 const buildDir = path.normalize(`${__dirname}/../build`)
 const funcsDir = path.normalize(`${buildDir}/functions`)
 
-const deploy = async () => {
+try {
   const funcs = fs.readdirSync(funcsDir)
-  await Promise.all(funcs.map(async funcName => {
+  funcs.forEach(funcName => {
     const cmd = `apex deploy ${funcName}`
     const numRetries = 3
     let i
@@ -18,6 +18,7 @@ const deploy = async () => {
       try {
         // sometimes 'apex deploy' returns error
         execSync(cmd, { cwd: buildDir, maxBuffer: 100 * 1024 * 1024, timeout: 10 * 1000 })
+        console.log(`deployed ${funcName}`)
         break
       } catch (error) {
         console.log('retry...')
@@ -27,10 +28,8 @@ const deploy = async () => {
     if (i === numRetries) {
       throw new Error(`failed to deploy ${funcName}`)
     }
-  }))
-}
-
-deploy().catch(error => {
+  })
+} catch (error) {
   console.log(error.message)
   console.log(error.stack)
-})
+}

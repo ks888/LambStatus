@@ -44,7 +44,7 @@
       }
     },
     "deploy": {
-      "command": "npm run build && babel-node bin/upload-dist",
+      "command": "npm run build && babel-node bin/deploy",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
@@ -58,7 +58,7 @@
       }
     },
     "release": {
-      "command": "npm run build && babel-node bin/release-dist",
+      "command": "npm run build && babel-node bin/release",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"

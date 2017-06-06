@@ -91,6 +91,7 @@ getSettings().then((
   console.log('settings.json created')
 }).catch((error) => {
   console.error(error, error.stack)
+  process.exit(1)
 })
 
 getBucketInfo().then((
