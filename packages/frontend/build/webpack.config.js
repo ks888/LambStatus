@@ -134,14 +134,21 @@ export default function (config) {
   // Loaders
   // ------------------------------------
   // JavaScript / JSON
+  const babelPresets = ['es2015', 'react', 'stage-0']
+  const babelPlugins = ['transform-runtime']
+  if (__TEST__) {
+    babelPlugins.push('empower-assert')
+    babelPlugins.push('espower')
+  }
+
   webpackConfig.module.loaders = [{
     test: /\.(js|jsx)$/,
     exclude: /node_modules/,
     loader: 'babel',
     query: {
       cacheDirectory: true,
-      plugins: ['transform-runtime'],
-      presets: ['es2015', 'react', 'stage-0']
+      plugins: babelPlugins,
+      presets: babelPresets
     }
   },
   {

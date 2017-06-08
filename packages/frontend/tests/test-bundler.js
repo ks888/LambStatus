@@ -8,7 +8,6 @@ import * as settings from 'utils/settings'
 
 global.sinon = sinon
 global.assert = assert
-global.console.error = () => {}
 settings.apiURL = '/'
 settings.userPoolId = 'ap-northeast-1_XXXXXXXXX'
 settings.clientId = 'test'

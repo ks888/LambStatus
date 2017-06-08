@@ -37,6 +37,7 @@ export default class MetricsGraph extends React.Component {
 
     if (this.props.settings.statusPageURL) {
       this.fetchMetricData()
+      return
     }
   }
 
