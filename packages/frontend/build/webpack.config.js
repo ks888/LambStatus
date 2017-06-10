@@ -9,7 +9,7 @@ const debug = _debug('app:webpack:config')
 
 export default function (config) {
   const paths = config.utils_paths
-  const {__DEV__, __PROD__, __TEST__} = config.globals
+  const {__DEV__, __PROD__, __TEST__, __COVERAGE__} = config.globals
 
   debug('Create configuration.')
   const webpackConfig = {
@@ -136,7 +136,8 @@ export default function (config) {
   // JavaScript / JSON
   const babelPresets = ['es2015', 'react', 'stage-0']
   const babelPlugins = ['transform-runtime']
-  if (__TEST__) {
+  if (__TEST__ && !__COVERAGE__) {
+    // not work well with coverage setting
     babelPlugins.push('empower-assert')
     babelPlugins.push('espower')
   }
