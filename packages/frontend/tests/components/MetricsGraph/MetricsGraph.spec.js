@@ -1,16 +1,27 @@
 import React from 'react'
+import c3 from 'c3'
 import { mount } from 'enzyme'
 import MetricsGraph from 'components/common/MetricsGraph/MetricsGraph'
+import classes from 'components/common/MetricsGraph/MetricsGraph.scss'
 import { timeframes, getNumDates } from 'utils/status'
 
 describe('MetricsGraph', () => {
   const generateProps = () => {
     return {
+      metricID: '1',
       metric: {title: '', unit: '', data: {}},
       settings: {statusPageURL: 'example.com'},
       timeframe: timeframes[0],
       fetchData: sinon.spy()
     }
+  }
+
+  const buildDates = () => {
+    const currDate = new Date()
+    const today = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+    currDate.setDate(currDate.getDate() - 1)
+    const yesterday = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+    return [yesterday, today]
   }
 
   describe('componentDidMount', () => {
@@ -118,12 +129,261 @@ describe('MetricsGraph', () => {
       const graph = mount(<MetricsGraph {...props} />)
       const inst = graph.instance()
 
-      const currDate = new Date()
-      const today = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
-      currDate.setDate(currDate.getDate() - 1)
-      const yesterday = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+      const dates = buildDates()
+      assert(inst.areAllDataFetched({[dates[0]]: [], [dates[1]]: []}))
+    })
+  })
 
-      assert(inst.areAllDataFetched({[today]: [], [yesterday]: []}))
+  describe('collectDataWithinRange', () => {
+    it('should collect data within the specified range', () => {
+      const props = generateProps()
+      const dates = buildDates()
+      dates.push('2017-6-1')
+      const data = {
+        [dates[0]]: [{timestamp: 0}, {timestamp: 1}],
+        [dates[1]]: [{timestamp: 2}, {timestamp: 3}]
+      }
+      props.metric.data = data
+      const graph = mount(<MetricsGraph {...props} />)
+      const filteredData = graph.instance().collectDataWithinRange(dates, 1, 2)
+
+      assert(filteredData.length === 2)
+      assert(filteredData[0].timestamp === 1)
+      assert(filteredData[1].timestamp === 2)
+    })
+  })
+
+  describe('averageData', () => {
+    it('should return null list if no data', () => {
+      const data = []
+      const startDate = new Date('2017-06-01T00:00:00.000Z')
+      const endDate = new Date('2017-06-02T00:00:00.000Z')
+      const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 1)
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      const { timestamps, values } = inst.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+
+      assert(timestamps.length === 2)
+      assert(values.length === 2)
+      assert(timestamps[0].toISOString() === startDate.toISOString())
+      assert(values[0] === null)
+      assert(timestamps[1].toISOString() === endDate.toISOString())
+      assert(values[1] === null)
+    })
+
+    it('should average data by the interval', () => {
+      const data = [
+        {timestamp: '2017-06-01T00:00:00.000Z', value: 1},
+        {timestamp: '2017-06-02T00:00:00.000Z', value: 2},
+        {timestamp: '2017-06-03T00:00:00.000Z', value: 3},
+        {timestamp: '2017-06-04T00:00:00.000Z', value: 4}
+      ]
+      const startDate = new Date(data[0].timestamp)
+      const endDate = new Date(data[data.length - 1].timestamp)
+      const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      const { timestamps, values } = inst.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+
+      assert(timestamps.length === 2)
+      assert(values.length === 2)
+      assert(timestamps[0].toISOString() === data[0].timestamp)
+      assert(values[0] === 1.5)
+      assert(timestamps[1].toISOString() === data[2].timestamp)
+      assert(values[1] === 3.5)
+    })
+
+    it('should ignore data out of range', () => {
+      const data = [
+        {timestamp: '2017-06-01T00:00:00.000Z', value: 1},
+        {timestamp: '2017-06-02T00:00:00.000Z', value: 2},
+        {timestamp: '2017-06-03T00:00:00.000Z', value: 3},
+        {timestamp: '2017-06-04T00:00:00.000Z', value: 4},
+        {timestamp: '2017-06-05T00:00:00.000Z', value: 5}
+      ]
+      const startDate = new Date(data[1].timestamp)
+      const endDate = new Date(data[data.length - 2].timestamp)
+      const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      const { timestamps, values } = inst.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+
+      assert(timestamps.length === 2)
+      assert(values.length === 2)
+      assert(timestamps[0].toISOString() === data[1].timestamp)
+      assert(values[0] === 2.5)
+      assert(timestamps[1].toISOString() === data[3].timestamp)
+      assert(values[1] === 4)
+    })
+  })
+
+  describe('ceil', () => {
+    it('should return the ceiled value', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.ceil(0) === 0)
+      assert(inst.ceil(0.5) === 1)
+      assert(inst.ceil(1) === 1)
+      assert(inst.ceil(1.5) === 2)
+      assert(inst.ceil(2) === 2)
+      assert(inst.ceil(10) === 10)
+      assert(inst.ceil(11) === 20)
+      assert(inst.ceil(19) === 20)
+      assert(inst.ceil(90) === 90)
+      assert(inst.ceil(91) === 100)
+    })
+  })
+
+  describe('floor', () => {
+    it('should return the floored value', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.floor(0) === 0)
+      assert(inst.floor(0.5) === 0)
+      assert(inst.floor(1) === 1)
+      assert(inst.floor(1.5) === 1)
+      assert(inst.floor(2) === 2)
+      assert(inst.floor(10) === 10)
+      assert(inst.floor(11) === 10)
+      assert(inst.floor(19) === 10)
+      assert(inst.floor(90) === 90)
+      assert(inst.floor(91) === 90)
+    })
+  })
+
+  describe('calculateAvg', () => {
+    it('should return 0 if no data', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [],
+        [dates[1]]: []
+      }
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.calculateAvg(data) === 0)
+    })
+
+    it('should return the overall average', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [{value: 1}, {value: 2}],
+        [dates[1]]: [{value: 3}]
+      }
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.calculateAvg(data) === 2)
+    })
+  })
+
+  describe('updateGraph', () => {
+    it('should update the graph using the data in props', () => {
+      let graphParams
+      sinon.stub(c3, 'generate', params => {
+        graphParams = params
+      })
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      inst.collectDataWithinRange = sinon.stub().returns([1])
+      inst.averageDataByInterval = sinon.stub().returns({
+        timestamps: [new Date(), new Date(), new Date()],
+        values: [1, 2, 3]
+      })
+      inst.updateGraph()
+
+      assert(graphParams !== undefined)
+      assert(graphParams.axis.y.min === 1)
+      assert(graphParams.axis.y.max === 3)
+
+      c3.generate.restore()
+    })
+  })
+
+  describe('hasDatapoints', () => {
+    it('should return true if there is any data', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [{}],
+        [dates[1]]: []
+      }
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.hasDatapoints(data) === true)
+    })
+
+    it('should return false if no data', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[1]]: []
+      }
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.hasDatapoints(data) === false)
+    })
+  })
+
+  describe('render', () => {
+    it('should render the graph if all data are available', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [{timestamp: 1, value: 1}],
+        [dates[1]]: []
+      }
+      const props = generateProps()
+      props.metric.data = data
+      const graph = mount(<MetricsGraph {...props} />)
+
+      assert(graph.find(`#metricID${props.metricID}`).length === 1)
+    })
+
+    it('should render the fetching message if some data are not available', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [{timestamp: 1, value: 1}]
+      }
+      const props = generateProps()
+      props.metric.data = data
+      const graph = mount(<MetricsGraph {...props} />)
+
+      assert(graph.find(`.${classes.loading}`).length === 1)
+      assert(graph.find(`.${classes.loading}`).text().match(/Fetching/) !== null)
+    })
+
+    it('should render the no data message if no datapoints ', () => {
+      const dates = buildDates()
+      const data = {
+        [dates[0]]: [],
+        [dates[1]]: []
+      }
+      const props = generateProps()
+      props.metric.data = data
+      const graph = mount(<MetricsGraph {...props} />)
+
+      assert(graph.find(`.${classes.loading}`).length === 1)
+      assert(graph.find(`.${classes.loading}`).text().match(/No data/) !== null)
     })
   })
 })
