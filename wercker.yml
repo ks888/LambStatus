@@ -28,3 +28,8 @@ build:
         cwd: packages/frontend
         code: |
           xvfb-run -a --server-args="-screen 0 1024x768x24" npm run test
+    - script:
+        name: send test coverage to codecov
+        cwd: packages/frontend
+        code: |
+          npm run codecov

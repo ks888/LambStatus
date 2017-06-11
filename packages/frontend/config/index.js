@@ -57,10 +57,7 @@ export default function () {
     // ----------------------------------
     // Test Configuration
     // ----------------------------------
-    coverage_reporters : [
-      { type : 'text-summary' },
-      { type : 'lcov', dir : 'coverage' }
-    ]
+    coverage_reporters : ['text', 'lcov']
   }
 
   /************************************************

@@ -73,18 +73,19 @@ const karmaConfig = {
   webpackMiddleware: {
     noInfo: true
   },
-  coverageReporter: {
-    reporters: config.coverage_reporters
+  coverageIstanbulReporter: {
+    reports: config.coverage_reporters,
+    fixWebpackSourcePaths: true
   }
 }
 
 if (config.globals.__COVERAGE__) {
-  karmaConfig.reporters.push('coverage')
-  karmaConfig.webpack.module.preLoaders = [{
+  karmaConfig.reporters.push('coverage-istanbul')
+  karmaConfig.webpack.module.postLoaders = [{
     test: /\.(js|jsx)$/,
     include: new RegExp(config.dir_client),
-    loader: 'isparta',
-    exclude: /node_modules/
+    loader: 'istanbul-instrumenter?esModules=true',
+    exclude: /(node_modules|tests)/
   }]
 }
 
