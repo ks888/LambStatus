@@ -13,6 +13,7 @@
     "deploy": "npm run build && babel-node ./bin/deploy.js",
     "test-deploy": "babel-node ./bin/deploy.js",
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
+    "test:coverage": "nyc --reporter=lcov --reporter=text --include src/ --all npm run test",
     "test:dev": "npm run test -- --watch",
     "release": "npm run build && babel-node ./bin/release.js",
     "release:force": "npm run release -- --force",
@@ -59,6 +60,7 @@
     "eslint-plugin-react": "^6.1.2",
     "eslint-plugin-standard": "^2.0.0",
     "mocha": "^3.1.2",
+    "nyc": "^11.0.2",
     "power-assert": "^1.4.2",
     "sinon": "^1.17.6"
   }
