@@ -1,2 +1,4 @@
-fixes:
-  - "::packages/frontend/"
+coverage:
+  fixes:
+    - "::packages/frontend/"
+comment: off
