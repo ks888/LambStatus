@@ -6,7 +6,6 @@ import * as dialogUtil from 'utils/dialog'
 import Button from 'components/common/Button'
 import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
 import MetricDialog, { dialogType } from 'components/adminPage/MetricDialog/MetricDialog'
-import classes from 'components/adminPage/MetricDialog/MetricDialog.scss'
 
 describe('MetricDialog', () => {
   const generateProps = () => {
@@ -129,6 +128,25 @@ describe('MetricDialog', () => {
       assert(props.updateMetric.calledOnce)
 
       dialogUtil.mountDialog.restore()
+    })
+
+    it('should close dialog when the update is successful', () => {
+      let dialogDOM
+      sinon.stub(dialogUtil, 'mountDialog', () => {})
+      sinon.stub(dialogUtil, 'unmountDialog', param => {
+        dialogDOM = param
+      })
+
+      const props = generateProps()
+      props.postMetric = (t, p, ti, s, u, d, callbacks) => { callbacks.onSuccess() }
+      const dialog = shallow(<MetricDialog {...props} />)
+
+      const add = dialog.find(Button).first()
+      add.simulate('click')
+      assert(dialogDOM !== undefined)
+
+      dialogUtil.mountDialog.restore()
+      dialogUtil.unmountDialog.restore()
     })
   })
 })
