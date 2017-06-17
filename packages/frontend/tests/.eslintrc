@@ -5,6 +5,7 @@
   },
   "globals" : {
     "sinon"  : false,
-    "assert"  : false
+    "assert"  : false,
+    "buildEmptyStore": false
   }
 }

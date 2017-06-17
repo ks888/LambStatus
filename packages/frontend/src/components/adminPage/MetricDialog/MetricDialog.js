@@ -6,7 +6,7 @@ import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
-import { monitoringServices, metricStatuses } from 'utils/status'
+import { monitoringServices, metricStatuses, cloudWatchMonitoringService } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricDialog.scss'
 
@@ -68,9 +68,7 @@ export default class MetricDialog extends React.Component {
   }
 
   handleChangeProps = (value) => {
-    this.setState({
-      props: Object.assign({}, this.state.props, value)
-    })
+    this.setState({props: value})
   }
 
   handleChangeTitle = (value) => {
@@ -117,8 +115,13 @@ export default class MetricDialog extends React.Component {
   }
 
   renderMetrics = () => {
-    // TODO: should be instantiated based on 'type'
-    return (<CloudWatchMetricsSelector onChange={this.handleChangeProps} props={this.state.props} />)
+    switch (this.state.type) {
+      case cloudWatchMonitoringService:
+        return (<CloudWatchMetricsSelector onChange={this.handleChangeProps} props={this.state.props} />)
+      default:
+        console.error('Unknown monitoring service:', this.state.type)
+        return null
+    }
   }
 
   render () {
