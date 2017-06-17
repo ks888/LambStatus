@@ -17,7 +17,7 @@ global.buildEmptyStore = (state) => {
     getState: () => { return { ...state } }
   }
 }
-settings.apiURL = '/'
+settings.apiURL = 'https://XXXXXXXXXX.execute-api.ap-northeast-1.amazonaws.com/prod/'
 settings.userPoolId = 'ap-northeast-1_XXXXXXXXX'
 settings.clientId = 'test'
 

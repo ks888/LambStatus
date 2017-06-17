@@ -42,7 +42,7 @@ describe('MetricDialog', () => {
       assert(dialog.state.message === '')
     })
 
-    it('should set default value if the metric is empty', () => {
+    it('should set default values if the metric is empty', () => {
       const dialog = new MetricDialog({})
       assert(dialog.state.type === monitoringServices[0])
       assert(dialog.state.props === null)

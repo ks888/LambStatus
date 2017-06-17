@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import DropdownList from 'components/common/DropdownList'
 import Spinner from 'components/common/Spinner'
 import { apiURL } from 'utils/settings'
-import { regions } from 'utils/status'
+import { regions, cloudWatchMonitoringService } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'
 
 export default class CloudWatchMetricsSelector extends React.Component {
@@ -51,7 +51,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
   componentDidMount () {
     if (this.needFetching()) {
       const regionID = regions.find(r => r.name === this.state.regionName).id
-      this.props.fetchExternalMetrics('CloudWatch', {region: regionID}, this.callbacks)
+      this.props.fetchExternalMetrics(cloudWatchMonitoringService, {region: regionID}, this.callbacks)
     }
   }
 
@@ -66,7 +66,7 @@ export default class CloudWatchMetricsSelector extends React.Component {
     this.setState({regionName: value, namespace: '', metric: ''})
 
     const regionID = regions.find(r => r.name === value).id
-    this.props.fetchExternalMetrics('CloudWatch', {region: regionID}, this.callbacks)
+    this.props.fetchExternalMetrics(cloudWatchMonitoringService, {region: regionID}, this.callbacks)
   }
 
   handleChangeNamespace = (value) => {
