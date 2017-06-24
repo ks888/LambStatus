@@ -4,11 +4,12 @@ import classnames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 import classes from './TextField.scss'
 
-const ENTER_KEY_CODE = 13
+export const enterKeyCode = 13
 
 export default class TextField extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
+    // onEnterKey will be called if the enter key is pressed.
     onEnterKey: PropTypes.func,
     label: PropTypes.string.isRequired,
     text: PropTypes.string,
@@ -27,7 +28,7 @@ export default class TextField extends React.Component {
   }
 
   handleKeyDown = (e) => {
-    if (e.keyCode === ENTER_KEY_CODE && this.props.onEnterKey) {
+    if (e.keyCode === enterKeyCode && this.props.onEnterKey) {
       this.props.onEnterKey(e.target.value)
       e.preventDefault()
     }

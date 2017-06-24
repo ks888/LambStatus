@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import ModestLink from 'components/common/ModestLink'
+import Link from 'components/common/Link'
 import classes from './NotFound.scss'
 
 export default class NotFound extends React.Component {
@@ -9,7 +9,7 @@ export default class NotFound extends React.Component {
       <div className={classnames(classes.layout)}>
         <h4>404 page not found</h4>
         <p>We are sorry but the page you are looking for does not exist.</p>
-        <ModestLink link='/' text='Current Incidents' />
+        <Link link='/' text='Current Incidents' />
       </div>
     )
   }

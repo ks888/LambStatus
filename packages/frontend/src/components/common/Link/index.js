@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import { Link } from 'react-router'
-import classes from './ModestLink.scss'
+import { Link as ReactRouterLink } from 'react-router'
+import classes from './Link.scss'
 
-export default class ModestLink extends React.Component {
+export default class Link extends React.Component {
   static propTypes = {
     link: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired
@@ -12,9 +12,9 @@ export default class ModestLink extends React.Component {
   render () {
     return (
       <div className={classes.block}>
-        <Link to={this.props.link} className={classes.link}>
+        <ReactRouterLink to={this.props.link} className={classes.link}>
           <i className={classnames('material-icons', classes.link_icon)}>chevron_right</i> {this.props.text}
-        </Link>
+        </ReactRouterLink>
       </div>
     )
   }

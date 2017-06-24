@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import ModestLink from 'components/common/ModestLink'
+import Link from 'components/common/Link'
 import ErrorMessage from 'components/common/ErrorMessage'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import classes from './Incident.scss'
@@ -54,7 +54,7 @@ export default class Incident extends React.Component {
         <div className='mdl-cell mdl-cell--12-col mdl-list'>
           {incident}
         </div>
-        <ModestLink link='/' text='Current Incidents' />
+        <Link link='/' text='Current Incidents' />
       </div>
     )
   }

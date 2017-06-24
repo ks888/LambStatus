@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import ModestLink from 'components/common/ModestLink'
+import Link from 'components/common/Link'
 import Title from 'components/statusPage/Title'
 import SubscribeButton from 'components/statusPage/SubscribeButton'
 import IncidentItem from 'components/statusPage/IncidentItem'
@@ -107,7 +107,7 @@ export default class History extends React.Component {
         <div className='mdl-cell mdl-cell--12-col mdl-list'>
           {eventsByMonth}
         </div>
-        <ModestLink link='/' text='Current Incidents' />
+        <Link link='/' text='Current Incidents' />
       </div>
     )
   }

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
-import ModestLink from 'components/common/ModestLink'
+import Link from 'components/common/Link'
 import MetricsGraph from 'components/common/MetricsGraph'
 import Title from 'components/statusPage/Title'
 import SubscribeButton from 'components/statusPage/SubscribeButton'
@@ -108,7 +108,7 @@ export default class Statuses extends React.Component {
         {metricsTitle}
         {metricsContent}
         {incidents}
-        <ModestLink link='/history' text='Incident History' />
+        <Link link='/history' text='Incident History' />
       </div>
     )
   }
