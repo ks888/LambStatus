@@ -1,4 +1,5 @@
 import SettingsStore from 'db/settings'
+import APIGateway from 'aws/apiGateway'
 import Cognito from 'aws/cognito'
 import SNS from 'aws/sns'
 import { ValidationError, NotFoundError } from 'utils/errors'
@@ -102,6 +103,14 @@ export class Settings {
       await new Cognito().updateUserPool(cognitoPoolID, serviceName, adminPageURL, snsCallerArn)
     } else {
       console.warn('CognitoPoolID not found')
+    }
+  }
+
+  async getApiKeys () {
+    try {
+      return await new APIGateway().getApiKeys()
+    } catch (err) {
+      throw err
     }
   }
 }

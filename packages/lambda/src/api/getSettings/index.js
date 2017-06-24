@@ -6,7 +6,8 @@ export async function handle (event, context, callback) {
     const serviceName = await settings.getServiceName()
     const adminPageURL = await settings.getAdminPageURL()
     const statusPageURL = await settings.getStatusPageURL()
-    callback(null, {serviceName, adminPageURL, statusPageURL})
+    const apiKeys = await settings.getApiKeys()
+    callback(null, {serviceName, adminPageURL, statusPageURL, apiKeys})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

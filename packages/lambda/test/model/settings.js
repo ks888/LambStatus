@@ -3,6 +3,7 @@ import sinon from 'sinon'
 import SNS from 'aws/sns'
 import { Settings } from 'model/settings'
 import SettingsStore from 'db/settings'
+import APIGateway from 'aws/apiGateway'
 import { NotFoundError } from 'utils/errors'
 
 describe('Settings', () => {
@@ -84,6 +85,32 @@ describe('Settings', () => {
         error = e
       }
       assert(error.name === 'Error')
+    })
+  })
+
+  describe('getApiKeys', () => {
+    afterEach(() => {
+      APIGateway.prototype.getApiKeys.restore()
+    })
+
+    it('should return the list of api keys', async () => {
+      const expected = ['token']
+      sinon.stub(APIGateway.prototype, 'getApiKeys').returns(expected)
+
+      const actual = await new Settings().getApiKeys()
+      assert.deepEqual(actual, expected)
+    })
+
+    it('should throw the error if API returns the error ', async () => {
+      sinon.stub(APIGateway.prototype, 'getApiKeys').throws(new Error())
+
+      let err
+      try {
+        await new Settings().getApiKeys()
+      } catch (e) {
+        err = e
+      }
+      assert(err !== undefined)
     })
   })
 })

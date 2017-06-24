@@ -16,4 +16,15 @@ export default class APIGateway {
       })
     })
   }
+
+  getApiKeys () {
+    return new Promise((resolve, reject) => {
+      this.apiGateway.getApiKeys({}, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result.items)
+      })
+    })
+  }
 }
