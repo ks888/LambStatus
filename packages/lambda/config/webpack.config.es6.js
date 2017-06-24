@@ -125,6 +125,14 @@ export default {
       'babel-polyfill',
       './src/api/patchSettings/index.js'
     ],
+    PostApiKeys: [
+      'babel-polyfill',
+      './src/api/postApiKeys/index.js'
+    ],
+    DeleteApiKeys: [
+      'babel-polyfill',
+      './src/api/deleteApiKeys/index.js'
+    ],
     DBCreateItems: [
       'babel-polyfill',
       './src/api/dbCreateItems/index.js'

@@ -97,9 +97,9 @@ describe('Settings', () => {
     it('should return the list of enabled api keys', async () => {
       const expected = [{id: '1', enabled: true}, {id: '2', enabled: false}]
       const stub = sinon.stub(APIGateway.prototype, 'getApiKeys').returns(expected)
-
       const keyPrefix = 'test'
       constants.stackName = keyPrefix
+
       const actual = await new Settings().getApiKeys()
       assert(actual.length === 1)
       assert(actual[0].id === expected[0].id)
@@ -112,6 +112,35 @@ describe('Settings', () => {
       let err
       try {
         await new Settings().getApiKeys()
+      } catch (e) {
+        err = e
+      }
+      assert(err !== undefined)
+    })
+  })
+
+  describe('createApiKey', () => {
+    afterEach(() => {
+      APIGateway.prototype.createApiKey.restore()
+    })
+
+    it('should create the new api key', async () => {
+      const expected = {id: '1'}
+      const stub = sinon.stub(APIGateway.prototype, 'createApiKey').returns(expected)
+      const keyPrefix = 'test'
+      constants.stackName = keyPrefix
+
+      const actual = await new Settings().createApiKey()
+      assert(actual.id === expected.id)
+      assert.deepEqual(stub.firstCall.args, [keyPrefix])
+    })
+
+    it('should throw the error if API returns the error ', async () => {
+      sinon.stub(APIGateway.prototype, 'createApiKey').throws(new Error())
+
+      let err
+      try {
+        await new Settings().createApiKey()
       } catch (e) {
         err = e
       }

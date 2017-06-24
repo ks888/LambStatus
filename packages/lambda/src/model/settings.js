@@ -10,7 +10,7 @@ const settingsKeyStatusPageURL = 'StatusPageURL'
 const settingsKeyAdminPageURL = 'AdminPageURL'
 const settingsKeyCognitoPoolID = 'CognitoPoolID'
 
-// InvocationURL, UserPoolID, ClientID are bootstrap set. Do not store here.
+// InvocationURL, UserPoolID, and ClientID are parts of S3 object (settings.json). Do not store them here.
 
 export class Settings {
   constructor () {
@@ -113,16 +113,40 @@ export class Settings {
       const rawKeys = await new APIGateway().getApiKeys(stackName)
       rawKeys.forEach(key => {
         if (!key.enabled) return
-        keys.push({
-          id: key.id,
-          value: key.value,
-          createdDate: key.createdDate,
-          lastUpdatedDate: key.lastUpdatedDate
-        })
+        keys.push(new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate))
       })
       return keys
     } catch (err) {
       throw err
+    }
+  }
+
+  async createApiKey () {
+    try {
+      const newKey = await new APIGateway().createApiKey(stackName)
+      return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
+    } catch (err) {
+      throw err
+    }
+  }
+}
+
+export class ApiKey {
+  constructor (id, value, createdDate, lastUpdatedDate) {
+    this.id = id
+    this.value = value
+    this.createdDate = createdDate
+    this.lastUpdatedDate = lastUpdatedDate
+  }
+
+  // no needs to validate this so far.
+
+  objectify () {
+    return {
+      id: this.id,
+      value: this.value,
+      createdDate: this.createdDate,
+      lastUpdatedDate: this.lastUpdatedDate
     }
   }
 }

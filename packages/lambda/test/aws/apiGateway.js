@@ -76,4 +76,41 @@ describe('APIGateway', () => {
       assert(err !== undefined)
     })
   })
+
+  context('createApiKey', () => {
+    it('should create the new key', async () => {
+      const name = 'key name'
+      AWS.mock('APIGateway', 'createApiKey', (params, callback) => {
+        callback(null, {name: params.name, enabled: params.enabled})
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err, actual
+      try {
+        actual = await apiGateway.createApiKey(name)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert.deepEqual(actual.name, name)
+      assert(actual.enabled)
+    })
+
+    it('should throws the error if the API call failed', async () => {
+      AWS.mock('APIGateway', 'createApiKey', (params, callback) => {
+        callback(new Error(''))
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.createApiKey()
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
 })

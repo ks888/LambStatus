@@ -31,4 +31,16 @@ export default class APIGateway {
       })
     })
   }
+
+  createApiKey (name) {
+    const params = { name, enabled: true }
+    return new Promise((resolve, reject) => {
+      this.apiGateway.createApiKey(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
 }
