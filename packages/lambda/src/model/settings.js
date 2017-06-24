@@ -3,6 +3,7 @@ import APIGateway from 'aws/apiGateway'
 import Cognito from 'aws/cognito'
 import SNS from 'aws/sns'
 import { ValidationError, NotFoundError } from 'utils/errors'
+import { stackName } from 'utils/const'
 
 const settingsKeyServiceName = 'ServiceName'
 const settingsKeyStatusPageURL = 'StatusPageURL'
@@ -107,8 +108,19 @@ export class Settings {
   }
 
   async getApiKeys () {
+    const keys = []
     try {
-      return await new APIGateway().getApiKeys()
+      const rawKeys = await new APIGateway().getApiKeys(stackName)
+      rawKeys.forEach(key => {
+        if (!key.enabled) return
+        keys.push({
+          id: key.id,
+          value: key.value,
+          createdDate: key.createdDate,
+          lastUpdatedDate: key.lastUpdatedDate
+        })
+      })
+      return keys
     } catch (err) {
       throw err
     }

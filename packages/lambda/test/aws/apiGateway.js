@@ -51,7 +51,7 @@ describe('APIGateway', () => {
 
       let err, actual
       try {
-        actual = await apiGateway.getApiKeys()
+        actual = await apiGateway.getApiKeys('name')
       } catch (error) {
         err = error
       }

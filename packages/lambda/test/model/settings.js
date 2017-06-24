@@ -5,6 +5,7 @@ import { Settings } from 'model/settings'
 import SettingsStore from 'db/settings'
 import APIGateway from 'aws/apiGateway'
 import { NotFoundError } from 'utils/errors'
+import * as constants from 'utils/const'
 
 describe('Settings', () => {
   describe('vaildateURL', () => {
@@ -93,12 +94,16 @@ describe('Settings', () => {
       APIGateway.prototype.getApiKeys.restore()
     })
 
-    it('should return the list of api keys', async () => {
-      const expected = ['token']
-      sinon.stub(APIGateway.prototype, 'getApiKeys').returns(expected)
+    it('should return the list of enabled api keys', async () => {
+      const expected = [{id: '1', enabled: true}, {id: '2', enabled: false}]
+      const stub = sinon.stub(APIGateway.prototype, 'getApiKeys').returns(expected)
 
+      const keyPrefix = 'test'
+      constants.stackName = keyPrefix
       const actual = await new Settings().getApiKeys()
-      assert.deepEqual(actual, expected)
+      assert(actual.length === 1)
+      assert(actual[0].id === expected[0].id)
+      assert.deepEqual(stub.firstCall.args, [keyPrefix])
     })
 
     it('should throw the error if API returns the error ', async () => {

@@ -17,9 +17,13 @@ export default class APIGateway {
     })
   }
 
-  getApiKeys () {
+  getApiKeys (queryName) {
+    const params = {
+      nameQuery: queryName,
+      includeValues: true
+    }
     return new Promise((resolve, reject) => {
-      this.apiGateway.getApiKeys({}, (err, result) => {
+      this.apiGateway.getApiKeys(params, (err, result) => {
         if (err) {
           return reject(err)
         }
