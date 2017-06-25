@@ -129,6 +129,11 @@ Resources:
                   - apigateway:*
                 Resource: !Sub |-
                   arn:aws:apigateway:${AWS::Region}::/apikeys
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: !Sub |-
+                  arn:aws:apigateway:${AWS::Region}::/apikeys/*
         - PolicyName: SNS
           PolicyDocument:
             Statement:
@@ -764,7 +769,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/components/{componentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/settings/apikeys/{apikeyid}
   GetExternalMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:

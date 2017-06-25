@@ -26,7 +26,7 @@ describe('APIGateway', () => {
 
     it('should throws the error if the API call failed', async () => {
       AWS.mock('APIGateway', 'createDeployment', (params, callback) => {
-        callback(new Error(''))
+        callback(new Error())
       })
       const apiGateway = new APIGateway('ap-northeast-1')
 
@@ -62,13 +62,49 @@ describe('APIGateway', () => {
 
     it('should throws the error if the API call failed', async () => {
       AWS.mock('APIGateway', 'getApiKeys', (params, callback) => {
-        callback(new Error(''))
+        callback(new Error())
       })
       const apiGateway = new APIGateway('ap-northeast-1')
 
       let err
       try {
         await apiGateway.getApiKeys()
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
+
+  context('getApiKey', () => {
+    it('should returns the api key', async () => {
+      const id = 'id'
+      AWS.mock('APIGateway', 'getApiKey', (params, callback) => {
+        callback(null, {id: params.apiKey})
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err, actual
+      try {
+        actual = await apiGateway.getApiKey(id)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual.id, id)
+    })
+
+    it('should throws the error if the API call failed', async () => {
+      AWS.mock('APIGateway', 'getApiKey', (params, callback) => {
+        callback(new Error())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.getApiKey()
       } catch (error) {
         err = error
       }
@@ -99,13 +135,51 @@ describe('APIGateway', () => {
 
     it('should throws the error if the API call failed', async () => {
       AWS.mock('APIGateway', 'createApiKey', (params, callback) => {
-        callback(new Error(''))
+        callback(new Error())
       })
       const apiGateway = new APIGateway('ap-northeast-1')
 
       let err
       try {
         await apiGateway.createApiKey()
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
+
+  context('deleteApiKey', () => {
+    it('should delete the existing key', async () => {
+      const id = 'id'
+      let actualID
+      AWS.mock('APIGateway', 'deleteApiKey', (params, callback) => {
+        actualID = params.apiKey
+        callback(null)
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.deleteApiKey(id)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actualID === id)
+    })
+
+    it('should throws the error if the API call failed', async () => {
+      AWS.mock('APIGateway', 'deleteApiKey', (params, callback) => {
+        callback(new Error())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.deleteApiKey()
       } catch (error) {
         err = error
       }

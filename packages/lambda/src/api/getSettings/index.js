@@ -6,7 +6,7 @@ export async function handle (event, context, callback) {
     const serviceName = await settings.getServiceName()
     const adminPageURL = await settings.getAdminPageURL()
     const statusPageURL = await settings.getStatusPageURL()
-    const apiKeys = await settings.getApiKeys()
+    const apiKeys = await settings.allApiKeys()
     callback(null, {serviceName, adminPageURL, statusPageURL, apiKeys})
   } catch (error) {
     console.log(error.message)

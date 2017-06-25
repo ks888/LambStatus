@@ -32,6 +32,18 @@ export default class APIGateway {
     })
   }
 
+  getApiKey (id) {
+    const params = { apiKey: id }
+    return new Promise((resolve, reject) => {
+      this.apiGateway.getApiKey(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
   createApiKey (name) {
     const params = { name, enabled: true }
     return new Promise((resolve, reject) => {
@@ -40,6 +52,18 @@ export default class APIGateway {
           return reject(err)
         }
         resolve(result)
+      })
+    })
+  }
+
+  deleteApiKey (id) {
+    const params = { apiKey: id }
+    return new Promise((resolve, reject) => {
+      this.apiGateway.deleteApiKey(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
       })
     })
   }

@@ -107,7 +107,7 @@ export class Settings {
     }
   }
 
-  async getApiKeys () {
+  async allApiKeys () {
     const keys = []
     try {
       const rawKeys = await new APIGateway().getApiKeys(stackName)
@@ -121,13 +121,23 @@ export class Settings {
     }
   }
 
-  async createApiKey () {
+  async lookupApiKey (id) {
     try {
-      const newKey = await new APIGateway().createApiKey(stackName)
-      return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
+      const key = await new APIGateway().getApiKey(id)
+      return new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate)
     } catch (err) {
-      throw err
+      switch (err.name) {
+        case 'NotFoundException':
+          throw new NotFoundError(err.message)
+        default:
+          throw err
+      }
     }
+  }
+
+  async createApiKey () {
+    const newKey = await new APIGateway().createApiKey(stackName)
+    return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
   }
 }
 
@@ -147,6 +157,19 @@ export class ApiKey {
       value: this.value,
       createdDate: this.createdDate,
       lastUpdatedDate: this.lastUpdatedDate
+    }
+  }
+
+  async delete () {
+    try {
+      await new APIGateway().deleteApiKey(this.id)
+    } catch (err) {
+      switch (err.name) {
+        case 'NotFoundException':
+          throw new NotFoundError(err.message)
+        default:
+          throw err
+      }
     }
   }
 }
