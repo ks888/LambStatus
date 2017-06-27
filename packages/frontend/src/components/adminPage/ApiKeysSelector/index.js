@@ -41,8 +41,15 @@ export default class ApiKeysSelector extends React.Component {
           <input className='mdl-textfield__input' onClick={this.handleClickText} value={apiKey.value} readOnly />
         )
         break
+      case apiKeyStatuses.toBeDeleted:
+        const deleteMsg = 'This key will be deleted when the SAVE button is pressed.'
+        input = (
+          <input className={classnames(classes['key-not-created'], 'mdl-textfield__input')} value={deleteMsg}
+            readOnly />
+        )
+        break
       default:
-        return null
+        throw new Error('unknown status', apiKey.status)
     }
 
     return (
