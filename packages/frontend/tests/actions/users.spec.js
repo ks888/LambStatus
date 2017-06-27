@@ -4,13 +4,14 @@ import {
   GET_USER,
   signin,
   fetchUser,
+  setNewPassword,
   isAuthorized,
   signout,
   forgotPassword,
   setCodeAndPassword
 } from 'actions/users'
 
-describe('(Action) users', () => {
+describe('Actions/Users', () => {
   let dispatchSpy, callbacks
 
   beforeEach(() => {
@@ -24,11 +25,11 @@ describe('(Action) users', () => {
   })
 
   describe('signin', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof signin() === 'function')
     })
 
-    it('Should sign in.', () => {
+    it('should sign in.', () => {
       sinon.stub(CognitoUser.prototype, 'authenticateUser', (auth, authCallbacks) => {
         authCallbacks.onSuccess()
       })
@@ -36,8 +37,8 @@ describe('(Action) users', () => {
 
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
-      assert(!callbacks.onFailure.called)
-      assert(!callbacks.onNewPasswordRequested.called)
+      assert(callbacks.onFailure.notCalled)
+      assert(callbacks.onNewPasswordRequested.notCalled)
 
       assert(dispatchSpy.firstCall.args[0].type === GET_USER)
       assert.deepEqual({username: 'inami'}, dispatchSpy.firstCall.args[0].user)
@@ -46,54 +47,101 @@ describe('(Action) users', () => {
       CognitoUser.prototype.authenticateUser.restore()
     })
 
-    it('Should handle signin error.', () => {
+    it('should handle signin error.', () => {
       sinon.stub(CognitoUser.prototype, 'authenticateUser', (auth, authCallbacks) => {
         authCallbacks.onFailure({message: '', stack: ''})
       })
       signin('inami', undefined, callbacks)(dispatchSpy)
 
       assert(callbacks.onLoad.calledOnce)
-      assert(!callbacks.onSuccess.called)
+      assert(callbacks.onSuccess.notCalled)
       assert(callbacks.onFailure.calledOnce)
+      assert(callbacks.onNewPasswordRequested.notCalled)
 
-      assert(!dispatchSpy.called)
+      assert(dispatchSpy.notCalled)
 
       CognitoUser.prototype.authenticateUser.restore()
     })
 
-    it('Should set new password.', () => {
+    it('should set new password.', () => {
       sinon.stub(CognitoUser.prototype, 'authenticateUser', (auth, authCallbacks) => {
         authCallbacks.newPasswordRequired()
       })
-      sinon.stub(CognitoUser.prototype, 'completeNewPasswordChallenge', (newPassword, _, authCallbacks) => {
-        authCallbacks.onSuccess()
+      signin('inami', undefined, callbacks)(dispatchSpy)
+
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.notCalled)
+      assert(callbacks.onFailure.notCalled)
+      assert(callbacks.onNewPasswordRequested.calledOnce)
+
+      assert(dispatchSpy.notCalled)
+
+      CognitoUser.prototype.authenticateUser.restore()
+    })
+
+    it('should show error if the new password callback is not given.', () => {
+      sinon.stub(CognitoUser.prototype, 'authenticateUser', (auth, authCallbacks) => {
+        authCallbacks.newPasswordRequired()
       })
       signin('inami', undefined, {
-        onLoad: callbacks.onLoad,
-        onSuccess: callbacks.onSuccess,
-        onFailure: callbacks.onFailure,
-        onNewPasswordRequested: (cb) => { cb(undefined, callbacks) }
+        ...callbacks,
+        onNewPasswordRequested: undefined
       })(dispatchSpy)
 
-      assert(callbacks.onLoad.calledTwice)
-      assert(callbacks.onSuccess.calledOnce)
-      assert(!callbacks.onFailure.called)
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.notCalled)
+      assert(callbacks.onFailure.calledOnce)
 
-      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
-      assert.deepEqual({username: 'inami'}, dispatchSpy.firstCall.args[0].user)
-      assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
+      assert(dispatchSpy.notCalled)
 
-      CognitoUser.prototype.completeNewPasswordChallenge.restore()
       CognitoUser.prototype.authenticateUser.restore()
     })
   })
 
+  describe('setNewPassword', () => {
+    it('should set a new password.', () => {
+      sinon.stub(CognitoUser.prototype, 'completeNewPasswordChallenge', (newPassword, userAttrs, callbacks) => {
+        callbacks.onSuccess()
+      })
+      const userName = '1'
+      const user = new CognitoUser({Username: userName, Pool: {}})
+      setNewPassword(dispatchSpy, user, 'newPassword', callbacks)
+
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.called)
+      assert(callbacks.onFailure.notCalled)
+
+      assert(dispatchSpy.firstCall.args[0].type === GET_USER)
+      assert(userName === dispatchSpy.firstCall.args[0].user.username)
+      assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
+
+      CognitoUser.prototype.completeNewPasswordChallenge.restore()
+    })
+
+    it('should handle set password error.', () => {
+      sinon.stub(CognitoUser.prototype, 'completeNewPasswordChallenge', (newPassword, userAttrs, callbacks) => {
+        callbacks.onFailure(new Error(''))
+      })
+      const userName = '1'
+      const user = new CognitoUser({Username: userName, Pool: {}})
+      setNewPassword(dispatchSpy, user, 'newPassword', callbacks)
+
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.notCalled)
+      assert(callbacks.onFailure.called)
+
+      assert(dispatchSpy.notCalled)
+
+      CognitoUser.prototype.completeNewPasswordChallenge.restore()
+    })
+  })
+
   describe('fetchUser', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchUser() === 'function')
     })
 
-    it('Should fetch a user.', () => {
+    it('should fetch a user.', () => {
       const user = {username: 'inami'}
       sinon.stub(CognitoUserPool.prototype, 'getCurrentUser', () => {
         return user
@@ -109,9 +157,9 @@ describe('(Action) users', () => {
   })
 
   describe('isAuthorized', () => {
-    it('Should authorize a right user.', () => {
+    it('should call callback(true) if a user is valid.', () => {
       sinon.stub(CognitoUserPool.prototype, 'getCurrentUser', () => {
-        return { username: 'inami', getSession: (cb) => { cb() } }
+        return { username: 'inami', getSession: (cb) => { cb(null, {}) } }
       })
 
       const callback = sinon.spy()
@@ -120,38 +168,49 @@ describe('(Action) users', () => {
 
       CognitoUserPool.prototype.getCurrentUser.restore()
     })
+
+    it('should call callback(false) if a user is invalid.', () => {
+      sinon.stub(CognitoUserPool.prototype, 'getCurrentUser', () => {
+        return { username: 'inami', getSession: (cb) => { cb(new Error('')) } }
+      })
+
+      const callback = sinon.spy()
+      isAuthorized(callback)
+      assert(callback.firstCall.args[0] === false)
+
+      CognitoUserPool.prototype.getCurrentUser.restore()
+    })
   })
 
   describe('signout', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof signout() === 'function')
     })
 
-    it('Should sign out.', () => {
+    it('should call signOut().', () => {
       sinon.stub(CognitoUserPool.prototype, 'getCurrentUser', () => {
         return new CognitoUser({Username: '', Pool: ''})
       })
-      const signOutMock = sinon.mock(CognitoUser.prototype)
-      signOutMock.expects('signOut').once()
+      const signOutStub = sinon.stub(CognitoUser.prototype, 'signOut', () => {})
 
       signout()(dispatchSpy)
 
+      assert(signOutStub.calledOnce)
       assert(dispatchSpy.firstCall.args[0].type === GET_USER)
       assert.deepEqual({username: ''}, dispatchSpy.firstCall.args[0].user)
       assert(dispatchSpy.secondCall.args[0].type === CALL_HISTORY_METHOD)
 
-      signOutMock.verify()
-      signOutMock.restore()
+      CognitoUser.prototype.signOut.restore()
       CognitoUserPool.prototype.getCurrentUser.restore()
     })
   })
 
   describe('forgotPassword', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof forgotPassword() === 'function')
     })
 
-    it('Should forgot password.', () => {
+    it('should call forgotPassword().', () => {
       sinon.stub(CognitoUser.prototype, 'forgotPassword', (authCallbacks) => {
         authCallbacks.onSuccess()
       })
@@ -159,18 +218,31 @@ describe('(Action) users', () => {
 
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
-      assert(!callbacks.onFailure.called)
+      assert(callbacks.onFailure.notCalled)
+
+      CognitoUser.prototype.forgotPassword.restore()
+    })
+
+    it('should handle forgotPassword() error.', () => {
+      sinon.stub(CognitoUser.prototype, 'forgotPassword', (authCallbacks) => {
+        authCallbacks.onFailure(new Error(''))
+      })
+      forgotPassword('inami', callbacks)(dispatchSpy)
+
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.notCalled)
+      assert(callbacks.onFailure.calledOnce)
 
       CognitoUser.prototype.forgotPassword.restore()
     })
   })
 
   describe('setCodeAndPassword', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof setCodeAndPassword() === 'function')
     })
 
-    it('Should set code and new password.', () => {
+    it('should call confirmPassword().', () => {
       sinon.stub(CognitoUser.prototype, 'confirmPassword', (code, password, authCallbacks) => {
         authCallbacks.onSuccess()
       })
@@ -178,7 +250,20 @@ describe('(Action) users', () => {
 
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
-      assert(!callbacks.onFailure.called)
+      assert(callbacks.onFailure.notCalled)
+
+      CognitoUser.prototype.confirmPassword.restore()
+    })
+
+    it('should handle confirmPassword() error.', () => {
+      sinon.stub(CognitoUser.prototype, 'confirmPassword', (code, password, authCallbacks) => {
+        authCallbacks.onFailure(new Error(''))
+      })
+      setCodeAndPassword(undefined, 'inami', undefined, callbacks)(dispatchSpy)
+
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.notCalled)
+      assert(callbacks.onFailure.calledOnce)
 
       CognitoUser.prototype.confirmPassword.restore()
     })

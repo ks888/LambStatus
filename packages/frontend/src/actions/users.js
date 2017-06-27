@@ -62,7 +62,7 @@ export const signin = (username, password, callbacks = {}) => {
   }
 }
 
-const setNewPassword = (dispatch, cognitoUser, newPassword, callbacks = {}) => {
+export const setNewPassword = (dispatch, cognitoUser, newPassword, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   if (onLoad && typeof onLoad === 'function') onLoad()
 

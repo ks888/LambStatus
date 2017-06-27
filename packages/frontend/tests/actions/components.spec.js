@@ -10,15 +10,14 @@ import {
   deleteComponent
 } from 'actions/components'
 
-describe('(Action) components', () => {
-  const comp1 = {
-    componentID: 'compID1',
-    name: 'name1',
-    description: 'desc1',
-    status: 'status1',
+describe('Actions/Components', () => {
+  const comp = {
+    componentID: '1',
+    name: 'name',
+    description: 'desc',
+    status: 'status',
     order: 0
   }
-
   let dispatchSpy, callbacks
 
   beforeEach(() => {
@@ -35,12 +34,12 @@ describe('(Action) components', () => {
   })
 
   describe('fetchComponents', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchComponents() === 'function')
     })
 
-    it('Should fetch components.', () => {
-      fetchMock.get(/.*\/components/, { body: [comp1], headers: {'Content-Type': 'application/json'} })
+    it('should fetch components.', () => {
+      fetchMock.get(/.*\/components/, { body: [comp], headers: {'Content-Type': 'application/json'} })
 
       return fetchComponents(callbacks)(dispatchSpy)
         .then(() => {
@@ -49,11 +48,11 @@ describe('(Action) components', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === LIST_COMPONENTS)
-          assert.deepEqual([comp1], dispatchSpy.firstCall.args[0].components)
+          assert.deepEqual([comp], dispatchSpy.firstCall.args[0].components)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.get(/.*\/components/, { status: 400, body: {} })
 
       return fetchComponents(callbacks)(dispatchSpy)
@@ -68,12 +67,12 @@ describe('(Action) components', () => {
   })
 
   describe('postComponent', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof postComponent() === 'function')
     })
 
-    it('Should post a new component.', () => {
-      fetchMock.post(/.*\/components/, { body: comp1, headers: {'Content-Type': 'application/json'} })
+    it('should post a new component.', () => {
+      fetchMock.post(/.*\/components/, { body: comp, headers: {'Content-Type': 'application/json'} })
 
       return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
@@ -82,11 +81,11 @@ describe('(Action) components', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === ADD_COMPONENT)
-          assert.deepEqual(comp1, dispatchSpy.firstCall.args[0].component)
+          assert.deepEqual(comp, dispatchSpy.firstCall.args[0].component)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.post(/.*\/components/, { status: 400, body: {} })
 
       return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -101,12 +100,12 @@ describe('(Action) components', () => {
   })
 
   describe('updateComponent', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof updateComponent() === 'function')
     })
 
-    it('Should update the existing component.', () => {
-      fetchMock.patch(/.*\/components\/.*/, { body: comp1, headers: {'Content-Type': 'application/json'} })
+    it('should update the existing component.', () => {
+      fetchMock.patch(/.*\/components\/.*/, { body: comp, headers: {'Content-Type': 'application/json'} })
 
       return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
@@ -115,11 +114,11 @@ describe('(Action) components', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === EDIT_COMPONENT)
-          assert.deepEqual(comp1, dispatchSpy.firstCall.args[0].component)
+          assert.deepEqual(comp, dispatchSpy.firstCall.args[0].component)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.patch(/.*\/components\/.*/, { status: 400, body: {} })
 
       return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -134,11 +133,11 @@ describe('(Action) components', () => {
   })
 
   describe('deleteComponent', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof deleteComponent() === 'function')
     })
 
-    it('Should delete the component.', () => {
+    it('should delete the component.', () => {
       fetchMock.delete(/.*\/components\/.*/, 204)
 
       return deleteComponent('c1', callbacks)(dispatchSpy)
@@ -152,7 +151,7 @@ describe('(Action) components', () => {
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.delete(/.*\/components\/.*/, { status: 400, body: {} })
 
       return deleteComponent('c1', callbacks)(dispatchSpy)
