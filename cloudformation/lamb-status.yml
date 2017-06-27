@@ -15,7 +15,7 @@ Parameters:
 Mappings:
   Constants:
     LambStatus:
-      Version: 0.3.2
+      Version: 0.4.0
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -706,13 +706,12 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
-        # S3Bucket: !Sub |-
-        #   lambstatus-${AWS::Region}
-        # S3Key: !Sub
-        #   - fn/${Version}/PostApiKeys.zip
-        #   - Version:
-        #       Fn::FindInMap: [ Constants, LambStatus, Version ]
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/PostApiKeys.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Create a new api key"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
@@ -740,13 +739,12 @@ Resources:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        ZipFile: "exports.handler = function(event, context) { context.fail('Not Implemented'); };"
-        # S3Bucket: !Sub |-
-        #   lambstatus-${AWS::Region}
-        # S3Key: !Sub
-        #   - fn/${Version}/DeleteApiKeys.zip
-        #   - Version:
-        #       Fn::FindInMap: [ Constants, LambStatus, Version ]
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/DeleteApiKeys.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
       Description: "Delete an existing component"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
