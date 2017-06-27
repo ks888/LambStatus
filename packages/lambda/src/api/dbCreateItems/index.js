@@ -21,7 +21,8 @@ export async function handle (event, context, callback) {
       await settings.setStatusPageURL(statusPageURL)
     }
   } catch (error) {
-    // failed due to the unknown SNS topic.
+    // setStatusPageURL always fails due to the unknown SNS topic. So ignore the error here.
+    // TODO: improve error handling. There may be other kinds of errors.
     console.warn(error.message)
   }
 
@@ -34,6 +35,9 @@ export async function handle (event, context, callback) {
     if (cognitoPoolID) {
       await settings.setCognitoPoolID(cognitoPoolID)
     }
+
+    await settings.createApiKey()
+
     response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)
