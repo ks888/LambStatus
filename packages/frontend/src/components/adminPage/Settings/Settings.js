@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import TextField from 'components/common/TextField'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
+import ApiKeysSelector, { apiKeyStatuses } from 'components/adminPage/ApiKeysSelector'
 import classes from './Settings.scss'
 
 export default class Settings extends React.Component {
@@ -10,10 +11,16 @@ export default class Settings extends React.Component {
     settings: PropTypes.shape({
       adminPageURL: PropTypes.string,
       statusPageURL: PropTypes.string,
-      serviceName: PropTypes.string
+      serviceName: PropTypes.string,
+      apiKeys: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired
+      }))
     }).isRequired,
     fetchSettings: PropTypes.func.isRequired,
-    updateSettings: PropTypes.func.isRequired
+    updateSettings: PropTypes.func.isRequired,
+    addApiKey: PropTypes.func.isRequired,
+    deleteApiKey: PropTypes.func.isRequired
   }
 
   constructor (props) {
@@ -23,7 +30,10 @@ export default class Settings extends React.Component {
       message: '',
       adminPageURL: props.settings.adminPageURL || '',
       statusPageURL: props.settings.statusPageURL || '',
-      serviceName: props.settings.serviceName || ''
+      serviceName: props.settings.serviceName || '',
+      apiKeys: props.settings.apiKeys ? props.settings.apiKeys.map(key => {
+        return { ...key, status: apiKeyStatuses.created }
+      }) : []
     }
   }
 
@@ -43,8 +53,32 @@ export default class Settings extends React.Component {
     this.setState({
       adminPageURL: nextProps.settings.adminPageURL,
       statusPageURL: nextProps.settings.statusPageURL,
-      serviceName: nextProps.settings.serviceName
+      serviceName: nextProps.settings.serviceName,
+      apiKeys: nextProps.settings.apiKeys.map(key => {
+        return { ...key, status: apiKeyStatuses.created }
+      })
     })
+  }
+
+  handleApiKeyAdd = () => {
+    this.setState({
+      apiKeys: this.state.apiKeys.concat({id: new Date().toISOString(), status: apiKeyStatuses.toBeCreated})
+    })
+  }
+
+  handleApiKeyDelete = (id) => {
+    const newKeys = []
+    this.state.apiKeys.forEach(key => {
+      if (key.id !== id) { newKeys.push(key); return }
+
+      switch (key.status) {
+        case apiKeyStatuses.toBeCreated:
+          break
+        default:
+          newKeys.push({ ...key, status: apiKeyStatuses.toBeDeleted })
+      }
+    })
+    this.setState({ apiKeys: newKeys })
   }
 
   handleChangeValue = (key) => {
@@ -56,6 +90,28 @@ export default class Settings extends React.Component {
   handleClickSaveButton = () => {
     this.props.updateSettings(this.state.serviceName, this.state.adminPageURL, this.state.statusPageURL,
                               this.callbacks)
+    this.state.apiKeys.forEach(key => {
+      switch (key.status) {
+        case apiKeyStatuses.toBeCreated:
+          this.props.addApiKey()
+          break
+        case apiKeyStatuses.created:
+          break
+        case apiKeyStatuses.toBeDeleted:
+          this.props.deleteApiKey(key.id)
+          break
+        default:
+          throw new Error('unknown status', key.status)
+      }
+    })
+  }
+
+  renderApiKeysSelector = () => {
+    return (
+      <ul key='apiKeys' className={classnames(classes.item, 'mdl-cell', 'mdl-cell--7-col', 'mdl-list')}>
+        <ApiKeysSelector apiKeys={this.state.apiKeys} onAdd={this.handleApiKeyAdd} onDelete={this.handleApiKeyDelete} />
+      </ul>
+    )
   }
 
   renderItem = (setting) => {
@@ -78,6 +134,7 @@ export default class Settings extends React.Component {
       {key: 'adminPageURL', info: urlSettingInfo}
     ]
     const settingItems = settings.map(this.renderItem)
+    settingItems.push(this.renderApiKeysSelector())
 
     let errMsg
     if (this.state.message) {

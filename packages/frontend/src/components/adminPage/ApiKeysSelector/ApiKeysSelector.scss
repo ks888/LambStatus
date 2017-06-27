@@ -1,0 +1,33 @@
+.container {
+  width: 100%;
+  padding: 10px 0;
+}
+
+.label {
+  color: #607D8B;
+  font-size: 14px;
+}
+
+.item {
+  padding-top: 8px;
+  display: flex;
+}
+
+.key-not-created {
+  color: rgba(0,0,0,.30);
+}
+
+.delete-icon {
+  font-size: 16px;
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.add-icon {
+  font-size: 16px;
+  padding-top: 10px;
+  padding-bottom: 4px;
+  float: right;
+  cursor: pointer;
+}
