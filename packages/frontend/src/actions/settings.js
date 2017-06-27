@@ -4,6 +4,8 @@ import { apiURL } from 'utils/settings'
 
 export const LIST_SETTINGS = 'LIST_SETTINGS'
 export const EDIT_SETTINGS = 'EDIT_SETTINGS'
+export const ADD_API_KEY = 'ADD_API_KEY'
+export const REMOVE_API_KEY = 'REMOVE_API_KEY'
 
 export function listSettings (json) {
   return {
@@ -16,6 +18,20 @@ export function editSettings (json) {
   return {
     type: EDIT_SETTINGS,
     settings: json
+  }
+}
+
+export function addApiKey (json) {
+  return {
+    type: ADD_API_KEY,
+    apiKey: json
+  }
+}
+
+export function removeApiKey (keyID) {
+  return {
+    type: REMOVE_API_KEY,
+    keyID
   }
 }
 
@@ -55,6 +71,36 @@ export const updateSettings = (serviceName, adminPageURL, statusPageURL, callbac
         body: JSON.stringify(body)
       }, callbacks)
       dispatch(editSettings(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
+export const postApiKey = (callbacks = {}) => {
+  return async dispatch => {
+    try {
+      const json = await sendRequest(apiURL + 'settings/apikeys', {
+        headers: await buildHeaders(),
+        method: 'POST'
+      }, callbacks)
+      dispatch(addApiKey(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
+export const deleteApiKey = (keyID, callbacks = {}) => {
+  return async dispatch => {
+    try {
+      await sendRequest(`${apiURL}settings/apikeys/${keyID}`, {
+        headers: await buildHeaders(),
+        method: 'DELETE'
+      }, callbacks)
+      dispatch(removeApiKey(keyID))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

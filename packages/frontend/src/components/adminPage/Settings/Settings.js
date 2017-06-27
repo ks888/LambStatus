@@ -19,7 +19,7 @@ export default class Settings extends React.Component {
     }).isRequired,
     fetchSettings: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired,
-    addApiKey: PropTypes.func.isRequired,
+    postApiKey: PropTypes.func.isRequired,
     deleteApiKey: PropTypes.func.isRequired
   }
 
@@ -93,7 +93,7 @@ export default class Settings extends React.Component {
     this.state.apiKeys.forEach(key => {
       switch (key.status) {
         case apiKeyStatuses.toBeCreated:
-          this.props.addApiKey()
+          this.props.postApiKey()
           break
         case apiKeyStatuses.created:
           break

@@ -15,7 +15,7 @@ describe('Settings', () => {
       },
       fetchSettings: sinon.spy(),
       updateSettings: sinon.spy(),
-      addApiKey: sinon.spy(),
+      postApiKey: sinon.spy(),
       deleteApiKey: sinon.spy()
     }
   }
@@ -83,13 +83,13 @@ describe('Settings', () => {
       assert(props.updateSettings.calledOnce)
     })
 
-    it('should call the addApiKey function', () => {
+    it('should call the postApiKey function', () => {
       const props = generateProps()
       const settings = mount(<Settings {...props} />)
       settings.getNode().handleApiKeyAdd()
       settings.find(Button).simulate('click')
 
-      assert(props.addApiKey.calledOnce)
+      assert(props.postApiKey.calledOnce)
       assert(props.deleteApiKey.notCalled)
     })
 
@@ -99,7 +99,7 @@ describe('Settings', () => {
       settings.getNode().handleApiKeyDelete(props.settings.apiKeys[0].id)
       settings.find(Button).simulate('click')
 
-      assert(props.addApiKey.notCalled)
+      assert(props.postApiKey.notCalled)
       assert(props.deleteApiKey.calledOnce)
     })
   })

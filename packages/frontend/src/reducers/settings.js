@@ -1,4 +1,4 @@
-import { LIST_SETTINGS, EDIT_SETTINGS } from 'actions/settings'
+import { LIST_SETTINGS, EDIT_SETTINGS, ADD_API_KEY, REMOVE_API_KEY } from 'actions/settings'
 
 function listSettingsHandler (state = { }, action) {
   return Object.assign({}, state, {
@@ -12,9 +12,29 @@ function editSettingsHandler (state = { }, action) {
   })
 }
 
+function addApiKeyHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    settings: {
+      ...state.settings,
+      apiKeys: [...state.settings.apiKeys, action.apiKey]
+    }
+  })
+}
+
+function removeApiKeyHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    settings: {
+      ...state.settings,
+      apiKeys: state.settings.apiKeys.filter(key => key.id !== action.keyID)
+    }
+  })
+}
+
 const ACTION_HANDLERS = {
   [LIST_SETTINGS]: listSettingsHandler,
-  [EDIT_SETTINGS]: editSettingsHandler
+  [EDIT_SETTINGS]: editSettingsHandler,
+  [ADD_API_KEY]: addApiKeyHandler,
+  [REMOVE_API_KEY]: removeApiKeyHandler
 }
 
 export default function settingsReducer (state = {
