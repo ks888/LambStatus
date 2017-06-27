@@ -32,12 +32,12 @@ describe('ApiKeysSelector', () => {
     assert(selector.find('input').at(0).prop('value').match(/SAVE/))
   })
 
-  it('should not show the key if the key will be deleted', () => {
+  it('should show the info message if the key will be deleted', () => {
     const props = generateProps()
     props.apiKeys = [{ id: '1', status: apiKeyStatuses.toBeDeleted }]
     const selector = shallow(<ApiKeysSelector {...props} />)
 
-    assert(selector.find('input').length === 0)
+    assert(selector.find('input').at(0).prop('value').match(/SAVE/))
   })
 
   it('should call onDelete if the delete icon is clicked', () => {
