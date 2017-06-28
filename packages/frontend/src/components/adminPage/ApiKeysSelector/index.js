@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
+import { getDateTimeFormat } from 'utils/datetime'
 import classes from './ApiKeysSelector.scss'
 
 export const apiKeyStatuses = {
@@ -15,6 +16,7 @@ export default class ApiKeysSelector extends React.Component {
     apiKeys: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.string.isRequired,
       value: PropTypes.string,
+      createdDate: PropTypes.string,
       status: PropTypes.number.isRequired
     })).isRequired
   }
@@ -28,7 +30,7 @@ export default class ApiKeysSelector extends React.Component {
   }
 
   renderApiKey = (apiKey) => {
-    let input
+    let input, createdAt
     switch (apiKey.status) {
       case apiKeyStatuses.toBeCreated:
         const msg = 'New key will be created when the SAVE button is pressed.'
@@ -38,7 +40,13 @@ export default class ApiKeysSelector extends React.Component {
         break
       case apiKeyStatuses.created:
         input = (
-          <input className='mdl-textfield__input' onClick={this.handleClickText} value={apiKey.value} readOnly />
+          <input className={classnames(classes['key-created'], 'mdl-textfield__input')}
+            onClick={this.handleClickText} value={apiKey.value} readOnly />
+        )
+        createdAt = (
+          <span className={classes['created-at']}>
+            Created at {getDateTimeFormat(apiKey.createdDate, 'MMM DD, YYYY - HH:mm')}
+          </span>
         )
         break
       case apiKeyStatuses.toBeDeleted:
@@ -55,6 +63,7 @@ export default class ApiKeysSelector extends React.Component {
     return (
       <div className={classes.item} key={apiKey.id}>
         {input}
+        {createdAt}
         <i className={classnames(classes['delete-icon'], 'material-icons')}
           onClick={this.handleClickDeleteIcon(apiKey.id)}>delete</i>
       </div>

@@ -21,6 +21,8 @@ describe('ApiKeysSelector', () => {
     assert(selector.find('label').text() === 'API Keys')
     assert(selector.find('input').at(0).prop('value') === props.apiKeys[0].value)
     assert(selector.find('input').at(1).prop('value') === props.apiKeys[1].value)
+    assert(selector.find('span').length === props.apiKeys.length)
+    assert(selector.find('span').at(0).text().match(/Created at/))
     assert(selector.find('i').length - 1 === props.apiKeys.length)
   })
 

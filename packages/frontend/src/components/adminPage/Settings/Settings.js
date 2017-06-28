@@ -14,7 +14,8 @@ export default class Settings extends React.Component {
       serviceName: PropTypes.string,
       apiKeys: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired
+        value: PropTypes.string.isRequired,
+        createdDate: PropTypes.string.isRequired
       }))
     }).isRequired,
     fetchSettings: PropTypes.func.isRequired,
@@ -108,7 +109,7 @@ export default class Settings extends React.Component {
 
   renderApiKeysSelector = () => {
     return (
-      <ul key='apiKeys' className={classnames(classes.item, 'mdl-cell', 'mdl-cell--7-col', 'mdl-list')}>
+      <ul key='apiKeys' className={classnames(classes.item, 'mdl-cell', 'mdl-cell--9-col', 'mdl-list')}>
         <ApiKeysSelector apiKeys={this.state.apiKeys} onAdd={this.handleApiKeyAdd} onDelete={this.handleApiKeyDelete} />
       </ul>
     )
@@ -118,7 +119,7 @@ export default class Settings extends React.Component {
     const { key, info } = setting
     const text = key.charAt(0).toUpperCase() + key.slice(1)
     return (
-      <ul key={key} className={classnames(classes.item, 'mdl-cell', 'mdl-cell--7-col', 'mdl-list')}>
+      <ul key={key} className={classnames(classes.item, 'mdl-cell', 'mdl-cell--9-col', 'mdl-list')}>
         <TextField label={text} text={this.state[key]} rows={1} onChange={this.handleChangeValue(key)}
           information={info} />
       </ul>
@@ -153,7 +154,7 @@ export default class Settings extends React.Component {
         </div>
         {errMsg}
         {settingItems}
-        <div className='mdl-cell mdl-cell--6-col mdl-cell--middle' />
+        <div className='mdl-cell mdl-cell--8-col mdl-cell--middle' />
         <div className='mdl-cell mdl-cell--1-col'>
           <Button onClick={this.handleClickSaveButton} name='Save'
             class='mdl-button--accent' disabled={this.state.isFetching} />
