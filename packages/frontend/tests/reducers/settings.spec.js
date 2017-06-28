@@ -1,7 +1,7 @@
 import { listSettings, editSettings, addApiKey, removeApiKey } from 'actions/settings'
 import settingsReducer from 'reducers/settings'
 
-describe('Reducer/Settings', () => {
+describe('Reducers/Settings', () => {
   const settings = {
     adminPageURL: 'admin',
     statusPageURL: 'status',

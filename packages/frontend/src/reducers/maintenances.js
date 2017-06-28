@@ -1,5 +1,5 @@
 import { LIST_MAINTENANCES, LIST_MAINTENANCE_UPDATES, ADD_MAINTENANCE, EDIT_MAINTENANCE,
-  REMOVE_MAINTENANCE } from 'actions/maintenances'
+         REMOVE_MAINTENANCE } from 'actions/maintenances'
 
 function listMaintenancesHandler (state = { }, action) {
   const maintenances = action.maintenances

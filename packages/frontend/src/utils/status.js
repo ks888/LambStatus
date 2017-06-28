@@ -67,7 +67,10 @@ export const getMaintenanceColor = (impact) => {
   }
 }
 
-export const timeframes = ['Day', 'Week', 'Month']
+export const timeframeDay = 'Day'
+export const timeframeWeek = 'Week'
+export const timeframeMonth = 'Month'
+export const timeframes = [timeframeDay, timeframeWeek, timeframeMonth]
 
 export const getXAxisFormat = (timeframe) => {
   switch (timeframe) {

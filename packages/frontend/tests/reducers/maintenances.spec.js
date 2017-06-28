@@ -1,65 +1,78 @@
 import { listMaintenances, listMaintenanceUpdates, addMaintenance, editMaintenance,
-  removeMaintenance } from 'actions/maintenances'
+         removeMaintenance } from 'actions/maintenances'
 import maintenancesReducer from 'reducers/maintenances'
 
-describe('(Reducer) maintenances', () => {
+describe('Reducers/maintenances', () => {
   const maintenance1 = {
     maintenanceID: '1',
     name: 'name1',
     status: 'status1',
-    updatedAt: ''
+    updatedAt: '1'
   }
   const maintenanceUpdate1 = {
     maintenanceUpdateID: '1',
     maintenanceStatus: 'status1',
     message: 'message1',
-    updatedAt: ''
+    updatedAt: '1'
   }
   const maintenance2 = {
     maintenanceID: '2',
     name: 'name2',
     status: 'status2',
-    updatedAt: ''
+    updatedAt: '2'
   }
 
   describe('listMaintenancesHandler', () => {
-    it('Should update the `maintenances` state.', () => {
+    it('should update the maintenances.', () => {
       const state = maintenancesReducer(undefined, listMaintenances([maintenance1]))
       assert.deepEqual([maintenance1], state.maintenances)
+    })
+
+    it('should sort the maintenances.', () => {
+      const state = maintenancesReducer(undefined, listMaintenances([maintenance1, maintenance2]))
+      assert.deepEqual([maintenance2, maintenance1], state.maintenances)
     })
   })
 
   describe('listMaintenanceUpdatesHandler', () => {
-    it('Should update the `maintenances` state.', () => {
+    it('should update the maintenance updates.', () => {
       const state = maintenancesReducer({maintenances: [maintenance1]},
-        listMaintenanceUpdates([maintenanceUpdate1], '1'))
-      assert.deepEqual([Object.assign({}, maintenance1, {
-        maintenanceUpdates: [maintenanceUpdate1]
-      })], state.maintenances)
+                                     listMaintenanceUpdates([maintenanceUpdate1], maintenance1.maintenanceID))
+      assert(state.maintenances.length === 1)
+      assert(state.maintenances[0].maintenanceUpdates.length === 1)
+      assert.deepEqual(state.maintenances[0].maintenanceUpdates[0], maintenanceUpdate1)
+    })
+
+    it('should sort the maintenance updates.', () => {
+      const updates = [maintenanceUpdate1, {...maintenanceUpdate1, maintenanceUpdateID: '2', updatedAt: '2'}]
+      const state = maintenancesReducer({maintenances: [maintenance1]},
+                                     listMaintenanceUpdates(updates, maintenance1.maintenanceID))
+      assert(state.maintenances.length === 1)
+      assert(state.maintenances[0].maintenanceUpdates.length === 2)
+      assert(state.maintenances[0].maintenanceUpdates[0].maintenanceUpdateID === '2')
     })
   })
 
   describe('addMaintenanceHandler', () => {
-    it('Should update the `maintenances` state.', () => {
+    it('should add the new maintenance.', () => {
       const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance({maintenance: maintenance2}))
       assert.deepEqual([maintenance2, maintenance1], state.maintenances)
     })
   })
 
   describe('editMaintenanceHandler', () => {
-    it('Should update the `maintenances` state.', () => {
-      const newMaintenance1 = Object.assign({}, maintenance1, {
-        name: 'newname'
-      })
-      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance({maintenance: newMaintenance1}))
-      assert.deepEqual([newMaintenance1], state.maintenances)
+    it('should update the `maintenances` state.', () => {
+      const newName = 'newName'
+      const newMaintenance = { ...maintenance1, name: newName }
+      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance({maintenance: newMaintenance}))
+      assert.deepEqual([newMaintenance], state.maintenances)
     })
   })
 
   describe('removeMaintenanceHandler', () => {
-    it('Should delete the `maintenances` state.', () => {
+    it('should delete the `maintenances` state.', () => {
       const state = maintenancesReducer({maintenances: [maintenance1]}, removeMaintenance('1'))
-      assert.deepEqual([], state.maintenances)
+      assert(state.maintenances.length === 0)
     })
   })
 })
