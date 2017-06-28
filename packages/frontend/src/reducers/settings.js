@@ -1,12 +1,16 @@
 import { LIST_SETTINGS, EDIT_SETTINGS, ADD_API_KEY, REMOVE_API_KEY } from 'actions/settings'
 
 function listSettingsHandler (state = { }, action) {
+  action.settings.apiKeys.sort((a, b) => a.createdDate > b.createdDate)
+
   return Object.assign({}, state, {
     settings: action.settings
   })
 }
 
 function editSettingsHandler (state = { }, action) {
+  action.settings.apiKeys.sort((a, b) => a.createdDate > b.createdDate)
+
   return Object.assign({}, state, {
     settings: action.settings
   })

@@ -14,6 +14,16 @@ describe('Reducers/Settings', () => {
       const state = settingsReducer(undefined, listSettings(settings))
       assert.deepEqual(settings, state.settings)
     })
+
+    it('should sort the api keys.', () => {
+      const settingsWithCreatedDate = {
+        ...settings,
+        apiKeys: [{...settings.apiKeys[0], createdDate: '2'}, {...settings.apiKeys[1], createdDate: '1'}]
+      }
+      const state = settingsReducer(undefined, listSettings(settingsWithCreatedDate))
+      assert(settings.apiKeys.length === state.settings.apiKeys.length)
+      assert(state.settings.apiKeys[0].id === '2')
+    })
   })
 
   context('editSettingsHandler', () => {
@@ -25,6 +35,16 @@ describe('Reducers/Settings', () => {
         settings: [settings]
       }, editSettings(newSettings))
       assert.deepEqual(newSettings, state.settings)
+    })
+
+    it('should sort the api keys.', () => {
+      const settingsWithCreatedDate = {
+        ...settings,
+        apiKeys: [{...settings.apiKeys[0], createdDate: '2'}, {...settings.apiKeys[1], createdDate: '1'}]
+      }
+      const state = settingsReducer(undefined, editSettings(settingsWithCreatedDate))
+      assert(settings.apiKeys.length === state.settings.apiKeys.length)
+      assert(state.settings.apiKeys[0].id === '2')
     })
   })
 
