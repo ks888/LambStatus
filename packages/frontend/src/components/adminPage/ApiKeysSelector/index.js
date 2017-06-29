@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './ApiKeysSelector.scss'
 
 export const apiKeyStatuses = {
@@ -45,7 +45,7 @@ export default class ApiKeysSelector extends React.Component {
         )
         createdAt = (
           <span className={classes['created-at']}>
-            Created at {getDateTimeFormat(apiKey.createdDate, 'MMM DD, YYYY - HH:mm')}
+            Created at {getFormattedDateTime(apiKey.createdDate, 'MMM DD, YYYY - HH:mm')}
           </span>
         )
         break

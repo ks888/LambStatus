@@ -5,7 +5,7 @@ import Title from 'components/statusPage/Title'
 import SubscribeButton from 'components/statusPage/SubscribeButton'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import MaintenanceItem from 'components/statusPage/MaintenanceItem'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './History.scss'
 
 export default class History extends React.Component {
@@ -74,7 +74,7 @@ export default class History extends React.Component {
   renderEventsByMonth = (events) => {
     let months = {}
     events.forEach(event => {
-      const updatedAt = getDateTimeFormat(event.updatedAt, 'MMMM YYYY')
+      const updatedAt = getFormattedDateTime(event.updatedAt, 'MMMM YYYY')
       if (!months.hasOwnProperty(updatedAt)) {
         months[updatedAt] = [event]
       } else {

@@ -1,7 +1,45 @@
-import { getXAxisFormat, getTooltipTitleFormat, getIncrementTimestampFunc,
-         timeframeDay, timeframeWeek } from 'utils/status'
+import { componentStatuses, getComponentColor, incidentStatuses, getIncidentColor, metricStatuses,
+         getMetricColor, maintenanceStatuses, getMaintenanceColor, getXAxisFormat, getTooltipTitleFormat,
+         getIncrementTimestampFunc, timeframeDay, timeframeWeek } from 'utils/status'
 
 describe('utils/status', () => {
+  describe('getComponentColor', () => {
+    const unknownColor = '#9e9e9e'
+    it('should return a color other than the unknown color.', () => {
+      componentStatuses.forEach(status => {
+        assert(getComponentColor(status) !== unknownColor)
+      })
+    })
+  })
+
+  describe('getIncidentColor', () => {
+    const unknownColor = '#9e9e9e'
+    it('should return a color other than the unknown color.', () => {
+      incidentStatuses.forEach(status => {
+        assert(getIncidentColor(status) !== unknownColor)
+      })
+    })
+  })
+
+  describe('getMetricColor', () => {
+    const unknownColor = '#9e9e9e'
+    it('should return a metric color other than the unknown color.', () => {
+      metricStatuses.forEach((status, i) => {
+        if (i === 0) return  // intentionally same as unknown color
+        assert(getMetricColor(status) !== unknownColor)
+      })
+    })
+  })
+
+  describe('getMaintenanceColor', () => {
+    const unknownColor = '#9e9e9e'
+    it('should return a color other than the unknown color.', () => {
+      maintenanceStatuses.forEach(status => {
+        assert(getMaintenanceColor(status) !== unknownColor)
+      })
+    })
+  })
+
   describe('getXAxisFormat', () => {
     context('if timeframe is Day', () => {
       let formatFunc, currDate

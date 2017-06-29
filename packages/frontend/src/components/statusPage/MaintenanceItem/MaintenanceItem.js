@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import AutolinkedText from 'components/common/AutolinkedText'
 import Button from 'components/common/Button'
 import { getMaintenanceColor } from 'utils/status'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './MaintenanceItem.scss'
 
 export default class MaintenanceItem extends React.Component {
@@ -47,7 +47,7 @@ export default class MaintenanceItem extends React.Component {
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {getDateTimeFormat(maintUpdate.updatedAt)}
+          {getFormattedDateTime(maintUpdate.updatedAt)}
         </div>
       </div>
     )
@@ -68,8 +68,8 @@ export default class MaintenanceItem extends React.Component {
         </span>
       )
     }
-    const startAt = getDateTimeFormat(maintenance.startAt, 'MMM DD, HH:mm ')
-    const endAt = getDateTimeFormat(maintenance.endAt, 'MMM DD, HH:mm (z)')
+    const startAt = getFormattedDateTime(maintenance.startAt, 'MMM DD, HH:mm ')
+    const endAt = getFormattedDateTime(maintenance.endAt, 'MMM DD, HH:mm (z)')
 
     return (
       <li className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.item)}>

@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import MaintenanceItem from 'components/statusPage/MaintenanceItem'
 import { maintenanceStatuses } from 'utils/status'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './Incidents.scss'
 
 export default class Incidents extends React.Component {
@@ -72,13 +72,13 @@ export default class Incidents extends React.Component {
     }
 
     incidents.forEach(incident => {
-      const updatedAt = getDateTimeFormat(incident.updatedAt, this.dateFormat)
+      const updatedAt = getFormattedDateTime(incident.updatedAt, this.dateFormat)
       if (dates.hasOwnProperty(updatedAt)) dates[updatedAt].push(incident)
     })
 
     const lastStatus = maintenanceStatuses[maintenanceStatuses.length - 1]
     maintenances.forEach(maintenance => {
-      const updatedAt = getDateTimeFormat(maintenance.updatedAt, this.dateFormat)
+      const updatedAt = getFormattedDateTime(maintenance.updatedAt, this.dateFormat)
       if (dates.hasOwnProperty(updatedAt) && maintenance.status === lastStatus) {
         dates[updatedAt].push(maintenance)
       }

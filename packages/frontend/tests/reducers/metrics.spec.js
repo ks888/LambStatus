@@ -82,14 +82,19 @@ describe('Reducers/metrics', () => {
 
   describe('listMetricsDataHandler', () => {
     it('should update the metrics.', () => {
-      const state = metricsReducer(undefined, listMetrics(metrics))
-      assert.deepEqual(metrics, state.metrics)
+      const state = metricsReducer({metrics}, listMetricsData(metrics[0].metricID, 0, 0, 0, metricsData))
+      assert(state.metrics.length === metrics.length)
+      assert(state.metrics[0].data['0-0-0'] === metricsData)
     })
 
     it('should not remove existing data.', () => {
-      const metricsWithData = [{...metrics[0], data: metricsData}]
-      const state = metricsReducer({metrics: metricsWithData}, listMetrics(metrics))
-      assert.deepEqual(state.metrics[0].data, metricsData)
+      const metricID = '1'
+      const metrics = [{metricID, data: {0: metricsData}}]
+      const state = metricsReducer({metrics}, listMetricsData(metricID, 0, 0, 0, metricsData))
+
+      assert(state.metrics.length === metrics.length)
+      assert(state.metrics[0].data['0'] === metricsData)
+      assert(state.metrics[0].data['0-0-0'] === metricsData)
     })
   })
 })
