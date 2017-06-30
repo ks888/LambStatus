@@ -1,14 +1,16 @@
 import SettingsStore from 'db/settings'
+import APIGateway from 'aws/apiGateway'
 import Cognito from 'aws/cognito'
 import SNS from 'aws/sns'
 import { ValidationError, NotFoundError } from 'utils/errors'
+import { stackName } from 'utils/const'
 
 const settingsKeyServiceName = 'ServiceName'
 const settingsKeyStatusPageURL = 'StatusPageURL'
 const settingsKeyAdminPageURL = 'AdminPageURL'
 const settingsKeyCognitoPoolID = 'CognitoPoolID'
 
-// InvocationURL, UserPoolID, ClientID are bootstrap set. Do not store here.
+// InvocationURL, UserPoolID, and ClientID are parts of S3 object (settings.json). Do not store them here.
 
 export class Settings {
   constructor () {
@@ -102,6 +104,72 @@ export class Settings {
       await new Cognito().updateUserPool(cognitoPoolID, serviceName, adminPageURL, snsCallerArn)
     } else {
       console.warn('CognitoPoolID not found')
+    }
+  }
+
+  async allApiKeys () {
+    const keys = []
+    try {
+      const rawKeys = await new APIGateway().getApiKeys(stackName)
+      rawKeys.forEach(key => {
+        if (!key.enabled) return
+        keys.push(new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate))
+      })
+      return keys
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async lookupApiKey (id) {
+    try {
+      const key = await new APIGateway().getApiKey(id)
+      return new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate)
+    } catch (err) {
+      switch (err.name) {
+        case 'NotFoundException':
+          throw new NotFoundError(err.message)
+        default:
+          throw err
+      }
+    }
+  }
+
+  async createApiKey () {
+    const newKey = await new APIGateway().createApiKey(stackName)
+    return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
+  }
+}
+
+export class ApiKey {
+  constructor (id, value, createdDate, lastUpdatedDate) {
+    this.id = id
+    this.value = value
+    this.createdDate = createdDate
+    this.lastUpdatedDate = lastUpdatedDate
+  }
+
+  // no needs to validate this so far.
+
+  objectify () {
+    return {
+      id: this.id,
+      value: this.value,
+      createdDate: this.createdDate,
+      lastUpdatedDate: this.lastUpdatedDate
+    }
+  }
+
+  async delete () {
+    try {
+      await new APIGateway().deleteApiKey(this.id)
+    } catch (err) {
+      switch (err.name) {
+        case 'NotFoundException':
+          throw new NotFoundError(err.message)
+        default:
+          throw err
+      }
     }
   }
 }

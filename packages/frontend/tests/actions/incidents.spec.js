@@ -12,15 +12,9 @@ import {
   deleteIncident
 } from 'actions/incidents'
 
-describe('(Action) incidents', () => {
-  const incident1 = {
-    incidentID: 'id'
-  }
-
-  const incidentUpdate1 = {
-    incidentUpdateID: 'id'
-  }
-
+describe('Actions/Incidents', () => {
+  const incident = { incidentID: '1' }
+  const incidentUpdate = { incidentUpdateID: '1' }
   let dispatchSpy, callbacks
 
   beforeEach(() => {
@@ -37,12 +31,12 @@ describe('(Action) incidents', () => {
   })
 
   describe('fetchIncidents', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchIncidents() === 'function')
     })
 
-    it('Should fetch incidents.', () => {
-      fetchMock.get(/.*\/incidents/, { body: [incident1], headers: {'Content-Type': 'application/json'} })
+    it('should fetch incidents.', () => {
+      fetchMock.get(/.*\/incidents/, { body: [incident], headers: {'Content-Type': 'application/json'} })
 
       return fetchIncidents(callbacks)(dispatchSpy)
         .then(() => {
@@ -51,11 +45,11 @@ describe('(Action) incidents', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENTS)
-          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].incidents)
+          assert.deepEqual([incident], dispatchSpy.firstCall.args[0].incidents)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.get(/.*\/incidents/, { status: 400, body: {} })
 
       return fetchIncidents(callbacks)(dispatchSpy)
@@ -70,13 +64,13 @@ describe('(Action) incidents', () => {
   })
 
   describe('fetchIncidentUpdates', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchIncidentUpdates() === 'function')
     })
 
-    it('Should fetch incidents.', () => {
+    it('should fetch incidents.', () => {
       fetchMock.get(/.*\/incidents\/.*\/incidentupdates/,
-                    { body: [incidentUpdate1], headers: {'Content-Type': 'application/json'} })
+                    { body: [incidentUpdate], headers: {'Content-Type': 'application/json'} })
 
       return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
         .then(() => {
@@ -85,12 +79,12 @@ describe('(Action) incidents', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENT_UPDATES)
-          assert.deepEqual([incidentUpdate1], dispatchSpy.firstCall.args[0].incidentUpdates)
+          assert.deepEqual([incidentUpdate], dispatchSpy.firstCall.args[0].incidentUpdates)
           assert(dispatchSpy.firstCall.args[0].incidentID === 'id')
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.get(/.*\/incidents\/.*\/incidentupdates/, { status: 400, body: {} })
 
       return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
@@ -105,12 +99,12 @@ describe('(Action) incidents', () => {
   })
 
   describe('postIncident', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof postIncident() === 'function')
     })
 
-    it('Should post a new incident.', () => {
-      fetchMock.post(/.*\/incidents/, { body: [incident1], headers: {'Content-Type': 'application/json'} })
+    it('should post a new incident.', () => {
+      fetchMock.post(/.*\/incidents/, { body: [incident], headers: {'Content-Type': 'application/json'} })
 
       return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
@@ -119,11 +113,11 @@ describe('(Action) incidents', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === ADD_INCIDENT)
-          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].response)
+          assert.deepEqual([incident], dispatchSpy.firstCall.args[0].response)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.post(/.*\/incidents/, { status: 400, body: {} })
 
       return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -138,13 +132,13 @@ describe('(Action) incidents', () => {
   })
 
   describe('updateIncident', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof updateIncident() === 'function')
     })
 
-    it('Should post a new incident.', () => {
+    it('should post a new incident.', () => {
       fetchMock.patch(/.*\/incidents\/.*/,
-                      { body: [incident1], headers: {'Content-Type': 'application/json'} })
+                      { body: [incident], headers: {'Content-Type': 'application/json'} })
 
       return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
         .then(() => {
@@ -153,11 +147,11 @@ describe('(Action) incidents', () => {
           assert(!callbacks.onFailure.called)
 
           assert(dispatchSpy.firstCall.args[0].type === EDIT_INCIDENT)
-          assert.deepEqual([incident1], dispatchSpy.firstCall.args[0].response)
+          assert.deepEqual([incident], dispatchSpy.firstCall.args[0].response)
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.patch(/.*\/incidents\/.*/, { status: 400, body: {} })
 
       return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -172,11 +166,11 @@ describe('(Action) incidents', () => {
   })
 
   describe('deleteIncident', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof deleteIncident() === 'function')
     })
 
-    it('Should post a new incident.', () => {
+    it('should post a new incident.', () => {
       fetchMock.delete(/.*\/incidents\/.*/, 204)
 
       return deleteIncident('id', callbacks)(dispatchSpy)
@@ -190,7 +184,7 @@ describe('(Action) incidents', () => {
         })
     })
 
-    it('Should handle error properly.', () => {
+    it('should handle error properly.', () => {
       fetchMock.delete(/.*\/incidents\/.*/, { status: 400, body: {} })
 
       return deleteIncident('id', callbacks)(dispatchSpy)

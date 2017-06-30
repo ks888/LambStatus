@@ -9,6 +9,7 @@ import * as settings from 'utils/settings'
 global.sinon = sinon
 global.assert = assert
 global.componentHandler = { upgradeElement: () => {} }
+global.dialogPolyfill = { forceRegisterDialog: () => {} }
 global.buildEmptyStore = (state) => {
   return {
     default: () => {},

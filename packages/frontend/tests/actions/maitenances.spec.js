@@ -12,15 +12,9 @@ import {
   deleteMaintenance
 } from 'actions/maintenances'
 
-describe('(Action) maintenances', () => {
-  const maintenance1 = {
-    maintenanceID: 'id'
-  }
-
-  const maintenanceUpdate1 = {
-    maintenanceUpdateID: 'id'
-  }
-
+describe('Actions/Maintenances', () => {
+  const maintenance = { maintenanceID: '1' }
+  const maintenanceUpdate = { maintenanceUpdateID: '1' }
   let dispatchSpy, callbacks
 
   beforeEach(() => {
@@ -37,12 +31,12 @@ describe('(Action) maintenances', () => {
   })
 
   describe('fetchMaintenances', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchMaintenances() === 'function')
     })
 
-    it('Should fetch maintenances.', async () => {
-      fetchMock.get(/.*\/maintenances/, { body: [maintenance1], headers: {'Content-Type': 'application/json'} })
+    it('should fetch maintenances.', async () => {
+      fetchMock.get(/.*\/maintenances/, { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
       await fetchMaintenances(callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
@@ -50,10 +44,10 @@ describe('(Action) maintenances', () => {
       assert(!callbacks.onFailure.called)
 
       assert(dispatchSpy.firstCall.args[0].type === LIST_MAINTENANCES)
-      assert.deepEqual([maintenance1], dispatchSpy.firstCall.args[0].maintenances)
+      assert.deepEqual([maintenance], dispatchSpy.firstCall.args[0].maintenances)
     })
 
-    it('Should handle error properly.', async () => {
+    it('should handle error properly.', async () => {
       fetchMock.get(/.*\/maintenances/, { status: 400, body: {} })
 
       await fetchMaintenances(callbacks)(dispatchSpy)
@@ -66,13 +60,13 @@ describe('(Action) maintenances', () => {
   })
 
   describe('fetchMaintenanceUpdates', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof fetchMaintenanceUpdates() === 'function')
     })
 
-    it('Should fetch maintenances.', async () => {
+    it('should fetch maintenances.', async () => {
       fetchMock.get(/.*\/maintenances\/.*\/maintenanceupdates/,
-                    { body: [maintenanceUpdate1], headers: {'Content-Type': 'application/json'} })
+                    { body: [maintenanceUpdate], headers: {'Content-Type': 'application/json'} })
 
       await fetchMaintenanceUpdates('id', callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
@@ -80,11 +74,11 @@ describe('(Action) maintenances', () => {
       assert(!callbacks.onFailure.called)
 
       assert(dispatchSpy.firstCall.args[0].type === LIST_MAINTENANCE_UPDATES)
-      assert.deepEqual([maintenanceUpdate1], dispatchSpy.firstCall.args[0].maintenanceUpdates)
+      assert.deepEqual([maintenanceUpdate], dispatchSpy.firstCall.args[0].maintenanceUpdates)
       assert(dispatchSpy.firstCall.args[0].maintenanceID === 'id')
     })
 
-    it('Should handle error properly.', async () => {
+    it('should handle error properly.', async () => {
       fetchMock.get(/.*\/maintenances\/.*\/maintenanceupdates/, { status: 400, body: {} })
 
       await fetchMaintenanceUpdates('id', callbacks)(dispatchSpy)
@@ -97,12 +91,12 @@ describe('(Action) maintenances', () => {
   })
 
   describe('postMaintenance', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof postMaintenance() === 'function')
     })
 
-    it('Should post a new maintenance.', async () => {
-      fetchMock.post(/.*\/maintenances/, { body: [maintenance1], headers: {'Content-Type': 'application/json'} })
+    it('should post a new maintenance.', async () => {
+      fetchMock.post(/.*\/maintenances/, { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
       await postMaintenance(undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
@@ -110,10 +104,10 @@ describe('(Action) maintenances', () => {
       assert(!callbacks.onFailure.called)
 
       assert(dispatchSpy.firstCall.args[0].type === ADD_MAINTENANCE)
-      assert.deepEqual([maintenance1], dispatchSpy.firstCall.args[0].response)
+      assert.deepEqual([maintenance], dispatchSpy.firstCall.args[0].response)
     })
 
-    it('Should handle error properly.', async () => {
+    it('should handle error properly.', async () => {
       fetchMock.post(/.*\/maintenances/, { status: 400, body: {} })
 
       await postMaintenance(undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -126,13 +120,13 @@ describe('(Action) maintenances', () => {
   })
 
   describe('updateMaintenance', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof updateMaintenance() === 'function')
     })
 
-    it('Should post a new maintenance.', async () => {
+    it('should post a new maintenance.', async () => {
       fetchMock.patch(/.*\/maintenances\/.*/,
-                      { body: [maintenance1], headers: {'Content-Type': 'application/json'} })
+                      { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
       await updateMaintenance('id', undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
@@ -140,10 +134,10 @@ describe('(Action) maintenances', () => {
       assert(!callbacks.onFailure.called)
 
       assert(dispatchSpy.firstCall.args[0].type === EDIT_MAINTENANCE)
-      assert.deepEqual([maintenance1], dispatchSpy.firstCall.args[0].response)
+      assert.deepEqual([maintenance], dispatchSpy.firstCall.args[0].response)
     })
 
-    it('Should handle error properly.', async () => {
+    it('should handle error properly.', async () => {
       fetchMock.patch(/.*\/maintenances\/.*/, { status: 400, body: {} })
 
       await updateMaintenance('id', undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
@@ -156,11 +150,11 @@ describe('(Action) maintenances', () => {
   })
 
   describe('deleteMaintenance', () => {
-    it('Should return a function.', () => {
+    it('should return a function.', () => {
       assert(typeof deleteMaintenance() === 'function')
     })
 
-    it('Should post a new maintenance.', async () => {
+    it('should post a new maintenance.', async () => {
       fetchMock.delete(/.*\/maintenances\/.*/, 204)
 
       await deleteMaintenance('id', callbacks)(dispatchSpy)
@@ -172,7 +166,7 @@ describe('(Action) maintenances', () => {
       assert.deepEqual('id', dispatchSpy.firstCall.args[0].maintenanceID)
     })
 
-    it('Should handle error properly.', async () => {
+    it('should handle error properly.', async () => {
       fetchMock.delete(/.*\/maintenances\/.*/, { status: 400, body: {} })
 
       await deleteMaintenance('id', callbacks)(dispatchSpy)

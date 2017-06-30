@@ -1,56 +1,56 @@
-import { listComponents, addComponent, editComponent, removeComponent } from 'actions/components'
+import { listComponents, addComponent, editComponent,
+  removeComponent } from 'actions/components'
 import componentsReducer from 'reducers/components'
 
-describe('(Reducer) components', () => {
-  const comp1 = {
-    componentID: 'compID1',
-    name: 'name1',
-    description: 'desc1',
-    status: 'status1',
-    order: 0
-  }
-  const comp2 = {
-    componentID: 'compID2',
-    name: 'name2',
-    description: 'desc2',
-    status: 'status2',
+describe('Reducers/components', () => {
+  const comp = {
+    componentID: '1',
+    name: 'name',
+    description: 'desc',
+    status: 'status',
     order: 0
   }
 
   describe('listComponentsHandler', () => {
-    it('Should update the `components` state.', () => {
-      const state = componentsReducer(undefined, listComponents([comp1]))
-      assert.deepEqual([comp1], state.components)
+    it('should update the `components` state.', () => {
+      const state = componentsReducer(undefined, listComponents([comp]))
+      assert.deepEqual([comp], state.components)
     })
   })
 
   describe('addComponentHandler', () => {
-    it('Should update the `components` state.', () => {
-      const state = componentsReducer({
-        components: [comp1]
-      }, addComponent(comp2))
-      assert.deepEqual([comp1, comp2], state.components)
+    it('should add the new component to the store.', () => {
+      const state = componentsReducer({components: [comp]},
+                                      addComponent({...comp, componentID: '2'}))
+
+      assert(state.components.length === 2)
+      assert(state.components[0].componentID === '1')
+      assert(state.components[1].componentID === '2')
     })
   })
 
   describe('editComponentHandler', () => {
-    it('Should update the `components` state.', () => {
-      const newComp1 = Object.assign({}, comp1, {
-        name: 'newname'
-      })
-      const state = componentsReducer({
-        components: [comp1]
-      }, editComponent(newComp1))
-      assert.deepEqual([newComp1], state.components)
+    it('should update the existing component.', () => {
+      const newName = 'newname'
+      const state = componentsReducer({components: [comp]}, editComponent({...comp, name: newName}))
+
+      assert(state.components.length === 1)
+      assert(state.components[0].name === newName)
+    })
+
+    it('should sort the components using latest orders.', () => {
+      const comps = [comp, {...comp, componentID: '2'}]
+      const state = componentsReducer({components: comps}, editComponent({...comp, order: 1}))
+
+      assert(state.components.length === 2)
+      assert(state.components[0].componentID === '2')
     })
   })
 
   describe('removeComponentHandler', () => {
-    it('Should update the `components` state.', () => {
-      const state = componentsReducer({
-        components: [comp1]
-      }, removeComponent(comp1.componentID))
-      assert.deepEqual([], state.components)
+    it('should delete the component.', () => {
+      const state = componentsReducer({components: [comp]}, removeComponent('1'))
+      assert(state.components.length === 0)
     })
   })
 })

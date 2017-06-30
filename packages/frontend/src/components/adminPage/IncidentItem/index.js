@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
 import Tooltip from 'components/common/Tooltip'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
 export default class IncidentItem extends React.Component {
@@ -37,7 +37,7 @@ export default class IncidentItem extends React.Component {
           <Tooltip />
           <span>{incident.name}</span>
           <span className='mdl-list__item-sub-title'>
-            updated at {getDateTimeFormat(incident.updatedAt)}
+            updated at {getFormattedDateTime(incident.updatedAt)}
           </span>
         </span>
         <span className='mdl-list__item-secondary-content'>

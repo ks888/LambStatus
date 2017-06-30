@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import Button from 'components/common/Button'
 import AutolinkedText from 'components/common/AutolinkedText'
 import { getIncidentColor } from 'utils/status'
-import { getDateTimeFormat } from 'utils/datetime'
+import { getFormattedDateTime } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
 export default class IncidentItem extends React.Component {
@@ -44,7 +44,7 @@ export default class IncidentItem extends React.Component {
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {getDateTimeFormat(incidentUpdate.updatedAt)}
+          {getFormattedDateTime(incidentUpdate.updatedAt)}
         </div>
       </div>
     )
@@ -61,7 +61,7 @@ export default class IncidentItem extends React.Component {
     } else {
       updatedAt = (
         <span className='mdl-list__item-sub-title'>
-          {getDateTimeFormat(incident.updatedAt)}
+          {getFormattedDateTime(incident.updatedAt)}
         </span>
       )
       detailButton = (
