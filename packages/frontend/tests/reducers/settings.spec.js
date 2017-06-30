@@ -27,24 +27,17 @@ describe('Reducers/Settings', () => {
   })
 
   context('editSettingsHandler', () => {
-    it('should update the settings state.', () => {
-      const newSettings = Object.assign({}, settings, {
-        adminPageURL: 'newAdmin'
-      })
-      const state = settingsReducer({
-        settings: [settings]
-      }, editSettings(newSettings))
-      assert.deepEqual(newSettings, state.settings)
-    })
-
-    it('should sort the api keys.', () => {
-      const settingsWithCreatedDate = {
-        ...settings,
-        apiKeys: [{...settings.apiKeys[0], createdDate: '2'}, {...settings.apiKeys[1], createdDate: '1'}]
+    it('should update the settings state except api keys.', () => {
+      const newSettings = {
+        adminPageURL: 'newAdmin',
+        statusPageURL: 'newStatus',
+        serviceName: 'newService'
       }
-      const state = settingsReducer(undefined, editSettings(settingsWithCreatedDate))
-      assert(settings.apiKeys.length === state.settings.apiKeys.length)
-      assert(state.settings.apiKeys[0].id === '2')
+      const state = settingsReducer({settings}, editSettings(newSettings))
+      assert(state.settings.adminPageURL === newSettings.adminPageURL)
+      assert(state.settings.statusPageURL === newSettings.statusPageURL)
+      assert(state.settings.serviceName === newSettings.serviceName)
+      assert.deepEqual(state.settings.apiKeys, settings.apiKeys)
     })
   })
 

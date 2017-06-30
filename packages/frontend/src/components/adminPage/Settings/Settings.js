@@ -89,8 +89,6 @@ export default class Settings extends React.Component {
   }
 
   handleClickSaveButton = () => {
-    this.props.updateSettings(this.state.serviceName, this.state.adminPageURL, this.state.statusPageURL,
-                              this.callbacks)
     this.state.apiKeys.forEach(key => {
       switch (key.status) {
         case apiKeyStatuses.toBeCreated:
@@ -105,6 +103,8 @@ export default class Settings extends React.Component {
           throw new Error('unknown status', key.status)
       }
     })
+    this.props.updateSettings(this.state.serviceName, this.state.adminPageURL, this.state.statusPageURL,
+                              this.callbacks)
   }
 
   renderApiKeysSelector = () => {
