@@ -1,9 +1,11 @@
 import CloudWatch from 'aws/cloudWatch'
+import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import generateID from 'utils/generateID'
 import { NotFoundError, ValidationError } from 'utils/errors'
-import { metricStatuses, metricStatusVisible, monitoringServices, region } from 'utils/const'
+import { metricStatuses, metricStatusVisible, monitoringServices, region, stackName } from 'utils/const'
+import { getDateObject } from 'utils/datetime'
 
 export class Metric {
   constructor (metricID, type, title, unit, description, status, order, props) {
@@ -76,6 +78,93 @@ export class Metric {
   async delete () {
     const store = new MetricsStore()
     await store.delete(this.metricID)
+  }
+
+  async getBucketName () {
+    if (this.bucketName !== undefined) {
+      return this.bucketName
+    }
+    this.bucketName = await new CloudFormation(stackName).getStatusPageBucketName()
+    return this.bucketName
+  }
+
+  buildObjectName (metricID, date) {
+    return `metrics/${metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
+  }
+
+  async getDatapoints (date) {
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    try {
+      const s3 = new S3()
+      const obj = await s3.getObject(region, bucketName, objectName)
+      return JSON.parse(obj.Body.toString())
+    } catch (error) {
+      // There will be no existing object at first.
+      return null
+    }
+  }
+
+  normalizeDatapoints (datapoints) {
+    datapoints.forEach(datapoint => {
+      datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
+    })
+    datapoints.sort((a, b) => a.timestamp > b.timestamp)
+  }
+
+  async insertNormalizedDatapointsAtDate (datapoints, date) {
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    let existingDatapoints = await this.getDatapoints(date)
+    if (existingDatapoints === null) {
+      existingDatapoints = []
+    }
+
+    let mergedDatapoints = []
+    let i = 0
+    let j = 0
+    while (i < existingDatapoints.length && j < datapoints.length) {
+      const existingPoint = existingDatapoints[i]
+      const newPoint = datapoints[j]
+      if (existingPoint.timestamp < newPoint.timestamp) {
+        mergedDatapoints.push(existingPoint)
+        i++
+      } else if (existingPoint.timestamp === newPoint.timestamp) {
+        mergedDatapoints.push(newPoint)
+        i++
+        j++
+      } else {
+        mergedDatapoints.push(newPoint)
+        j++
+      }
+    }
+
+    if (i < existingDatapoints.length) {
+      mergedDatapoints = mergedDatapoints.concat(existingDatapoints.slice(i))
+    } else if (j < datapoints.length) {
+      mergedDatapoints = mergedDatapoints.concat(datapoints.slice(j))
+    }
+
+    const s3 = new S3()
+    await s3.putObject(region, bucketName, objectName, mergedDatapoints)
+  }
+
+  async insertDatapoints (datapoints) {
+    this.normalizeDatapoints(datapoints)
+
+    const dates = {}
+    datapoints.forEach(datapoint => {
+      const date = datapoint.timestamp.substr(0, 10)
+      if (date in dates) {
+        dates[date].push(datapoint)
+      } else {
+        dates[date] = [datapoint]
+      }
+    })
+    await Promise.all(Object.keys(dates).map(async date => {
+      const data = dates[date]
+      await this.insertNormalizedDatapointsAtDate(data, getDateObject(data[0].timestamp))
+    }))
   }
 
   objectify () {

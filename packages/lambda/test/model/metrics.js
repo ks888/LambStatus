@@ -1,6 +1,8 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import CloudWatch from 'aws/cloudWatch'
+import CloudFormation from 'aws/cloudFormation'
+import S3 from 'aws/s3'
 import { Metrics, Metric } from 'model/metrics'
 import MetricsStore from 'db/metrics'
 import { monitoringServices, metricStatusVisible, metricStatusHidden } from 'utils/const'
@@ -123,6 +125,9 @@ describe('Metrics', () => {
 })
 
 describe('Metric', () => {
+  const genMock = () => new Metric(undefined, monitoringServices[0], 'title', 'unit', 'description',
+                                   metricStatusVisible, 1, {})
+
   describe('constructor', () => {
     it('should construct a new instance', () => {
       const comp = new Metric('1', 'type', 'title', 'unit', 'description', 'status', 1, {})
@@ -144,8 +149,6 @@ describe('Metric', () => {
   })
 
   describe('validate', () => {
-    const genMock = () => new Metric(undefined, monitoringServices[0], 'title', 'unit', 'description',
-                                     metricStatusVisible, 1, {})
     it('should return no error when input is valid', async () => {
       const comp = genMock()
       let error
@@ -301,6 +304,185 @@ describe('Metric', () => {
         error = e
       }
       assert(error.name === 'ValidationError')
+    })
+  })
+
+  describe('getBucketName', () => {
+    afterEach(() => {
+      CloudFormation.prototype.getStatusPageBucketName.restore()
+    })
+
+    it('should return the bucket name and save it', async () => {
+      const expected = 'bucket'
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns(expected)
+
+      const metric = genMock()
+      const actual = await metric.getBucketName()
+      assert(expected === actual)
+      assert(expected === metric.bucketName)
+    })
+
+    it('should reuse the previously fetched bucket name', async () => {
+      const expected = 'bucket'
+      const stub = sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns(expected)
+
+      const metric = genMock()
+      await metric.getBucketName()
+      await metric.getBucketName()
+      assert(stub.calledOnce)
+    })
+  })
+
+  describe('getDatapoints', () => {
+    afterEach(() => {
+      S3.prototype.getObject.restore()
+      CloudFormation.prototype.getStatusPageBucketName.restore()
+    })
+
+    it('should return datapoints at the specified date', async () => {
+      const date = new Date(2017, 6, 3, 0, 0, 0)
+      const timestamp = date.toISOString()
+      const value = 1
+      const expected = {Body: new Buffer(`[{"timestamp":"${timestamp}","value":${value}}]`)}
+      const stub = sinon.stub(S3.prototype, 'getObject').returns(expected)
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+
+      const actual = await metric.getDatapoints(date)
+      assert(actual.length === 1)
+      assert(actual[0].timestamp === timestamp)
+      assert(actual[0].value === value)
+
+      assert(stub.calledOnce)
+      assert(stub.args[0][2] === `metrics/${metric.metricID}/2017/7/3.json`)
+    })
+
+    it('should return null if no datapoint', async () => {
+      const date = new Date(2017, 6, 3, 0, 0, 0)
+      sinon.stub(S3.prototype, 'getObject').throws()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+
+      const metric = genMock()
+
+      const actual = await metric.getDatapoints(date)
+      assert(actual === null)
+    })
+  })
+
+  describe('insertDatapoints', () => {
+    afterEach(() => {
+      S3.prototype.getObject.restore()
+      S3.prototype.putObject.restore()
+      CloudFormation.prototype.getStatusPageBucketName.restore()
+    })
+
+    it('should insert a datapoint in the order of timestamp', async () => {
+      const existingDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 1}]
+      const datapoints = {Body: new Buffer(JSON.stringify(existingDatapoints))}
+      sinon.stub(S3.prototype, 'getObject').returns(datapoints)
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
+      await metric.insertDatapoints(newDatapoints)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      assert(argsOnFirstCall[3].length === 2)
+      assert(argsOnFirstCall[3][0].timestamp === newDatapoints[0].timestamp)
+      assert(argsOnFirstCall[3][1].timestamp === existingDatapoints[0].timestamp)
+    })
+
+    it('should create new S3 object if the object does not exist', async () => {
+      sinon.stub(S3.prototype, 'getObject').throws(new Error())
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
+      await metric.insertDatapoints(newDatapoints)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      assert(argsOnFirstCall[3].length === 1)
+      assert(argsOnFirstCall[3][0].timestamp === newDatapoints[0].timestamp)
+      assert(argsOnFirstCall[3][0].value === newDatapoints[0].value)
+    })
+
+    it('should insert multiple datapoints in the order of timestamp', async () => {
+      const existingDatapoints = [{timestamp: '2017-07-03T02:00:00.000Z', value: 2}]
+      const datapoints = {Body: new Buffer(JSON.stringify(existingDatapoints))}
+      sinon.stub(S3.prototype, 'getObject').returns(datapoints)
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 1},
+                             {timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
+      await metric.insertDatapoints(newDatapoints)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      assert(argsOnFirstCall[3].length === 3)
+      assert(argsOnFirstCall[3][0].value === 0)
+      assert(argsOnFirstCall[3][1].value === 1)
+      assert(argsOnFirstCall[3][2].value === 2)
+    })
+
+    it('should update multiple objects if there are multiple dates', async () => {
+      sinon.stub(S3.prototype, 'getObject').throws(new Error())
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: '2017-07-02T00:00:00.000Z', value: 0},
+                             {timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
+      await metric.insertDatapoints(newDatapoints)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/2.json`)
+      assert(argsOnFirstCall[3].length === 1)
+      assert(argsOnFirstCall[3][0].timestamp === newDatapoints[0].timestamp)
+
+      const argsOnSecondCall = stub.args[1]
+      assert(argsOnSecondCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      assert(argsOnSecondCall[3].length === 1)
+      assert(argsOnSecondCall[3][0].timestamp === newDatapoints[1].timestamp)
+    })
+
+    it('should update the existing datapoints if the timestamp is same', async () => {
+      const existingDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 1}]
+      const datapoints = {Body: new Buffer(JSON.stringify(existingDatapoints))}
+      sinon.stub(S3.prototype, 'getObject').returns(datapoints)
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
+      await metric.insertDatapoints(newDatapoints)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      assert(argsOnFirstCall[3].length === 1)
+      assert(argsOnFirstCall[3][0].timestamp === newDatapoints[0].timestamp)
+      assert(argsOnFirstCall[3][0].value === newDatapoints[0].value)
+    })
+
+    it('should throw error if the timestamp is invalid', async () => {
+      sinon.stub(S3.prototype, 'getObject').returns({})
+      sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+
+      const metric = genMock()
+      const newDatapoints = [{timestamp: 'invalid', value: 1}]
+      try {
+        await metric.insertDatapoints(newDatapoints)
+        assert(false)
+      } catch (error) {
+        assert(error.message.match(/invalid/))
+      }
     })
   })
 })
