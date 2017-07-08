@@ -81,6 +81,10 @@ export default {
       'babel-polyfill',
       './src/api/postMetrics/index.js'
     ],
+    PostMetricsData: [
+      'babel-polyfill',
+      './src/api/postMetricsData/index.js'
+    ],
     PatchMetrics: [
       'babel-polyfill',
       './src/api/patchMetrics/index.js'

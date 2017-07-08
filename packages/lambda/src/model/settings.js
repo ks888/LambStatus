@@ -136,7 +136,20 @@ export class Settings {
   }
 
   async createApiKey () {
-    const newKey = await new APIGateway().createApiKey(stackName)
+    const apiGateway = new APIGateway()
+    const usagePlans = await apiGateway.getUsagePlans()
+    let usagePlan = usagePlans.reduce((prev, curr) => (curr.name === stackName ? curr : prev), undefined)
+    if (usagePlan === undefined) {
+      const restApis = await apiGateway.getRestApis()
+      let restApi = restApis.reduce((prev, curr) => (curr.name === stackName ? curr : prev), undefined)
+      if (restApi === undefined) {
+        throw new Error(`RestAPI resource ${stackName} does not exist`)
+      }
+      usagePlan = await apiGateway.createUsagePlan(stackName, restApi.id)
+    }
+
+    const newKey = await apiGateway.createApiKey(stackName)
+    await apiGateway.createUsagePlanKey(newKey, usagePlan)
     return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
   }
 }

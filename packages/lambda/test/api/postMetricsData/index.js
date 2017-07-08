@@ -48,8 +48,25 @@ describe('postMetricsData', () => {
     sinon.stub(Metric.prototype, 'insertDatapoints').returns()
     sinon.stub(Metrics.prototype, 'lookup').throws(new NotFoundError('no matched item'))
 
-    return await handle({1: []}, null, (error, result) => {
-      assert(error.match(/not found/))
+    const id = 123
+    return await handle({[id]: []}, null, (error, result) => {
+      assert(error.length === 1)
+      assert(error[0].message.match(new RegExp(id)))
+    })
+  })
+
+  it('should return a list of errors if there are several errors', async () => {
+    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    const stub = sinon.stub(Metrics.prototype, 'lookup')
+    stub.onCall(0).throws(new NotFoundError('no matched item'))
+    stub.onCall(1).throws(new Error())
+
+    const id1 = 123
+    const id2 = 456
+    return await handle({[id1]: [], [id2]: []}, null, (error, result) => {
+      assert(error.length === 2)
+      assert(error[0].message.match(new RegExp(id1)))
+      assert(error[1].message.match(new RegExp(id2)) === null)
     })
   })
 })
