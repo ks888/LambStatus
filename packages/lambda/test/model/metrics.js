@@ -485,4 +485,100 @@ describe('Metric', () => {
       }
     })
   })
+
+  describe('collect', () => {
+    afterEach(() => {
+      S3.prototype.getObject.restore()
+      S3.prototype.putObject.restore()
+      CloudFormation.prototype.getStatusPageBucketName.restore()
+      CloudWatch.prototype.getMetricData.restore()
+    })
+
+    it('should collect a datapoint and insert it', async () => {
+      sinon.stub(S3.prototype, 'getObject').returns({Body: new Buffer('[]')})
+      const putObjectStub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+      const timestamp = '2017-07-03T01:00:05.000Z'
+      const newDatapoints = [{timestamp, value: 1}]
+      const getMetricDataStub = sinon.stub(CloudWatch.prototype, 'getMetricData').returns(newDatapoints)
+
+      const metric = genMock()
+      await metric.collect()
+
+      assert(putObjectStub.callCount === 1)
+      const argsOnFirstCall = putObjectStub.args[0]
+      assert(argsOnFirstCall[3].length === newDatapoints.length)
+      assert(argsOnFirstCall[3][0].timestamp === timestamp.substr(0, 16) + ':00.000Z')
+      assert(argsOnFirstCall[3][0].value === newDatapoints[0].value)
+
+      const actualBegin = getMetricDataStub.args[0][1]
+      const actualEnd = getMetricDataStub.args[0][2]
+      const now = new Date()
+      assert(actualBegin.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime())
+      assert(actualEnd.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime())
+    })
+
+    it('should collect a yesterday\'s datapoint if it does not exist', async () => {
+      const getObjectStub = sinon.stub(S3.prototype, 'getObject')
+      getObjectStub.onCall(0).throws()
+      getObjectStub.returns({Body: new Buffer('[]')})
+
+      const putObjectStub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+      const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
+      const getMetricDataStub = sinon.stub(CloudWatch.prototype, 'getMetricData').returns(newDatapoints)
+
+      const metric = genMock()
+      await metric.collect()
+
+      assert(putObjectStub.callCount === 2)
+      const actualBegin = getMetricDataStub.args[1][1]
+      const actualEnd = getMetricDataStub.args[1][2]
+      const now = new Date()
+      assert(actualBegin.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime())
+      assert(actualEnd.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime())
+    })
+
+    it('should append to existing datapoints', async () => {
+      const existingDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
+      sinon.stub(S3.prototype, 'getObject').returns({Body: new Buffer(JSON.stringify(existingDatapoints))})
+      const putObjectStub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+      const newDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 2}]
+      const getMetricDataStub = sinon.stub(CloudWatch.prototype, 'getMetricData').returns(newDatapoints)
+
+      const metric = genMock()
+      await metric.collect()
+
+      assert(putObjectStub.callCount === 1)
+      const actualDatapoints = putObjectStub.args[0][3]
+      assert(actualDatapoints.length === 2)
+      assert(actualDatapoints[0].timestamp === existingDatapoints[0].timestamp)
+      assert(actualDatapoints[1].timestamp === newDatapoints[0].timestamp)
+
+      const actualBegin = getMetricDataStub.args[0][1]
+      const actualEnd = getMetricDataStub.args[0][2]
+      assert(actualBegin.toISOString() === existingDatapoints[0].timestamp)
+      assert(actualEnd.toISOString() > existingDatapoints[0].timestamp)
+    })
+
+    it('should not append the datapoint if the same-timestamp data already exists', async () => {
+      const existingDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
+      sinon.stub(S3.prototype, 'getObject').returns({Body: new Buffer(JSON.stringify(existingDatapoints))})
+      const putObjectStub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
+      const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 2}]
+      const getMetricDataStub = sinon.stub(CloudWatch.prototype, 'getMetricData').returns(newDatapoints)
+
+      const metric = genMock()
+      await metric.collect()
+
+      assert(putObjectStub.callCount === 0)
+
+      const actualBegin = getMetricDataStub.args[0][1]
+      const actualEnd = getMetricDataStub.args[0][2]
+      assert(actualBegin.toISOString() === existingDatapoints[0].timestamp)
+      assert(actualEnd.toISOString() > existingDatapoints[0].timestamp)
+    })
+  })
 })
