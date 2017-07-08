@@ -59,4 +59,9 @@ export default class CloudFormation {
     const key = 'IncidentNotificationTopic'
     return await this.getOutputValue(key)
   }
+
+  async getUsagePlanID () {
+    const key = 'UsagePlanID'
+    return await this.getOutputValue(key)
+  }
 }

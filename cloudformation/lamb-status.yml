@@ -134,6 +134,11 @@ Resources:
                   - apigateway:*
                 Resource: !Sub |-
                   arn:aws:apigateway:${AWS::Region}::/apikeys/*
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource: !Sub |-
+                  arn:aws:apigateway:${AWS::Region}::/usageplans/${UsagePlan}/keys
         - PolicyName: SNS
           PolicyDocument:
             Statement:
@@ -2848,6 +2853,15 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
+  UsagePlan:
+    Type: "AWS::ApiGateway::UsagePlan"
+    Properties:
+      ApiStages:
+        - ApiId: !Sub |-
+            ${RestApi}
+          Stage: prod
+      UsagePlanName: !Sub |-
+        ${AWS::StackName}
   StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
@@ -3403,3 +3417,6 @@ Outputs:
   IncidentNotificationTopic:
     Value:
       Ref: "IncidentNotificationTopic"
+  UsagePlanID:
+    Value:
+      Ref: "UsagePlan"

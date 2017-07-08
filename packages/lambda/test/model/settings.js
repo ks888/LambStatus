@@ -1,6 +1,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import SNS from 'aws/sns'
+import CloudFormation from 'aws/cloudFormation'
 import { Settings, ApiKey } from 'model/settings'
 import SettingsStore from 'db/settings'
 import APIGateway from 'aws/apiGateway'
@@ -169,20 +170,15 @@ describe('Settings', () => {
   describe('createApiKey', () => {
     afterEach(() => {
       APIGateway.prototype.createApiKey.restore()
-      APIGateway.prototype.getUsagePlans.restore()
-      APIGateway.prototype.getRestApis.restore()
-      APIGateway.prototype.createUsagePlan.restore()
       APIGateway.prototype.createUsagePlanKey.restore()
+      CloudFormation.prototype.getUsagePlanID.restore()
     })
 
     it('should create the new api key', async () => {
-      constants.stackName = 'stack'
-      sinon.stub(APIGateway.prototype, 'getUsagePlans').returns([{name: constants.stackName}])
-      sinon.stub(APIGateway.prototype, 'getRestApis').returns()
-      sinon.stub(APIGateway.prototype, 'createUsagePlan').returns()
       const expected = {id: '1'}
       const createApiKeyStub = sinon.stub(APIGateway.prototype, 'createApiKey').returns(expected)
       const createUsagePlanKeyStub = sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
+      sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns()
 
       const actual = await new Settings().createApiKey()
       assert(actual.id === expected.id)
@@ -190,43 +186,11 @@ describe('Settings', () => {
       assert(createUsagePlanKeyStub.calledOnce)
     })
 
-    it('should create the usage plan if it does not exist', async () => {
-      constants.stackName = 'stack'
-      sinon.stub(APIGateway.prototype, 'getUsagePlans').returns([])
-      sinon.stub(APIGateway.prototype, 'getRestApis').returns([{ name: constants.stackName }])
-      const createUsagePlanStub = sinon.stub(APIGateway.prototype, 'createUsagePlan').returns({ name: 'test' })
-      const expected = {id: '1'}
-      sinon.stub(APIGateway.prototype, 'createApiKey').returns(expected)
-      sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
-
-      const actual = await new Settings().createApiKey()
-      assert(actual.id === expected.id)
-      assert(createUsagePlanStub.calledOnce)
-    })
-
     it('should throw the error if API returns the error ', async () => {
       constants.stackName = 'stack'
-      sinon.stub(APIGateway.prototype, 'getUsagePlans').returns([{name: constants.stackName}])
-      sinon.stub(APIGateway.prototype, 'getRestApis').returns()
-      sinon.stub(APIGateway.prototype, 'createUsagePlan').returns()
       sinon.stub(APIGateway.prototype, 'createApiKey').throws(new Error())
       sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
-
-      try {
-        await new Settings().createApiKey()
-        assert(false)
-      } catch (e) {
-        assert(e !== undefined)
-      }
-    })
-
-    it('should throw the error if RestApi does not exist', async () => {
-      constants.stackName = 'stack'
-      sinon.stub(APIGateway.prototype, 'getUsagePlans').returns([])
-      sinon.stub(APIGateway.prototype, 'getRestApis').returns([])
-      sinon.stub(APIGateway.prototype, 'createUsagePlan').returns()
-      sinon.stub(APIGateway.prototype, 'createApiKey').returns()
-      sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
+      sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns()
 
       try {
         await new Settings().createApiKey()

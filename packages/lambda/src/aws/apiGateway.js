@@ -68,51 +68,8 @@ export default class APIGateway {
     })
   }
 
-  getUsagePlans () {
-    const params = {}
-    return new Promise((resolve, reject) => {
-      this.apiGateway.getUsagePlans(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result.items)
-      })
-    })
-  }
-
-  createUsagePlan (name, apiId) {
-    const params = {
-      name,
-      apiStages: [{apiId, stage: 'prod'}]
-    }
-    return new Promise((resolve, reject) => {
-      this.apiGateway.createUsagePlan(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result)
-      })
-    })
-  }
-
-  getRestApis () {
-    const params = {}
-    return new Promise((resolve, reject) => {
-      this.apiGateway.getRestApis(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result.items)
-      })
-    })
-  }
-
-  createUsagePlanKey (key, usagePlan) {
-    const params = {
-      usagePlanId: usagePlan.id,
-      keyId: key.id,
-      keyType: 'API_KEY'
-    }
+  createUsagePlanKey (keyId, usagePlanId) {
+    const params = { usagePlanId, keyId, keyType: 'API_KEY' }
     return new Promise((resolve, reject) => {
       this.apiGateway.createUsagePlanKey(params, (err, result) => {
         if (err) {

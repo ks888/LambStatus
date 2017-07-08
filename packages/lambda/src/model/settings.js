@@ -1,4 +1,5 @@
 import SettingsStore from 'db/settings'
+import CloudFormation from 'aws/cloudFormation'
 import APIGateway from 'aws/apiGateway'
 import Cognito from 'aws/cognito'
 import SNS from 'aws/sns'
@@ -137,19 +138,9 @@ export class Settings {
 
   async createApiKey () {
     const apiGateway = new APIGateway()
-    const usagePlans = await apiGateway.getUsagePlans()
-    let usagePlan = usagePlans.reduce((prev, curr) => (curr.name === stackName ? curr : prev), undefined)
-    if (usagePlan === undefined) {
-      const restApis = await apiGateway.getRestApis()
-      let restApi = restApis.reduce((prev, curr) => (curr.name === stackName ? curr : prev), undefined)
-      if (restApi === undefined) {
-        throw new Error(`RestAPI resource ${stackName} does not exist`)
-      }
-      usagePlan = await apiGateway.createUsagePlan(stackName, restApi.id)
-    }
-
+    const usagePlanID = await new CloudFormation(stackName).getUsagePlanID()
     const newKey = await apiGateway.createApiKey(stackName)
-    await apiGateway.createUsagePlanKey(newKey, usagePlan)
+    await apiGateway.createUsagePlanKey(newKey.id, usagePlanID)
     return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
   }
 }
