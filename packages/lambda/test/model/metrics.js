@@ -386,7 +386,9 @@ describe('Metric', () => {
 
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
-      await metric.insertDatapoints(newDatapoints)
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 1)
 
       const argsOnFirstCall = stub.args[0]
       assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
@@ -402,7 +404,9 @@ describe('Metric', () => {
 
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
-      await metric.insertDatapoints(newDatapoints)
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 1)
 
       const argsOnFirstCall = stub.args[0]
       assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
@@ -421,7 +425,9 @@ describe('Metric', () => {
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 1},
                              {timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
-      await metric.insertDatapoints(newDatapoints)
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 2)
 
       const argsOnFirstCall = stub.args[0]
       assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
@@ -439,7 +445,9 @@ describe('Metric', () => {
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-02T00:00:00.000Z', value: 0},
                              {timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
-      await metric.insertDatapoints(newDatapoints)
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 2)
 
       const argsOnFirstCall = stub.args[0]
       assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/2.json`)
@@ -461,7 +469,9 @@ describe('Metric', () => {
 
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
-      await metric.insertDatapoints(newDatapoints)
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 1)
 
       const argsOnFirstCall = stub.args[0]
       assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)

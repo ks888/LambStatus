@@ -123,6 +123,7 @@ export class Metric {
     }
 
     let mergedDatapoints = []
+    let insertedDatapoints = []
     let i = 0
     let j = 0
     while (i < existingDatapoints.length && j < datapoints.length) {
@@ -133,10 +134,12 @@ export class Metric {
         i++
       } else if (existingPoint.timestamp === newPoint.timestamp) {
         mergedDatapoints.push(newPoint)
+        insertedDatapoints.push(newPoint)
         i++
         j++
       } else {
         mergedDatapoints.push(newPoint)
+        insertedDatapoints.push(newPoint)
         j++
       }
     }
@@ -144,11 +147,14 @@ export class Metric {
     if (i < existingDatapoints.length) {
       mergedDatapoints = mergedDatapoints.concat(existingDatapoints.slice(i))
     } else if (j < datapoints.length) {
-      mergedDatapoints = mergedDatapoints.concat(datapoints.slice(j))
+      const rest = datapoints.slice(j)
+      mergedDatapoints = mergedDatapoints.concat(rest)
+      insertedDatapoints = insertedDatapoints.concat(rest)
     }
 
     const s3 = new S3()
     await s3.putObject(region, bucketName, objectName, mergedDatapoints)
+    return insertedDatapoints
   }
 
   async insertDatapoints (datapoints) {
@@ -163,10 +169,13 @@ export class Metric {
         dates[date] = [datapoint]
       }
     })
+    let insertedDatapoints = []
     await Promise.all(Object.keys(dates).map(async date => {
       const data = dates[date]
-      await this.insertNormalizedDatapointsAtDate(data, getDateObject(data[0].timestamp))
+      const result = await this.insertNormalizedDatapointsAtDate(data, getDateObject(data[0].timestamp))
+      insertedDatapoints = insertedDatapoints.concat(result)
     }))
+    return insertedDatapoints
   }
 
   async calculateUncollectedDates (curr) {
