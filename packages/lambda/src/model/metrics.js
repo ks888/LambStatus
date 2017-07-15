@@ -1,9 +1,11 @@
 import CloudWatch from 'aws/cloudWatch'
+import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import generateID from 'utils/generateID'
 import { NotFoundError, ValidationError } from 'utils/errors'
-import { metricStatuses, metricStatusVisible, monitoringServices, region } from 'utils/const'
+import { metricStatuses, metricStatusVisible, monitoringServices, region, stackName } from 'utils/const'
+import { getDateObject } from 'utils/datetime'
 
 export class Metric {
   constructor (metricID, type, title, unit, description, status, order, props) {
@@ -16,6 +18,8 @@ export class Metric {
       this.needIDValidation = true
     }
     this.type = type
+    // TODO: should be instantiated based on 'type'
+    this.monitoringService = new CloudWatch()
     this.title = title
     this.unit = unit
     this.description = description
@@ -78,6 +82,149 @@ export class Metric {
     await store.delete(this.metricID)
   }
 
+  async getBucketName () {
+    if (this.bucketName !== undefined) {
+      return this.bucketName
+    }
+    this.bucketName = await new CloudFormation(stackName).getStatusPageBucketName()
+    return this.bucketName
+  }
+
+  buildObjectName (metricID, date) {
+    return `metrics/${metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
+  }
+
+  async getDatapoints (date) {
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    try {
+      const s3 = new S3()
+      const obj = await s3.getObject(region, bucketName, objectName)
+      return JSON.parse(obj.Body.toString())
+    } catch (error) {
+      // There will be no existing object at first.
+      return null
+    }
+  }
+
+  normalizeDatapoints (datapoints) {
+    datapoints.forEach(datapoint => {
+      datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
+    })
+    datapoints.sort((a, b) => a.timestamp > b.timestamp)
+  }
+
+  async insertNormalizedDatapointsAtDate (datapoints, date) {
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    let existingDatapoints = await this.getDatapoints(date)
+    if (existingDatapoints === null) {
+      existingDatapoints = []
+    }
+
+    let mergedDatapoints = []
+    let insertedDatapoints = []
+    let i = 0
+    let j = 0
+    while (i < existingDatapoints.length && j < datapoints.length) {
+      const existingPoint = existingDatapoints[i]
+      const newPoint = datapoints[j]
+      if (existingPoint.timestamp < newPoint.timestamp) {
+        mergedDatapoints.push(existingPoint)
+        i++
+      } else if (existingPoint.timestamp === newPoint.timestamp) {
+        mergedDatapoints.push(newPoint)
+        insertedDatapoints.push(newPoint)
+        i++
+        j++
+      } else {
+        mergedDatapoints.push(newPoint)
+        insertedDatapoints.push(newPoint)
+        j++
+      }
+    }
+
+    if (i < existingDatapoints.length) {
+      mergedDatapoints = mergedDatapoints.concat(existingDatapoints.slice(i))
+    } else if (j < datapoints.length) {
+      const rest = datapoints.slice(j)
+      mergedDatapoints = mergedDatapoints.concat(rest)
+      insertedDatapoints = insertedDatapoints.concat(rest)
+    }
+
+    const s3 = new S3()
+    await s3.putObject(region, bucketName, objectName, mergedDatapoints)
+    return insertedDatapoints
+  }
+
+  async insertDatapoints (datapoints) {
+    this.normalizeDatapoints(datapoints)
+
+    const dates = {}
+    datapoints.forEach(datapoint => {
+      const date = datapoint.timestamp.substr(0, 10)
+      if (date in dates) {
+        dates[date].push(datapoint)
+      } else {
+        dates[date] = [datapoint]
+      }
+    })
+    let insertedDatapoints = []
+    await Promise.all(Object.keys(dates).map(async date => {
+      const data = dates[date]
+      const result = await this.insertNormalizedDatapointsAtDate(data, getDateObject(data[0].timestamp))
+      insertedDatapoints = insertedDatapoints.concat(result)
+    }))
+    return insertedDatapoints
+  }
+
+  async calculateUncollectedDates (curr) {
+    const maxBackfillDates = 30
+    for (let i = 0; i < maxBackfillDates; i++) {
+      const data = await this.getDatapoints(curr)
+      if (data) {
+        return i
+      }
+      curr.setDate(curr.getDate() - 1)
+    }
+    return maxBackfillDates
+  }
+
+  async collect () {
+    const now = new Date()
+    const numUncollectedDates = await this.calculateUncollectedDates(new Date(now.getTime()))
+    console.log(`collect the data for ${numUncollectedDates + 1} dates (metricID: ${this.metricID})`)
+
+    await Promise.all(Array.apply(null, {length: numUncollectedDates + 1}).map(async (value, i) => {
+      const curr = new Date(now.getTime())
+      curr.setDate(curr.getDate() - i)
+
+      const existingDatapoints = await this.getDatapoints(curr)
+      let begin, lastTimestamp
+      if (existingDatapoints && existingDatapoints.length > 0) {
+        lastTimestamp = existingDatapoints[existingDatapoints.length - 1].timestamp
+        begin = getDateObject(lastTimestamp)
+      } else {
+        begin = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
+      }
+
+      const end = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
+      end.setDate(end.getDate() + 1)
+
+      let datapoints = await this.monitoringService.getMetricData(this.props, begin, end)
+      if (datapoints.length > 0 && lastTimestamp && datapoints[0].timestamp === lastTimestamp) {
+        datapoints = datapoints.slice(1)
+      }
+      console.log(`collected ${datapoints.length} datapoints (metricID: ${this.metricID}, i: ${i})`)
+
+      if (datapoints.length > 0 || !existingDatapoints) {
+        datapoints = (existingDatapoints === null ? [] : existingDatapoints).concat(datapoints)
+        this.normalizeDatapoints(datapoints)
+        await this.insertNormalizedDatapointsAtDate(datapoints, begin)
+      }
+    }))
+  }
+
   objectify () {
     return {
       metricID: this.metricID,
@@ -125,101 +272,5 @@ export class Metrics {
     } else {
       throw new Error('matched too many items')
     }
-  }
-}
-
-class DataPoint {
-  constructor (objectName, body) {
-    this.objectName = objectName
-    this.body = body
-  }
-
-  append (newData) {
-    this.body = this.body.concat(newData)
-  }
-}
-
-export class MetricsData {
-  constructor (metricID, type, props, dataBucket) {
-    this.metricID = metricID
-    this.type = type
-    this.props = props
-    this.dataBucket = dataBucket
-    // TODO: should be instantiated based on 'type'
-    this.service = new CloudWatch()
-  }
-
-  async getDataPoint (date) {
-    const objectName = `metrics/${this.metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
-    try {
-      const s3 = new S3()
-      const obj = await s3.getObject(region, this.dataBucket, objectName)
-      return new DataPoint(objectName, JSON.parse(obj.Body.toString()))
-    } catch (error) {
-      // There will be no existing object at first.
-      return null
-    }
-  }
-
-  async putDataPoint (object) {
-    const body = JSON.stringify(object.body)
-    const s3 = new S3()
-    return await s3.putObject(region, this.dataBucket, object.objectName, body)
-  }
-
-  async calculateUncollectedDates (curr) {
-    const maxBackfillDates = 30
-    for (let i = 0; i < maxBackfillDates; i++) {
-      const data = await this.getDataPoint(curr)
-      if (data) {
-        return i
-      }
-      curr.setDate(curr.getDate() - 1)
-    }
-    return maxBackfillDates
-  }
-
-  async collect () {
-    const now = new Date()
-    const numUncollectedDates = await this.calculateUncollectedDates(new Date(now.getTime()))
-    console.log(`collect the data for ${numUncollectedDates} dates (metricID: ${this.metricID})`)
-    await Promise.all(Array.apply(null, {length: numUncollectedDates + 1}).map(async (value, i) => {
-      const curr = new Date(now.getTime())
-      curr.setDate(curr.getDate() - i)
-
-      const existingData = await this.getDataPoint(curr)
-      let begin, lastTimestamp
-      if (existingData && existingData.body.length > 0) {
-        begin = existingData.body[existingData.body.length - 1].timestamp
-        lastTimestamp = begin
-      } else {
-        begin = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
-      }
-
-      const end = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
-      end.setDate(end.getDate() + 1)
-
-      let datapoints = await this.service.getMetricData(this.props, begin, end)
-      if (datapoints.length > 0 && lastTimestamp && datapoints[0].timestamp === lastTimestamp) {
-        datapoints = datapoints.slice(1)
-      }
-      console.log(`collected ${datapoints.length} datapoints (metricID: ${this.metricID}, i: ${i})`)
-
-      if (datapoints.length > 0 || !existingData) {
-        await this.save(curr, datapoints, existingData)
-      }
-    }))
-  }
-
-  async save (date, datapoints, existingDataPoint) {
-    let dataObject
-    if (existingDataPoint) {
-      dataObject = existingDataPoint
-    } else {
-      const objectName = `metrics/${this.metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
-      dataObject = new DataPoint(objectName, [])
-    }
-    dataObject.append(datapoints)
-    return await this.putDataPoint(dataObject)
   }
 }

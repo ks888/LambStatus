@@ -1,6 +1,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import SNS from 'aws/sns'
+import CloudFormation from 'aws/cloudFormation'
 import { Settings, ApiKey } from 'model/settings'
 import SettingsStore from 'db/settings'
 import APIGateway from 'aws/apiGateway'
@@ -169,29 +170,34 @@ describe('Settings', () => {
   describe('createApiKey', () => {
     afterEach(() => {
       APIGateway.prototype.createApiKey.restore()
+      APIGateway.prototype.createUsagePlanKey.restore()
+      CloudFormation.prototype.getUsagePlanID.restore()
     })
 
     it('should create the new api key', async () => {
       const expected = {id: '1'}
-      const stub = sinon.stub(APIGateway.prototype, 'createApiKey').returns(expected)
-      const keyPrefix = 'test'
-      constants.stackName = keyPrefix
+      const createApiKeyStub = sinon.stub(APIGateway.prototype, 'createApiKey').returns(expected)
+      const createUsagePlanKeyStub = sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
+      sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns()
 
       const actual = await new Settings().createApiKey()
       assert(actual.id === expected.id)
-      assert.deepEqual(stub.firstCall.args, [keyPrefix])
+      assert(createApiKeyStub.calledOnce)
+      assert(createUsagePlanKeyStub.calledOnce)
     })
 
     it('should throw the error if API returns the error ', async () => {
+      constants.stackName = 'stack'
       sinon.stub(APIGateway.prototype, 'createApiKey').throws(new Error())
+      sinon.stub(APIGateway.prototype, 'createUsagePlanKey').returns()
+      sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns()
 
-      let err
       try {
         await new Settings().createApiKey()
+        assert(false)
       } catch (e) {
-        err = e
+        assert(e !== undefined)
       }
-      assert(err !== undefined)
     })
   })
 })

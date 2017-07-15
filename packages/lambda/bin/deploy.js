@@ -30,7 +30,7 @@ const deployAll = async () => {
   for (let i = 0; i < funcs.length; i++) {
     const func = funcs[i]
     const cmd = `apex deploy ${func}`
-    const numRetries = 3
+    const numRetries = 5
     let j
     for (j = 0; j < numRetries; j++) {
       try {

@@ -1,4 +1,5 @@
 import SettingsStore from 'db/settings'
+import CloudFormation from 'aws/cloudFormation'
 import APIGateway from 'aws/apiGateway'
 import Cognito from 'aws/cognito'
 import SNS from 'aws/sns'
@@ -136,7 +137,10 @@ export class Settings {
   }
 
   async createApiKey () {
-    const newKey = await new APIGateway().createApiKey(stackName)
+    const apiGateway = new APIGateway()
+    const usagePlanID = await new CloudFormation(stackName).getUsagePlanID()
+    const newKey = await apiGateway.createApiKey(stackName)
+    await apiGateway.createUsagePlanKey(newKey.id, usagePlanID)
     return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
   }
 }

@@ -67,4 +67,16 @@ export default class APIGateway {
       })
     })
   }
+
+  createUsagePlanKey (keyId, usagePlanId) {
+    const params = { usagePlanId, keyId, keyType: 'API_KEY' }
+    return new Promise((resolve, reject) => {
+      this.apiGateway.createUsagePlanKey(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
 }
