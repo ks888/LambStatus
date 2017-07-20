@@ -1,10 +1,10 @@
-import CloudWatch from 'aws/cloudWatch'
 import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
+import { monitoringServiceManager } from 'model/monitoringService'
 import generateID from 'utils/generateID'
 import { NotFoundError, ValidationError } from 'utils/errors'
-import { metricStatuses, metricStatusVisible, monitoringServices, region, stackName } from 'utils/const'
+import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/const'
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
@@ -18,8 +18,7 @@ export class Metric {
       this.needIDValidation = true
     }
     this.type = type
-    // TODO: should be instantiated based on 'type'
-    this.monitoringService = new CloudWatch()
+    this.monitoringService = monitoringServiceManager.create(this.type)
     this.title = title
     this.unit = unit
     this.description = description
@@ -40,10 +39,6 @@ export class Metric {
     if (this.needIDValidation) {
       const metrics = new Metrics()
       await metrics.lookup(this.metricID)
-    }
-
-    if (monitoringServices.indexOf(this.type) < 0) {
-      throw new ValidationError('invalid type parameter')
     }
 
     if (this.title === undefined || this.title === '') {
@@ -153,7 +148,7 @@ export class Metric {
     }
 
     const s3 = new S3()
-    await s3.putObject(region, bucketName, objectName, mergedDatapoints)
+    await s3.putObject(region, bucketName, objectName, JSON.stringify(mergedDatapoints))
     return insertedDatapoints
   }
 
@@ -241,8 +236,8 @@ export class Metric {
 
 export class Metrics {
   async listExternal (type, cursor, filters) {
-    // TODO: should be instantiated based on 'type'
-    return await new CloudWatch().listMetrics(cursor, filters)
+    const monitoringService = monitoringServiceManager.create(type)
+    return await monitoringService.listMetrics(cursor, filters)
   }
 
   async listPublic () {

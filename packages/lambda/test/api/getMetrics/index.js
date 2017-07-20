@@ -10,14 +10,16 @@ describe('getMetrics', () => {
 
   it('should return a list of metrics', async () => {
     const metrics = [
-      new Metric('2', undefined, undefined, undefined, undefined, undefined, 2, undefined),
-      new Metric('1', undefined, undefined, undefined, undefined, undefined, 1, undefined)
+      new Metric('2', 'Mock', undefined, undefined, undefined, undefined, 2, undefined),
+      new Metric('1', 'Mock', undefined, undefined, undefined, undefined, 1, undefined)
     ]
     sinon.stub(Metrics.prototype, 'list').returns(metrics.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
-      assert.deepEqual(result, [metrics[1].objectify(), metrics[0].objectify()])
+      assert(result.length === metrics.length)
+      assert(result[0].metricID === metrics[1].metricID)
+      assert(result[1].metricID === metrics[0].metricID)
     })
   })
 
