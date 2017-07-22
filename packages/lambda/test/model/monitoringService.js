@@ -37,9 +37,7 @@ describe('MonitoringServiceManager', () => {
       const inst = monitoringServiceManager.create(name)
       assert(inst.constructor.name === MonitoringService.name)
     })
-  })
 
-  describe('create', () => {
     it('should throw error if the service is unknown', () => {
       const name = 'test'
       monitoringServiceManager.register(name, MonitoringService)

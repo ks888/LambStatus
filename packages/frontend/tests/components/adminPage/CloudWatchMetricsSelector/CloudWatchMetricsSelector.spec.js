@@ -12,6 +12,12 @@ describe('CloudWatchMetricsSelector', () => {
     }
   }
 
+  describe('monitoringServiceName', () => {
+    it('should return the service name without instantiating the class', () => {
+      assert(CloudWatchMetricsSelector.monitoringServiceName === 'CloudWatch')
+    })
+  })
+
   describe('constructor', () => {
     it('should initialize state by the given props', () => {
       const props = generateProps()

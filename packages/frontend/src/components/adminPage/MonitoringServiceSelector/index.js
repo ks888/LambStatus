@@ -1,6 +1,4 @@
 import React, { PropTypes } from 'react'
-import CloudWatchMetricsSelector from 'components/adminPage/MonitoringServiceSelector/CloudWatchMetricsSelector'
-import SelfMetricsSelector from 'components/adminPage/MonitoringServiceSelector/SelfMetricsSelector'
 
 // MonitoringServiceSelector creates the selector associated with the service type.
 // Each selector must handle the `props` object and the `onChange` function properly.
@@ -16,15 +14,15 @@ export default class MonitoringServiceSelector extends React.Component {
   }
 
   render () {
-    const Selector = monitoringServiceManager.create(this.props.type)
+    const Selector = metricsSelectorManager.get(this.props.type)
     return (
       <Selector onChange={this.props.onChange} props={this.props.props} />
     )
   }
 }
 
-// MonitoringServiceManager is a manager class to create the new instance of some monitoring service.
-class MonitoringServiceManager {
+// MetricsSelectorManager manages registered selectors.
+class MetricsSelectorManager {
   constructor () {
     this.services = {}
   }
@@ -33,7 +31,7 @@ class MonitoringServiceManager {
     this.services[serviceName] = selector
   }
 
-  create (serviceName) {
+  get (serviceName) {
     const selector = this.services[serviceName]
     if (selector === undefined) {
       throw new Error(`unknown service: ${serviceName}`)
@@ -48,6 +46,4 @@ class MonitoringServiceManager {
 }
 
 // singleton
-export const monitoringServiceManager = new MonitoringServiceManager()
-monitoringServiceManager.register(CloudWatchMetricsSelector.monitoringServiceName, CloudWatchMetricsSelector)
-monitoringServiceManager.register(SelfMetricsSelector.monitoringServiceName, SelfMetricsSelector)
+export const metricsSelectorManager = new MetricsSelectorManager()
