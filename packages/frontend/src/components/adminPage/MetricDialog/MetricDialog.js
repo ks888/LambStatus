@@ -22,7 +22,7 @@ export default class MetricDialog extends React.Component {
     metric: PropTypes.shape({
       metricID: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
-      props: PropTypes.object.isRequired,
+      props: PropTypes.object,
       title: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,

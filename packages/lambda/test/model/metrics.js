@@ -285,16 +285,16 @@ describe('Metric', () => {
       assert(error.name === 'ValidationError')
     })
 
-    it('should return error when props is string', async () => {
+    it('should return no error when props is null', async () => {
       const comp = genMock()
-      comp.props = '{}'
+      comp.props = null
       let error
       try {
         await comp.validate()
       } catch (e) {
         error = e
       }
-      assert(error.name === 'ValidationError')
+      assert(error === undefined)
     })
   })
 

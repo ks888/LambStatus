@@ -1,4 +1,6 @@
 // MonitoringService is an interface the all monitoring service classes should implement.
+// TODO: it may be better to divide this class to MonitoringService, Metric by Service and Metric by LambStatus
+// classes to separate the responsibility of this class.
 export class MonitoringService {
   // listMetrics returns a list of metrics.
   async listMetrics (nextToken = undefined, filters = {}) {

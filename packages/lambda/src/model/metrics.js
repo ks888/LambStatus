@@ -61,7 +61,7 @@ export class Metric {
       throw new ValidationError('invalid order parameter')
     }
 
-    if (this.props === undefined || this.props === null || typeof this.props !== 'object') {
+    if (this.props === undefined) {
       throw new ValidationError('invalid metrics parameter')
     }
   }
