@@ -21,6 +21,12 @@ describe('MonitoringService', () => {
       assert(err.name.match(/Error/))
     }
   })
+
+  it('allowPostDatapointsAPI should return false', () => {
+    const service = new MonitoringService()
+    const actual = service.allowPostDatapointsAPI()
+    assert(actual === false)
+  })
 })
 
 describe('MonitoringServiceManager', () => {

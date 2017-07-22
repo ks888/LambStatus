@@ -8,6 +8,10 @@ export default class MockService extends MonitoringService {
   async getMetricData (props, startTime, endTime) {
     return []
   }
+
+  allowPostDatapointsAPI () {
+    return true
+  }
 }
 
 monitoringServiceManager.register('Mock', MockService)

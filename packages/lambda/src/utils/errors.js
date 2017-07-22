@@ -1,11 +1,3 @@
-export class ParameterError extends Error {
-  constructor (message) {
-    super()
-    this.name = 'ParameterError'
-    this.message = message
-  }
-}
-
 export class ValidationError extends Error {
   constructor (message) {
     super()

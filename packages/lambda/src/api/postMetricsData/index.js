@@ -1,4 +1,6 @@
 import { Metrics } from 'model/metrics'
+import 'model/monitoringServices'  // load monitoring services
+import { ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   const metrics = new Metrics()
@@ -10,6 +12,9 @@ export async function handle (event, context, callback) {
     const data = event[metricID]
     try {
       const metric = await metrics.lookup(metricID)
+      if (!metric.monitoringService.allowPostDatapointsAPI()) {
+        throw new ValidationError(`post datapoints is not allowed (${metric.type})`)
+      }
       resp[metricID] = await metric.insertDatapoints(data)
     } catch (error) {
       console.log(error.message)
@@ -17,6 +22,9 @@ export async function handle (event, context, callback) {
       switch (error.name) {
         case 'NotFoundError':
           errorResp.push({message: `Error: the metric ${metricID} not found`})
+          break
+        case 'ValidationError':
+          errorResp.push({message: `Error: ${error.message}`})
           break
         default:
           errorResp.push({message: 'Error: failed to post the metric'})

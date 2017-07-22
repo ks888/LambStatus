@@ -16,7 +16,7 @@ describe('CloudWatch', () => {
     CloudWatchAPI.prototype.listMetrics.restore()
   })
 
-  it('should return a list of metrics', async () => {
+  it('should get metric data', async () => {
     const expect = [1, 2]
     const stub = sinon.stub(CloudWatchAPI.prototype, 'getMetricData').returns(expect)
     const cloudWatch = new CloudWatch()
