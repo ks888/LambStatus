@@ -3,7 +3,6 @@ import ReactTooltip from 'react-tooltip'
 import classnames from 'classnames'
 import DropdownList from 'components/common/DropdownList'
 import Spinner from 'components/common/Spinner'
-import { metricsSelectorManager } from 'components/adminPage/MonitoringServiceSelector'
 import { apiURL } from 'utils/settings'
 import { regions } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'
@@ -193,5 +192,3 @@ export default class CloudWatchMetricsSelector extends React.Component {
     )
   }
 }
-
-metricsSelectorManager.register(CloudWatchMetricsSelector.monitoringServiceName, CloudWatchMetricsSelector)

@@ -46,7 +46,7 @@ describe('Self', () => {
       const expect = [{value: 1, timestamp: start.toISOString()}, {value: 2, timestamp: end.toISOString()}]
       const stub = sinon.stub(Metric.prototype, 'getDatapoints').returns(expect)
 
-      const actual = await new Self().getMetricData({metricID: 1}, start, end)
+      const actual = await new Self().getMetricData(1, {}, start, end)
       assert(actual.length === 1)
       assert(actual[0].value === expect[0].value)
       assert(stub.calledOnce)
@@ -68,7 +68,7 @@ describe('Self', () => {
       stub.withArgs(startPlusOneDay).returns(expect.slice(1))
       stub.returns(null)
 
-      const actual = await new Self().getMetricData({metricID: 1}, start, end)
+      const actual = await new Self().getMetricData(1, {}, start, end)
       assert(actual.length === 2)
       assert(actual[0].value === expect[0].value)
       assert(actual[1].value === expect[1].value)
@@ -82,7 +82,7 @@ describe('Self', () => {
       sinon.stub(Metric.prototype, 'getDatapoints').returns(null)
 
       try {
-        await new Self().getMetricData({metricID: 1}, start, end)
+        await new Self().getMetricData(1, {}, start, end)
         assert(false)
       } catch (err) {
         assert(err.message.match(/later/))
@@ -96,7 +96,7 @@ describe('Self', () => {
       sinon.stub(Metric.prototype, 'getDatapoints').returns(null)
 
       try {
-        await new Self().getMetricData({metricID: 1}, start, end)
+        await new Self().getMetricData(1, {}, start, end)
         assert(false)
       } catch (err) {
         assert(err.message.match(/match/))

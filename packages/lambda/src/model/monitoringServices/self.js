@@ -9,8 +9,8 @@ export default class Self extends MonitoringService {
     return metrics.filter(metric => metric.type === serviceName).map(metric => metric.objectify())
   }
 
-  async getMetricData (props, startTime, endTime) {
-    const metric = await new Metrics().lookup(props.metricID)
+  async getMetricData (metricID, props, startTime, endTime) {
+    const metric = await new Metrics().lookup(metricID)
 
     const startTimeStr = startTime.toISOString()
     const endTimeStr = endTime.toISOString()

@@ -11,7 +11,7 @@ export default class CloudWatch extends MonitoringService {
     return await this.api.listMetrics(nextToken, filters)
   }
 
-  async getMetricData (props, startTime, endTime) {
+  async getMetricData (metricID, props, startTime, endTime) {
     return await this.api.getMetricData(props, startTime, endTime)
   }
 }

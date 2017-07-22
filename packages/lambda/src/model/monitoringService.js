@@ -6,13 +6,14 @@ export class MonitoringService {
   }
 
   // getMetricData returns the list of datapoints.
+  // `metricID` is the ID of the metric added to LambStatus (not the metric ID of the monitoring service).
   // `props` is the object to select the specific metric. Its values depend on
   // the actual monitoring service.
   // `startTime` is the time stamp that determines the first data point to return.
   // The value specified is inclusive.
   // `endTime` is he time stamp that determines the last data point to return.
   // The value specified is exclusive.
-  async getMetricData (props, startTime, endTime) {
+  async getMetricData (metricID, props, startTime, endTime) {
     throw new Error('not implemented')
   }
 

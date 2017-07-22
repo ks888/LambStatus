@@ -520,8 +520,8 @@ describe('Metric', () => {
       assert(body[0].timestamp === timestamp.substr(0, 16) + ':00.000Z')
       assert(body[0].value === newDatapoints[0].value)
 
-      const actualBegin = getMetricDataStub.args[0][1]
-      const actualEnd = getMetricDataStub.args[0][2]
+      const actualBegin = getMetricDataStub.args[0][2]
+      const actualEnd = getMetricDataStub.args[0][3]
       const now = new Date()
       assert(actualBegin.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime())
       assert(actualEnd.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime())
@@ -541,8 +541,8 @@ describe('Metric', () => {
       await metric.collect()
 
       assert(putObjectStub.callCount === 2)
-      const actualBegin = getMetricDataStub.args[1][1]
-      const actualEnd = getMetricDataStub.args[1][2]
+      const actualBegin = getMetricDataStub.args[1][2]
+      const actualEnd = getMetricDataStub.args[1][3]
       const now = new Date()
       assert(actualBegin.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime())
       assert(actualEnd.getTime() === new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime())
@@ -565,8 +565,8 @@ describe('Metric', () => {
       assert(actualDatapoints[0].timestamp === existingDatapoints[0].timestamp)
       assert(actualDatapoints[1].timestamp === newDatapoints[0].timestamp)
 
-      const actualBegin = getMetricDataStub.args[0][1]
-      const actualEnd = getMetricDataStub.args[0][2]
+      const actualBegin = getMetricDataStub.args[0][2]
+      const actualEnd = getMetricDataStub.args[0][3]
       assert(actualBegin.toISOString() === existingDatapoints[0].timestamp)
       assert(actualEnd.toISOString() > existingDatapoints[0].timestamp)
     })
@@ -584,8 +584,8 @@ describe('Metric', () => {
 
       assert(putObjectStub.callCount === 0)
 
-      const actualBegin = getMetricDataStub.args[0][1]
-      const actualEnd = getMetricDataStub.args[0][2]
+      const actualBegin = getMetricDataStub.args[0][2]
+      const actualEnd = getMetricDataStub.args[0][3]
       assert(actualBegin.toISOString() === existingDatapoints[0].timestamp)
       assert(actualEnd.toISOString() > existingDatapoints[0].timestamp)
     })

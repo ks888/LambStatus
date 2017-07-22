@@ -206,7 +206,7 @@ export class Metric {
       const end = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
       end.setDate(end.getDate() + 1)
 
-      let datapoints = await this.monitoringService.getMetricData(this.props, begin, end)
+      let datapoints = await this.monitoringService.getMetricData(this.metricID, this.props, begin, end)
       if (datapoints.length > 0 && lastTimestamp && datapoints[0].timestamp === lastTimestamp) {
         datapoints = datapoints.slice(1)
       }
