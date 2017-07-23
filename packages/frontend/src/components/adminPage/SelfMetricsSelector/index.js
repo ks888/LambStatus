@@ -13,9 +13,9 @@ export default class SelfMetricsSelector extends React.Component {
   }
 
   render () {
-    const linkToDoc = 'https://github.com/ks888/LambStatus/wiki/LambStatus-API-v0'
+    const linkToDoc = 'https://github.com/ks888/LambStatus/wiki/The-usage-of-%22Self%22-type-metrics'
     return (
-      <div>
+      <div className={classes['container']}>
         <div>
           This option asks you to submit data points via LambStatus API.
         </div>

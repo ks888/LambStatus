@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
 import RadioButtonGroup from 'components/common/RadioButtonGroup'
+import TextWithLabel from 'components/common/TextWithLabel'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import MonitoringServiceSelector, { metricsSelectorManager } from 'components/adminPage/MonitoringServiceSelector'
@@ -135,6 +136,10 @@ export default class MetricDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
+    let metricID
+    if (this.props.metricID) {
+      metricID = (<TextWithLabel label='Metric ID' text={this.props.metricID} />)
+    }
     const typeSelector = (
       <div className={classes['metric-type']}>
         <RadioButtonGroup title='Metrics Type' candidates={metricsSelectorManager.listServices()}
@@ -149,27 +154,30 @@ export default class MetricDialog extends React.Component {
           checkedCandidate={this.state.status} onClicked={this.handleChangeStatus} />
       </div>
     )
-    return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
-      <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        {actionName} Metric
-      </h2>
-      <div className='mdl-dialog__content'>
-        <ErrorMessage message={this.state.message} />
-        {typeSelector}
-        <div>
-          {metrics}
+    return (
+      <dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
+        <h2 className={classnames('mdl-dialog__title', classes.title)}>
+          {actionName} Metric
+        </h2>
+        <div className='mdl-dialog__content'>
+          <ErrorMessage message={this.state.message} />
+          {metricID}
+          {typeSelector}
+          <div>
+            {metrics}
+          </div>
+          <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
+          <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
+          <TextField label='Description (optional)' text={this.state.description} rows={2}
+            onChange={this.handleChangeDescription} />
+          {metricStatusSelector}
         </div>
-        <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
-        <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
-        <TextField label='Description (optional)' text={this.state.description} rows={2}
-          onChange={this.handleChangeDescription} />
-        {metricStatusSelector}
-      </div>
-      <div className='mdl-dialog__actions'>
-        <Button onClick={clickHandler} name={actionName}
-          class='mdl-button--accent' disabled={this.state.isUpdating} />
-        <Button onClick={this.handleHideDialog} name='Cancel' />
-      </div>
-    </dialog>)
+        <div className='mdl-dialog__actions'>
+          <Button onClick={clickHandler} name={actionName}
+            class='mdl-button--accent' disabled={this.state.isUpdating} />
+          <Button onClick={this.handleHideDialog} name='Cancel' />
+        </div>
+      </dialog>
+    )
   }
 }
