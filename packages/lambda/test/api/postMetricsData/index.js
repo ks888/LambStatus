@@ -58,7 +58,7 @@ describe('postMetricsData', () => {
   it('should return validation error if metric type is invalid', async () => {
     sinon.stub(Metric.prototype, 'insertDatapoints').returns([])
     sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
-    sinon.stub(MockService.prototype, 'allowPostDatapointsAPI').returns(false)
+    sinon.stub(MockService.prototype, 'shouldAdminPostDatapoints').returns(false)
 
     const id = 123
     await handle({[id]: []}, null, (error, result) => {
@@ -66,7 +66,7 @@ describe('postMetricsData', () => {
       assert(error[0].message.match(/Mock/))
     })
 
-    MockService.prototype.allowPostDatapointsAPI.restore()
+    MockService.prototype.shouldAdminPostDatapoints.restore()
   })
 
   it('should return a list of errors if there are several errors', async () => {

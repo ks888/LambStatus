@@ -22,9 +22,9 @@ describe('MonitoringService', () => {
     }
   })
 
-  it('allowPostDatapointsAPI should return false', () => {
+  it('shouldAdminPostDatapoints should return false', () => {
     const service = new MonitoringService()
-    const actual = service.allowPostDatapointsAPI()
+    const actual = service.shouldAdminPostDatapoints()
     assert(actual === false)
   })
 })

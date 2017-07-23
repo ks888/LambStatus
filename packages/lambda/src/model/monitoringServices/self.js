@@ -39,7 +39,7 @@ export default class Self extends MonitoringService {
     })
   }
 
-  allowPostDatapointsAPI () {
+  shouldAdminPostDatapoints () {
     return true
   }
 }

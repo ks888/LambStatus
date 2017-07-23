@@ -12,8 +12,8 @@ export async function handle (event, context, callback) {
     const data = event[metricID]
     try {
       const metric = await metrics.lookup(metricID)
-      if (!metric.monitoringService.allowPostDatapointsAPI()) {
-        throw new ValidationError(`post datapoints is not allowed (${metric.type})`)
+      if (!metric.monitoringService.shouldAdminPostDatapoints()) {
+        throw new ValidationError(`${metric.type} type metrics does not allow a user to submit datapoints`)
       }
       resp[metricID] = await metric.insertDatapoints(data)
     } catch (error) {

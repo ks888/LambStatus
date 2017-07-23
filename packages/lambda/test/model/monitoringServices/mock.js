@@ -9,7 +9,7 @@ export default class MockService extends MonitoringService {
     return []
   }
 
-  allowPostDatapointsAPI () {
+  shouldAdminPostDatapoints () {
     return true
   }
 }

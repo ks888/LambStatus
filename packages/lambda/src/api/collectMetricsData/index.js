@@ -4,7 +4,9 @@ import 'model/monitoringServices'  // load monitoring services
 export async function handle (event, context, callback) {
   try {
     const metrics = await new Metrics().list()
-    await Promise.all(metrics.map(async metric => await metric.collect()))
+    await Promise.all(metrics
+                      .filter(metric => !metric.monitoringService.shouldAdminPostDatapoints())
+                      .map(async metric => await metric.collect()))
     callback(null)
   } catch (error) {
     console.log(error.message)

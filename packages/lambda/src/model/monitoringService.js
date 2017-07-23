@@ -19,9 +19,9 @@ export class MonitoringService {
     throw new Error('not implemented')
   }
 
-  // allowPostDatapointsAPI returns true if a user can post new datapoints to a LambStatus metric
-  // via LambStatus API. Not allowed by default.
-  allowPostDatapointsAPI () {
+  // shouldAdminPostDatapoints returns true if an admin should post new datapoints to a LambStatus metric
+  // via LambStatus API. False by default.
+  shouldAdminPostDatapoints () {
     return false
   }
 }

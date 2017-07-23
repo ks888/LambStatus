@@ -4,9 +4,15 @@ import { handle } from 'api/collectMetricsData'
 import { Metrics, Metric } from 'model/metrics'
 
 describe('collectMetricsData', () => {
+  let shouldAdminPostDatapointsMock
+  beforeEach(() => {
+    shouldAdminPostDatapointsMock = sinon.stub(MockService.prototype, 'shouldAdminPostDatapoints').returns(false)
+  })
+
   afterEach(() => {
     Metrics.prototype.list.restore()
     Metric.prototype.collect.restore()
+    MockService.prototype.shouldAdminPostDatapoints.restore()
   })
 
   it('should collect the new data for each metric', async () => {
@@ -37,6 +43,17 @@ describe('collectMetricsData', () => {
       assert(error === null)
       assert(stub.callCount === metrics.length)
       assert(numResolved === metrics.length)
+    })
+  })
+
+  it('should not collect the new data if the admin should post datapoints ', async () => {
+    shouldAdminPostDatapointsMock.returns(true)
+    sinon.stub(Metrics.prototype, 'list').returns([new Metric('1', 'Mock')])
+    const stub = sinon.stub(Metric.prototype, 'collect').returns()
+
+    await handle({}, null, (error, result) => {
+      assert(error === null)
+      assert(stub.notCalled)
     })
   })
 
