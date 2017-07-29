@@ -41,6 +41,8 @@ export default class MetricPreviewDialog extends React.Component {
       )
     })
 
+    const linkToScript = '/metrics/${metricID}/scripts/python?apiKey=${apiKey}&hostname=${hostname}'
+
     return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
       <h2 className={classnames('mdl-dialog__title', classes.title)}>
         Preview

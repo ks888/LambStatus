@@ -17,13 +17,8 @@ export default class SelfMetricsSelector extends React.Component {
     return (
       <div className={classes['container']}>
         <div>
-          This option asks you to submit data points via LambStatus API.
-        </div>
-        <div>
-          Check out
-          <a href={linkToDoc} className={classes.link} target='_blank'>
-            the API Documentation and code snippets
-          </a>
+          This option asks you to submit data points via LambStatus API. Check out
+          <a href={linkToDoc} className={classes.link} target='_blank'>the Documentation</a>
           for more details.
         </div>
       </div>
