@@ -51,34 +51,31 @@ export default class Scripts extends React.Component {
     }).isRequired,
     location: PropTypes.shape({
       query: PropTypes.shape({
-        apiKey: PropTypes.string.isRequired,
-        hostname: PropTypes.string.isRequired
+        apiKey: PropTypes.string,
+        hostname: PropTypes.string
       }).isRequired
     }).isRequired
   }
 
   render () {
-    const metricID = this.props.params.metricid
     const lang = this.props.params.lang
-    const query = this.props.location.query
-    let apiKey = ''
-    if (query.hasOwnProperty('apiKey')) {
-      apiKey = query['apiKey']
-    }
-    let hostname = ''
-    if (query.hasOwnProperty('hostname')) {
-      hostname = query['hostname']
-    }
-
     let script
     if (lang === 'python') {
       script = pythonScript
     } else {
       script = `Unsupported language: ${lang}`
     }
-    script = script.replace('<API_KEY>', apiKey)
-      .replace('<API_HOSTNAME>', hostname)
-      .replace('<METRIC_ID>', metricID)
+
+    const metricID = this.props.params.metricid
+    script = script.replace('<METRIC_ID>', metricID)
+
+    const query = this.props.location.query
+    if (query.hasOwnProperty('apiKey')) {
+      script = script.replace('<API_KEY>', query['apiKey'])
+    }
+    if (query.hasOwnProperty('hostname')) {
+      script = script.replace('<API_HOSTNAME>', query['hostname'])
+    }
 
     return (
       <pre className={classes.script}>

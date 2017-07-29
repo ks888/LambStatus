@@ -10,8 +10,7 @@ import { buildStore } from 'utils/store'
 import * as settings from 'utils/settings'
 
 // load plugins
-import 'components/adminPage/CloudWatchMetricsSelector'
-import 'components/adminPage/SelfMetricsSelector'
+import 'components/adminPage/MonitoringServices'
 
 // ========================================================
 // Browser History Setup

@@ -35,5 +35,14 @@ describe('Scripts', () => {
 
       assert(scripts.text().match(/Unsupported/) !== null)
     })
+
+    it('should not replace <...> if the query params are not given ', () => {
+      const props = generateProps()
+      props.location.query = {}
+      const scripts = shallow(<Scripts {...props} />)
+
+      assert(scripts.text().match(/<API_KEY>/) !== null)
+      assert(scripts.text().match(/<API_HOSTNAME>/) !== null)
+    })
   })
 })

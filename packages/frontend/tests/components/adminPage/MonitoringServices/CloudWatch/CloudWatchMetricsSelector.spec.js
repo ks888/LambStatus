@@ -2,7 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import Spinner from 'components/common/Spinner'
 import DropdownList from 'components/common/DropdownList'
-import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector/CloudWatchMetricsSelector'
+import CloudWatchMetricsSelector from 'components/adminPage/MonitoringServices/CloudWatch/CloudWatchMetricsSelector'
 
 describe('CloudWatchMetricsSelector', () => {
   const generateProps = () => {
@@ -11,12 +11,6 @@ describe('CloudWatchMetricsSelector', () => {
       fetchExternalMetrics: sinon.spy()
     }
   }
-
-  describe('monitoringServiceName', () => {
-    it('should return the service name without instantiating the class', () => {
-      assert(CloudWatchMetricsSelector.monitoringServiceName === 'CloudWatch')
-    })
-  })
 
   describe('constructor', () => {
     it('should initialize state by the given props', () => {

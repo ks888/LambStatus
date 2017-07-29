@@ -6,7 +6,7 @@ import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextWithLabel from 'components/common/TextWithLabel'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
-import MonitoringServiceSelector, { metricsSelectorManager } from 'components/adminPage/MonitoringServiceSelector'
+import { monitoringServiceManager } from 'components/adminPage/MonitoringService'
 import { metricStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricDialog.scss'
@@ -48,7 +48,7 @@ export default class MetricDialog extends React.Component {
       }
     } else {
       this.state = {
-        type: metricsSelectorManager.listServices()[0],
+        type: monitoringServiceManager.listServices()[0],
         props: null,
         title: '',
         status: metricStatuses[0],
@@ -116,8 +116,10 @@ export default class MetricDialog extends React.Component {
   }
 
   renderMetrics = () => {
+    const service = monitoringServiceManager.create(this.state.type)
+    const Selector = service.getMetricsSelector()
     return (
-      <MonitoringServiceSelector type={this.state.type} onChange={this.handleChangeProps} props={this.state.props} />
+      <Selector onChange={this.handleChangeProps} props={this.state.props} />
     )
   }
 
@@ -142,7 +144,7 @@ export default class MetricDialog extends React.Component {
     }
     const typeSelector = (
       <div className={classes['metric-type']}>
-        <RadioButtonGroup title='Metrics Type' candidates={metricsSelectorManager.listServices()}
+        <RadioButtonGroup title='Metrics Type' candidates={monitoringServiceManager.listServices()}
           checkedCandidate={this.state.type} onClicked={this.handleChangeType} />
       </div>
     )
