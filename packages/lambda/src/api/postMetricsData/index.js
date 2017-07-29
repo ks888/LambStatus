@@ -2,7 +2,14 @@ import { Metrics } from 'model/metrics'
 import 'model/monitoringServices'  // load monitoring services
 import { ValidationError } from 'utils/errors'
 
+const maxDatapoints = 3000
+
 export async function handle (event, context, callback) {
+  const numDatapoints = Object.keys(event).reduce((sum, key) => { return sum + event[key].length }, 0)
+  if (numDatapoints > maxDatapoints) {
+    callback([{message: 'Error: too many data points'}])
+    return
+  }
   const metrics = new Metrics()
   const resp = {}
   const errorResp = []

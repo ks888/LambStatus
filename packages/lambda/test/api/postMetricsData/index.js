@@ -25,6 +25,20 @@ describe('postMetricsData', () => {
     assert(stub.calledOnce)
   })
 
+  it('should return too many data points error if there are >3000 data points', async () => {
+    const datapoints = { 1: [] }
+    for (let i = 0; i < 3001; i++) {
+      datapoints[1].push({})
+    }
+    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    sinon.stub(Metrics.prototype, 'lookup').returns()
+
+    return await handle(datapoints, null, (error, result) => {
+      assert(error.length === 1)
+      assert(error[0].message.match(/too many/))
+    })
+  })
+
   it('should post multiple data and return inserted data', async () => {
     const datapoints = {
       1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}],

@@ -992,7 +992,7 @@ Resources:
           - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
-      Timeout: 30
+      Timeout: 60
   PostMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
