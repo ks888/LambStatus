@@ -13,7 +13,7 @@ export default class MetricPreviewDialog extends React.Component {
   static propTypes = {
     metricID: PropTypes.string.isRequired,
     metric: PropTypes.shape({
-      type: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired
     }),
     onClosed: PropTypes.func.isRequired
   }
@@ -40,7 +40,7 @@ export default class MetricPreviewDialog extends React.Component {
     const service = monitoringServiceManager.create(this.props.metric.type)
     const Message = service.getMessageInPreviewDialog()
     return (
-      <Message metricID={this.props.metric.metricID} />
+      <Message metricID={this.props.metricID} />
     )
   }
 
@@ -64,7 +64,7 @@ export default class MetricPreviewDialog extends React.Component {
           {timeframesSelector}
         </div>
         <div className='mdl-list'>
-          <MetricsGraph metricID={this.props.metric.metricID} timeframe={this.state.timeframe} />
+          <MetricsGraph metricID={this.props.metricID} timeframe={this.state.timeframe} />
         </div>
         {message}
         <div className='mdl-dialog__actions'>

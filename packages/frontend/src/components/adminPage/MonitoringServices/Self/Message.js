@@ -27,7 +27,7 @@ export default class Message extends React.Component {
 
     return (
       <div>
-        Note: this metric is 'Self' type, and so submit data points by yourself. Use
+        Note: this metric is "Self" type, and so submit data points by yourself. Use
         <a href={linkToScript} className={classes.link} target='_blank'>this Python script</a>
         as the starting point.
       </div>
