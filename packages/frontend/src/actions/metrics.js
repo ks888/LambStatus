@@ -182,6 +182,8 @@ export const fetchMetricsData = (statusPageURL, metricID, year, month, date, cal
                                          {cache: 'no-cache', mode: 'cors'}, callbacks)
       if (typeof respBody === 'object') {
         dispatch(listMetricsData(metricID, year, month, date, respBody))
+      } else {
+        dispatch(listMetricsData(metricID, year, month, date, []))
       }
     } catch (error) {
       console.error(error.message)

@@ -106,7 +106,15 @@ export class Metric {
     datapoints.forEach(datapoint => {
       datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
     })
-    datapoints.sort((a, b) => a.timestamp > b.timestamp)
+    datapoints.sort((a, b) => {
+      if (a.timestamp > b.timestamp) {
+        return 1
+      } else if (a.timestamp < b.timestamp) {
+        return -1
+      } else {
+        return 0
+      }
+    })
   }
 
   async insertNormalizedDatapointsAtDate (datapoints, date) {

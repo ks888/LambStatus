@@ -361,6 +361,45 @@ describe('Metric', () => {
     })
   })
 
+  describe('normalizeDatapoints', () => {
+    it('should sort in the order of timestamp ', async () => {
+      const datapoints = [
+        { timestamp: '2017-07-31T14:18:00.000Z', value: 23 },
+        { timestamp: '2017-07-31T14:17:00.000Z', value: 22 },
+        { timestamp: '2017-07-31T14:16:00.000Z', value: 21 },
+        { timestamp: '2017-07-31T14:15:00.000Z', value: 20 },
+        { timestamp: '2017-07-31T14:14:00.000Z', value: 19 },
+        { timestamp: '2017-07-31T14:13:00.000Z', value: 18 },
+        { timestamp: '2017-07-31T14:12:00.000Z', value: 17 },
+        { timestamp: '2017-07-31T14:11:00.000Z', value: 16 },
+        { timestamp: '2017-07-31T14:10:00.000Z', value: 15 },
+        { timestamp: '2017-07-31T14:09:00.000Z', value: 14 },
+        { timestamp: '2017-07-31T14:08:00.000Z', value: 13 },
+        { timestamp: '2017-07-31T14:07:00.000Z', value: 12 },
+        { timestamp: '2017-07-31T14:06:00.000Z', value: 11 },
+        { timestamp: '2017-07-31T14:05:00.000Z', value: 10 },
+        { timestamp: '2017-07-31T14:04:00.000Z', value: 9 },
+        { timestamp: '2017-07-31T14:03:00.000Z', value: 8 },
+        { timestamp: '2017-07-31T14:02:00.000Z', value: 7 },
+        { timestamp: '2017-07-31T14:01:00.000Z', value: 6 },
+        { timestamp: '2017-07-31T14:00:00.000Z', value: 5 },
+        { timestamp: '2017-07-31T13:59:00.000Z', value: 4 },
+        { timestamp: '2017-07-31T13:58:00.000Z', value: 3 },
+        { timestamp: '2017-07-31T13:57:00.000Z', value: 2 },
+        { timestamp: '2017-07-31T13:56:00.000Z', value: 1 },
+        { timestamp: '2017-07-31T13:55:00.000Z', value: 0 }
+      ]
+
+      const metric = genMock()
+      await metric.normalizeDatapoints(datapoints)
+
+      Object.keys(datapoints).forEach((k, i) => {
+        assert(datapoints[k].timestamp.endsWith('00.000Z'))
+        assert(datapoints[k].value === i)
+      })
+    })
+  })
+
   describe('insertDatapoints', () => {
     afterEach(() => {
       S3.prototype.getObject.restore()

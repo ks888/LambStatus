@@ -32,7 +32,8 @@ export default class DropdownList extends React.Component {
     return (
       <span ref='dropdown' className={classnames('mdl-textfield', 'mdl-js-textfield', classes.dropdown,
             (this.props.disabled ? 'is-disabled' : ''))}>
-        <select className='mdl-textfield__input' onChange={this.handleChange} value={this.props.initialValue}
+        <select
+          className='mdl-textfield__input' onChange={this.handleChange} value={this.props.initialValue}
           disabled={this.props.disabled}>
           {statusDOMs}
         </select>
