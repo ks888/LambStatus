@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
 import RadioButtonGroup from 'components/common/RadioButtonGroup'
+import TextWithLabel from 'components/common/TextWithLabel'
 import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
-import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
-import { monitoringServices, metricStatuses, cloudWatchMonitoringService } from 'utils/status'
+import { monitoringServiceManager } from 'components/adminPage/MonitoringService'
+import { metricStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 import classes from './MetricDialog.scss'
 
@@ -22,7 +23,7 @@ export default class MetricDialog extends React.Component {
     metric: PropTypes.shape({
       metricID: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
-      props: PropTypes.object.isRequired,
+      props: PropTypes.object,
       title: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
@@ -47,7 +48,7 @@ export default class MetricDialog extends React.Component {
       }
     } else {
       this.state = {
-        type: monitoringServices[0],
+        type: monitoringServiceManager.listServices()[0],
         props: null,
         title: '',
         status: metricStatuses[0],
@@ -115,13 +116,11 @@ export default class MetricDialog extends React.Component {
   }
 
   renderMetrics = () => {
-    switch (this.state.type) {
-      case cloudWatchMonitoringService:
-        return (<CloudWatchMetricsSelector onChange={this.handleChangeProps} props={this.state.props} />)
-      default:
-        console.error('Unknown monitoring service:', this.state.type)
-        return null
-    }
+    const service = monitoringServiceManager.create(this.state.type)
+    const Selector = service.getMetricsSelector()
+    return (
+      <Selector onChange={this.handleChangeProps} props={this.state.props} />
+    )
   }
 
   render () {
@@ -139,9 +138,13 @@ export default class MetricDialog extends React.Component {
         console.warn('unknown dialog type: ', this.props.dialogType)
     }
 
+    let metricID
+    if (this.props.metricID) {
+      metricID = (<TextWithLabel label='Metric ID' text={this.props.metricID} />)
+    }
     const typeSelector = (
       <div className={classes['metric-type']}>
-        <RadioButtonGroup title='Metrics Type' candidates={monitoringServices}
+        <RadioButtonGroup title='Metrics Type' candidates={monitoringServiceManager.listServices()}
           checkedCandidate={this.state.type} onClicked={this.handleChangeType} />
       </div>
     )
@@ -153,27 +156,30 @@ export default class MetricDialog extends React.Component {
           checkedCandidate={this.state.status} onClicked={this.handleChangeStatus} />
       </div>
     )
-    return (<dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
-      <h2 className={classnames('mdl-dialog__title', classes.title)}>
-        {actionName} Metric
-      </h2>
-      <div className='mdl-dialog__content'>
-        <ErrorMessage message={this.state.message} />
-        {typeSelector}
-        <div>
-          {metrics}
+    return (
+      <dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
+        <h2 className={classnames('mdl-dialog__title', classes.title)}>
+          {actionName} Metric
+        </h2>
+        <div className='mdl-dialog__content'>
+          <ErrorMessage message={this.state.message} />
+          {metricID}
+          {typeSelector}
+          <div>
+            {metrics}
+          </div>
+          <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
+          <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
+          <TextField label='Description (optional)' text={this.state.description} rows={2}
+            onChange={this.handleChangeDescription} />
+          {metricStatusSelector}
         </div>
-        <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
-        <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
-        <TextField label='Description (optional)' text={this.state.description} rows={2}
-          onChange={this.handleChangeDescription} />
-        {metricStatusSelector}
-      </div>
-      <div className='mdl-dialog__actions'>
-        <Button onClick={clickHandler} name={actionName}
-          class='mdl-button--accent' disabled={this.state.isUpdating} />
-        <Button onClick={this.handleHideDialog} name='Cancel' />
-      </div>
-    </dialog>)
+        <div className='mdl-dialog__actions'>
+          <Button onClick={clickHandler} name={actionName}
+            class='mdl-button--accent' disabled={this.state.isUpdating} />
+          <Button onClick={this.handleHideDialog} name='Cancel' />
+        </div>
+      </dialog>
+    )
   }
 }

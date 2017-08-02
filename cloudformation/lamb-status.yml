@@ -992,7 +992,7 @@ Resources:
           - "LambdaRole"
           - "Arn"
       Runtime: "nodejs4.3"
-      Timeout: 30
+      Timeout: 60
   PostMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
@@ -2862,6 +2862,9 @@ Resources:
           Stage: prod
       UsagePlanName: !Sub |-
         ${AWS::StackName}
+      Throttle:
+        BurstLimit: 10
+        RateLimit: 10
   StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:

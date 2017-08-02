@@ -1,10 +1,10 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { mount, shallow } from 'enzyme'
-import { monitoringServices, metricStatuses } from 'utils/status'
+import { metricStatuses } from 'utils/status'
 import * as dialogUtil from 'utils/dialog'
 import Button from 'components/common/Button'
-import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector'
+import { monitoringServiceManager } from 'components/adminPage/MonitoringService'
 import MetricDialog, { dialogType } from 'components/adminPage/MetricDialog/MetricDialog'
 
 describe('MetricDialog', () => {
@@ -14,7 +14,7 @@ describe('MetricDialog', () => {
       metricID: '1',
       metric: {
         metricID: '1',
-        type: '',
+        type: 'Self',
         props: {},
         title: 'Title',
         status: metricStatuses[0],
@@ -44,7 +44,7 @@ describe('MetricDialog', () => {
 
     it('should set default values if the metric is empty', () => {
       const dialog = new MetricDialog({})
-      assert(dialog.state.type === monitoringServices[0])
+      assert(dialog.state.type === monitoringServiceManager.listServices()[0])
       assert(dialog.state.props === null)
       assert(dialog.state.title === '')
       assert(dialog.state.status === metricStatuses[0])
@@ -93,18 +93,6 @@ describe('MetricDialog', () => {
   })
 
   describe('render', () => {
-    it('should show cloud watch metrics selector by default', () => {
-      sinon.stub(dialogUtil, 'mountDialog', () => {})
-      const props = generateProps()
-      props.metric = undefined
-      const dialog = shallow(<MetricDialog {...props} />)
-
-      const selector = dialog.find(CloudWatchMetricsSelector)
-      assert(selector.length === 1)
-
-      dialogUtil.mountDialog.restore()
-    })
-
     it('should call postMetric action if the add button is clicked', () => {
       sinon.stub(dialogUtil, 'mountDialog', () => {})
       const props = generateProps()
@@ -147,6 +135,17 @@ describe('MetricDialog', () => {
 
       dialogUtil.mountDialog.restore()
       dialogUtil.unmountDialog.restore()
+    })
+
+    it('should throw the error if the metric type is unknown', () => {
+      const props = generateProps()
+      props.metric.type = 'Unknown'
+      try {
+        mount(<MetricDialog {...props} />)
+        assert(false)
+      } catch (e) {
+        assert(e.message.match(/Unknown/))
+      }
     })
   })
 })

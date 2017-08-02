@@ -24,7 +24,7 @@ describe('MetricDialog', () => {
       const props = generateProps()
       const metric = {
         metricID: props.metricID,
-        type: '',
+        type: 'Self',
         props: {},
         title: 'Title',
         status: metricStatuses[0],

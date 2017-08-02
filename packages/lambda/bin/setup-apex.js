@@ -52,3 +52,6 @@ createFunctionJSON(lambdaRoleArn, 60, 512, [
   buildDir + '/functions/CollectMetricsData',
   buildDir + '/functions/GetExternalMetrics'
 ])
+createFunctionJSON(lambdaRoleArn, 60, 128, [
+  buildDir + '/functions/PostMetricsData'
+])

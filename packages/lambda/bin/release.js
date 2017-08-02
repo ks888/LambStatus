@@ -27,7 +27,7 @@ const funcsDir = path.normalize(`${buildDir}/functions`)
 const buildFunc = (funcName) => {
   const cmd = `apex build ${funcName}`
   try {
-    const numRetries = 3
+    const numRetries = 5
     let stdout
     for (let i = 0; i < numRetries; i++) {
       stdout = execSync(cmd, { cwd: buildDir, maxBuffer: 100 * 1024 * 1024 })

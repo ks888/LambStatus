@@ -12,7 +12,6 @@ export const componentStatuses = ['Operational', 'Under Maintenance', 'Degraded 
   'Major Outage']
 export const incidentStatuses = ['Investigating', 'Identified', 'Monitoring', 'Resolved']
 export const maintenanceStatuses = ['Scheduled', 'In Progress', 'Verifying', 'Completed']
-export const monitoringServices = ['CloudWatch']
 export const metricStatusVisible = 'Visible'
 export const metricStatusHidden = 'Hidden'
 export const metricStatuses = [metricStatusVisible, metricStatusHidden]

@@ -35,8 +35,6 @@ export const getIncidentColor = (impact) => {
   }
 }
 
-export const cloudWatchMonitoringService = 'CloudWatch'
-export const monitoringServices = [cloudWatchMonitoringService]
 export const metricStatuses = ['Hidden', 'Visible']
 
 export const getMetricColor = (impact) => {

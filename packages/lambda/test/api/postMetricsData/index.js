@@ -15,7 +15,7 @@ describe('postMetricsData', () => {
       1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
     }
     const stub = sinon.stub(Metric.prototype, 'insertDatapoints').returns(datapoints[1])
-    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric())
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
 
     await handle(datapoints, null, (error, result) => {
       assert(error === null)
@@ -23,6 +23,20 @@ describe('postMetricsData', () => {
       assert.deepEqual(result[1], datapoints[1])
     })
     assert(stub.calledOnce)
+  })
+
+  it('should return too many data points error if there are >3000 data points', async () => {
+    const datapoints = { 1: [] }
+    for (let i = 0; i < 3001; i++) {
+      datapoints[1].push({})
+    }
+    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    sinon.stub(Metrics.prototype, 'lookup').returns()
+
+    return await handle(datapoints, null, (error, result) => {
+      assert(error.length === 1)
+      assert(error[0].message.match(/too many/))
+    })
   })
 
   it('should post multiple data and return inserted data', async () => {
@@ -33,7 +47,7 @@ describe('postMetricsData', () => {
     const stub = sinon.stub(Metric.prototype, 'insertDatapoints')
     stub.onCall(0).returns(datapoints[1])
     stub.onCall(1).returns(datapoints[2])
-    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric())
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
 
     await handle(datapoints, null, (error, result) => {
       assert(error === null)
@@ -53,6 +67,20 @@ describe('postMetricsData', () => {
       assert(error.length === 1)
       assert(error[0].message.match(new RegExp(id)))
     })
+  })
+
+  it('should return validation error if metric type is invalid', async () => {
+    sinon.stub(Metric.prototype, 'insertDatapoints').returns([])
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
+    sinon.stub(MockService.prototype, 'shouldAdminPostDatapoints').returns(false)
+
+    const id = 123
+    await handle({[id]: []}, null, (error, result) => {
+      assert(error.length === 1)
+      assert(error[0].message.match(/Mock/))
+    })
+
+    MockService.prototype.shouldAdminPostDatapoints.restore()
   })
 
   it('should return a list of errors if there are several errors', async () => {

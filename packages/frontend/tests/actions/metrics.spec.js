@@ -144,8 +144,7 @@ describe('Actions/Metrics', () => {
       return fetchExternalMetrics(metricsType, filters, callbacks)(dispatchSpy)
         .then(() => {
           const lastURL = fetchMock.lastUrl(/.*\/external-metrics/)
-          assert(lastURL.match(/type=%26!%3D/))
-          assert(lastURL.match(/filters=%7B%22a%22%3A%221%22%7D/))
+          assert(lastURL.match(/\?type=%26!%3D&filters=%7B%22a%22%3A%221%22%7D/))
         })
     })
 
@@ -307,7 +306,7 @@ describe('Actions/Metrics', () => {
         })
     })
 
-    it('should not call dispatch if the data is not found.', () => {
+    it('should call dispatch with empty data if the data is not found.', () => {
       fetchMock.get(/.*\/metrics\/.*/, { body: '<html />', headers: {'Content-Type': 'text/html'} })
 
       return fetchMetricsData('', '', '', '', '', callbacks)(dispatchSpy)
@@ -316,7 +315,7 @@ describe('Actions/Metrics', () => {
           assert(callbacks.onSuccess.calledOnce)
           assert(callbacks.onFailure.notCalled)
 
-          assert(dispatchSpy.notCalled)
+          assert(dispatchSpy.firstCall.args[0].metricsData.length === 0)
         })
     })
 

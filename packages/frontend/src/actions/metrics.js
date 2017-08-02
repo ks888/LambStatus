@@ -91,7 +91,7 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
 
       let queryParam = `type=${encodeURIComponent(metricsType)}`
       if (filters) {
-        queryParam += `${queryParam}&filters=${encodeURIComponent(JSON.stringify(filters))}`
+        queryParam = `${queryParam}&filters=${encodeURIComponent(JSON.stringify(filters))}`
       }
       let nextCursor
       let metrics = []
@@ -182,6 +182,8 @@ export const fetchMetricsData = (statusPageURL, metricID, year, month, date, cal
                                          {cache: 'no-cache', mode: 'cors'}, callbacks)
       if (typeof respBody === 'object') {
         dispatch(listMetricsData(metricID, year, month, date, respBody))
+      } else {
+        dispatch(listMetricsData(metricID, year, month, date, []))
       }
     } catch (error) {
       console.error(error.message)

@@ -2,7 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import Spinner from 'components/common/Spinner'
 import DropdownList from 'components/common/DropdownList'
-import CloudWatchMetricsSelector from 'components/adminPage/CloudWatchMetricsSelector/CloudWatchMetricsSelector'
+import CloudWatchMetricsSelector from 'components/adminPage/MonitoringServices/CloudWatch/CloudWatchMetricsSelector'
 
 describe('CloudWatchMetricsSelector', () => {
   const generateProps = () => {

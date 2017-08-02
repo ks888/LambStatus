@@ -1,7 +1,10 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { fetchExternalMetrics } from 'actions/metrics'
+import { MonitoringService, monitoringServiceManager } from 'components/adminPage/MonitoringService'
 import CloudWatchMetricsSelector from './CloudWatchMetricsSelector'
+
+const serviceName = 'CloudWatch'
 
 const mapStateToProps = (state) => {
   let filters, metrics
@@ -16,4 +19,16 @@ function mapDispatchToProps (dispatch) {
   return bindActionCreators({fetchExternalMetrics}, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CloudWatchMetricsSelector)
+const container = connect(mapStateToProps, mapDispatchToProps)(CloudWatchMetricsSelector)
+
+export default class CloudWatch extends MonitoringService {
+  getMetricsSelector () {
+    return container
+  }
+
+  getServiceName () {
+    return serviceName
+  }
+}
+
+monitoringServiceManager.register(serviceName, CloudWatch)

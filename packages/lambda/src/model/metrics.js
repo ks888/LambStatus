@@ -1,10 +1,10 @@
-import CloudWatch from 'aws/cloudWatch'
 import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
+import { monitoringServiceManager } from 'model/monitoringService'
 import generateID from 'utils/generateID'
 import { NotFoundError, ValidationError } from 'utils/errors'
-import { metricStatuses, metricStatusVisible, monitoringServices, region, stackName } from 'utils/const'
+import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/const'
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
@@ -18,8 +18,7 @@ export class Metric {
       this.needIDValidation = true
     }
     this.type = type
-    // TODO: should be instantiated based on 'type'
-    this.monitoringService = new CloudWatch()
+    this.monitoringService = monitoringServiceManager.create(this.type)
     this.title = title
     this.unit = unit
     this.description = description
@@ -42,10 +41,6 @@ export class Metric {
       await metrics.lookup(this.metricID)
     }
 
-    if (monitoringServices.indexOf(this.type) < 0) {
-      throw new ValidationError('invalid type parameter')
-    }
-
     if (this.title === undefined || this.title === '') {
       throw new ValidationError('invalid title parameter')
     }
@@ -66,7 +61,7 @@ export class Metric {
       throw new ValidationError('invalid order parameter')
     }
 
-    if (this.props === undefined || this.props === null || typeof this.props !== 'object') {
+    if (this.props === undefined) {
       throw new ValidationError('invalid metrics parameter')
     }
   }
@@ -111,7 +106,15 @@ export class Metric {
     datapoints.forEach(datapoint => {
       datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
     })
-    datapoints.sort((a, b) => a.timestamp > b.timestamp)
+    datapoints.sort((a, b) => {
+      if (a.timestamp > b.timestamp) {
+        return 1
+      } else if (a.timestamp < b.timestamp) {
+        return -1
+      } else {
+        return 0
+      }
+    })
   }
 
   async insertNormalizedDatapointsAtDate (datapoints, date) {
@@ -153,7 +156,7 @@ export class Metric {
     }
 
     const s3 = new S3()
-    await s3.putObject(region, bucketName, objectName, mergedDatapoints)
+    await s3.putObject(region, bucketName, objectName, JSON.stringify(mergedDatapoints))
     return insertedDatapoints
   }
 
@@ -211,7 +214,7 @@ export class Metric {
       const end = new Date(curr.getFullYear(), curr.getMonth(), curr.getDate())
       end.setDate(end.getDate() + 1)
 
-      let datapoints = await this.monitoringService.getMetricData(this.props, begin, end)
+      let datapoints = await this.monitoringService.getMetricData(this.metricID, this.props, begin, end)
       if (datapoints.length > 0 && lastTimestamp && datapoints[0].timestamp === lastTimestamp) {
         datapoints = datapoints.slice(1)
       }
@@ -241,8 +244,8 @@ export class Metric {
 
 export class Metrics {
   async listExternal (type, cursor, filters) {
-    // TODO: should be instantiated based on 'type'
-    return await new CloudWatch().listMetrics(cursor, filters)
+    const monitoringService = monitoringServiceManager.create(type)
+    return await monitoringService.listMetrics(cursor, filters)
   }
 
   async listPublic () {
