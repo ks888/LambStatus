@@ -4,19 +4,19 @@ import { ValidationError } from 'utils/errors'
 
 const maxDatapoints = 3000
 
-export async function handle (event, context, callback) {
-  const numDatapoints = Object.keys(event).reduce((sum, key) => { return sum + event[key].length }, 0)
+const insertDatapoints = async (dataByMetric, resp) => {
+  const errors = []
+  const numDatapoints = Object.keys(dataByMetric).reduce((sum, id) => { return sum + dataByMetric[id].length }, 0)
   if (numDatapoints > maxDatapoints) {
-    callback([{message: 'Error: too many data points'}])
-    return
+    errors.push('too many data points')
+    return errors
   }
+
   const metrics = new Metrics()
-  const resp = {}
-  const errorResp = []
-  const keys = Object.keys(event)
-  for (let i = 0; i < keys.length; i++) {
-    const metricID = keys[i]
-    const data = event[metricID]
+  const ids = Object.keys(dataByMetric)
+  for (let i = 0; i < ids.length; i++) {
+    const metricID = ids[i]
+    const data = dataByMetric[metricID]
     try {
       const metric = await metrics.lookup(metricID)
       if (!metric.monitoringService.shouldAdminPostDatapoints()) {
@@ -28,19 +28,25 @@ export async function handle (event, context, callback) {
       console.log(error.stack)
       switch (error.name) {
         case 'NotFoundError':
-          errorResp.push({message: `Error: the metric ${metricID} not found`})
+          errors.push(`the metric ${metricID} not found`)
           break
         case 'ValidationError':
-          errorResp.push({message: `Error: ${error.message}`})
+          errors.push(error.message)
           break
         default:
-          errorResp.push({message: 'Error: failed to post the metric'})
+          errors.push('failed to post the metric')
       }
     }
   }
+  return errors
+}
 
-  if (errorResp.length > 0) {
-    callback(errorResp)
+export async function handle (event, context, callback) {
+  const resp = {}
+  const errors = await insertDatapoints(event, resp)
+  if (errors.length > 0) {
+    const errorResp = errors.map(err => { return {message: `Error: ${err}`} })
+    callback(JSON.stringify(errorResp))
     return
   }
   callback(null, resp)

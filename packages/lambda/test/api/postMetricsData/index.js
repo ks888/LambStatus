@@ -34,6 +34,8 @@ describe('postMetricsData', () => {
     sinon.stub(Metrics.prototype, 'lookup').returns()
 
     return await handle(datapoints, null, (error, result) => {
+      error = JSON.parse(error)
+
       assert(error.length === 1)
       assert(error[0].message.match(/too many/))
     })
@@ -64,6 +66,7 @@ describe('postMetricsData', () => {
 
     const id = 123
     return await handle({[id]: []}, null, (error, result) => {
+      error = JSON.parse(error)
       assert(error.length === 1)
       assert(error[0].message.match(new RegExp(id)))
     })
@@ -76,6 +79,7 @@ describe('postMetricsData', () => {
 
     const id = 123
     await handle({[id]: []}, null, (error, result) => {
+      error = JSON.parse(error)
       assert(error.length === 1)
       assert(error[0].message.match(/Mock/))
     })
@@ -92,6 +96,8 @@ describe('postMetricsData', () => {
     const id1 = 123
     const id2 = 456
     return await handle({[id1]: [], [id2]: []}, null, (error, result) => {
+      error = JSON.parse(error)
+
       assert(error.length === 2)
       assert(error[0].message.match(new RegExp(id1)))
       assert(error[1].message.match(new RegExp(id2)) === null)

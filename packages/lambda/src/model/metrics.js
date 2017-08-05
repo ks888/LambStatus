@@ -106,6 +106,10 @@ export class Metric {
     datapoints.forEach(datapoint => {
       datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
     })
+    datapoints = datapoints.filter((datapoint, i, arr) => {
+      if (i === 0) return true
+      return arr[i - 1].timestamp !== arr[i].timestamp
+    })
     datapoints.sort((a, b) => {
       if (a.timestamp > b.timestamp) {
         return 1
@@ -115,6 +119,7 @@ export class Metric {
         return 0
       }
     })
+    return datapoints
   }
 
   async insertNormalizedDatapointsAtDate (datapoints, date) {
@@ -161,7 +166,7 @@ export class Metric {
   }
 
   async insertDatapoints (datapoints) {
-    this.normalizeDatapoints(datapoints)
+    datapoints = this.normalizeDatapoints(datapoints)
 
     const dates = {}
     datapoints.forEach(datapoint => {
@@ -222,7 +227,7 @@ export class Metric {
 
       if (datapoints.length > 0 || !existingDatapoints) {
         datapoints = (existingDatapoints === null ? [] : existingDatapoints).concat(datapoints)
-        this.normalizeDatapoints(datapoints)
+        datapoints = this.normalizeDatapoints(datapoints)
         await this.insertNormalizedDatapointsAtDate(datapoints, begin)
       }
     }))

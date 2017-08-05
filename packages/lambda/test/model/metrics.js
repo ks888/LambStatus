@@ -391,11 +391,11 @@ describe('Metric', () => {
       ]
 
       const metric = genMock()
-      await metric.normalizeDatapoints(datapoints)
+      const actual = await metric.normalizeDatapoints(datapoints)
 
-      Object.keys(datapoints).forEach((k, i) => {
-        assert(datapoints[k].timestamp.endsWith('00.000Z'))
-        assert(datapoints[k].value === i)
+      Object.keys(actual).forEach((k, i) => {
+        assert(actual[k].timestamp.endsWith('00.000Z'))
+        assert(actual[k].value === i)
       })
     })
   })
@@ -505,6 +505,30 @@ describe('Metric', () => {
 
       const metric = genMock()
       const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
+      const insertedData = await metric.insertDatapoints(newDatapoints)
+
+      assert(insertedData.length === 1)
+
+      const argsOnFirstCall = stub.args[0]
+      assert(argsOnFirstCall[2] === `metrics/${metric.metricID}/2017/7/3.json`)
+      const body = JSON.parse(argsOnFirstCall[3])
+      assert(body.length === 1)
+      assert(body[0].timestamp === newDatapoints[0].timestamp)
+      assert(body[0].value === newDatapoints[0].value)
+    })
+
+    it('should insert one datapoint if there are 2 data points in one minute', async () => {
+      const datapoints = {Body: new Buffer('[]')}
+      sinon.stub(S3.prototype, 'getObject').returns(datapoints)
+      const stub = sinon.stub(S3.prototype, 'putObject').returns()
+      sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
+
+      const metric = genMock()
+      const newDatapoints = [
+        {timestamp: '2017-07-03T01:00:01.000Z', value: 1},
+        {timestamp: '2017-07-03T01:00:02.000Z', value: 2},
+        {timestamp: '2017-07-03T01:00:03.000Z', value: 3}
+      ]
       const insertedData = await metric.insertDatapoints(newDatapoints)
 
       assert(insertedData.length === 1)
