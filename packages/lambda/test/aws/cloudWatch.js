@@ -122,6 +122,28 @@ describe('CloudWatch', () => {
       assert(actual.Period === 300)
     })
 
+    it('should use ExtendedStatistics if the statistics is pXX', async () => {
+      const curr = new Date()
+      const stat = 'p90'
+      const expect = {Datapoints: [
+        {Timestamp: curr, ExtendedStatistics: {[stat]: '1'}},
+        {Timestamp: new Date(curr.getTime() + 1), ExtendedStatistics: {[stat]: '2'}}
+      ]}
+      AWS.mock('CloudWatch', 'getMetricStatistics', (params, callback) => {
+        assert(params.ExtendedStatistics.length === 1)
+        assert(params.ExtendedStatistics[0] === stat)
+        callback(null, expect)
+      })
+
+      const cloudWatch = new CloudWatch()
+      const props = {Namespace: '', MetricName: '', Statistics: stat}
+      const actual = await cloudWatch.getMetricData(props, curr, curr)
+
+      assert(actual.length === expect.Datapoints.length)
+      assert(actual[0].value === '1')
+      assert(actual[1].value === '2')
+    })
+
     it('should throws the error if the API call failed', async () => {
       const expect = 'error'
       AWS.mock('CloudWatch', 'getMetricStatistics', (params, callback) => {
