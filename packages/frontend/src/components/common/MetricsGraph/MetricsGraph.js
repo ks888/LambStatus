@@ -123,15 +123,20 @@ export default class MetricsGraph extends React.Component {
       currDateStr = currDate.toISOString()
       let sum = 0
       let count = 0
+      let maxDecimalDigits = 0
       while (data[currIndex] && data[currIndex].timestamp < currDateStr) {
         sum += data[currIndex].value
         count++
+        const decimalParts = data[currIndex].value.toString().split('.')[1]
+        if (decimalParts !== undefined && decimalParts.length > maxDecimalDigits) {
+          maxDecimalDigits = decimalParts.length
+        }
         currIndex++
       }
 
       if (count !== 0) {
         const avg = sum / count
-        values.push(avg)
+        values.push(this.cutDecimalPart(avg, maxDecimalDigits))
       } else {
         values.push(null)
       }
@@ -150,6 +155,11 @@ export default class MetricsGraph extends React.Component {
     const value = Math.floor(rawValue)
     const place = Math.pow(10, (value.toString().length - 1))
     return Math.floor(value / place) * place
+  }
+
+  cutDecimalPart = (rawValue, numDecimalDigits = 0) => {
+    const mul = Math.pow(10, numDecimalDigits)
+    return Math.floor(rawValue * mul) / mul
   }
 
   updateGraph = () => {
@@ -241,7 +251,7 @@ export default class MetricsGraph extends React.Component {
         format: {
           title: tooltipTitleFormat,
           name: () => { return this.props.metric.title },
-          value: (value) => { return Math.round(value) + this.props.metric.unit }
+          value: (value) => { return value + this.props.metric.unit }
         }
       },
       legend: {

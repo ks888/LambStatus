@@ -153,7 +153,7 @@ describe('MetricsGraph', () => {
     })
   })
 
-  describe('averageData', () => {
+  describe('averageDataByInterval', () => {
     it('should return null list if no data', () => {
       const data = []
       const startDate = new Date('2017-06-01T00:00:00.000Z')
@@ -192,9 +192,9 @@ describe('MetricsGraph', () => {
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[0].timestamp)
-      assert(values[0] === 1.5)
+      assert(values[0] === 1)
       assert(timestamps[1].toISOString() === data[2].timestamp)
-      assert(values[1] === 3.5)
+      assert(values[1] === 3)
     })
 
     it('should ignore data out of range', () => {
@@ -217,9 +217,33 @@ describe('MetricsGraph', () => {
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[1].timestamp)
-      assert(values[0] === 2.5)
+      assert(values[0] === 2)
       assert(timestamps[1].toISOString() === data[3].timestamp)
       assert(values[1] === 4)
+    })
+
+    it('should let the average data have same precision as source values', () => {
+      const data = [
+        {timestamp: '2017-06-01T00:00:00.000Z', value: 1.0},
+        {timestamp: '2017-06-02T00:00:00.000Z', value: 1.5},
+        {timestamp: '2017-06-03T00:00:00.000Z', value: 3.5},
+        {timestamp: '2017-06-04T00:00:00.000Z', value: 3.99}
+      ]
+      const startDate = new Date(data[0].timestamp)
+      const endDate = new Date(data[data.length - 1].timestamp)
+      const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
+
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      const { timestamps, values } = inst.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+
+      assert(timestamps.length === 2)
+      assert(values.length === 2)
+      assert(timestamps[0].toISOString() === data[0].timestamp)
+      assert(values[0] === 1.2)
+      assert(timestamps[1].toISOString() === data[2].timestamp)
+      assert(values[1] === 3.74)
     })
   })
 
@@ -258,6 +282,44 @@ describe('MetricsGraph', () => {
       assert(inst.floor(19) === 10)
       assert(inst.floor(90) === 90)
       assert(inst.floor(91) === 90)
+    })
+  })
+
+  describe('cutDecimalPart', () => {
+    it('should return the given value if the value is integer', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.cutDecimalPart(0) === 0)
+      assert(inst.cutDecimalPart(1) === 1)
+      assert(inst.cutDecimalPart(10) === 10)
+      assert(inst.cutDecimalPart(100) === 100)
+    })
+
+    it('should cut decimal part but leave some of them as specified', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+
+      assert(inst.cutDecimalPart(0.1, 0) === 0)
+      assert(inst.cutDecimalPart(0.1, 1) === 0.1)
+      assert(inst.cutDecimalPart(0.1, 2) === 0.1)
+      assert(inst.cutDecimalPart(1.1, 0) === 1)
+      assert(inst.cutDecimalPart(1.1, 1) === 1.1)
+      assert(inst.cutDecimalPart(1.1, 2) === 1.1)
+      assert(inst.cutDecimalPart(1.11, 0) === 1)
+      assert(inst.cutDecimalPart(1.11, 1) === 1.1)
+      assert(inst.cutDecimalPart(1.11, 2) === 1.11)
+      assert(inst.cutDecimalPart(1.11, 3) === 1.11)
+      assert(inst.cutDecimalPart(11.11, 0) === 11)
+      assert(inst.cutDecimalPart(11.11, 1) === 11.1)
+      assert(inst.cutDecimalPart(11.11, 2) === 11.11)
+      assert(inst.cutDecimalPart(11.11, 3) === 11.11)
+      assert(inst.cutDecimalPart(99.9, 0) === 99)
+      assert(inst.cutDecimalPart(99.9, 1) === 99.9)
+      assert(inst.cutDecimalPart(99.9, 2) === 99.9)
+      assert(inst.cutDecimalPart(99.99, 1) === 99.9)
     })
   })
 
