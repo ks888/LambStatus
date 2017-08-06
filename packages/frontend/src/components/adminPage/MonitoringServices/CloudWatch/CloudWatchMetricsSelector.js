@@ -7,6 +7,19 @@ import { apiURL } from 'utils/settings'
 import { regions } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'
 
+const statisticsList = [
+  'Average',
+  'Minimum',
+  'Maximum',
+  'Sum',
+  'SampleCount',
+  'p99',
+  'p95',
+  'p90',
+  'p50',
+  'p10'
+]
+
 export default class CloudWatchMetricsSelector extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
@@ -36,10 +49,12 @@ export default class CloudWatchMetricsSelector extends React.Component {
     const regionName = regions.find(r => r.id === region).name
     const namespace = props.props ? props.props.Namespace : ''
     const metric = props.props ? this.buildMetricExpression(props.props) : ''
+    const statistics = props.props ? props.props.Statistics : statisticsList[0]
     this.state = {
       regionName,
       namespace,
       metric,
+      statistics,
       isFetching: false
     }
   }
@@ -90,7 +105,22 @@ export default class CloudWatchMetricsSelector extends React.Component {
       Region: regionID,
       Namespace: this.state.namespace,
       MetricName: metricName,
-      Dimensions: dimensions
+      Dimensions: dimensions,
+      Statistics: this.state.statistics
+    })
+  }
+
+  handleChangeStatistics = (value) => {
+    this.setState({statistics: value})
+
+    const { metricName, dimensions } = this.parseMetricExpression(this.state.metric)
+    const regionID = regions.find(r => r.name === this.state.regionName).id
+    this.props.onChange({
+      Region: regionID,
+      Namespace: this.state.namespace,
+      MetricName: metricName,
+      Dimensions: dimensions,
+      Statistics: value
     })
   }
 
@@ -177,6 +207,14 @@ export default class CloudWatchMetricsSelector extends React.Component {
         <div id='name' className={classes['dropdown-list']}>
           <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeMetric}
             list={metrics} initialValue={this.state.metric} />
+        </div>
+
+        <label className={classes.label} htmlFor='statistics'>
+          CloudWatch Statistics
+        </label>
+        <div id='statistics' className={classes['dropdown-list']}>
+          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeStatistics}
+            list={statisticsList} initialValue={this.state.statistics} />
         </div>
 
         <ReactTooltip id='cloudWatchInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>

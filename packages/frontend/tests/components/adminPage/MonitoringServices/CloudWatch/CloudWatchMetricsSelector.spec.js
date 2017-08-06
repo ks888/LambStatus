@@ -124,5 +124,21 @@ describe('CloudWatchMetricsSelector', () => {
 
       assert(props.onChange.calledOnce)
     })
+
+    it('should call onChange if the statistics is changed', () => {
+      const props = generateProps()
+      props.metrics = [
+        {Namespace: 'ns1', MetricName: 'm1', Dimensions: [{Name: 'name', Value: 'value'}]},
+        {Namespace: 'ns1', MetricName: 'm2', Dimensions: [{Name: 'name', Value: 'value'}]},
+        {Namespace: 'ns2', MetricName: 'm3', Dimensions: [{Name: 'name', Value: 'value'}]}
+      ]
+      props.filters = {region: 'ap-northeast-1'}
+      const selector = mount(<CloudWatchMetricsSelector {...props} />)
+      const expect = 'Sum'
+      selector.instance().handleChangeStatistics(expect)
+
+      assert(props.onChange.calledOnce)
+      assert(props.onChange.firstCall.args[0].Statistics === expect)
+    })
   })
 })
