@@ -32,6 +32,8 @@ export default class CloudWatch {
       Dimensions: dimensions,
       Region: region
     } = props
+    let statistics = (props.Statistics ? props.Statistics : 'Average')
+
     let period = 60
     let twoWeeksBefore = new Date()
     twoWeeksBefore.setDate(twoWeeksBefore.getDate() - 14)
@@ -48,8 +50,12 @@ export default class CloudWatch {
         Dimensions: dimensions,
         EndTime: endTime,
         StartTime: startTime,
-        Period: period,
-        Statistics: ['Average']
+        Period: period
+      }
+      if (statistics.startsWith('p')) {
+        params.ExtendedStatistics = [statistics]
+      } else {
+        params.Statistics = [statistics]
       }
       cloudWatch.getMetricStatistics(params, (err, result) => {
         if (err) {
@@ -59,7 +65,7 @@ export default class CloudWatch {
         const datapoints = result.Datapoints.map((datapoint) => {
           return {
             timestamp: datapoint.Timestamp.toISOString(),
-            value: datapoint.Average
+            value: statistics.startsWith('p') ? datapoint.ExtendedStatistics[statistics] : datapoint[statistics]
           }
         })
         datapoints.sort((a, b) => {
