@@ -4,7 +4,7 @@ import classes from './Title.scss'
 export const Title = (props) => (
   <h4>
     <span className={classes.service_name}>{props.service_name}</span>
-    <span className={classes.status}>Status</span>
+    <span className={classes.status}> Status</span>
   </h4>
 )
 
