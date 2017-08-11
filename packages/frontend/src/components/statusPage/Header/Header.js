@@ -14,7 +14,7 @@ export default class Header extends React.Component {
 
   componentWillUpdate (nextProps) {
     if (nextProps.settings.serviceName) {
-      document.title = `${nextProps.settings.serviceName}Status`
+      document.title = `${nextProps.settings.serviceName} Status`
     }
   }
 
