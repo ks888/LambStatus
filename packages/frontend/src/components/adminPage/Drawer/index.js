@@ -13,7 +13,7 @@ const components = {
     path: '/incidents'
   },
   maintenances: {
-    name: 'Scheduled Maintenances',
+    name: 'Scheduled Maintenance',
     path: '/maintenances'
   },
   metrics: {

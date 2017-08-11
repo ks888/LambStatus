@@ -35,7 +35,7 @@ export default class ScheduledMaintenaces extends React.Component {
 
     return (
       <ul className={this.props.classNames}>
-        <h4 className={classnames(classes.title)}>Scheduled Maintenances</h4>
+        <h4 className={classnames(classes.title)}>Scheduled Maintenance</h4>
         {filteredMaintenances.map(maint => {
           return (
             <MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} autoloadDetail />
