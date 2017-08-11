@@ -206,17 +206,21 @@ describe('ApiKey', () => {
   describe('delete', () => {
     afterEach(() => {
       APIGateway.prototype.deleteApiKey.restore()
+      APIGateway.prototype.disableApiKey.restore()
     })
 
     it('should delete the api key', async () => {
       const id = 'id'
-      const stub = sinon.stub(APIGateway.prototype, 'deleteApiKey').returns()
+      const disableStub = sinon.stub(APIGateway.prototype, 'disableApiKey').returns()
+      const deleteStub = sinon.stub(APIGateway.prototype, 'deleteApiKey').returns()
 
       await new ApiKey(id).delete(id)
-      assert.deepEqual(stub.firstCall.args, [id])
+      assert.deepEqual(disableStub.firstCall.args, [id])
+      assert.deepEqual(deleteStub.firstCall.args, [id])
     })
 
     it('should throw the error if API returns the error ', async () => {
+      sinon.stub(APIGateway.prototype, 'disableApiKey').throws(new Error())
       sinon.stub(APIGateway.prototype, 'deleteApiKey').throws(new Error())
 
       let err
@@ -229,7 +233,8 @@ describe('ApiKey', () => {
     })
 
     it('should throw the NotFound error if the key not found', async () => {
-      sinon.stub(APIGateway.prototype, 'deleteApiKey').throws(new NotFoundException())
+      sinon.stub(APIGateway.prototype, 'disableApiKey').throws(new NotFoundException())
+      sinon.stub(APIGateway.prototype, 'deleteApiKey').returns()
 
       let err
       try {

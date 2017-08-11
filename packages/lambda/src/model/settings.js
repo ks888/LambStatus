@@ -166,6 +166,7 @@ export class ApiKey {
 
   async delete () {
     try {
+      await new APIGateway().disableApiKey(this.id)
       await new APIGateway().deleteApiKey(this.id)
     } catch (err) {
       switch (err.name) {

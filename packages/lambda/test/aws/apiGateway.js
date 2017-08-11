@@ -150,6 +150,47 @@ describe('APIGateway', () => {
     })
   })
 
+  context('disableApiKey', () => {
+    it('should disable the existing key', async () => {
+      const expect = 'id'
+      let actualParams
+      AWS.mock('APIGateway', 'updateApiKey', (params, callback) => {
+        actualParams = params
+        callback(null)
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.disableApiKey(expect)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actualParams.apiKey === expect)
+      assert(actualParams.patchOperations.length === 1)
+      assert(actualParams.patchOperations[0].path === '/enabled')
+      assert(actualParams.patchOperations[0].value === 'false')
+    })
+
+    it('should throws the error if the API call failed', async () => {
+      AWS.mock('APIGateway', 'updateApiKey', (params, callback) => {
+        callback(new Error())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.disableApiKey()
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
+
   context('deleteApiKey', () => {
     it('should delete the existing key', async () => {
       const id = 'id'

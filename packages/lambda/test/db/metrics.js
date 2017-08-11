@@ -17,6 +17,7 @@ describe('MetricsStore', () => {
       assert(metrics[0].metricID === '1')
       assert(metrics[0].unit === '')
       assert(metrics[0].description === '')
+      assert(metrics[0].decimalPlaces === 0)
       assert.deepEqual(metrics[0].props, {key: 'value'})
     })
 
@@ -48,6 +49,7 @@ describe('MetricsStore', () => {
       assert(metrics.length === 1)
       assert(metrics[0].unit === '')
       assert(metrics[0].description === '')
+      assert(metrics[0].decimalPlaces === 0)
       assert.deepEqual(metrics[0].props, {key: 'value'})
     })
 
@@ -92,7 +94,7 @@ describe('MetricsStore', () => {
         }})
       })
       const metric = await new MetricsStore().update('1', undefined, undefined, undefined, undefined,
-                                                     undefined, undefined, {key: 'value'})
+                                                     undefined, undefined, undefined, {key: 'value'})
       assert(metric.metricID === '1')
       assert(metric.unit === '')
       assert(metric.description === '')
@@ -106,7 +108,8 @@ describe('MetricsStore', () => {
 
       let error
       try {
-        await new MetricsStore().update('1', '', '', '', 1)
+        await new MetricsStore().update('1', undefined, undefined, undefined, undefined,
+                                        undefined, undefined, undefined, {key: 'value'})
       } catch (e) {
         error = e
       }

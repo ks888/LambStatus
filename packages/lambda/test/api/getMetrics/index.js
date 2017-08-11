@@ -10,8 +10,8 @@ describe('getMetrics', () => {
 
   it('should return a list of metrics', async () => {
     const metrics = [
-      new Metric('2', 'Mock', undefined, undefined, undefined, undefined, 2, undefined),
-      new Metric('1', 'Mock', undefined, undefined, undefined, undefined, 1, undefined)
+      new Metric('2', 'Mock', undefined, undefined, undefined, undefined, undefined, 2, undefined),
+      new Metric('1', 'Mock', undefined, undefined, undefined, undefined, undefined, 1, undefined)
     ]
     sinon.stub(Metrics.prototype, 'list').returns(metrics.slice(0))
 

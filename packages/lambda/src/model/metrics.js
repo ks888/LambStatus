@@ -8,7 +8,7 @@ import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/co
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
-  constructor (metricID, type, title, unit, description, status, order, props) {
+  constructor (metricID, type, title, unit, description, decimalPlaces, status, order, props) {
     if (!metricID) {
       this.metricID = generateID()
       this.needIDValidation = false
@@ -22,6 +22,7 @@ export class Metric {
     this.title = title
     this.unit = unit
     this.description = description
+    this.decimalPlaces = decimalPlaces
     this.status = status
     if (!order) {
       this.order = Math.floor(new Date().getTime() / 1000)
@@ -53,6 +54,10 @@ export class Metric {
       throw new ValidationError('invalid description parameter')
     }
 
+    if (this.decimalPlaces === undefined || this.decimalPlaces !== parseInt(this.decimalPlaces, 10)) {
+      throw new ValidationError('invalid description parameter')
+    }
+
     if (metricStatuses.indexOf(this.status) < 0) {
       throw new ValidationError('invalid status parameter')
     }
@@ -68,8 +73,8 @@ export class Metric {
 
   async save () {
     const store = new MetricsStore()
-    await store.update(this.metricID, this.type, this.title, this.unit, this.description, this.status,
-                       this.order, this.props)
+    await store.update(this.metricID, this.type, this.title, this.unit, this.description, this.decimalPlaces,
+                       this.status, this.order, this.props)
   }
 
   async delete () {
@@ -240,6 +245,7 @@ export class Metric {
       title: this.title,
       unit: this.unit,
       description: this.description,
+      decimalPlaces: this.decimalPlaces,
       status: this.status,
       order: this.order,
       props: this.props
@@ -264,7 +270,7 @@ export class Metrics {
     const metrics = await new MetricsStore().getAll()
     return metrics.map(metric => {
       return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.status, metric.order, metric.props)
+                        metric.decimalPlaces, metric.status, metric.order, metric.props)
     })
   }
 
@@ -276,7 +282,7 @@ export class Metrics {
     } else if (metrics.length === 1) {
       const metric = metrics[0]
       return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.status, metric.order, metric.props)
+                        metric.decimalPlaces, metric.status, metric.order, metric.props)
     } else {
       throw new Error('matched too many items')
     }

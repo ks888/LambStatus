@@ -128,24 +128,25 @@ describe('Metrics', () => {
 })
 
 describe('Metric', () => {
-  const genMock = () => new Metric(undefined, 'Mock', 'title', 'unit', 'description',
+  const genMock = () => new Metric(undefined, 'Mock', 'title', 'unit', 'description', 0,
                                    metricStatusVisible, 1, {})
 
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const comp = new Metric('1', 'Mock', 'title', 'unit', 'description', 'status', 1, {})
+      const comp = new Metric('1', 'Mock', 'title', 'unit', 'description', 0, 'status', 1, {})
       assert(comp.metricID === '1')
       assert(comp.type === 'Mock')
       assert(comp.title === 'title')
       assert(comp.unit === 'unit')
       assert(comp.description === 'description')
+      assert(comp.decimalPlaces === 0)
       assert(comp.status === 'status')
       assert(comp.order === 1)
       assert.deepEqual(comp.props, {})
     })
 
     it('should fill in insufficient values', () => {
-      const comp = new Metric(undefined, 'Mock', 'title', 'unit', 'description', 'status', undefined, {})
+      const comp = new Metric(undefined, 'Mock', 'title', 'unit', 'description', 0, 'status', undefined, {})
       assert(comp.metricID.length === 12)
       assert(typeof comp.order === 'number')
     })
@@ -240,6 +241,42 @@ describe('Metric', () => {
     it('should return error when description is invalid', async () => {
       const comp = genMock()
       comp.description = undefined
+      let error
+      try {
+        await comp.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when decimalPlaces is invalid', async () => {
+      const comp = genMock()
+      comp.decimalPlaces = undefined
+      let error
+      try {
+        await comp.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when decimalPlaces is float', async () => {
+      const comp = genMock()
+      comp.decimalPlaces = 1.1
+      let error
+      try {
+        await comp.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when decimalPlaces is string', async () => {
+      const comp = genMock()
+      comp.decimalPlaces = '1'
       let error
       try {
         await comp.validate()

@@ -56,6 +56,25 @@ export default class APIGateway {
     })
   }
 
+  disableApiKey (id) {
+    const params = {
+      apiKey: id,
+      patchOperations: [{
+        op: 'replace',
+        path: '/enabled',
+        value: 'false'
+      }]
+    }
+    return new Promise((resolve, reject) => {
+      this.apiGateway.updateApiKey(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
+      })
+    })
+  }
+
   deleteApiKey (id) {
     const params = { apiKey: id }
     return new Promise((resolve, reject) => {

@@ -4,7 +4,8 @@ import 'model/monitoringServices'  // load monitoring services
 export async function handle (event, context, callback) {
   try {
     const metric = new Metric(event.params.metricid, event.body.type, event.body.title, event.body.unit,
-                              event.body.description, event.body.status, event.body.order, event.body.props)
+                              event.body.description, event.body.decimalPlaces, event.body.status,
+                              event.body.order, event.body.props)
     await metric.validate()
     await metric.save()
     callback(null, metric.objectify())

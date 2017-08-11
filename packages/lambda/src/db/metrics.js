@@ -14,7 +14,7 @@ export default class MetricsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
-        ProjectionExpression: 'metricID, #t, title, #u, description, #s, #or, props',
+        ProjectionExpression: 'metricID, #t, title, #u, description, decimalPlaces, #s, #or, props',
         ExpressionAttributeNames: {
           '#t': 'type',
           '#u': 'unit',
@@ -28,7 +28,7 @@ export default class MetricsStore {
         }
         let metrics = []
         scanResult.Items.forEach((metric) => {
-          fillInsufficientProps({unit: '', description: ''}, metric)
+          fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, metric)
           metric['props'] = JSON.parse(metric['props'])
           metrics.push(metric)
         })
@@ -46,7 +46,7 @@ export default class MetricsStore {
         ExpressionAttributeValues: {
           ':hkey': metricID
         },
-        ProjectionExpression: 'metricID, #t, title, #u, description, #s, #or, props',
+        ProjectionExpression: 'metricID, #t, title, #u, description, decimalPlaces, #s, #or, props',
         ExpressionAttributeNames: {
           '#t': 'type',
           '#u': 'unit',
@@ -64,7 +64,7 @@ export default class MetricsStore {
         }
 
         queryResult.Items.forEach(item => {
-          fillInsufficientProps({unit: '', description: ''}, item)
+          fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, item)
           item['props'] = JSON.parse(item['props'])
         })
 
@@ -73,9 +73,9 @@ export default class MetricsStore {
     })
   }
 
-  update (id, type, title, unit, description, status, order, props) {
+  update (id, type, title, unit, description, decimalPlaces, status, order, props) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-      type, title, unit, description, status, order, props: JSON.stringify(props)
+      type, title, unit, description, decimalPlaces, status, order, props: JSON.stringify(props)
     })
     return new Promise((resolve, reject) => {
       const params = {
