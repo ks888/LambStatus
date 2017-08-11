@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactTooltip from 'react-tooltip'
 import classnames from 'classnames'
-import DropdownList from 'components/common/DropdownList'
+import LabeledDropdownList from 'components/common/LabeledDropdownList'
 import Spinner from 'components/common/Spinner'
 import { apiURL } from 'utils/settings'
 import { regions } from 'utils/status'
@@ -170,52 +170,27 @@ export default class CloudWatchMetricsSelector extends React.Component {
     }
 
     const linkToMetricsPage = `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#metricsV2:`
-    let spinner
-    if (this.state.isFetching) {
-      spinner = <Spinner enable class={classes['spinner']} />
-    }
 
     return (
       <div>
-        <label className={classes.label} htmlFor='region'>
-          CloudWatch Region
-          <i className={classnames(classes.icon, 'material-icons')}
-            data-tip data-for='cloudWatchInfo'>info_outline</i>
-        </label>
-        <div id='region' className={classes['dropdown-list']}>
-          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeRegion}
-            list={this.regionNames} initialValue={this.state.regionName} />
-        </div>
+        <LabeledDropdownList
+          id='namespace' label='CloudWatch Region' onChange={this.handleChangeRegion}
+          list={this.regionNames} initialValue={this.state.regionName} disabled={this.state.isFetching}
+          infoIconID='cloudWatchInfo' />
 
-        <label className={classes.label} htmlFor='namespace'>
-          <div className={classes['spinner-box']}>
-            CloudWatch Namespace
-            {spinner}
-          </div>
-        </label>
-        <div id='namespace' className={classes['dropdown-list']}>
-          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeNamespace}
-            list={namespaces} initialValue={this.state.namespace} />
-        </div>
+        <LabeledDropdownList
+          id='namespace' label='CloudWatch Namespace' onChange={this.handleChangeNamespace}
+          list={namespaces} initialValue={this.state.namespace} disabled={this.state.isFetching}
+          showSpinner={this.state.isFetching} />
 
-        <label className={classes.label} htmlFor='name'>
-          <div className={classes['spinner-box']}>
-            CloudWatch MetricName & Dimensions
-            {spinner}
-          </div>
-        </label>
-        <div id='name' className={classes['dropdown-list']}>
-          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeMetric}
-            list={metrics} initialValue={this.state.metric} />
-        </div>
+        <LabeledDropdownList
+          id='name' label='CloudWatch MetricName & Dimensions' onChange={this.handleChangeMetric}
+          list={metrics} initialValue={this.state.metric} disabled={this.state.isFetching}
+          showSpinner={this.state.isFetching} />
 
-        <label className={classes.label} htmlFor='statistics'>
-          CloudWatch Statistics
-        </label>
-        <div id='statistics' className={classes['dropdown-list']}>
-          <DropdownList disabled={this.state.isFetching} onChange={this.handleChangeStatistics}
-            list={statisticsList} initialValue={this.state.statistics} />
-        </div>
+        <LabeledDropdownList
+          id='statistics' label='CloudWatch Statistics' onChange={this.handleChangeStatistics}
+          list={statisticsList} initialValue={this.state.statistics} disabled={this.state.isFetching} />
 
         <ReactTooltip id='cloudWatchInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
           <div>
