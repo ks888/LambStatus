@@ -30,12 +30,15 @@ export class GraphDrawer {
     return Math.floor(rawValue * mul) / mul
   }
 
-  formatDecimalPart = (rawValue, decimalPlaces = 0) => {
+  formatNumber = (rawValue, decimalPlaces = 0) => {
     const value = this.cutDecimalPart(rawValue, decimalPlaces)
-    if (decimalPlaces === 0) return `${value}`
 
-    const [integerPart, decimalPart = ''] = value.toString().split('.', 2)
-    return `${integerPart}.${decimalPart + '0'.repeat(decimalPlaces - decimalPart.length)}`
+    let [integerPart, decimalPart = ''] = value.toString().split('.', 2)
+    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    decimalPart = decimalPart + '0'.repeat(decimalPlaces - decimalPart.length)
+
+    if (decimalPlaces === 0) return `${integerPart}`
+    return `${integerPart}.${decimalPart}`
   }
 
   collectDataWithinRange = (metric, dates, beginDate, endDate) => {
@@ -70,7 +73,7 @@ export class GraphDrawer {
   }
 
   // startDate and endDate will not be changed.
-  averageDataByInterval = (data, startDate, endDate, decimalPlaces, incrementTimestamp) => {
+  averageDataByInterval = (data, startDate, endDate, incrementTimestamp) => {
     const timestamps = []
     const values = []
     let currIndex = 0
@@ -97,8 +100,7 @@ export class GraphDrawer {
       }
 
       if (count !== 0) {
-        const avg = sum / count
-        values.push(this.cutDecimalPart(avg, decimalPlaces))
+        values.push(sum / count)
       } else {
         values.push(null)
       }
@@ -131,8 +133,7 @@ export class GraphDrawer {
     currDate = new Date(now.getTime())
     currDate.setDate(currDate.getDate() - numDates)
     const incrementTimestamp = getIncrementTimestampFunc(timeframe)
-    const { timestamps, values } = this.averageDataByInterval(data, currDate, now, metric.decimalPlaces,
-                                                              incrementTimestamp)
+    const { timestamps, values } = this.averageDataByInterval(data, currDate, now, incrementTimestamp)
 
     const minValue = values.reduce((min, curr) => (min === undefined || min > curr) ? curr : min, undefined)
     const maxValue = values.reduce((max, curr) => (max === undefined || max < curr) ? curr : max, undefined)
@@ -182,6 +183,7 @@ export class GraphDrawer {
           min: flooredMinValue,
           max: ceiledMaxValue,
           tick: {
+            format: this.formatNumber,
             values: yTicks
           },
           padding: {
@@ -198,7 +200,7 @@ export class GraphDrawer {
         format: {
           title: tooltipTitleFormat,
           name: () => { return metric.title },
-          value: value => this.formatDecimalPart(value, metric.decimalPlaces) + metric.unit
+          value: value => this.formatNumber(value, metric.decimalPlaces) + metric.unit
         }
       },
       legend: {
@@ -206,7 +208,7 @@ export class GraphDrawer {
       }
     })
 
-    this.average = this.formatDecimalPart(this.calculateAverage(data), metric.decimalPlaces)
+    this.average = this.formatNumber(this.calculateAverage(data), metric.decimalPlaces)
 
     return true
   }

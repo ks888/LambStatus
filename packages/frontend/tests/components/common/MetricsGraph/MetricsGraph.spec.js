@@ -92,19 +92,28 @@ describe('GraphDrawer', () => {
     })
   })
 
-  describe('formatDecimalPart', () => {
+  describe('formatNumber', () => {
     it('should format decimal part', () => {
       const drawer = new GraphDrawer()
 
-      assert(drawer.formatDecimalPart(0, 0) === '0')
-      assert(drawer.formatDecimalPart(0, 1) === '0.0')
-      assert(drawer.formatDecimalPart(0, 2) === '0.00')
-      assert(drawer.formatDecimalPart(0.1, 0) === '0')
-      assert(drawer.formatDecimalPart(0.1, 1) === '0.1')
-      assert(drawer.formatDecimalPart(0.1, 2) === '0.10')
-      assert(drawer.formatDecimalPart(0.11, 0) === '0')
-      assert(drawer.formatDecimalPart(0.11, 1) === '0.1')
-      assert(drawer.formatDecimalPart(0.11, 2) === '0.11')
+      assert(drawer.formatNumber(0, 0) === '0')
+      assert(drawer.formatNumber(0, 1) === '0.0')
+      assert(drawer.formatNumber(0, 2) === '0.00')
+      assert(drawer.formatNumber(0.1, 0) === '0')
+      assert(drawer.formatNumber(0.1, 1) === '0.1')
+      assert(drawer.formatNumber(0.1, 2) === '0.10')
+      assert(drawer.formatNumber(0.11, 0) === '0')
+      assert(drawer.formatNumber(0.11, 1) === '0.1')
+      assert(drawer.formatNumber(0.11, 2) === '0.11')
+    })
+
+    it('should format integer part', () => {
+      const drawer = new GraphDrawer()
+
+      assert(drawer.formatNumber(10) === '10')
+      assert(drawer.formatNumber(100) === '100')
+      assert(drawer.formatNumber(1000) === '1,000')
+      assert(drawer.formatNumber(1000000) === '1,000,000')
     })
   })
 
@@ -135,7 +144,7 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 1)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
@@ -157,14 +166,14 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[0].timestamp)
-      assert(values[0] === 1)
+      assert(values[0] === 1.5)
       assert(timestamps[1].toISOString() === data[2].timestamp)
-      assert(values[1] === 3)
+      assert(values[1] === 3.5)
     })
 
     it('should ignore data out of range', () => {
@@ -180,12 +189,12 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[1].timestamp)
-      assert(values[0] === 2)
+      assert(values[0] === 2.5)
       assert(timestamps[1].toISOString() === data[3].timestamp)
       assert(values[1] === 4)
     })
@@ -202,14 +211,14 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 1, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[0].timestamp)
-      assert(values[0] === 1.2)
+      assert(values[0] === 1.25)
       assert(timestamps[1].toISOString() === data[2].timestamp)
-      assert(values[1] === 3.7)
+      assert(values[1] === 3.745)
     })
   })
 
