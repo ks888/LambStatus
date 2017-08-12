@@ -138,7 +138,7 @@ Resources:
                 Action:
                   - apigateway:*
                 Resource: !Sub |-
-                  arn:aws:apigateway:${AWS::Region}::/usageplans/${UsagePlan}/keys
+                  arn:aws:apigateway:${AWS::Region}::/usageplans/*/keys
         - PolicyName: SNS
           PolicyDocument:
             Statement:
@@ -1106,23 +1106,6 @@ Resources:
     # The deployment resource must depend on the RestApi's methods.
     # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-deployment.html#aws-resource-apigateway-deployment-examples
     DependsOn:
-      - "RestApi"
-      - "ComponentsApiResource"
-      - "ComponentApiResource"
-      - "IncidentsApiResource"
-      - "IncidentApiResource"
-      - "IncidentUpdatesApiResource"
-      - "MaintenancesApiResource"
-      - "MaintenanceApiResource"
-      - "MaintenanceUpdatesApiResource"
-      - "ExternalMetricsApiResource"
-      - "PublicMetricsApiResource"
-      - "MetricsApiResource"
-      - "MetricApiResource"
-      - "PublicSettingsApiResource"
-      - "SettingsApiResource"
-      - "ApiKeysApiResource"
-      - "ApiKeyApiResource"
       - "GetComponentsApiMethod"
       - "PostComponentsApiMethod"
       - "OptionsComponentsApiMethod"
@@ -1164,9 +1147,6 @@ Resources:
       - "OptionsApiKeysApiMethod"
       - "DeleteApiKeyApiMethod"
       - "OptionsApiKeyApiMethod"
-      - "V0ApiResource"
-      - "V0MetricsApiResource"
-      - "V0MetricsDataApiResource"
       - "PostMetricsDataApiMethod"
   RestApi:
     Type: "AWS::ApiGateway::RestApi"
@@ -2865,6 +2845,8 @@ Resources:
       Throttle:
         BurstLimit: 10
         RateLimit: 10
+    DependsOn:
+      - ApiDeployment
   StatusPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
@@ -3273,6 +3255,8 @@ Resources:
         https://${StatusPageDistribution.DomainName}
       IncidentNotificationTopic:
         Ref: "IncidentNotificationTopic"
+      UsagePlanID:
+        Ref: "UsagePlan"
   StatusPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:

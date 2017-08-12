@@ -12,7 +12,8 @@ export async function handle (event, context, callback) {
     AdminPageURL: adminPageURL,
     StatusPageURL: statusPageURL,
     CognitoPoolID: cognitoPoolID,
-    IncidentNotificationTopic: incidentNotificationTopic
+    IncidentNotificationTopic: incidentNotificationTopic,
+    UsagePlanID: usagePlanID
   } = event.ResourceProperties
 
   const settings = new Settings()
@@ -36,7 +37,7 @@ export async function handle (event, context, callback) {
       await settings.setCognitoPoolID(cognitoPoolID)
     }
 
-    await settings.createApiKey()
+    await settings.createApiKey(usagePlanID)
 
     response.send(event, context, response.SUCCESS)
   } catch (error) {

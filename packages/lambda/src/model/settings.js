@@ -136,9 +136,11 @@ export class Settings {
     }
   }
 
-  async createApiKey () {
+  async createApiKey (usagePlanID) {
     const apiGateway = new APIGateway()
-    const usagePlanID = await new CloudFormation(stackName).getUsagePlanID()
+    if (usagePlanID === undefined) {
+      usagePlanID = await new CloudFormation(stackName).getUsagePlanID()
+    }
     const newKey = await apiGateway.createApiKey(stackName)
     await apiGateway.createUsagePlanKey(newKey.id, usagePlanID)
     return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
