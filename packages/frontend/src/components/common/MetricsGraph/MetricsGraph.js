@@ -236,7 +236,6 @@ export default class MetricsGraph extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      needUpdateGraph: false,
       status: graphStatus.preparing
     }
     this.graphNodeID = `metricID${props.metricID}`
@@ -245,8 +244,7 @@ export default class MetricsGraph extends React.Component {
 
   componentDidMount () {
     if (this.areAllDataFetched(this.props.metric.data, this.props.timeframe)) {
-      // The chart width is wrong if update the graph here. Let componentDidUpdate update it instead.
-      this.setState({needUpdateGraph: true})
+      this.draw(this.props.metric, this.props.timeframe)
       return
     }
 
@@ -264,12 +262,7 @@ export default class MetricsGraph extends React.Component {
     }
 
     if (this.areAllDataFetched(nextProps.metric.data, nextProps.timeframe)) {
-      const ok = this.graphDrawer.draw(nextProps.metric, nextProps.timeframe)
-      if (ok) {
-        this.setState({status: graphStatus.ready})
-      } else {
-        this.setState({status: graphStatus.failed})
-      }
+      this.draw(nextProps.metric, nextProps.timeframe)
       return
     }
 
@@ -278,6 +271,15 @@ export default class MetricsGraph extends React.Component {
       this.setState({status: graphStatus.preparing})
       this.fetchMetricData(nextProps.settings.statusPageURL, nextProps.timeframe)
       return
+    }
+  }
+
+  draw = (metric, timeframe) => {
+    const ok = this.graphDrawer.draw(metric, timeframe)
+    if (ok) {
+      this.setState({status: graphStatus.ready})
+    } else {
+      this.setState({status: graphStatus.failed})
     }
   }
 

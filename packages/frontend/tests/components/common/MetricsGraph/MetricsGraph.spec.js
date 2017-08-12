@@ -256,20 +256,18 @@ describe('MetricsGraph', () => {
       // call componentDidMount directly. The instance is re-created if unmount() and mount() are called.
       inst.componentDidMount()
 
-      assert(graph.state().needUpdateGraph === false)
-      assert(inst.fetchMetricData.callCount === 1)
+      assert(inst.fetchMetricData.calledOnce)
     })
 
-    it('should set needUpdateGraph state if all data are fetched', () => {
+    it('should call draw method if all data are fetched', () => {
       const props = generateProps()
       const graph = mount(<MetricsGraph {...props} />)
       const inst = graph.instance()
-      inst.fetchMetricData = sinon.spy()
       inst.areAllDataFetched = () => { return true }
+      inst.draw = sinon.spy()
       inst.componentDidMount()
 
-      assert(graph.state().needUpdateGraph === true)
-      assert(inst.fetchMetricData.callCount === 0)
+      assert(inst.draw.calledOnce)
     })
   })
 
@@ -282,33 +280,18 @@ describe('MetricsGraph', () => {
       inst.fetchMetricData = sinon.spy()
       inst.componentWillReceiveProps({settings: {statusPageURL: 'example.com'}})
 
-      assert(inst.fetchMetricData.callCount === 1)
+      assert(inst.fetchMetricData.calledOnce)
     })
 
-    it('should draw the graph and set ready state if all data are fetched', () => {
+    it('should draw the graph if all data are fetched', () => {
       const props = generateProps()
       const graph = mount(<MetricsGraph {...props} />)
       const inst = graph.instance()
-      inst.fetchMetricData = sinon.spy()
-      inst.graphDrawer.draw = sinon.stub().returns(true)
+      inst.draw = sinon.spy()
       inst.areAllDataFetched = sinon.stub().returns(true)
       inst.componentWillReceiveProps(props)
 
-      assert(inst.graphDrawer.draw.callCount === 1)
-      assert(graph.state().status === graphStatus.ready)
-    })
-
-    it('should draw the graph and set failed state if failed to draw the graph', () => {
-      const props = generateProps()
-      const graph = mount(<MetricsGraph {...props} />)
-      const inst = graph.instance()
-      inst.fetchMetricData = sinon.spy()
-      inst.graphDrawer.draw = sinon.stub().returns(false)
-      inst.areAllDataFetched = sinon.stub().returns(true)
-      inst.componentWillReceiveProps(props)
-
-      assert(inst.graphDrawer.draw.callCount === 1)
-      assert(graph.state().status === graphStatus.failed)
+      assert(inst.draw.calledOnce)
     })
 
     it('should fetch MetricData if timeframe is changed', () => {
@@ -336,6 +319,30 @@ describe('MetricsGraph', () => {
       inst.fetchMetricData(props.settings.statusPageURL, props.timeframe)
 
       assert(props.fetchData.callCount === getNumDates(props.timeframe) + 1)
+    })
+  })
+
+  describe('draw', () => {
+    it('should draw the graph and set ready state', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      inst.graphDrawer.draw = sinon.stub().returns(true)
+      inst.draw()
+
+      assert(inst.graphDrawer.draw.calledOnce)
+      assert(graph.state().status === graphStatus.ready)
+    })
+
+    it('should draw the graph and set failed state if failed to draw the graph', () => {
+      const props = generateProps()
+      const graph = mount(<MetricsGraph {...props} />)
+      const inst = graph.instance()
+      inst.graphDrawer.draw = sinon.stub().returns(false)
+      inst.draw()
+
+      assert(inst.graphDrawer.draw.calledOnce)
+      assert(graph.state().status === graphStatus.failed)
     })
   })
 
