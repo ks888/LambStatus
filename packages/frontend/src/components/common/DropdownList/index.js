@@ -6,8 +6,8 @@ import classes from './DropdownList.scss'
 export default class DropdownList extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    list: PropTypes.array.isRequired,
-    initialValue: PropTypes.string.isRequired,
+    list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])).isRequired,
+    initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     disabled: PropTypes.bool
   }
 

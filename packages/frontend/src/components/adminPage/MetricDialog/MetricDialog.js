@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react'
+import ReactTooltip from 'react-tooltip'
 import ReactDOM from 'react-dom'
 import classnames from 'classnames'
 import Button from 'components/common/Button'
+import LabeledDropdownList from 'components/common/LabeledDropdownList'
 import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextWithLabel from 'components/common/TextWithLabel'
 import TextField from 'components/common/TextField'
@@ -16,6 +18,8 @@ export const dialogType = {
   edit: 2
 }
 
+const decimalPlacesList = [0, 1, 2, 3, 4]
+
 export default class MetricDialog extends React.Component {
   static propTypes = {
     onClosed: PropTypes.func.isRequired,
@@ -28,6 +32,7 @@ export default class MetricDialog extends React.Component {
       status: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      decimalPlaces: PropTypes.number.isRequired,
       order: PropTypes.number.isRequired
     }),
     dialogType: PropTypes.number.isRequired,
@@ -44,7 +49,8 @@ export default class MetricDialog extends React.Component {
         title: props.metric.title,
         status: props.metric.status,
         unit: props.metric.unit,
-        description: props.metric.description
+        description: props.metric.description,
+        decimalPlaces: props.metric.decimalPlaces
       }
     } else {
       this.state = {
@@ -53,7 +59,8 @@ export default class MetricDialog extends React.Component {
         title: '',
         status: metricStatuses[0],
         unit: '',
-        description: ''
+        description: '',
+        decimalPlaces: decimalPlacesList[0]
       }
     }
     this.state.isUpdating = false
@@ -88,6 +95,10 @@ export default class MetricDialog extends React.Component {
     this.setState({description: value})
   }
 
+  handleChangeDecimalPlaces = (value) => {
+    this.setState({decimalPlaces: parseInt(value, 10)})
+  }
+
   updateCallbacks = {
     onLoad: () => { this.setState({isUpdating: true}) },
     onSuccess: () => {
@@ -101,13 +112,16 @@ export default class MetricDialog extends React.Component {
 
   handleClickAddButton = (e) => {
     this.props.postMetric(this.state.type, this.state.props, this.state.title, this.state.status,
-                          this.state.unit, this.state.description, this.updateCallbacks)
+                          this.state.unit, this.state.description, this.state.decimalPlaces,
+                          this.updateCallbacks)
   }
 
   handleClickEditButton = (e) => {
+    console.log('dp', this.state.decimalPlaces, typeof this.state.decimalPlaces)
     this.props.updateMetric(this.props.metric.metricID, this.state.type, this.state.props,
                             this.state.title, this.state.status, this.state.unit,
-                            this.state.description, this.props.metric.order, this.updateCallbacks)
+                            this.state.description, this.state.decimalPlaces, this.props.metric.order,
+                            this.updateCallbacks)
   }
 
   handleHideDialog = () => {
@@ -172,6 +186,15 @@ export default class MetricDialog extends React.Component {
           <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
           <TextField label='Description (optional)' text={this.state.description} rows={2}
             onChange={this.handleChangeDescription} />
+          <LabeledDropdownList
+            id='decimalPlaces' label='Decimal Places' onChange={this.handleChangeDecimalPlaces}
+            list={decimalPlacesList} initialValue={this.state.decimalPlaces} infoIconID='decimalPlacesInfo' />
+          <ReactTooltip
+            id='decimalPlacesInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
+            <div>
+              This value is used on displaying graphs. The data to be collected is unaffected.
+            </div>
+          </ReactTooltip>
           {metricStatusSelector}
         </div>
         <div className='mdl-dialog__actions'>

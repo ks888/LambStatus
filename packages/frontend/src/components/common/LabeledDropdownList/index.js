@@ -9,8 +9,8 @@ export default class LabeledDropdownList extends React.Component {
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    list: PropTypes.array.isRequired,
-    initialValue: PropTypes.string.isRequired,
+    list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])).isRequired,
+    initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     disabled: PropTypes.bool,
     showSpinner: PropTypes.bool,
     infoIconID: PropTypes.string

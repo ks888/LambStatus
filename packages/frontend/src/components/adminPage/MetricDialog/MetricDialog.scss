@@ -17,3 +17,13 @@
 .metric-status {
   padding-top: 10px;
 }
+
+.tooltip {
+  background-color: #777 !important;
+  padding: 3px 10px !important;
+}
+
+.tooltip::after {
+  border-right-color: #777 !important;
+}
+

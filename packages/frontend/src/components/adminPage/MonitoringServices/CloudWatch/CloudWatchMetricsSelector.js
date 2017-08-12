@@ -1,8 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactTooltip from 'react-tooltip'
-import classnames from 'classnames'
 import LabeledDropdownList from 'components/common/LabeledDropdownList'
-import Spinner from 'components/common/Spinner'
 import { apiURL } from 'utils/settings'
 import { regions } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'

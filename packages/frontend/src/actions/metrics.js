@@ -121,10 +121,10 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
   }
 }
 
-export const postMetric = (type, props, title, status, unit, description, callbacks = {}) => {
+export const postMetric = (type, props, title, status, unit, description, decimalPlaces, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { type, props, title, status, unit, description }
+      const body = { type, props, title, status, unit, description, decimalPlaces }
       const json = await sendRequest(apiURL + 'metrics', {
         headers: await buildHeaders(),
         method: 'POST',
@@ -138,10 +138,11 @@ export const postMetric = (type, props, title, status, unit, description, callba
   }
 }
 
-export const updateMetric = (metricID, type, props, title, status, unit, description, order, callbacks = {}) => {
+export const updateMetric = (metricID, type, props, title, status, unit, description, decimalPlaces,
+                             order, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { type, props, title, status, unit, description, order }
+      const body = { type, props, title, status, unit, description, decimalPlaces, order }
       const json = await sendRequest(apiURL + 'metrics/' + metricID, {
         headers: await buildHeaders(),
         method: 'PATCH',

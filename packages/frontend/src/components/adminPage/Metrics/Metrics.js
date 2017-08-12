@@ -28,6 +28,7 @@ export default class Metrics extends React.Component {
       status: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
+      decimalPlaces: PropTypes.number.isRequired,
       order: PropTypes.number.isRequired
     }).isRequired).isRequired,
     fetchMetrics: PropTypes.func.isRequired,
@@ -96,7 +97,8 @@ export default class Metrics extends React.Component {
       const newOrder = Math.floor((orderA + orderB) / 2)
       this.props.updateMetric(clickedMetric.metricID, clickedMetric.type, clickedMetric.props,
                               clickedMetric.title, clickedMetric.status, clickedMetric.unit,
-                              clickedMetric.description, newOrder, this.callbacks)
+                              clickedMetric.description, clickedMetric.decimalPlaces, newOrder,
+                              this.callbacks)
     }
   }
 

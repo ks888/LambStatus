@@ -20,6 +20,7 @@ describe('MetricDialog', () => {
         status: metricStatuses[0],
         unit: 'ms',
         description: 'description',
+        decimalPlaces: 0,
         order: 0
       },
       dialogType: dialogType.add,
@@ -38,6 +39,7 @@ describe('MetricDialog', () => {
       assert(dialog.state.status === props.metric.status)
       assert(dialog.state.unit === props.metric.unit)
       assert(dialog.state.description === props.metric.description)
+      assert(dialog.state.decimalPlaces === props.metric.decimalPlaces)
       assert(dialog.state.isUpdating === false)
       assert(dialog.state.message === '')
     })
@@ -50,6 +52,7 @@ describe('MetricDialog', () => {
       assert(dialog.state.status === metricStatuses[0])
       assert(dialog.state.unit === '')
       assert(dialog.state.description === '')
+      assert(dialog.state.decimalPlaces === 0)
       assert(dialog.state.isUpdating === false)
       assert(dialog.state.message === '')
     })
@@ -126,7 +129,7 @@ describe('MetricDialog', () => {
       })
 
       const props = generateProps()
-      props.postMetric = (t, p, ti, s, u, d, callbacks) => { callbacks.onSuccess() }
+      props.postMetric = (t, p, ti, s, u, d, de, callbacks) => { callbacks.onSuccess() }
       const dialog = shallow(<MetricDialog {...props} />)
 
       const add = dialog.find(Button).first()
