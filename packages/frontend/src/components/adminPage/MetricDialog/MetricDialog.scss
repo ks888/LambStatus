@@ -6,16 +6,19 @@
   font-size: 2.0rem;
 }
 
-.textfield {
-  width: 100%;
-}
-
 .metric-type {
   padding-bottom: 10px;
 }
 
 .metric-status {
   padding-top: 10px;
+}
+
+.advanced {
+  font-size: 14px;
+  padding-top: 10px;
+  color: #000;
+  cursor: pointer;
 }
 
 .tooltip {
@@ -27,3 +30,8 @@
   border-right-color: #777 !important;
 }
 
+.icon {
+  font-size: 18px;
+  font-weight: 600;
+  vertical-align: top;
+}

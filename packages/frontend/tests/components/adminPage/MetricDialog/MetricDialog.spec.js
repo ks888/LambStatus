@@ -4,8 +4,10 @@ import { mount, shallow } from 'enzyme'
 import { metricStatuses } from 'utils/status'
 import * as dialogUtil from 'utils/dialog'
 import Button from 'components/common/Button'
+import TextField from 'components/common/TextField'
 import { monitoringServiceManager } from 'components/adminPage/MonitoringService'
 import MetricDialog, { dialogType } from 'components/adminPage/MetricDialog/MetricDialog'
+import classes from 'components/adminPage/MetricDialog//MetricDialog.scss'
 
 describe('MetricDialog', () => {
   const generateProps = () => {
@@ -138,6 +140,25 @@ describe('MetricDialog', () => {
 
       dialogUtil.mountDialog.restore()
       dialogUtil.unmountDialog.restore()
+    })
+
+    it('should hide advanced options at first', () => {
+      sinon.stub(dialogUtil, 'mountDialog', () => {})
+      const props = generateProps()
+      const dialog = shallow(<MetricDialog {...props} />)
+
+      assert(dialog.find(TextField).find({label: 'Unit'}).length === 0)
+      dialogUtil.mountDialog.restore()
+    })
+
+    it('should show advanced options if clicked', () => {
+      sinon.stub(dialogUtil, 'mountDialog', () => {})
+      const props = generateProps()
+      const dialog = shallow(<MetricDialog {...props} />)
+      dialog.find(`div.${classes.advanced}`).simulate('click')
+
+      assert(dialog.find(TextField).find({label: 'Unit'}).length === 1)
+      dialogUtil.mountDialog.restore()
     })
 
     it('should throw the error if the metric type is unknown', () => {

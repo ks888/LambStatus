@@ -64,6 +64,7 @@ export default class MetricDialog extends React.Component {
       }
     }
     this.state.isUpdating = false
+    this.state.showAdvancedOption = false
     this.state.message = ''
   }
 
@@ -97,6 +98,10 @@ export default class MetricDialog extends React.Component {
 
   handleChangeDecimalPlaces = (value) => {
     this.setState({decimalPlaces: parseInt(value, 10)})
+  }
+
+  handleChangeAdvancedOption = (value) => {
+    this.setState({showAdvancedOption: !this.state.showAdvancedOption})
   }
 
   updateCallbacks = {
@@ -170,6 +175,29 @@ export default class MetricDialog extends React.Component {
           checkedCandidate={this.state.status} onClicked={this.handleChangeStatus} />
       </div>
     )
+
+    let advancedOptions
+    let advancedIcon = 'expand_more'
+    if (this.state.showAdvancedOption) {
+      advancedOptions = (
+        <div>
+          <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
+          <TextField
+            label='Description (optional)' text={this.state.description} rows={2}
+            onChange={this.handleChangeDescription} />
+          <LabeledDropdownList
+            id='decimalPlaces' label='Decimal Places' onChange={this.handleChangeDecimalPlaces}
+            list={decimalPlacesList} initialValue={this.state.decimalPlaces} infoIconID='decimalPlacesInfo' />
+          <ReactTooltip
+            id='decimalPlacesInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
+            <div>
+              This value is used on displaying graphs. The data to be collected is unaffected.
+            </div>
+          </ReactTooltip>
+        </div>
+      )
+      advancedIcon = 'expand_less'
+    }
     return (
       <dialog className={classnames('mdl-dialog', classes.dialog)} ref='dialog'>
         <h2 className={classnames('mdl-dialog__title', classes.title)}>
@@ -183,19 +211,11 @@ export default class MetricDialog extends React.Component {
             {metrics}
           </div>
           <TextField label='Title' text={this.state.title} rows={1} onChange={this.handleChangeTitle} />
-          <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
-          <TextField label='Description (optional)' text={this.state.description} rows={2}
-            onChange={this.handleChangeDescription} />
-          <LabeledDropdownList
-            id='decimalPlaces' label='Decimal Places' onChange={this.handleChangeDecimalPlaces}
-            list={decimalPlacesList} initialValue={this.state.decimalPlaces} infoIconID='decimalPlacesInfo' />
-          <ReactTooltip
-            id='decimalPlacesInfo' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
-            <div>
-              This value is used on displaying graphs. The data to be collected is unaffected.
-            </div>
-          </ReactTooltip>
           {metricStatusSelector}
+          <div className={classes.advanced} onClick={this.handleChangeAdvancedOption}>
+            Advanced <i className={classnames(classes.icon, 'material-icons')}>{advancedIcon}</i>
+          </div>
+          {advancedOptions}
         </div>
         <div className='mdl-dialog__actions'>
           <Button onClick={clickHandler} name={actionName}
