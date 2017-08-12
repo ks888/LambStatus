@@ -119,7 +119,7 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 1)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
@@ -141,7 +141,7 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
@@ -164,7 +164,7 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 0, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
@@ -174,7 +174,7 @@ describe('GraphDrawer', () => {
       assert(values[1] === 4)
     })
 
-    it('should let the average data have same precision as source values', () => {
+    it('should let the average data have specified decimal places', () => {
       const data = [
         {timestamp: '2017-06-01T00:00:00.000Z', value: 1.0},
         {timestamp: '2017-06-02T00:00:00.000Z', value: 1.5},
@@ -186,14 +186,14 @@ describe('GraphDrawer', () => {
       const incrementTimestamp = timestamp => timestamp.setDate(timestamp.getDate() + 2)
 
       const drawer = new GraphDrawer()
-      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, incrementTimestamp)
+      const { timestamps, values } = drawer.averageDataByInterval(data, startDate, endDate, 1, incrementTimestamp)
 
       assert(timestamps.length === 2)
       assert(values.length === 2)
       assert(timestamps[0].toISOString() === data[0].timestamp)
       assert(values[0] === 1.2)
       assert(timestamps[1].toISOString() === data[2].timestamp)
-      assert(values[1] === 3.74)
+      assert(values[1] === 3.7)
     })
   })
 
@@ -202,21 +202,22 @@ describe('GraphDrawer', () => {
       const data = []
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data) === 0)
+      assert(drawer.calculateAverage(data, 0) === 0)
     })
 
     it('should return the overall average', () => {
       const data = [{value: 1}, {value: 2}, {value: 3}]
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data) === 2)
+      assert(drawer.calculateAverage(data, 0) === 2)
     })
 
-    it('should cut demail part but leave some of them', () => {
+    it('should remove some parts of demail digits', () => {
       const data = [{value: 0.1}, {value: 0.15}, {value: 0.2}]
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data) === 0.15)
+      assert(drawer.calculateAverage(data, 1) === 0.1)
+      assert(drawer.calculateAverage(data, 2) === 0.15)
     })
   })
 
@@ -233,7 +234,7 @@ describe('GraphDrawer', () => {
         timestamps: [new Date(), new Date(), new Date()],
         values: [1, 2, 3]
       })
-      drawer.draw(undefined, timeframes[0])
+      drawer.draw({decimalPlaces: 0}, timeframes[0])
 
       assert(graphParams !== undefined)
       assert(graphParams.axis.y.min === 1)

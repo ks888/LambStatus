@@ -25,8 +25,8 @@ export class GraphDrawer {
     return Math.floor(value / place) * place
   }
 
-  cutDecimalPart = (rawValue, numDecimalDigits = 0) => {
-    const mul = Math.pow(10, numDecimalDigits)
+  cutDecimalPart = (rawValue, decimalPlaces = 0) => {
+    const mul = Math.pow(10, decimalPlaces)
     return Math.floor(rawValue * mul) / mul
   }
 
@@ -47,27 +47,22 @@ export class GraphDrawer {
     return data
   }
 
-  calculateAverage = (data) => {
+  calculateAverage = (data, decimalPlaces) => {
     let sum = 0
     let count = 0
-    let maxDecimalDigits = 0
     data.forEach(entry => {
       sum += entry.value
       count++
-      const decimalParts = entry.value.toString().split('.')[1]
-      if (decimalParts !== undefined && decimalParts.length > maxDecimalDigits) {
-        maxDecimalDigits = decimalParts.length
-      }
     })
 
     if (count === 0) {
       return 0
     }
-    return this.cutDecimalPart(sum / count, maxDecimalDigits)
+    return this.cutDecimalPart(sum / count, decimalPlaces)
   }
 
   // startDate and endDate will not be changed.
-  averageDataByInterval = (data, startDate, endDate, incrementTimestamp) => {
+  averageDataByInterval = (data, startDate, endDate, decimalPlaces, incrementTimestamp) => {
     const timestamps = []
     const values = []
     let currIndex = 0
@@ -87,20 +82,15 @@ export class GraphDrawer {
       currDateStr = currDate.toISOString()
       let sum = 0
       let count = 0
-      let maxDecimalDigits = 0
       while (data[currIndex] && data[currIndex].timestamp < currDateStr) {
         sum += data[currIndex].value
         count++
-        const decimalParts = data[currIndex].value.toString().split('.')[1]
-        if (decimalParts !== undefined && decimalParts.length > maxDecimalDigits) {
-          maxDecimalDigits = decimalParts.length
-        }
         currIndex++
       }
 
       if (count !== 0) {
         const avg = sum / count
-        values.push(this.cutDecimalPart(avg, maxDecimalDigits))
+        values.push(this.cutDecimalPart(avg, decimalPlaces))
       } else {
         values.push(null)
       }
@@ -133,14 +123,15 @@ export class GraphDrawer {
     currDate = new Date(now.getTime())
     currDate.setDate(currDate.getDate() - numDates)
     const incrementTimestamp = getIncrementTimestampFunc(timeframe)
-    const { timestamps, values } = this.averageDataByInterval(data, currDate, now, incrementTimestamp)
+    const { timestamps, values } = this.averageDataByInterval(data, currDate, now, metric.decimalPlaces,
+                                                              incrementTimestamp)
 
     const minValue = values.reduce((min, curr) => (min === undefined || min > curr) ? curr : min, undefined)
     const maxValue = values.reduce((max, curr) => (max === undefined || max < curr) ? curr : max, undefined)
-    const ceilMaxValue = this.ceil(maxValue)
-    const floorMinValue = this.floor(minValue)
+    const ceiledMaxValue = this.ceil(maxValue)
+    const flooredMinValue = this.floor(minValue)
 
-    const yTicks = [floorMinValue, (ceilMaxValue + floorMinValue) / 2, ceilMaxValue]
+    const yTicks = [flooredMinValue, (ceiledMaxValue + flooredMinValue) / 2, ceiledMaxValue]
     const xTickFormat = getXAxisFormat(timeframe)
     const tooltipTitleFormat = getTooltipTitleFormat(timeframe)
 
@@ -180,8 +171,8 @@ export class GraphDrawer {
           }
         },
         y: {
-          min: floorMinValue,
-          max: ceilMaxValue,
+          min: flooredMinValue,
+          max: ceiledMaxValue,
           tick: {
             values: yTicks
           },
@@ -207,7 +198,7 @@ export class GraphDrawer {
       }
     })
 
-    this.average = this.calculateAverage(data)
+    this.average = this.calculateAverage(data, metric.decimalPlaces)
 
     return true
   }
@@ -232,6 +223,7 @@ export default class MetricsGraph extends React.Component {
     metric: PropTypes.shape({
       title: PropTypes.string.isRequired,
       unit: PropTypes.string.isRequired,
+      decimalPlaces: PropTypes.number.isRequired,
       data: PropTypes.object
     }),
     settings: PropTypes.shape({
