@@ -92,6 +92,22 @@ describe('GraphDrawer', () => {
     })
   })
 
+  describe('formatDecimalPart', () => {
+    it('should format decimal part', () => {
+      const drawer = new GraphDrawer()
+
+      assert(drawer.formatDecimalPart(0, 0) === '0')
+      assert(drawer.formatDecimalPart(0, 1) === '0.0')
+      assert(drawer.formatDecimalPart(0, 2) === '0.00')
+      assert(drawer.formatDecimalPart(0.1, 0) === '0')
+      assert(drawer.formatDecimalPart(0.1, 1) === '0.1')
+      assert(drawer.formatDecimalPart(0.1, 2) === '0.10')
+      assert(drawer.formatDecimalPart(0.11, 0) === '0')
+      assert(drawer.formatDecimalPart(0.11, 1) === '0.1')
+      assert(drawer.formatDecimalPart(0.11, 2) === '0.11')
+    })
+  })
+
   describe('collectDataWithinRange', () => {
     it('should collect data within the specified range', () => {
       const dates = buildDates()
@@ -202,22 +218,21 @@ describe('GraphDrawer', () => {
       const data = []
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data, 0) === 0)
+      assert(drawer.calculateAverage(data) === 0)
     })
 
     it('should return the overall average', () => {
       const data = [{value: 1}, {value: 2}, {value: 3}]
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data, 0) === 2)
+      assert(drawer.calculateAverage(data) === 2)
     })
 
     it('should remove some parts of demail digits', () => {
       const data = [{value: 0.1}, {value: 0.15}, {value: 0.2}]
       const drawer = new GraphDrawer()
 
-      assert(drawer.calculateAverage(data, 1) === 0.1)
-      assert(drawer.calculateAverage(data, 2) === 0.15)
+      assert(drawer.calculateAverage(data) === 0.15)
     })
   })
 

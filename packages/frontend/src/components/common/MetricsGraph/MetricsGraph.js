@@ -30,6 +30,14 @@ export class GraphDrawer {
     return Math.floor(rawValue * mul) / mul
   }
 
+  formatDecimalPart = (rawValue, decimalPlaces = 0) => {
+    const value = this.cutDecimalPart(rawValue, decimalPlaces)
+    if (decimalPlaces === 0) return `${value}`
+
+    const [integerPart, decimalPart = ''] = value.toString().split('.', 2)
+    return `${integerPart}.${decimalPart + '0'.repeat(decimalPlaces - decimalPart.length)}`
+  }
+
   collectDataWithinRange = (metric, dates, beginDate, endDate) => {
     const data = []
     dates.forEach(date => {
@@ -47,7 +55,7 @@ export class GraphDrawer {
     return data
   }
 
-  calculateAverage = (data, decimalPlaces) => {
+  calculateAverage = (data) => {
     let sum = 0
     let count = 0
     data.forEach(entry => {
@@ -58,7 +66,7 @@ export class GraphDrawer {
     if (count === 0) {
       return 0
     }
-    return this.cutDecimalPart(sum / count, decimalPlaces)
+    return sum / count
   }
 
   // startDate and endDate will not be changed.
@@ -190,7 +198,7 @@ export class GraphDrawer {
         format: {
           title: tooltipTitleFormat,
           name: () => { return metric.title },
-          value: (value) => { return value + metric.unit }
+          value: value => this.formatDecimalPart(value, metric.decimalPlaces) + metric.unit
         }
       },
       legend: {
@@ -198,7 +206,7 @@ export class GraphDrawer {
       }
     })
 
-    this.average = this.calculateAverage(data, metric.decimalPlaces)
+    this.average = this.formatDecimalPart(this.calculateAverage(data), metric.decimalPlaces)
 
     return true
   }
