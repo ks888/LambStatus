@@ -55,7 +55,7 @@ export class Metric {
     }
 
     if (this.decimalPlaces === undefined || this.decimalPlaces !== parseInt(this.decimalPlaces, 10)) {
-      throw new ValidationError('invalid description parameter')
+      throw new ValidationError('invalid decimalPlaces parameter')
     }
 
     if (metricStatuses.indexOf(this.status) < 0) {
