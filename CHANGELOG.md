@@ -1,5 +1,19 @@
 # Change Log
 
+## [v0.4.0](https://github.com/ks888/LambStatus/tree/v0.4.0) (2017-08-13)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.2...v0.4.0)
+
+### Added
+
+- [\#44](https://github.com/ks888/LambStatus/issues/44): Add LambStatus API v0 to post the metric data (thanks [@ccannell](https://github.com/ccannell))
+- [\#49](https://github.com/ks888/LambStatus/issues/49): [Metrics] Add an option to choose the statistics (thanks [@stephencornelius](https://github.com/stephencornelius))
+- [\#52](https://github.com/ks888/LambStatus/issues/52): [Metrics] Add commas to group every three digits (thanks [@skyzyx](https://github.com/skyzyx))
+
+### Fixed
+
+- [\#47](https://github.com/ks888/LambStatus/issues/47): The rounded value in the tooltip causes the problem (thanks [@blw9u2012](https://github.com/blw9u2012))
+- [\#50](https://github.com/ks888/LambStatus/issues/50): Improve the messages (thanks [@networkdawg](https://github.com/networkdawg))
+
 ## [v0.3.2](https://github.com/ks888/LambStatus/tree/v0.3.2) (2017-06-05)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.1...v0.3.2)
 
