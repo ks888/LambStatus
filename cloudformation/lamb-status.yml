@@ -2893,6 +2893,8 @@ Resources:
             QueryString: "false"
             Cookies:
               Forward: "none"
+            Headers:
+              - "Origin"
           ViewerProtocolPolicy: "allow-all"
         PriceClass: "PriceClass_200"
         ViewerCertificate:
