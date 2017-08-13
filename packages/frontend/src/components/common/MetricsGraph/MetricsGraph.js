@@ -253,11 +253,6 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidMount () {
-    if (this.areAllDataFetched(this.props.metric.data, this.props.timeframe)) {
-      this.draw(this.props.metric, this.props.timeframe)
-      return
-    }
-
     if (this.props.settings.statusPageURL) {
       this.fetchMetricData(this.props.settings.statusPageURL, this.props.timeframe)
       return

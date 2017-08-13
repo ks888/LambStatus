@@ -183,7 +183,7 @@ export default class MetricDialog extends React.Component {
         <div>
           <TextField label='Unit' text={this.state.unit} rows={1} onChange={this.handleChangeUnit} />
           <TextField
-            label='Description (optional)' text={this.state.description} rows={2}
+            label='Description' text={this.state.description} rows={2}
             onChange={this.handleChangeDescription} />
           <LabeledDropdownList
             id='decimalPlaces' label='Decimal Places' onChange={this.handleChangeDecimalPlaces}

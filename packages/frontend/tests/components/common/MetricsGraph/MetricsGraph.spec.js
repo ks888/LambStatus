@@ -282,17 +282,6 @@ describe('MetricsGraph', () => {
 
       assert(inst.fetchMetricData.calledOnce)
     })
-
-    it('should call draw method if all data are fetched', () => {
-      const props = generateProps()
-      const graph = mount(<MetricsGraph {...props} />)
-      const inst = graph.instance()
-      inst.areAllDataFetched = () => { return true }
-      inst.draw = sinon.spy()
-      inst.componentDidMount()
-
-      assert(inst.draw.calledOnce)
-    })
   })
 
   describe('componentWillReceiveProps', () => {
