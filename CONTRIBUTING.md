@@ -1,14 +1,71 @@
 # Contributing to LambStatus
 
-Thank you for seeing this page! The page will show you how to set up the developing environment so that you can start fixing a bug or adding a new feature.
+Thank you for seeing this page! The page has the resources to start working on the LambStatus yourself.
 
-### Architecture
+Table of Contents:
 
-Here is the rough architecture:
+* Coding rules
+* Project structure
+* How to set up the local environment
+
+## Coding Rules
+
+* Follow [JavaScript Standard Style](https://standardjs.com/).
+* Write tests.
+
+## Project Structure
+
+Here is the rough system architecture:
 
 ![Architecture](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/Architecture.png)
 
-### Set up
+These 3 directories under the repository are especially important to build the system:
+
+* `./cloudformation`: the CloudFormation template. It describes all the AWS resources including Lambda, API Gateway, DynamoDB, etc.
+* `./packages/lambda`: Server-side codes. All the server-side codes runs as the Lambda Functions.
+* `./packages/frontend`: Client-side codes. These codes are deployed to the S3 and served via CloudFront.
+
+Here is the description of each directory:
+
+```
+.
+├── cloudformation
+|   ├── bin                    --- the scripts to create the CloudFormation stack
+|   └── lamb-status.yml        --- the CloudFormation template file
+└── packages
+    ├── lambda
+    |   ├── bin                --- the scripts to build and deploy the lambda functions
+    |   ├── config             --- the webpack config file to build the codes
+    |   ├── src
+    |   |   ├── api            --- the handlers for the event from the API Gateway
+    |   |   ├── aws            --- the classes to access AWS resources
+    |   |   ├── db             --- the classes to access the database
+    |   |   ├── model          --- the models
+    |   |   └── utils          --- the utilities
+    |   ├── test               --- tests. Same structure as ./src
+    |   └── package.json       --- package.json file for lambda functions
+    └── frontend
+        ├── bin                --- the scripts to build and deploy the frontend
+        ├── build              --- the webpack config file to build the codes
+        ├── config             --- the environment-dependent config files
+        ├── src
+        |   ├── actions        --- Redux actions
+        |   ├── components     --- React components
+        |   ├── reducers       --- Redux reducers
+        |   ├── utils          --- the utilities
+        |   ├── admin-page.js  --- the js file to bootstrap the admin page
+        |   └── status-page.js --- the js file to bootstrap the status page
+        ├── test               --- tests. Same structure as ./src
+        └── package.json       --- package.json file for frontend
+```
+
+## Set up the Local Environment
+
+### Prerequisite Software
+
+* Node.js (v4.3.2)
+
+### Initial set up
 
 1. Clone the repository and go to the cloned directory
 
