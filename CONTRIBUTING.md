@@ -2,11 +2,9 @@
 
 Thank you for seeing this page! The page has the resources to start working on the LambStatus yourself.
 
-Table of Contents:
-
-* Coding rules
-* Project structure
-* How to set up the local environment
+* [Coding rules](#coding-rules)
+* [Project structure](#project-structure)
+* [How to set up the local environment](#set-up-the-local-environment)
 
 ## Coding Rules
 
@@ -19,13 +17,13 @@ Here is the rough system architecture:
 
 ![Architecture](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/Architecture.png)
 
-These 3 directories under the repository are especially important to build the system:
+These 3 directories under the repository are especially important for this system:
 
 * `./cloudformation`: the CloudFormation template. It describes all the AWS resources including Lambda, API Gateway, DynamoDB, etc.
-* `./packages/lambda`: Server-side codes. All the server-side codes runs as the Lambda Functions.
-* `./packages/frontend`: Client-side codes. These codes are deployed to the S3 and served via CloudFront.
+* `./packages/lambda`: Server-side code. All the server-side code runs as the Lambda Functions.
+* `./packages/frontend`: Client-side code. These are deployed to the S3 and served via CloudFront.
 
-Here is the description of each directory:
+Here is the contents of each directory:
 
 ```
 .
@@ -37,7 +35,7 @@ Here is the description of each directory:
     |   ├── bin                --- the scripts to build and deploy the lambda functions
     |   ├── config             --- the webpack config file to build the codes
     |   ├── src
-    |   |   ├── api            --- the handlers for the event from the API Gateway
+    |   |   ├── api            --- the entrypoints of Lambda functions. Handles the event from the API Gateway
     |   |   ├── aws            --- the classes to access AWS resources
     |   |   ├── db             --- the classes to access the database
     |   |   ├── model          --- the models
@@ -53,8 +51,8 @@ Here is the description of each directory:
         |   ├── components     --- React components
         |   ├── reducers       --- Redux reducers
         |   ├── utils          --- the utilities
-        |   ├── admin-page.js  --- the js file to bootstrap the admin page
-        |   └── status-page.js --- the js file to bootstrap the status page
+        |   ├── admin-page.js  --- the entrypoint of the admin page
+        |   └── status-page.js --- the entrypoint of the status page
         ├── test               --- tests. Same structure as ./src
         └── package.json       --- package.json file for frontend
 ```
@@ -81,45 +79,48 @@ Here is the description of each directory:
 
    `npm run cloudformation:create`
 
-   The command will return immediately, but it may take 20-25 minutes to actually create the stack, mainly due to the settings of CloudFront Distribution.
-
    If the command returns an error, make sure you properly configured [the AWS credentials](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence).
 
-### Server-side development
+   When the stack is created, the email will be sent to the email address.
+
+### To change AWS resources CloudFormation creates
+
+1. Make your change.
+
+2. Update the CloudFormation stack
+
+   `npm run cloudformation:update`
+
+### To change server-side code
 
 1. Go to the `lambda` directory
 
    `cd packages/lambda`
 
-2. Build
-
-   `npm run build`
-
-3. Test
+2. Make sure the tests pass
 
    `npm run test`
 
-4. Deploy
+3. Make your change. Add tests for your change. Make the tests pass
+
+4. (If necessary, deploy your functions)
 
    `npm run deploy`
 
-### Client-side development
+### To change client-side code
 
 1. Go to the `frontend` directory
 
    `cd packages/frontend`
 
-2. Build
-
-   `npm run build`
-
-3. Test
+2. Make sure the tests pass
 
    `npm run test`
 
-4. Run the local server
+3. Make your change. Add tests for your change. Make the tests pass
 
-   `npm run start`
+4. (If necessary, run the local server)
 
-Now, visit http://localhost:3000 and sign in to the admin console. Get the login information from the email you received.
+   `npm run start         # Run the local server for the admin page. Visit http://localhost:3000`
 
+   `npm run start:status  # Run the local server for the status page. Visit http://localhost:3001`
