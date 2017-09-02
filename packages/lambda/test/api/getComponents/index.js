@@ -10,8 +10,8 @@ describe('getComponents', () => {
 
   it('should return a list of components', async () => {
     const components = [
-      new Component('2', undefined, undefined, undefined, 2),
-      new Component('1', undefined, undefined, undefined, 1)
+      new Component({componentID: '2', order: 2}),
+      new Component({componentID: '1', order: 1})
     ]
     sinon.stub(Components.prototype, 'all').returns(components.slice(0))
 

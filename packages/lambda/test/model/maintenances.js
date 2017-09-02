@@ -9,13 +9,14 @@ import ComponentsStore from 'db/components'
 describe('Maintenance', () => {
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const maint = new Maintenance('1', 'name', 'status', 'start', 'end', 'msg', [], 'upd')
+      const maint = new Maintenance('1', 'name', 'status', 'start', 'end', 'msg', [{componentID: '1'}], 'upd')
       assert(maint.maintenanceID === '1')
       assert(maint.name === 'name')
       assert(maint.startAt === 'start')
       assert(maint.endAt === 'end')
       assert(maint.message === 'msg')
-      assert.deepEqual([], maint.components)
+      assert(maint.components.length === 1)
+      assert(maint.components[0].componentID, '1')
       assert(maint.updatedAt === 'upd')
     })
 
@@ -138,7 +139,7 @@ describe('Maintenance', () => {
 
     it('should return error when components validation failed', async () => {
       const maint = genMock()
-      maint.components = [new Component()]
+      maint.components = [new Component({})]
       let error
       try {
         await maint.validate()

@@ -2,7 +2,7 @@ import { Component } from 'model/components'
 
 export async function handle (event, context, callback) {
   try {
-    const comp = new Component(undefined, event.name, event.description, event.status, event.order)
+    const comp = new Component(event)
     await comp.validate()
     await comp.save()
     callback(null, comp.objectify())

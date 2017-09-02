@@ -4,7 +4,7 @@ import { componentStatuses } from 'utils/const'
 import { NotFoundError, ValidationError } from 'utils/errors'
 
 export class Component {
-  constructor (componentID, name, description, status, order) {
+  constructor ({componentID, name, description = '', status, order}) {
     if (!componentID) {
       this.componentID = generateID()
       this.needIDValidation = false
@@ -75,9 +75,7 @@ export class Components {
   async all () {
     const store = new ComponentsStore()
     const components = await store.getAll()
-    return components.map(comp => {
-      return new Component(comp.componentID, comp.name, comp.description, comp.status, comp.order)
-    })
+    return components.map(comp => new Component(comp))
   }
 
   async lookup (componentID) {
@@ -86,8 +84,7 @@ export class Components {
     if (comps.length === 0) {
       throw new NotFoundError('no matched item')
     } else if (comps.length === 1) {
-      const comp = comps[0]
-      return new Component(comp.componentID, comp.name, comp.description, comp.status, comp.order)
+      return new Component(comps[0])
     } else {
       throw new Error('matched too many items')
     }

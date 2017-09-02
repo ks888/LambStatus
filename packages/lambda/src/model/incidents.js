@@ -19,9 +19,7 @@ export class Incident {
     this.name = name
     this.status = status
     this.message = message
-    this.components = components.map(comp => {
-      return new Component(comp.componentID, comp.name, comp.description, comp.status, comp.order)
-    })
+    this.components = components.map(comp => new Component(comp))
     if (!updatedAt) {
       this.updatedAt = new Date().toISOString()
     } else {

@@ -70,7 +70,7 @@ describe('Components', () => {
 describe('Component', () => {
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const comp = new Component('1', 'name', 'desc', 'status', 1)
+      const comp = new Component({componentID: '1', name: 'name', description: 'desc', status: 'status', order: 1})
       assert(comp.componentID === '1')
       assert(comp.name === 'name')
       assert(comp.description === 'desc')
@@ -79,14 +79,16 @@ describe('Component', () => {
     })
 
     it('should fill in insufficient values', () => {
-      const comp = new Component(undefined, 'name', 'desc', 'status')
+      const comp = new Component({name: 'name', status: 'status'})
       assert(comp.componentID.length === 12)
       assert(comp.order !== undefined)
+      assert(comp.description === '')
     })
   })
 
   describe('validate', () => {
-    const genMock = () => new Component(undefined, 'name', 'desc', 'Operational')
+    const genMock = () => new Component({name: 'name', status: 'Operational'})
+
     it('should return no error when input is valid', async () => {
       const comp = genMock()
       let error
@@ -112,7 +114,7 @@ describe('Component', () => {
 
     it('should return error when componentID does not exist', async () => {
       sinon.stub(ComponentsStore.prototype, 'getByID').returns([])
-      const comp = new Component('1', 'name', 'desc', 'Operational')
+      const comp = new Component({componentID: '1', name: 'name', description: 'desc', status: 'Operational', order: 1})
       let error
       try {
         await comp.validate()
