@@ -56,12 +56,10 @@ export default class IncidentsStore {
     })
   }
 
-  update (id, name, status, updatedAt, updating) {
+  update ({incidentID, name, status, updatedAt}, updating = false) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          incidentID: id
-        },
+        Key: { incidentID },
         UpdateExpression: 'set #n = :n, #s = :s, updatedAt = :updatedAt, updating = :updating',
         ExpressionAttributeNames: {
           '#n': 'name',

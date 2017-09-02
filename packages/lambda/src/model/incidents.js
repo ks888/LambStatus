@@ -4,11 +4,12 @@ import IncidentUpdatesStore from 'db/incidentUpdates'
 import { Component } from 'model/components'
 import generateID from 'utils/generateID'
 import { incidentStatuses } from 'utils/const'
+import { isValidDate } from 'utils/datetime'
 import { NotFoundError, ValidationError } from 'utils/errors'
 
 export class Incident {
-  constructor (incidentID, name, status, message, components, updatedAt) {
-    if (!incidentID) {
+  constructor ({incidentID, name, status, message = '', components = [], updatedAt = new Date().toISOString()}) {
+    if (incidentID === undefined) {
       this.incidentID = generateID()
       this.needIDValidation = false
     } else {
@@ -20,11 +21,7 @@ export class Incident {
     this.status = status
     this.message = message
     this.components = components.map(comp => new Component(comp))
-    if (!updatedAt) {
-      this.updatedAt = new Date().toISOString()
-    } else {
-      this.updatedAt = updatedAt
-    }
+    this.updatedAt = updatedAt
   }
 
   async validate () {
@@ -56,6 +53,10 @@ export class Incident {
     await Promise.all(this.components.map(async comp => {
       await comp.validate()
     }))
+
+    if (!isValidDate(this.updatedAt)) {
+      throw new ValidationError('invalid updatedAt parameter')
+    }
   }
 
   async getIncidentUpdates () {
@@ -66,10 +67,10 @@ export class Incident {
   async save () {
     // TODO: retry
     const incidentsStore = new IncidentsStore()
-    await incidentsStore.update(this.incidentID, this.name, this.status, this.updatedAt, false)
+    await incidentsStore.update(this.objectify())
 
     const incidentUpdatesStore = new IncidentUpdatesStore()
-    await incidentUpdatesStore.update(this.incidentID, this.status, this.message, this.updatedAt)
+    await incidentUpdatesStore.update(this.objectify())
 
     const componentsStore = new ComponentsStore()
     await Promise.all(this.components.map(async (component) => {
@@ -103,10 +104,7 @@ export class Incidents {
   async all () {
     const store = new IncidentsStore()
     const incidents = await store.getAll()
-    return incidents.map(incident => {
-      return new Incident(incident.incidentID, incident.name, incident.status, '', [],
-                          incident.updatedAt)
-    })
+    return incidents.map(incident => new Incident(incident))
   }
 
   async lookup (incidentID) {
@@ -116,8 +114,7 @@ export class Incidents {
       throw new NotFoundError('no matched item')
     } else if (incidents.length === 1) {
       const incident = incidents[0]
-      return new Incident(incident.incidentID, incident.name, incident.status, '', [],
-                          incident.updatedAt)
+      return new Incident(incident)
     } else {
       throw new Error('matched too many items')
     }

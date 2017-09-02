@@ -34,11 +34,11 @@ export default class IncidentUpdatesStore {
     })
   }
 
-  update (incidentID, incidentStatus, message, updatedAt) {
+  update ({incidentID, status, message, updatedAt}) {
     return new Promise((resolve, reject) => {
       let incidentUpdateID = generateID()
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-        incidentStatus, message, updatedAt
+        incidentStatus: status, message, updatedAt
       })
       const params = {
         Key: {

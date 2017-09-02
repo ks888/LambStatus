@@ -72,10 +72,10 @@ export const postIncident = (name, incidentStatus, message, components, callback
   return async dispatch => {
     try {
       const body = {
-        name: name,
-        incidentStatus: incidentStatus,
-        message: message,
-        components: components
+        name,
+        status: incidentStatus,
+        message,
+        components
       }
       const json = await sendRequest(apiURL + 'incidents', {
         headers: await buildHeaders(),
@@ -94,10 +94,10 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
   return async dispatch => {
     try {
       const body = {
-        name: name,
-        incidentStatus: incidentStatus,
-        message: message,
-        components: components
+        name,
+        status: incidentStatus,
+        message,
+        components
       }
       const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
         headers: await buildHeaders(),

@@ -1,5 +1,14 @@
 import moment from 'moment'
 
+export const isValidDate = (dateString) => {
+  try {
+    getDateObject(dateString)
+  } catch (e) {
+    return false
+  }
+  return true
+}
+
 export const getDateObject = (dateString) => {
   const date = new Date(dateString)
   // Thanks to https://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript

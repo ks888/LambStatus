@@ -4,8 +4,8 @@ import { componentStatuses } from 'utils/const'
 import { NotFoundError, ValidationError } from 'utils/errors'
 
 export class Component {
-  constructor ({componentID, name, description = '', status, order}) {
-    if (!componentID) {
+  constructor ({componentID, name, description = '', status, order = Math.floor(new Date().getTime() / 1000)}) {
+    if (componentID === undefined) {
       this.componentID = generateID()
       this.needIDValidation = false
     } else {
@@ -16,11 +16,7 @@ export class Component {
     this.name = name
     this.description = description
     this.status = status
-    if (!order) {
-      this.order = Math.floor(new Date().getTime() / 1000)
-    } else {
-      this.order = order
-    }
+    this.order = order
   }
 
   async validate () {

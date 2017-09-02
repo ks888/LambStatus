@@ -3,8 +3,7 @@ import SNS from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
-    const incident = new Incident(undefined, event.name, event.incidentStatus, event.message,
-                                  event.components)
+    const incident = new Incident(event)
     await incident.validate()
     await incident.save()
 
