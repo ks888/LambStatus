@@ -70,21 +70,21 @@ describe('ComponentsStore', () => {
 
     it('should update the component', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
-        callback(null, {Attributes: {componentID: '1', name: '', description: '', status: '', order: 1}})
+        callback(null, {Attributes: {componentID: '1'}})
       })
-      const comp = await new ComponentsStore().update('1', '', '', '', 1)
+      const comp = await new ComponentsStore().update({componentID: '1', description: ''})
       assert(comp.componentID === '1')
       assert(comp.description === '')
     })
 
-    it('should return error on exception thrown', async () => {
+    it('should throw exception if the update failed', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
         callback('Error')
       })
 
       let error
       try {
-        await new ComponentsStore().update('1', '', '', '', 1)
+        await new ComponentsStore().update({componentID: '1'})
       } catch (e) {
         error = e
       }

@@ -52,7 +52,7 @@ export class Component {
 
   async save () {
     const store = new ComponentsStore()
-    await store.update(this.componentID, this.name, this.description, this.status, this.order)
+    await store.update(this.objectify())
   }
 
   async delete () {

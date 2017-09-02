@@ -62,13 +62,13 @@ export default class ComponentsStore {
     })
   }
 
-  update (id, name, description, status, order) {
+  update ({componentID, name, description, status, order}) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
         name, description, status, order
       })
       const params = {
-        Key: { componentID: id },
+        Key: { componentID },
         UpdateExpression: updateExp,
         ExpressionAttributeNames: attrNames,
         ExpressionAttributeValues: attrValues,

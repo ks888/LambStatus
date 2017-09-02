@@ -197,4 +197,33 @@ describe('Component', () => {
       assert(error.name === 'ValidationError')
     })
   })
+
+  describe('save', () => {
+    it('should call the update method of store', async () => {
+      const updateStub = sinon.stub(ComponentsStore.prototype, 'update').returns()
+
+      const comp = new Component({componentID: '1', name: 'name', description: 'desc', status: 'status', order: 1})
+      await comp.save()
+
+      assert(updateStub.calledOnce)
+      assert(updateStub.firstCall.args[0].componentID === '1')
+      assert(updateStub.firstCall.args[0].name === 'name')
+
+      ComponentsStore.prototype.update.restore()
+    })
+  })
+
+  describe('delete', () => {
+    it('should call the delete method of store', async () => {
+      const updateStub = sinon.stub(ComponentsStore.prototype, 'delete').returns()
+
+      const comp = new Component({componentID: '1'})
+      await comp.delete()
+
+      assert(updateStub.calledOnce)
+      assert(updateStub.firstCall.args[0] === '1')
+
+      ComponentsStore.prototype.delete.restore()
+    })
+  })
 })
