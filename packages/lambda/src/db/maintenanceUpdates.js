@@ -34,11 +34,11 @@ export default class MaintenanceUpdatesStore {
     })
   }
 
-  update (maintenanceID, maintenanceStatus, message, updatedAt) {
+  update ({maintenanceID, status, message, updatedAt}) {
     return new Promise((resolve, reject) => {
       let maintenanceUpdateID = generateID()
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-        maintenanceStatus, message, updatedAt
+        maintenanceStatus: status, message, updatedAt
       })
       const params = {
         Key: {

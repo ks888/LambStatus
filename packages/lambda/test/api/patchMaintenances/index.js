@@ -16,10 +16,11 @@ describe('patchMaintenances', () => {
     const saveStub = sinon.stub(Maintenance.prototype, 'save').returns('')
     const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    await handle({ params: { maintenanceid: '1' }, body: { components: [] } }, null, (error, result) => {
+    await handle({ params: { maintenanceid: '1' }, body: { name: 'test' } }, null, (error, result) => {
       assert(error === null)
       assert(result.maintenance.maintenanceID === '1')
-      assert.deepEqual(result.components, [])
+      assert(result.maintenance.name === 'test')
+      assert(result.components.length === 0)
     })
     assert(validateStub.calledOnce)
     assert(saveStub.calledOnce)
@@ -31,7 +32,7 @@ describe('patchMaintenances', () => {
     sinon.stub(Maintenance.prototype, 'save').returns()
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    return await handle({ params: { maintenanceid: '1' }, body: { components: [] } }, null, (error, result) => {
+    return await handle({ params: { maintenanceid: '1' } }, null, (error, result) => {
       assert(error.match(/Error/))
     })
   })

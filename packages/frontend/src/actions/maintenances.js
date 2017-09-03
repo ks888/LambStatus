@@ -71,7 +71,7 @@ export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
 export const postMaintenance = (name, maintenanceStatus, startAt, endAt, message, components, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { name, maintenanceStatus, startAt, endAt, message, components }
+      const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
       const json = await sendRequest(apiURL + 'maintenances', {
         headers: await buildHeaders(),
         method: 'POST',
@@ -89,7 +89,7 @@ export const updateMaintenance = (maintenanceID, name, maintenanceStatus, startA
                                   components, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { name, maintenanceStatus, startAt, endAt, message, components }
+      const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
       const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
         headers: await buildHeaders(),
         method: 'PATCH',

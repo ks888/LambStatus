@@ -3,9 +3,8 @@ import SNS from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
-    const maintenance = new Maintenance(event.params.maintenanceid, event.body.name, event.body.maintenanceStatus,
-                                        event.body.startAt, event.body.endAt, event.body.message,
-                                        event.body.components)
+    const params = Object.assign({}, {maintenanceID: event.params.maintenanceid}, event.body)
+    const maintenance = new Maintenance(params)
     await maintenance.validate()
     await maintenance.save()
 

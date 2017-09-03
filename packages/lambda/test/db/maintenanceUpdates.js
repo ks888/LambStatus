@@ -43,21 +43,28 @@ describe('MaintenanceUpdatesStore', () => {
     })
 
     it('should update the maintenance update', async () => {
+      const params = {
+        maintenanceID: '1',
+        status: 'status',
+        message: 'message',
+        updatedAt: 'updatedAt'
+      }
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
         callback(null, {Attributes: {
-          maintenanceID: '1',
-          maintenanceUpdateID: '1',
+          maintenanceID: params.Key.maintenanceID,
+          maintenanceUpdateID: params.Key.maintenanceUpdateID,
           maintenanceStatus: params.ExpressionAttributeValues[':maintenanceStatus'],
           message: params.ExpressionAttributeValues[':message'],
           updatedAt: params.ExpressionAttributeValues[':updatedAt']
         }})
       })
-      const maint = await new MaintenanceUpdatesStore().update('1', 'status', 'message', 'updatedAt')
-      assert(maint.maintenanceID === '1')
-      assert(maint.maintenanceUpdateID === '1')
-      assert(maint.maintenanceStatus === 'status')
-      assert(maint.message === 'message')
-      assert(maint.updatedAt === 'updatedAt')
+
+      const maint = await new MaintenanceUpdatesStore().update(params)
+      assert(maint.maintenanceID === params.maintenanceID)
+      assert(maint.maintenanceUpdateID.length === 12)
+      assert(maint.maintenanceStatus === params.status)
+      assert(maint.message === params.message)
+      assert(maint.updatedAt === params.updatedAt)
     })
 
     it('should return error on exception thrown', async () => {

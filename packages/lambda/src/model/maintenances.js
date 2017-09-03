@@ -4,11 +4,13 @@ import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import { Component } from 'model/components'
 import generateID from 'utils/generateID'
 import { maintenanceStatuses } from 'utils/const'
+import { isValidDate } from 'utils/datetime'
 import { NotFoundError, ValidationError } from 'utils/errors'
 
 export class Maintenance {
-  constructor (maintenanceID, name, status, startAt, endAt, message, components, updatedAt) {
-    if (!maintenanceID) {
+  constructor ({maintenanceID, name, status, startAt, endAt, message = '', components = [],
+                updatedAt = new Date().toISOString()}) {
+    if (maintenanceID === undefined) {
       this.maintenanceID = generateID()
       this.needIDValidation = false
     } else {
@@ -22,11 +24,7 @@ export class Maintenance {
     this.endAt = endAt
     this.message = message
     this.components = components.map(comp => new Component(comp))
-    if (!updatedAt) {
-      this.updatedAt = new Date().toISOString()
-    } else {
-      this.updatedAt = updatedAt
-    }
+    this.updatedAt = updatedAt
   }
 
   async validate () {
@@ -47,11 +45,11 @@ export class Maintenance {
       throw new ValidationError('invalid maintenance status parameter')
     }
 
-    if (this.startAt === undefined || this.startAt === '') {
+    if (!isValidDate(this.startAt)) {
       throw new ValidationError('invalid startAt parameter')
     }
 
-    if (this.endAt === undefined || this.endAt === '') {
+    if (!isValidDate(this.endAt)) {
       throw new ValidationError('invalid endAt parameter')
     }
 
@@ -70,6 +68,10 @@ export class Maintenance {
     await Promise.all(this.components.map(async comp => {
       await comp.validate()
     }))
+
+    if (!isValidDate(this.updatedAt)) {
+      throw new ValidationError('invalid updatedAt parameter')
+    }
   }
 
   async getMaintenanceUpdates () {
@@ -80,11 +82,10 @@ export class Maintenance {
   async save () {
     // TODO: retry
     const maintenancesStore = new MaintenancesStore()
-    await maintenancesStore.update(this.maintenanceID, this.name, this.status, this.startAt, this.endAt,
-                                   this.updatedAt, false)
+    await maintenancesStore.update(this.objectify())
 
     const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
-    await maintenanceUpdatesStore.update(this.maintenanceID, this.status, this.message, this.updatedAt)
+    await maintenanceUpdatesStore.update(this.objectify())
 
     const componentsStore = new ComponentsStore()
     await Promise.all(this.components.map(async (component) => {
@@ -120,10 +121,7 @@ export class Maintenances {
   async all () {
     const store = new MaintenancesStore()
     const maintenances = await store.getAll()
-    return maintenances.map(maintenance => {
-      return new Maintenance(maintenance.maintenanceID, maintenance.name, maintenance.status, maintenance.startAt,
-                             maintenance.endAt, '', [], maintenance.updatedAt)
-    })
+    return maintenances.map(maintenance => new Maintenance(maintenance))
   }
 
   async lookup (maintenanceID) {
@@ -133,8 +131,7 @@ export class Maintenances {
       throw new NotFoundError('no matched item')
     } else if (maintenances.length === 1) {
       const maintenance = maintenances[0]
-      return new Maintenance(maintenance.maintenanceID, maintenance.name, maintenance.status, maintenance.startAt,
-                             maintenance.endAt, '', [], maintenance.updatedAt)
+      return new Maintenance(maintenance)
     } else {
       throw new Error('matched too many items')
     }

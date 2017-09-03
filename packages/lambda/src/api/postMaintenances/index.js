@@ -3,8 +3,7 @@ import SNS from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
-    const maintenance = new Maintenance(undefined, event.name, event.maintenanceStatus, event.startAt,
-                                        event.endAt, event.message, event.components)
+    const maintenance = new Maintenance(event)
     await maintenance.validate()
     await maintenance.save()
 

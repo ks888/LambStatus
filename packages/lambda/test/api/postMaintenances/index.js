@@ -11,15 +11,16 @@ describe('postMaintenances', () => {
     SNS.prototype.notifyIncident.restore()
   })
 
-  it('should update the maintenance', async () => {
-    const validateStub = sinon.stub(Maintenance.prototype, 'validate').returns('')
-    const saveStub = sinon.stub(Maintenance.prototype, 'save').returns('')
+  it('should create the maintenance', async () => {
+    const validateStub = sinon.stub(Maintenance.prototype, 'validate').returns()
+    const saveStub = sinon.stub(Maintenance.prototype, 'save').returns()
     const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    await handle({ components: [] }, null, (error, result) => {
+    await handle({ name: 'test' }, null, (error, result) => {
       assert(error === null)
       assert(result.maintenance.maintenanceID.length === 12)
-      assert.deepEqual(result.components, [])
+      assert(result.maintenance.name === 'test')
+      assert(result.components.length === 0)
     })
     assert(validateStub.calledOnce)
     assert(saveStub.calledOnce)

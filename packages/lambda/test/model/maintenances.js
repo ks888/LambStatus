@@ -5,35 +5,56 @@ import { Component } from 'model/components'
 import MaintenancesStore from 'db/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import ComponentsStore from 'db/components'
+import { maintenanceStatuses } from 'utils/const'
 
 describe('Maintenance', () => {
+  const generateConstructorParams = (maintenanceID) => {
+    return {
+      maintenanceID,
+      name: 'test',
+      status: maintenanceStatuses[0],
+      startAt: '2017-09-02T07:15:50.634Z',
+      endAt: '2017-09-03T07:15:50.634Z',
+      message: '',
+      components: [],
+      updatedAt: '2017-09-01T07:15:50.634Z'
+    }
+  }
+
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const maint = new Maintenance('1', 'name', 'status', 'start', 'end', 'msg', [{componentID: '1'}], 'upd')
-      assert(maint.maintenanceID === '1')
-      assert(maint.name === 'name')
-      assert(maint.startAt === 'start')
-      assert(maint.endAt === 'end')
-      assert(maint.message === 'msg')
-      assert(maint.components.length === 1)
-      assert(maint.components[0].componentID, '1')
-      assert(maint.updatedAt === 'upd')
+      const params = generateConstructorParams('1')
+      const maint = new Maintenance(params)
+
+      assert(maint.maintenanceID === params.maintenanceID)
+      assert(maint.name === params.name)
+      assert(maint.startAt === params.startAt)
+      assert(maint.endAt === params.endAt)
+      assert(maint.message === params.message)
+      assert(maint.components.length === params.components.length)
+      assert(maint.updatedAt === params.updatedAt)
     })
 
     it('should fill in insufficient values', () => {
-      const maint = new Maintenance(undefined, 'name', 'status', 'start', 'end', 'msg', [], undefined)
+      const params = generateConstructorParams()
+      params.message = undefined
+      params.updatedAt = undefined
+
+      const maint = new Maintenance(params)
       assert(maint.maintenanceID.length === 12)
+      assert(maint.message === '')
       assert(maint.updatedAt !== undefined)
     })
   })
 
   describe('validate', () => {
-    const genMock = () => new Maintenance(undefined, 'name', 'Scheduled', '1', '2', 'msg', [], undefined)
     it('should return no error when input is valid', async () => {
-      const maint = genMock()
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -41,11 +62,12 @@ describe('Maintenance', () => {
     })
 
     it('should return error when maintenanceID is invalid', async () => {
-      const maint = genMock()
-      maint.maintenanceID = ''
+      const params = generateConstructorParams('')
+      const maintenance = new Maintenance(params)
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -54,10 +76,13 @@ describe('Maintenance', () => {
 
     it('should return error when maintenanceID does not exist', async () => {
       sinon.stub(MaintenancesStore.prototype, 'getByID').returns([])
-      const maint = new Maintenance('1', 'name', 'status', 'start', 'end', 'msg', [], undefined)
+
+      const params = generateConstructorParams('1')
+      const maintenance = new Maintenance(params)
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -66,11 +91,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when name is invalid', async () => {
-      const maint = genMock()
-      maint.name = ''
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.name = ''
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -78,11 +105,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when status is invalid', async () => {
-      const maint = genMock()
-      maint.status = 'st'
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.status = 'test'
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -90,11 +119,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when startAt is invalid', async () => {
-      const maint = genMock()
-      maint.startAt = ''
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.startAt = ''
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -102,11 +133,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when endAt is invalid', async () => {
-      const maint = genMock()
-      maint.endAt = ''
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.endAt = ''
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -114,11 +147,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when message is invalid', async () => {
-      const maint = genMock()
-      delete maint.startAt
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.message = undefined
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -126,11 +161,13 @@ describe('Maintenance', () => {
     })
 
     it('should return error when components is invalid', async () => {
-      const maint = genMock()
-      maint.components = ''
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.components = ''
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
@@ -138,15 +175,32 @@ describe('Maintenance', () => {
     })
 
     it('should return error when components validation failed', async () => {
-      const maint = genMock()
-      maint.components = [new Component({})]
+      const params = generateConstructorParams()
+      params.components = [new Component({componentID: ''})]
+      const maintenance = new Maintenance(params)
+
       let error
       try {
-        await maint.validate()
+        await maintenance.validate()
       } catch (e) {
         error = e
       }
       assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when updatedAt is invalid', async () => {
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.updatedAt = ''
+
+      let error
+      try {
+        await maintenance.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+      assert(error.message.match(/updatedAt/))
     })
   })
 
@@ -158,29 +212,37 @@ describe('Maintenance', () => {
     })
 
     it('should updates maitenance, maintenaceUpdate, and components', async () => {
-      const maintStoreStub = sinon.stub(MaintenancesStore.prototype, 'update').returns({})
-      const maintUpdateStoreStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'update').returns({})
-      const compStoreStub = sinon.stub(ComponentsStore.prototype, 'updateStatus').returns({})
+      const maintStoreStub = sinon.stub(MaintenancesStore.prototype, 'update').returns()
+      const maintUpdateStoreStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'update').returns()
+      const compStoreStub = sinon.stub(ComponentsStore.prototype, 'updateStatus').returns()
 
-      const maint = new Maintenance(undefined, '', '', '', '', '', [{}, {}], undefined)
-      await maint.save()
+      const params = generateConstructorParams('1')
+      params.components = [new Component({})]
+      const maintenance = new Maintenance(params)
+      await maintenance.save()
+
       assert(maintStoreStub.calledOnce)
+      assert(maintStoreStub.firstCall.args[0].maintenanceID === params.maintenanceID)
       assert(maintUpdateStoreStub.calledOnce)
-      assert(compStoreStub.calledTwice)
+      assert(maintUpdateStoreStub.firstCall.args[0].maintenanceID === params.maintenanceID)
+      assert(compStoreStub.calledOnce)
     })
 
     it('should throw error when updateStatus throws error', async () => {
-      const maintStoreStub = sinon.stub(MaintenancesStore.prototype, 'update').returns({})
-      const maintUpdateStoreStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'update').returns({})
+      const maintStoreStub = sinon.stub(MaintenancesStore.prototype, 'update').returns()
+      const maintUpdateStoreStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'update').returns()
       sinon.stub(ComponentsStore.prototype, 'updateStatus').throws()
 
-      const maint = new Maintenance(undefined, '', '', '', '', '', [{}, {}], undefined)
+      const params = generateConstructorParams()
+      params.components = [new Component({})]
+      const maintenance = new Maintenance(params)
       let error
       try {
-        await maint.save()
+        await maintenance.save()
       } catch (e) {
         error = e
       }
+
       assert(maintStoreStub.calledOnce)
       assert(maintUpdateStoreStub.calledOnce)
       assert(error.message.match(/Error/))
@@ -224,8 +286,8 @@ describe('Maintenances', () => {
     it('should return one maintenance', async () => {
       sinon.stub(MaintenancesStore.prototype, 'getByID').returns([{maintenanceID: 1}])
 
-      const maint = await new Maintenances().lookup(1)
-      assert(maint.maintenanceID === 1)
+      const maintenance = await new Maintenances().lookup(1)
+      assert(maintenance.maintenanceID === 1)
     })
 
     it('should return error when matched no maintenance', async () => {

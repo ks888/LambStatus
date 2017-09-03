@@ -56,12 +56,10 @@ export default class MaintenanceStore {
     })
   }
 
-  update (id, name, status, startAt, endAt, updatedAt, updating) {
+  update ({maintenanceID, name, status, startAt, endAt, updatedAt}, updating = false) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          maintenanceID: id
-        },
+        Key: { maintenanceID },
         UpdateExpression: `set #n = :n, #s = :s, startAt = :startAt, endAt = :endAt, updatedAt = :updatedAt, updating = :updating`,
         ExpressionAttributeNames: {
           '#n': 'name',
