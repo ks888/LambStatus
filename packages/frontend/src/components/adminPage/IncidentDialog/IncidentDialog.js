@@ -118,14 +118,16 @@ export default class IncidentDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postIncident(this.state.name, this.state.incidentStatus,
-      this.state.incidentMessage, this.state.components, this.updateCallbacks)
+    const params = Object.assign({}, this.state, {message: this.state.incidentMessage})
+    this.props.postIncident(params, this.updateCallbacks)
   }
 
   handleClickUpdateButton = (e) => {
-    this.props.updateIncident(this.props.incident.incidentID, this.state.name,
-      this.state.incidentStatus, this.state.incidentMessage, this.state.components,
-      this.updateCallbacks)
+    const params = Object.assign({}, this.state, {
+      incidentID: this.props.incident.incidentID,
+      message: this.state.incidentMessage
+    })
+    this.props.updateIncident(params, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

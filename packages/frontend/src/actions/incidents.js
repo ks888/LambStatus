@@ -68,7 +68,7 @@ export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   }
 }
 
-export const postIncident = (name, incidentStatus, message, components, callbacks = {}) => {
+export const postIncident = ({name, incidentStatus, message, components}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = {
@@ -90,7 +90,7 @@ export const postIncident = (name, incidentStatus, message, components, callback
   }
 }
 
-export const updateIncident = (incidentID, name, incidentStatus, message, components, callbacks = {}) => {
+export const updateIncident = ({incidentID, name, incidentStatus, message, components}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = {

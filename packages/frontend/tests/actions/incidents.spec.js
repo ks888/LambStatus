@@ -100,13 +100,13 @@ describe('Actions/Incidents', () => {
 
   describe('postIncident', () => {
     it('should return a function.', () => {
-      assert(typeof postIncident() === 'function')
+      assert(typeof postIncident({}) === 'function')
     })
 
     it('should post a new incident.', () => {
       fetchMock.post(/.*\/incidents/, { body: [incident], headers: {'Content-Type': 'application/json'} })
 
-      return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return postIncident({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -120,7 +120,7 @@ describe('Actions/Incidents', () => {
     it('should handle error properly.', () => {
       fetchMock.post(/.*\/incidents/, { status: 400, body: {} })
 
-      return postIncident(undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return postIncident({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
@@ -133,14 +133,14 @@ describe('Actions/Incidents', () => {
 
   describe('updateIncident', () => {
     it('should return a function.', () => {
-      assert(typeof updateIncident() === 'function')
+      assert(typeof updateIncident({}) === 'function')
     })
 
     it('should post a new incident.', () => {
       fetchMock.patch(/.*\/incidents\/.*/,
                       { body: [incident], headers: {'Content-Type': 'application/json'} })
 
-      return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateIncident({incidentID: 'id'}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -154,7 +154,7 @@ describe('Actions/Incidents', () => {
     it('should handle error properly.', () => {
       fetchMock.patch(/.*\/incidents\/.*/, { status: 400, body: {} })
 
-      return updateIncident('id', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateIncident({incidentID: 'id'}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
