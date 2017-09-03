@@ -214,7 +214,7 @@ describe('ApiKey', () => {
       const disableStub = sinon.stub(APIGateway.prototype, 'disableApiKey').returns()
       const deleteStub = sinon.stub(APIGateway.prototype, 'deleteApiKey').returns()
 
-      await new ApiKey(id).delete(id)
+      await new ApiKey({id}).delete()
       assert.deepEqual(disableStub.firstCall.args, [id])
       assert.deepEqual(deleteStub.firstCall.args, [id])
     })
@@ -225,7 +225,7 @@ describe('ApiKey', () => {
 
       let err
       try {
-        await new ApiKey().delete()
+        await new ApiKey({}).delete()
       } catch (e) {
         err = e
       }
@@ -238,7 +238,7 @@ describe('ApiKey', () => {
 
       let err
       try {
-        await new ApiKey().delete()
+        await new ApiKey({}).delete()
       } catch (e) {
         err = e
       }

@@ -9,7 +9,7 @@ describe('postApiKeys', () => {
   })
 
   it('should create the api key', async () => {
-    const apiKey = new ApiKey('1', 'a', '', '')
+    const apiKey = new ApiKey({id: '1', value: 'a'})
     sinon.stub(Settings.prototype, 'createApiKey').returns(apiKey)
 
     await handle({}, null, (error, result) => {

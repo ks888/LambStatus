@@ -114,7 +114,7 @@ export class Settings {
       const rawKeys = await new APIGateway().getApiKeys(stackName)
       rawKeys.forEach(key => {
         if (!key.enabled) return
-        keys.push(new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate))
+        keys.push(new ApiKey(key))
       })
       return keys
     } catch (err) {
@@ -125,7 +125,7 @@ export class Settings {
   async lookupApiKey (id) {
     try {
       const key = await new APIGateway().getApiKey(id)
-      return new ApiKey(key.id, key.value, key.createdDate, key.lastUpdatedDate)
+      return new ApiKey(key)
     } catch (err) {
       switch (err.name) {
         case 'NotFoundException':
@@ -143,12 +143,12 @@ export class Settings {
     }
     const newKey = await apiGateway.createApiKey(stackName)
     await apiGateway.createUsagePlanKey(newKey.id, usagePlanID)
-    return new ApiKey(newKey.id, newKey.value, newKey.createdDate, newKey.lastUpdatedDate)
+    return new ApiKey(newKey)
   }
 }
 
 export class ApiKey {
-  constructor (id, value, createdDate, lastUpdatedDate) {
+  constructor ({id, value, createdDate, lastUpdatedDate}) {
     this.id = id
     this.value = value
     this.createdDate = createdDate

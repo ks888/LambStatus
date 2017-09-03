@@ -12,7 +12,7 @@ describe('deleteApiKeys', () => {
 
   it('should delete the api key', async () => {
     const deleteStub = sinon.stub(ApiKey.prototype, 'delete').returns()
-    const lookupApiKeyStub = sinon.stub(Settings.prototype, 'lookupApiKey').returns(new ApiKey())
+    const lookupApiKeyStub = sinon.stub(Settings.prototype, 'lookupApiKey').returns(new ApiKey({}))
 
     const id = 'id'
     await handle({ params: {apikeyid: id} }, null, (error, result) => {
@@ -24,7 +24,7 @@ describe('deleteApiKeys', () => {
 
   it('should return error on exception thrown', async () => {
     sinon.stub(ApiKey.prototype, 'delete').throws()
-    sinon.stub(Settings.prototype, 'lookupApiKey').returns(new ApiKey())
+    sinon.stub(Settings.prototype, 'lookupApiKey').returns(new ApiKey({}))
 
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))
