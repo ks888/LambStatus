@@ -73,15 +73,13 @@ export default class MetricsStore {
     })
   }
 
-  update (id, type, title, unit, description, decimalPlaces, status, order, props) {
+  update ({metricID, type, title, unit, description, decimalPlaces, status, order, props}) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({
       type, title, unit, description, decimalPlaces, status, order, props: JSON.stringify(props)
     })
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          metricID: id
-        },
+        Key: { metricID },
         UpdateExpression: updateExp,
         ExpressionAttributeNames: attrNames,
         ExpressionAttributeValues: attrValues,

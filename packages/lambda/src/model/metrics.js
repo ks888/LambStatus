@@ -8,8 +8,9 @@ import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/co
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
-  constructor (metricID, type, title, unit, description, decimalPlaces, status, order, props) {
-    if (!metricID) {
+  constructor ({metricID, type, title, unit = '', description = '', decimalPlaces = 0, status,
+                order = Math.floor(new Date().getTime() / 1000), props = {}}) {
+    if (metricID === undefined) {
       this.metricID = generateID()
       this.needIDValidation = false
     } else {
@@ -24,11 +25,7 @@ export class Metric {
     this.description = description
     this.decimalPlaces = decimalPlaces
     this.status = status
-    if (!order) {
-      this.order = Math.floor(new Date().getTime() / 1000)
-    } else {
-      this.order = order
-    }
+    this.order = order
     this.props = props
   }
 
@@ -73,8 +70,7 @@ export class Metric {
 
   async save () {
     const store = new MetricsStore()
-    await store.update(this.metricID, this.type, this.title, this.unit, this.description, this.decimalPlaces,
-                       this.status, this.order, this.props)
+    await store.update(this.objectify())
   }
 
   async delete () {
@@ -268,10 +264,7 @@ export class Metrics {
 
   async list () {
     const metrics = await new MetricsStore().getAll()
-    return metrics.map(metric => {
-      return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.decimalPlaces, metric.status, metric.order, metric.props)
-    })
+    return metrics.map(metric => new Metric(metric))
   }
 
   async lookup (metricID) {
@@ -281,8 +274,7 @@ export class Metrics {
       throw new NotFoundError('no matched item')
     } else if (metrics.length === 1) {
       const metric = metrics[0]
-      return new Metric(metric.metricID, metric.type, metric.title, metric.unit, metric.description,
-                        metric.decimalPlaces, metric.status, metric.order, metric.props)
+      return new Metric(metric)
     } else {
       throw new Error('matched too many items')
     }

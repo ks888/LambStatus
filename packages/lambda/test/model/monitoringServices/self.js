@@ -7,7 +7,10 @@ import { NotFoundError } from 'utils/errors'
 describe('Self', () => {
   describe('listMetrics', () => {
     it('should return a list of self-type metrics', async () => {
-      const expect = [new Metric('1', 'Self'), new Metric('2', 'Self')]
+      const expect = [
+        new Metric({metricID: '1', type: 'Self'}),
+        new Metric({metricID: '2', type: 'Self'})
+      ]
       const stub = sinon.stub(Metrics.prototype, 'list').returns(expect)
 
       const actual = await new Self().listMetrics()
@@ -20,7 +23,10 @@ describe('Self', () => {
     })
 
     it('should remove non-self-type metrics', async () => {
-      const expect = [new Metric('1', 'Self'), new Metric('2', 'Self')]
+      const expect = [
+        new Metric({metricID: '1', type: 'Self'}),
+        new Metric({metricID: '2', type: 'Self'})
+      ]
       expect[1].type = 'Unknown'
       const stub = sinon.stub(Metrics.prototype, 'list').returns(expect)
 
@@ -42,7 +48,7 @@ describe('Self', () => {
     it('should return metric data between start time and end time', async () => {
       const start = new Date()
       const end = new Date(start.getTime() + 1)
-      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Self'))
+      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Self'}))
       const expect = [{value: 1, timestamp: start.toISOString()}, {value: 2, timestamp: end.toISOString()}]
       const stub = sinon.stub(Metric.prototype, 'getDatapoints').returns(expect)
 
@@ -57,7 +63,7 @@ describe('Self', () => {
       const startPlusOneDay = new Date(start.getTime() + 24 * 60 * 60 * 1000 /* 1 day */)
       const numDates = 3
       const end = new Date(start.getTime() + numDates * 24 * 60 * 60 * 1000)
-      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Self'))
+      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Self'}))
 
       const expect = [
         {value: 1, timestamp: start.toISOString()},
@@ -78,7 +84,7 @@ describe('Self', () => {
     it('should throw an error if the start time is later than end time', async () => {
       const start = new Date()
       const end = new Date(start.getTime() - 24 * 60 * 60 * 1000)
-      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Self'))
+      sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Self'}))
       sinon.stub(Metric.prototype, 'getDatapoints').returns(null)
 
       try {

@@ -88,17 +88,34 @@ describe('MetricsStore', () => {
     })
 
     it('should update the metric', async () => {
+      const params = {
+        metricID: '1',
+        type: 'type',
+        title: 'title',
+        unit: 'unit',
+        description: 'description',
+        decimalPlaces: 'decimalPlaces',
+        status: 'status',
+        order: 'order',
+        props: {key: 'value'}
+      }
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
         callback(null, {Attributes: {
-          metricID: '1', type: 'type', title: 'title', unit: '', description: '', status: 'status', order: 1
+          metricID: params.Key.metricID,
+          type: params.ExpressionAttributeValues[':type'],
+          title: params.ExpressionAttributeValues[':title'],
+          unit: params.ExpressionAttributeValues[':unit'],
+          description: params.ExpressionAttributeValues[':description'],
+          decimalPlaces: params.ExpressionAttributeValues[':decimalPlaces'],
+          status: params.ExpressionAttributeValues[':status'],
+          order: params.ExpressionAttributeValues[':order'],
+          props: params.ExpressionAttributeValues[':props']
         }})
       })
-      const metric = await new MetricsStore().update('1', undefined, undefined, undefined, undefined,
-                                                     undefined, undefined, undefined, {key: 'value'})
-      assert(metric.metricID === '1')
-      assert(metric.unit === '')
-      assert(metric.description === '')
-      assert.deepEqual(metric.props, {key: 'value'})
+      const metric = await new MetricsStore().update(params)
+      console.log(metric)
+      assert(metric.metricID === params.metricID)
+      assert.deepEqual(metric.props, params.props)
     })
 
     it('should return error on exception thrown', async () => {

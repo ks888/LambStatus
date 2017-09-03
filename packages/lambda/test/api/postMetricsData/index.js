@@ -15,7 +15,7 @@ describe('postMetricsData', () => {
       1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
     }
     const stub = sinon.stub(Metric.prototype, 'insertDatapoints').returns(datapoints[1])
-    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
 
     await handle(datapoints, null, (error, result) => {
       assert(error === null)
@@ -49,7 +49,7 @@ describe('postMetricsData', () => {
     const stub = sinon.stub(Metric.prototype, 'insertDatapoints')
     stub.onCall(0).returns(datapoints[1])
     stub.onCall(1).returns(datapoints[2])
-    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
 
     await handle(datapoints, null, (error, result) => {
       assert(error === null)
@@ -74,7 +74,7 @@ describe('postMetricsData', () => {
 
   it('should return validation error if metric type is invalid', async () => {
     sinon.stub(Metric.prototype, 'insertDatapoints').returns([])
-    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric('1', 'Mock'))
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
     sinon.stub(MockService.prototype, 'shouldAdminPostDatapoints').returns(false)
 
     const id = 123

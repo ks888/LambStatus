@@ -128,36 +128,63 @@ describe('Metrics', () => {
 })
 
 describe('Metric', () => {
-  const genMock = () => new Metric(undefined, 'Mock', 'title', 'unit', 'description', 0,
-                                   metricStatusVisible, 1, {})
+  const generateConstructorParams = (metricID) => {
+    return {
+      metricID,
+      type: 'Mock',
+      title: 'title',
+      unit: 'unit',
+      description: 'description',
+      decimalPlaces: 0,
+      status: metricStatusVisible,
+      order: 0,
+      props: {key: 'value'}
+    }
+  }
 
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const comp = new Metric('1', 'Mock', 'title', 'unit', 'description', 0, 'status', 1, {})
-      assert(comp.metricID === '1')
-      assert(comp.type === 'Mock')
-      assert(comp.title === 'title')
-      assert(comp.unit === 'unit')
-      assert(comp.description === 'description')
-      assert(comp.decimalPlaces === 0)
-      assert(comp.status === 'status')
-      assert(comp.order === 1)
-      assert.deepEqual(comp.props, {})
+      const params = generateConstructorParams('1')
+      const metric = new Metric(params)
+
+      assert(metric.metricID === params.metricID)
+      assert(metric.type === params.type)
+      assert(metric.title === params.title)
+      assert(metric.unit === params.unit)
+      assert(metric.description === params.description)
+      assert(metric.decimalPlaces === params.decimalPlaces)
+      assert(metric.status === params.status)
+      assert(metric.order === params.order)
+      assert.deepEqual(metric.props, params.props)
     })
 
     it('should fill in insufficient values', () => {
-      const comp = new Metric(undefined, 'Mock', 'title', 'unit', 'description', 0, 'status', undefined, {})
-      assert(comp.metricID.length === 12)
-      assert(typeof comp.order === 'number')
+      const params = generateConstructorParams()
+      params.metricID = undefined
+      params.unit = undefined
+      params.description = undefined
+      params.decimalPlaces = undefined
+      params.props = undefined
+      params.order = undefined
+      const metric = new Metric(params)
+
+      assert(metric.metricID.length === 12)
+      assert(metric.unit === '')
+      assert(metric.description === '')
+      assert(metric.decimalPlaces === 0)
+      assert.deepEqual(metric.props, {})
+      assert(metric.order !== undefined)
     })
   })
 
   describe('validate', () => {
     it('should return no error when input is valid', async () => {
-      const comp = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -165,11 +192,12 @@ describe('Metric', () => {
     })
 
     it('should return error when metricID is invalid', async () => {
-      const comp = genMock()
-      comp.metricID = ''
+      const params = generateConstructorParams('')
+      const metric = new Metric(params)
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -178,11 +206,13 @@ describe('Metric', () => {
 
     it('should return error when metricID does not exist', async () => {
       sinon.stub(MetricsStore.prototype, 'getByID').returns([])
-      const comp = new Metric('1', 'Mock', 'title', 'unit', 'description',
-                              metricStatusVisible, 1, {})
+
+      const params = generateConstructorParams('1')
+      const metric = new Metric(params)
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -191,11 +221,13 @@ describe('Metric', () => {
     })
 
     it('should return error when title is invalid', async () => {
-      const comp = genMock()
-      comp.title = ''
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.title = ''
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -203,11 +235,13 @@ describe('Metric', () => {
     })
 
     it('should return no error when unit is empty', async () => {
-      const comp = genMock()
-      comp.unit = ''
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.unit = ''
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -215,11 +249,13 @@ describe('Metric', () => {
     })
 
     it('should return error when unit is invalid', async () => {
-      const comp = genMock()
-      comp.unit = undefined
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.unit = undefined
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -227,11 +263,13 @@ describe('Metric', () => {
     })
 
     it('should return no error when description is empty', async () => {
-      const comp = genMock()
-      comp.description = ''
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.description = ''
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -239,11 +277,13 @@ describe('Metric', () => {
     })
 
     it('should return error when description is invalid', async () => {
-      const comp = genMock()
-      comp.description = undefined
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.description = undefined
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -251,11 +291,13 @@ describe('Metric', () => {
     })
 
     it('should return error when decimalPlaces is invalid', async () => {
-      const comp = genMock()
-      comp.decimalPlaces = undefined
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.decimalPlaces = undefined
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -263,11 +305,13 @@ describe('Metric', () => {
     })
 
     it('should return error when decimalPlaces is float', async () => {
-      const comp = genMock()
-      comp.decimalPlaces = 1.1
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.decimalPlaces = 1.1
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -275,11 +319,13 @@ describe('Metric', () => {
     })
 
     it('should return error when decimalPlaces is string', async () => {
-      const comp = genMock()
-      comp.decimalPlaces = '1'
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.decimalPlaces = '1'
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -287,11 +333,13 @@ describe('Metric', () => {
     })
 
     it('should return error when status is invalid', async () => {
-      const comp = genMock()
-      comp.status = ''
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.status = ''
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -299,11 +347,13 @@ describe('Metric', () => {
     })
 
     it('should return error when order is string', async () => {
-      const comp = genMock()
-      comp.order = 'order'
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.order = 'order'
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -311,11 +361,13 @@ describe('Metric', () => {
     })
 
     it('should return error when order is float', async () => {
-      const comp = genMock()
-      comp.order = 1.1
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.order = 1.1
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -323,11 +375,13 @@ describe('Metric', () => {
     })
 
     it('should return no error when props is null', async () => {
-      const comp = genMock()
-      comp.props = null
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.props = null
+
       let error
       try {
-        await comp.validate()
+        await metric.validate()
       } catch (e) {
         error = e
       }
@@ -344,7 +398,9 @@ describe('Metric', () => {
       const expected = 'bucket'
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns(expected)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+
       const actual = await metric.getBucketName()
       assert(expected === actual)
       assert(expected === metric.bucketName)
@@ -354,7 +410,9 @@ describe('Metric', () => {
       const expected = 'bucket'
       const stub = sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns(expected)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+
       await metric.getBucketName()
       await metric.getBucketName()
       assert(stub.calledOnce)
@@ -375,7 +433,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'getObject').returns(expected)
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
 
       const actual = await metric.getDatapoints(date)
       assert(actual.length === 1)
@@ -391,7 +450,8 @@ describe('Metric', () => {
       sinon.stub(S3.prototype, 'getObject').throws()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
 
       const actual = await metric.getDatapoints(date)
       assert(actual === null)
@@ -427,7 +487,8 @@ describe('Metric', () => {
         { timestamp: '2017-07-31T13:55:00.000Z', value: 0 }
       ]
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const actual = await metric.normalizeDatapoints(datapoints)
 
       Object.keys(actual).forEach((k, i) => {
@@ -451,7 +512,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
       const insertedData = await metric.insertDatapoints(newDatapoints)
 
@@ -470,7 +532,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
       const insertedData = await metric.insertDatapoints(newDatapoints)
 
@@ -492,7 +555,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 1},
                              {timestamp: '2017-07-03T00:00:00.000Z', value: 0}]
       const insertedData = await metric.insertDatapoints(newDatapoints)
@@ -513,7 +577,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: '2017-07-02T00:00:00.000Z', value: 0},
                              {timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
       const insertedData = await metric.insertDatapoints(newDatapoints)
@@ -540,7 +605,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
       const insertedData = await metric.insertDatapoints(newDatapoints)
 
@@ -560,7 +626,8 @@ describe('Metric', () => {
       const stub = sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('bucket')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [
         {timestamp: '2017-07-03T01:00:01.000Z', value: 1},
         {timestamp: '2017-07-03T01:00:02.000Z', value: 2},
@@ -583,7 +650,8 @@ describe('Metric', () => {
       sinon.stub(S3.prototype, 'putObject').returns()
       sinon.stub(CloudFormation.prototype, 'getStatusPageBucketName').returns('')
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       const newDatapoints = [{timestamp: 'invalid', value: 1}]
       try {
         await metric.insertDatapoints(newDatapoints)
@@ -610,7 +678,8 @@ describe('Metric', () => {
       const newDatapoints = [{timestamp, value: 1}]
       const getMetricDataStub = sinon.stub(MockService.prototype, 'getMetricData').returns(newDatapoints)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       await metric.collect()
 
       assert(putObjectStub.callCount === 1)
@@ -637,7 +706,8 @@ describe('Metric', () => {
       const newDatapoints = [{timestamp: '2017-07-03T01:00:05.000Z', value: 2}]
       const getMetricDataStub = sinon.stub(MockService.prototype, 'getMetricData').returns(newDatapoints)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       await metric.collect()
 
       assert(putObjectStub.callCount === 2)
@@ -656,7 +726,8 @@ describe('Metric', () => {
       const newDatapoints = [{timestamp: '2017-07-03T01:00:00.000Z', value: 2}]
       const getMetricDataStub = sinon.stub(MockService.prototype, 'getMetricData').returns(newDatapoints)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       await metric.collect()
 
       assert(putObjectStub.callCount === 1)
@@ -679,7 +750,8 @@ describe('Metric', () => {
       const newDatapoints = [{timestamp: '2017-07-03T00:00:00.000Z', value: 2}]
       const getMetricDataStub = sinon.stub(MockService.prototype, 'getMetricData').returns(newDatapoints)
 
-      const metric = genMock()
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
       await metric.collect()
 
       assert(putObjectStub.callCount === 0)
