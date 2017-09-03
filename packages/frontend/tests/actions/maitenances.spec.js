@@ -92,13 +92,13 @@ describe('Actions/Maintenances', () => {
 
   describe('postMaintenance', () => {
     it('should return a function.', () => {
-      assert(typeof postMaintenance() === 'function')
+      assert(typeof postMaintenance({}) === 'function')
     })
 
     it('should post a new maintenance.', async () => {
       fetchMock.post(/.*\/maintenances/, { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
-      await postMaintenance(undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      await postMaintenance({}, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
       assert(!callbacks.onFailure.called)
@@ -110,7 +110,7 @@ describe('Actions/Maintenances', () => {
     it('should handle error properly.', async () => {
       fetchMock.post(/.*\/maintenances/, { status: 400, body: {} })
 
-      await postMaintenance(undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      await postMaintenance({}, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(!callbacks.onSuccess.called)
       assert(callbacks.onFailure.calledOnce)
@@ -121,14 +121,14 @@ describe('Actions/Maintenances', () => {
 
   describe('updateMaintenance', () => {
     it('should return a function.', () => {
-      assert(typeof updateMaintenance() === 'function')
+      assert(typeof updateMaintenance({}) === 'function')
     })
 
     it('should post a new maintenance.', async () => {
       fetchMock.patch(/.*\/maintenances\/.*/,
                       { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
-      await updateMaintenance('id', undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      await updateMaintenance({maintenanceID: 'id'}, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
       assert(!callbacks.onFailure.called)
@@ -140,7 +140,7 @@ describe('Actions/Maintenances', () => {
     it('should handle error properly.', async () => {
       fetchMock.patch(/.*\/maintenances\/.*/, { status: 400, body: {} })
 
-      await updateMaintenance('id', undefined, undefined, undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      await updateMaintenance({maintenanceID: 'id'}, callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(!callbacks.onSuccess.called)
       assert(callbacks.onFailure.calledOnce)

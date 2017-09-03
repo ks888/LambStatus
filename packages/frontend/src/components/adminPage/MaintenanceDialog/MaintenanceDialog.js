@@ -136,14 +136,22 @@ export default class MaintenanceDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postMaintenance(this.state.name, this.state.maintenanceStatus, this.state.startAt.toISOString(),
-      this.state.endAt.toISOString(), this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
+    const params = Object.assign({}, this.state, {
+      startAt: this.state.startAt.toISOString(),
+      endAt: this.state.endAt.toISOString(),
+      message: this.state.maintenanceMessage
+    })
+    this.props.postMaintenance(params, this.updateCallbacks)
   }
 
   handleClickUpdateButton = (e) => {
-    this.props.updateMaintenance(this.props.maintenance.maintenanceID, this.state.name,
-      this.state.maintenanceStatus, this.state.startAt.toISOString(), this.state.endAt.toISOString(),
-      this.state.maintenanceMessage, this.state.components, this.updateCallbacks)
+    const params = Object.assign({}, this.state, {
+      maintenanceID: this.props.maintenance.maintenanceID,
+      startAt: this.state.startAt.toISOString(),
+      endAt: this.state.endAt.toISOString(),
+      message: this.state.maintenanceMessage
+    })
+    this.props.updateMaintenance(params, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

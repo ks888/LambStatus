@@ -68,7 +68,7 @@ export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
   }
 }
 
-export const postMaintenance = (name, maintenanceStatus, startAt, endAt, message, components, callbacks = {}) => {
+export const postMaintenance = ({name, maintenanceStatus, startAt, endAt, message, components}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
@@ -85,8 +85,8 @@ export const postMaintenance = (name, maintenanceStatus, startAt, endAt, message
   }
 }
 
-export const updateMaintenance = (maintenanceID, name, maintenanceStatus, startAt, endAt, message,
-                                  components, callbacks = {}) => {
+export const updateMaintenance = ({maintenanceID, name, maintenanceStatus, startAt, endAt, message,
+                                   components}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
