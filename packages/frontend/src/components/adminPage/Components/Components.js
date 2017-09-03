@@ -85,8 +85,8 @@ export default class Components extends React.Component {
       const orderA = components[i + 1].order
       const orderB = (i + 2 < components.length ? components[i + 2].order : Math.floor(new Date().getTime() / 1000))
       const newOrder = Math.floor((orderA + orderB) / 2)
-      this.props.updateComponent(clickedComp.componentID, clickedComp.name, clickedComp.description,
-                                 clickedComp.status, newOrder, this.callbacks)
+      const params = Object.assign({}, clickedComp, {order: newOrder})
+      this.props.updateComponent(params, this.callbacks)
     }
   }
 

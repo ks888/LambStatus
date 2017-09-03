@@ -71,12 +71,12 @@ export default class ComponentDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postComponent(this.state.name, this.state.description, this.state.status, this.updateCallbacks)
+    this.props.postComponent(this.state, this.updateCallbacks)
   }
 
   handleClickEditButton = (e) => {
-    this.props.updateComponent(this.props.component.componentID, this.state.name, this.state.description,
-                               this.state.status, this.props.component.order, this.updateCallbacks)
+    const params = Object.assign({}, this.props.component, this.state)
+    this.props.updateComponent(params, this.updateCallbacks)
   }
 
   handleHideDialog = () => {

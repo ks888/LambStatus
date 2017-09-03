@@ -47,7 +47,7 @@ export const fetchComponents = (callbacks = {}) => {
   }
 }
 
-export const postComponent = (name, description, status, callbacks = {}) => {
+export const postComponent = ({name, description, status}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { name, description, status }
@@ -64,7 +64,7 @@ export const postComponent = (name, description, status, callbacks = {}) => {
   }
 }
 
-export const updateComponent = (componentID, name, description, status, order, callbacks = {}) => {
+export const updateComponent = ({componentID, name, description, status, order}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { name, description, status, order }

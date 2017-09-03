@@ -68,13 +68,13 @@ describe('Actions/Components', () => {
 
   describe('postComponent', () => {
     it('should return a function.', () => {
-      assert(typeof postComponent() === 'function')
+      assert(typeof postComponent({}) === 'function')
     })
 
     it('should post a new component.', () => {
       fetchMock.post(/.*\/components/, { body: comp, headers: {'Content-Type': 'application/json'} })
 
-      return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return postComponent({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -88,7 +88,7 @@ describe('Actions/Components', () => {
     it('should handle error properly.', () => {
       fetchMock.post(/.*\/components/, { status: 400, body: {} })
 
-      return postComponent(undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return postComponent({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
@@ -101,13 +101,13 @@ describe('Actions/Components', () => {
 
   describe('updateComponent', () => {
     it('should return a function.', () => {
-      assert(typeof updateComponent() === 'function')
+      assert(typeof updateComponent({}) === 'function')
     })
 
     it('should update the existing component.', () => {
       fetchMock.patch(/.*\/components\/.*/, { body: comp, headers: {'Content-Type': 'application/json'} })
 
-      return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateComponent({componentID: 'c1'}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -121,7 +121,7 @@ describe('Actions/Components', () => {
     it('should handle error properly.', () => {
       fetchMock.patch(/.*\/components\/.*/, { status: 400, body: {} })
 
-      return updateComponent('c1', undefined, undefined, undefined, undefined, callbacks)(dispatchSpy)
+      return updateComponent({componentID: 'c1'}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
