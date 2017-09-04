@@ -131,7 +131,7 @@ describe('MetricDialog', () => {
       })
 
       const props = generateProps()
-      props.postMetric = (t, p, ti, s, u, d, de, callbacks) => { callbacks.onSuccess() }
+      props.postMetric = (_, callbacks) => { callbacks.onSuccess() }
       const dialog = shallow(<MetricDialog {...props} />)
 
       const add = dialog.find(Button).first()

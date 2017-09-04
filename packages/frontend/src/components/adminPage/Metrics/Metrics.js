@@ -95,10 +95,9 @@ export default class Metrics extends React.Component {
       const orderA = metrics[i + 1].order
       const orderB = (i + 2 < metrics.length ? metrics[i + 2].order : Math.floor(new Date().getTime() / 1000))
       const newOrder = Math.floor((orderA + orderB) / 2)
-      this.props.updateMetric(clickedMetric.metricID, clickedMetric.type, clickedMetric.props,
-                              clickedMetric.title, clickedMetric.status, clickedMetric.unit,
-                              clickedMetric.description, clickedMetric.decimalPlaces, newOrder,
-                              this.callbacks)
+
+      const params = Object.assign({}, clickedMetric, {order: newOrder})
+      this.props.updateMetric(params, this.callbacks)
     }
   }
 

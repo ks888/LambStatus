@@ -181,13 +181,13 @@ describe('Actions/Metrics', () => {
 
   describe('postMetric', () => {
     it('should return a function.', () => {
-      assert(typeof postMetric() === 'function')
+      assert(typeof postMetric({}) === 'function')
     })
 
     it('should post a new metric.', () => {
       fetchMock.post(/.*\/metrics/, { body: metrics[0], headers: {'Content-Type': 'application/json'} })
 
-      return postMetric('', '', '', '', '', '', 0, callbacks)(dispatchSpy)
+      return postMetric({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -201,7 +201,7 @@ describe('Actions/Metrics', () => {
     it('should handle error properly.', () => {
       fetchMock.post(/.*\/metrics/, { status: 400, body: {} })
 
-      return postMetric('', '', '', '', '', '', 0, callbacks)(dispatchSpy)
+      return postMetric({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.notCalled)
@@ -214,13 +214,13 @@ describe('Actions/Metrics', () => {
 
   describe('updateMetric', () => {
     it('should return a function.', () => {
-      assert(typeof updateMetric() === 'function')
+      assert(typeof updateMetric({}) === 'function')
     })
 
     it('should update the existing metric.', () => {
       fetchMock.patch(/.*\/metrics\/.*/, { body: metrics[0], headers: {'Content-Type': 'application/json'} })
 
-      return updateMetric('', '', '', '', '', '', '', 0, '', callbacks)(dispatchSpy)
+      return updateMetric({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -234,7 +234,7 @@ describe('Actions/Metrics', () => {
     it('should handle error properly.', () => {
       fetchMock.patch(/.*\/metrics\/.*/, { status: 400, body: {} })
 
-      return updateMetric('', '', '', '', '', '', '', 0, '', callbacks)(dispatchSpy)
+      return updateMetric({}, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)

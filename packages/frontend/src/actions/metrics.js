@@ -121,7 +121,7 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
   }
 }
 
-export const postMetric = (type, props, title, status, unit, description, decimalPlaces, callbacks = {}) => {
+export const postMetric = ({type, props, title, status, unit, description, decimalPlaces}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { type, props, title, status, unit, description, decimalPlaces }
@@ -138,8 +138,8 @@ export const postMetric = (type, props, title, status, unit, description, decima
   }
 }
 
-export const updateMetric = (metricID, type, props, title, status, unit, description, decimalPlaces,
-                             order, callbacks = {}) => {
+export const updateMetric = ({metricID, type, props, title, status, unit, description, decimalPlaces, order},
+                             callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { type, props, title, status, unit, description, decimalPlaces, order }

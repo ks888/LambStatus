@@ -116,17 +116,12 @@ export default class MetricDialog extends React.Component {
   }
 
   handleClickAddButton = (e) => {
-    this.props.postMetric(this.state.type, this.state.props, this.state.title, this.state.status,
-                          this.state.unit, this.state.description, this.state.decimalPlaces,
-                          this.updateCallbacks)
+    this.props.postMetric(this.state, this.updateCallbacks)
   }
 
   handleClickEditButton = (e) => {
-    console.log('dp', this.state.decimalPlaces, typeof this.state.decimalPlaces)
-    this.props.updateMetric(this.props.metric.metricID, this.state.type, this.state.props,
-                            this.state.title, this.state.status, this.state.unit,
-                            this.state.description, this.state.decimalPlaces, this.props.metric.order,
-                            this.updateCallbacks)
+    const params = Object.assign({}, this.props.metric, this.state)
+    this.props.updateMetric(params, this.updateCallbacks)
   }
 
   handleHideDialog = () => {
