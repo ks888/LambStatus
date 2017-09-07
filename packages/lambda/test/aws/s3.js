@@ -97,7 +97,7 @@ describe('S3', () => {
     })
 
     it('should throw error if listObjects fails ', async () => {
-      AWS.mock('S3', 'listObjects', (params, callback) => {
+      AWS.mock('S3', 'listObjectsV2', (params, callback) => {
         callback('error')
       })
 
