@@ -15,7 +15,7 @@ async function run (webpackConfig) {
       throw Error('Config set to fail on warning')
     }
     debug('Copy static assets to dist folder.')
-    fs.copySync(path.resolve(webpackConfig.resolve.root, 'static'), webpackConfig.output.path)
+    fs.copySync(path.resolve(webpackConfig.resolve.modules[0], 'static'), webpackConfig.output.path)
   } catch (e) {
     throw e
   }
