@@ -45,13 +45,15 @@ export default function () {
       colors : true
     },
     compiler_vendor : [
-      'babel-polyfill',
       'history',
       'react',
+      'react-dom',
       'react-redux',
       'react-router',
       'react-router-redux',
-      'redux'
+      'redux',
+      'moment-timezone',
+      'c3'
     ],
 
     // ----------------------------------
