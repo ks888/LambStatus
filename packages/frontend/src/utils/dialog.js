@@ -1,4 +1,6 @@
 // Workaround for the limitation of the dialog polyfill.
+import dialogPolyfill from 'dialog-polyfill/dialog-polyfill'
+import 'dialog-polyfill/dialog-polyfill.css'
 
 export const dialogID = 'dialog-container'
 export const innerDialogID = 'inner-dialog-container'
