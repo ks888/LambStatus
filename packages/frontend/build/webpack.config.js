@@ -75,15 +75,22 @@ export default function (config) {
   ]
 
   if (__DEV__) {
-    debug('Enable plugins for live development.')
+    debug('Enable plugins for live development (HMR, NoErrors).')
     webpackConfig.plugins.push(
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin()
     )
   } else if (__PROD__) {
-    debug('Enable plugins for production.')
+    debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
     webpackConfig.plugins.push(
-      new webpack.optimize.UglifyJsPlugin()
+      new webpack.optimize.UglifyJsPlugin({
+        sourceMap: true,
+        compress: {
+          unused: true,
+          dead_code: true,
+          warnings: false
+        }
+      })
     )
   }
 
@@ -269,14 +276,16 @@ export default function (config) {
   // http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
   if (!__DEV__) {
     debug('Apply ExtractTextPlugin to CSS loaders.')
-    webpackConfig.module.rules.filter(rule => rule.use && rule.use[0] === 'style-loader')
-      .forEach(rule => {
-        const [first, ...rest] = rule.use
-        rule.use = ExtractTextPlugin.extract({
-          fallback: first,
-          use: rest
-        })
+    webpackConfig.module.rules.filter(rule =>
+      rule.loaders && rule.loaders.find((name) => /css/.test(name.split('?')[0]))
+    ).forEach(rule => {
+      const [first, ...rest] = rule.loaders
+      rule.loader = ExtractTextPlugin.extract({
+        fallback: first,
+        use: rest.join('!')
       })
+      Reflect.deleteProperty(rule, 'loaders')
+    })
 
     webpackConfig.plugins.push(
       new ExtractTextPlugin({
