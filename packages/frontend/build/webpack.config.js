@@ -1,8 +1,8 @@
 import webpack from 'webpack'
+import cssnano from 'cssnano'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
-import Visualizer from 'webpack-visualizer-plugin'
 import _debug from 'debug'
 
 const debug = _debug('app:webpack:config')
@@ -17,17 +17,17 @@ export default function (config) {
     target: 'web',
     devtool: config.compiler_devtool,
     resolve: {
-      modules: [paths.client(), 'node_modules'],
-      extensions: ['.js', '.jsx', '.json']
+      root: paths.client(),
+      extensions: ['', '.js', '.jsx', '.json']
     },
-    module: {}
-    // devMiddlewareOptions: {  // TODO: temporal fix
-    //   publicPath: config.compiler_public_path,
-    //   quiet: config.compiler_quiet,
-    //   noInfo: config.compiler_quiet,
-    //   stats: config.compiler_stats
-    // }
-//    devPort: config.server_port  // TODO: temporal fix
+    module: {},
+    devMiddlewareOptions: {
+      publicPath: config.compiler_public_path,
+      quiet: config.compiler_quiet,
+      noInfo: config.compiler_quiet,
+      stats: config.compiler_stats
+    },
+    devPort: config.server_port
   }
   // ------------------------------------
   // Entry Points
@@ -70,8 +70,7 @@ export default function (config) {
     new CopyWebpackPlugin([
       { from: 'config/settings.json' }
     ]),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new Visualizer()
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ]
 
   if (__DEV__) {
@@ -83,8 +82,9 @@ export default function (config) {
   } else if (__PROD__) {
     debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
     webpackConfig.plugins.push(
+      new webpack.optimize.OccurrenceOrderPlugin(),
+      new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true,
         compress: {
           unused: true,
           dead_code: true,
@@ -104,10 +104,36 @@ export default function (config) {
   }
 
   // ------------------------------------
-  // Rules
+  // Pre-Loaders
   // ------------------------------------
-  // JavaScript
-  const babelPresets = [['es2015', {modules: false}], 'react', 'stage-0']
+  /*
+  [ NOTE ]
+  We no longer use eslint-loader due to it severely impacting build
+  times for larger projects. `npm run lint` still exists to aid in
+  deploy processes (such as with CI), and it's recommended that you
+  use a linting plugin for your IDE in place of this loader.
+
+  If you do wish to continue using the loader, you can uncomment
+  the code below and run `npm i --save-dev eslint-loader`. This code
+  will be removed in a future release.
+
+  webpackConfig.module.preLoaders = [{
+    test: /\.(js|jsx)$/,
+    loader: 'eslint',
+    exclude: /node_modules/
+  }]
+
+  webpackConfig.eslint = {
+    configFile: paths.base('.eslintrc'),
+    emitWarning: __DEV__
+  }
+  */
+
+  // ------------------------------------
+  // Loaders
+  // ------------------------------------
+  // JavaScript / JSON
+  const babelPresets = ['es2015', 'react', 'stage-0']
   const babelPlugins = ['transform-runtime']
   if (__TEST__ && !__COVERAGE__) {
     // not work well with coverage setting
@@ -115,17 +141,19 @@ export default function (config) {
     babelPlugins.push('espower')
   }
 
-  webpackConfig.module.rules = [{
+  webpackConfig.module.loaders = [{
     test: /\.(js|jsx)$/,
     exclude: /node_modules/,
-    use: [{
-      loader: 'babel-loader',
-      options: {
-        cacheDirectory: true,
-        plugins: babelPlugins,
-        presets: babelPresets
-      }
-    }]
+    loader: 'babel',
+    query: {
+      cacheDirectory: true,
+      plugins: babelPlugins,
+      presets: babelPresets
+    }
+  },
+  {
+    test: /\.json$/,
+    loader: 'json'
   }]
 
   // ------------------------------------
@@ -133,38 +161,7 @@ export default function (config) {
   // ------------------------------------
   // We use cssnano with the postcss loader, so we tell
   // css-loader not to duplicate minimization.
-  const BASE_CSS_LOADER = 'css-loader?sourceMap&-minimize'
-  const POST_CSS_LOADER = {
-    loader: 'postcss-loader',
-    options: {
-      config: {
-        ctx: {
-          cssnano: {
-            autoprefixer: {
-              add: true,
-              remove: true,
-              browsers: ['last 2 versions']
-            },
-            discardComments: {
-              removeAll: true
-            },
-            discardUnused: false,
-            mergeIdents: false,
-            reduceIdents: false,
-            safe: true,
-            sourcemap: true
-          }
-        }
-      }
-    }
-  }
-  const SASS_LOADER = {
-    loader: 'sass-loader',
-    options: {
-      sourceMap: true,
-      includePaths: paths.client('styles')
-    }
-  }
+  const BASE_CSS_LOADER = 'css?sourceMap&-minimize'
 
   // Add any packge names here whose styles need to be treated as CSS modules.
   // These paths will be combined into a single regex.
@@ -190,81 +187,106 @@ export default function (config) {
       'localIdentName=[name]__[local]___[hash:base64:5]'
     ].join('&')
 
-    webpackConfig.module.rules.push({
+    webpackConfig.module.loaders.push({
       test: /\.scss$/,
       include: cssModulesRegex,
       exclude: /\.global\.scss$/,
-      use: [
-        'style-loader',
+      loaders: [
+        'style',
         cssModulesLoader,
-        POST_CSS_LOADER,
-        SASS_LOADER
+        'postcss',
+        'sass?sourceMap'
       ]
     })
 
-    webpackConfig.module.rules.push({
+    webpackConfig.module.loaders.push({
       test: /\.css$/,
       include: cssModulesRegex,
       exclude: /\.global\.css$/,
-      use: [
-        'style-loader',
+      loaders: [
+        'style',
         cssModulesLoader,
-        POST_CSS_LOADER
+        'postcss'
       ]
     })
   }
 
   // Loaders for files that should not be treated as CSS modules.
   const excludeCSSModules = isUsingCSSModules ? cssModulesRegex : false
-  webpackConfig.module.rules.push({
+  webpackConfig.module.loaders.push({
     test: /\.global\.scss$/,
     include: cssModulesRegex,
-    use: [
-      'style-loader',
+    loaders: [
+      'style',
       BASE_CSS_LOADER,
-      POST_CSS_LOADER,
-      SASS_LOADER
+      'postcss',
+      'sass?sourceMap'
     ]
   })
-  webpackConfig.module.rules.push({
+  webpackConfig.module.loaders.push({
     test: /\.global\.css$/,
     include: cssModulesRegex,
-    use: [
-      'style-loader',
+    loaders: [
+      'style',
       BASE_CSS_LOADER,
-      POST_CSS_LOADER
+      'postcss'
     ]
   })
-  webpackConfig.module.rules.push({
+  webpackConfig.module.loaders.push({
     test: /\.scss$/,
     exclude: excludeCSSModules,
-    use: [
-      'style-loader',
+    loaders: [
+      'style',
       BASE_CSS_LOADER,
-      POST_CSS_LOADER,
-      SASS_LOADER
+      'postcss',
+      'sass?sourceMap'
     ]
   })
-  webpackConfig.module.rules.push({
+  webpackConfig.module.loaders.push({
     test: /\.css$/,
     exclude: excludeCSSModules,
-    use: [
-      'style-loader',
+    loaders: [
+      'style',
       BASE_CSS_LOADER,
-      POST_CSS_LOADER
+      'postcss'
     ]
   })
 
+  // ------------------------------------
+  // Style Configuration
+  // ------------------------------------
+  webpackConfig.sassLoader = {
+    includePaths: paths.client('styles')
+  }
+
+  webpackConfig.postcss = [
+    cssnano({
+      autoprefixer: {
+        add: true,
+        remove: true,
+        browsers: ['last 2 versions']
+      },
+      discardComments: {
+        removeAll: true
+      },
+      discardUnused: false,
+      mergeIdents: false,
+      reduceIdents: false,
+      safe: true,
+      sourcemap: true
+    })
+  ]
+
   // File loaders
   /* eslint-disable */
-  webpackConfig.module.rules.push(
-    { test: /\.woff(\?.*)?$/,  loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
-    { test: /\.woff2(\?.*)?$/, loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
-    { test: /\.otf(\?.*)?$/,   loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
-    { test: /\.ttf(\?.*)?$/,   loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
-    { test: /\.eot(\?.*)?$/,   loader: 'file-loader?prefix=fonts/&name=[path][name].[ext]' },
-    { test: /\.svg(\?.*)?$/,   loader: 'url-loader?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-    { test: /\.(png|jpg)$/,    loader: 'url-loader?limit=8192' }
+  webpackConfig.module.loaders.push(
+    { test: /\.woff(\?.*)?$/,  loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
+    { test: /\.woff2(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
+    { test: /\.otf(\?.*)?$/,   loader: 'file?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
+    { test: /\.ttf(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
+    { test: /\.eot(\?.*)?$/,   loader: 'file?prefix=fonts/&name=[path][name].[ext]' },
+    { test: /\.svg(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
+    { test: /\.(png|jpg)$/,    loader: 'url?limit=8192' }
   )
   /* eslint-enable */
 
@@ -276,20 +298,16 @@ export default function (config) {
   // http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
   if (!__DEV__) {
     debug('Apply ExtractTextPlugin to CSS loaders.')
-    webpackConfig.module.rules.filter(rule =>
-      rule.loaders && rule.loaders.find((name) => /css/.test(name.split('?')[0]))
-    ).forEach(rule => {
-      const [first, ...rest] = rule.loaders
-      rule.loader = ExtractTextPlugin.extract({
-        fallback: first,
-        use: rest.join('!')
-      })
-      Reflect.deleteProperty(rule, 'loaders')
+    webpackConfig.module.loaders.filter((loader) =>
+      loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
+    ).forEach((loader) => {
+      const [first, ...rest] = loader.loaders
+      loader.loader = ExtractTextPlugin.extract(first, rest.join('!'))
+      Reflect.deleteProperty(loader, 'loaders')
     })
 
     webpackConfig.plugins.push(
-      new ExtractTextPlugin({
-        filename: '[name].[contenthash].css',
+      new ExtractTextPlugin('[name].[contenthash].css', {
         allChunks: true
       })
     )

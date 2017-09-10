@@ -53,10 +53,10 @@ const karmaConfig = {
       noParse: [
         /\/sinon\.js/
       ],
-      rules: webpackConfig.module.rules.concat([
+      loaders: webpackConfig.module.loaders.concat([
         {
           test: /sinon(\\|\/)pkg(\\|\/)sinon\.js/,
-          loader: 'imports-loader?define=>false,require=>false'
+          loader: 'imports?define=>false,require=>false'
         }
       ])
     },
@@ -81,12 +81,11 @@ const karmaConfig = {
 
 if (config.globals.__COVERAGE__) {
   karmaConfig.reporters.push('coverage-istanbul')
-  karmaConfig.webpack.module.rules = [{
+  karmaConfig.webpack.module.postLoaders = [{
     test: /\.(js|jsx)$/,
     include: new RegExp(config.dir_client),
-    loader: 'istanbul-instrumenter-loader?esModules=true',
-    exclude: /(node_modules|tests)/,
-    enforce: 'post'
+    loader: 'istanbul-instrumenter?esModules=true',
+    exclude: /(node_modules|tests)/
   }]
 }
 
