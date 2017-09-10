@@ -1,3 +1,4 @@
+import dialogPolyfill from 'dialog-polyfill/dialog-polyfill'
 import { mountDialog, unmountDialog } from 'utils/dialog'
 
 describe('utils/dialog', () => {
@@ -14,22 +15,16 @@ describe('utils/dialog', () => {
 
   describe('mountDialog', () => {
     it('should call showModal().', () => {
+      const dialogPolyfillOrg = dialogPolyfill
+      const forceRegisterDialogSpy = sinon.spy()
+      dialogPolyfill = { forceRegisterDialog: forceRegisterDialogSpy }
+
       const dialogMock = { showModal: sinon.spy() }
       mountDialog(dialogMock)
 
       assert(appendChildSpy.calledOnce)
       assert(dialogMock.showModal.calledOnce)
-    })
-
-    it('should register dialog.', () => {
-      const dialogPolyfillOrg = dialogPolyfill
-      dialogPolyfill = { forceRegisterDialog: (dialog) => { dialog.showModal = sinon.spy() } }
-
-      const dialogMock = {}
-      mountDialog(dialogMock)
-
-      assert(appendChildSpy.calledOnce)
-      assert(dialogMock.showModal.calledOnce)
+      assert(dialogPolyfill.forceRegisterDialog.calledOnce)
 
       dialogPolyfill = dialogPolyfillOrg
     })
