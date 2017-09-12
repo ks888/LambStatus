@@ -92,14 +92,20 @@ if (__DEV__) {
 // Wait until settings are loaded, then start rendering.
 // ========================================================
 
-fetch('/settings.json').then(resp => {
-  return resp.json()
-}).then(json => {
-  settings.apiURL = json.InvocationURL
-  settings.userPoolId = json.UserPoolID
-  settings.clientId = json.ClientID
+let counter = 0
+const timer = setInterval(() => {
+  counter++
+  if (typeof __LAMBSTATUS_API_URL__ !== 'undefined') {
+    clearInterval(timer)
 
-  render(routes)
-}).catch(err => {
-  console.error('failed to load settings:', err)
-})
+    settings.apiURL = __LAMBSTATUS_API_URL__
+    settings.userPoolId = __LAMBSTATUS_USER_POOL_ID__
+    settings.clientId = __LAMBSTATUS_CLIENT_ID__
+    render(routes)
+  }
+  if (counter >= 6000) {
+    // wait 1 minute
+    console.error('failed to load settings')
+    clearInterval(timer)
+  }
+}, 10)

@@ -79,16 +79,15 @@ const getBucketInfo = async () => {
 getSettings().then((
   { invocationURL, userPoolID, clientID }
 ) => {
-  const apiInfo = {
-    InvocationURL: invocationURL,
-    UserPoolID: userPoolID,
-    ClientID: clientID
-  }
-  return JSON.stringify(apiInfo, null, 2)
-}).then((json) => {
+  const body = `
+__LAMBSTATUS_API_URL__ = '${invocationURL}';
+__LAMBSTATUS_USER_POOL_ID__ = '${userPoolID}';
+__LAMBSTATUS_CLIENT_ID__ = '${clientID}';
+`
+
   const configDir = path.normalize(`${__dirname}/../config`)
-  fs.writeFileSync(`${configDir}/settings.json`, json)
-  console.log('settings.json created')
+  fs.writeFileSync(`${configDir}/settings.js`, body)
+  console.log('settings.js created')
 }).catch((error) => {
   console.error(error, error.stack)
   process.exit(1)

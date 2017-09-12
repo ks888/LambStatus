@@ -68,7 +68,7 @@ export default function (config) {
       }
     }),
     new CopyWebpackPlugin([
-      { from: 'config/settings.json' }
+      { from: 'config/settings.js' }
     ]),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ]

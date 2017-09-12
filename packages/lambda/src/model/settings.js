@@ -11,7 +11,7 @@ const settingsKeyStatusPageURL = 'StatusPageURL'
 const settingsKeyAdminPageURL = 'AdminPageURL'
 const settingsKeyCognitoPoolID = 'CognitoPoolID'
 
-// InvocationURL, UserPoolID, and ClientID are parts of S3 object (settings.json). Do not store them here.
+// InvocationURL, UserPoolID, and ClientID are parts of S3 object (settings.js). Do not store them here.
 
 export class Settings {
   constructor () {
