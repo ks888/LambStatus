@@ -67,7 +67,8 @@ export default class S3 {
         Key: destObjectName,
         ContentType: contentType,
         CacheControl: cacheControl,
-        CopySource: srcBucketName + '/' + srcObjectName
+        CopySource: srcBucketName + '/' + srcObjectName,
+        MetadataDirective: 'REPLACE'
       }
       awsS3.copyObject(params, (err, result) => {
         if (err) {
