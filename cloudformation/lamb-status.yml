@@ -2915,6 +2915,7 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
         Enabled: "true"
+        HttpVersion: "http2"
         Comment: "Distribution for status page of LambStatus"
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
@@ -2966,6 +2967,7 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
         Enabled: "true"
+        HttpVersion: "http2"
         Comment: "Distribution for admin page of LambStatus"
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
