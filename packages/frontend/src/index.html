@@ -7,28 +7,10 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
   <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-amber.min.css" />
-  <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
-  <script>
-    try {
-      x = new(this.XMLHttpRequest || ActiveXObject)('MSXML2.XMLHTTP.3.0');
-      x.open('GET', '/settings.json', 1);
-      x.onreadystatechange = function () {
-        if (x.readyState === 4 && x.status === 200) {
-          j = JSON.parse(x.responseText);
-          __LAMBSTATUS_API_URL__ = j.InvocationURL;
-          __LAMBSTATUS_USER_POOL_ID__ = j.UserPoolID;
-          __LAMBSTATUS_CLIENT_ID__ = j.ClientID;
-        }
-      };
-      x.send()
-    } catch (e) {
-      window.console && console.log(e);
-    }
-  </script>
-  <script src="/dialog-polyfill.js"></script>
-  <link rel="stylesheet" type="text/css" href="/dialog-polyfill.css" />
 </head>
 <body style="height: 100%">
   <div id="root" style="height: 100%"></div>
+  <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+  <script src="settings.js"></script>
 </body>
 </html>

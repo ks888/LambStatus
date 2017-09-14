@@ -68,10 +68,9 @@ export default function (config) {
       }
     }),
     new CopyWebpackPlugin([
-      { from: 'node_modules/dialog-polyfill/dialog-polyfill.css' },
-      { from: 'node_modules/dialog-polyfill/dialog-polyfill.js' },
-      { from: 'config/settings.json' }
-    ])
+      { from: 'config/settings.js' }
+    ]),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ]
 
   if (__DEV__) {

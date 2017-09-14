@@ -18,7 +18,7 @@ const release = async (dir, prefix) => {
       await deleteObjects(region, releaseBucketName, objectKeys)
     }
     await uploadDirectory(dir, region, releaseBucketName, prefix)
-    await deleteObjects(region, releaseBucketName, [{ Key: prefix + 'settings.json' }])
+    await deleteObjects(region, releaseBucketName, [{ Key: prefix + 'settings.js' }])
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

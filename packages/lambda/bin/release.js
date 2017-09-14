@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
-import S3 from '../src/aws/s3'
+import S3 from 'aws/s3'
 import packageJSON from '../package.json'
 
 const regions = [
