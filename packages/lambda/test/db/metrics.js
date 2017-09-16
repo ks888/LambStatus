@@ -42,20 +42,19 @@ describe('MetricsStore', () => {
     })
 
     it('should return a metric', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{metricID: '1', props: '{"key": "value"}'}]})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {Item: {metricID: '1', props: '{"key": "value"}'}})
       })
-      const metrics = await new MetricsStore().getByID('1')
-      assert(metrics.length === 1)
-      assert(metrics[0].unit === '')
-      assert(metrics[0].description === '')
-      assert(metrics[0].decimalPlaces === 0)
-      assert.deepEqual(metrics[0].props, {key: 'value'})
+      const metric = await new MetricsStore().getByID('1')
+      assert(metric.unit === '')
+      assert(metric.description === '')
+      assert(metric.decimalPlaces === 0)
+      assert.deepEqual(metric.props, {key: 'value'})
     })
 
     it('should return NotFoundError if no item exists', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: []})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {})
       })
 
       let error
@@ -68,7 +67,7 @@ describe('MetricsStore', () => {
     })
 
     it('should call reject on error', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
         callback('Error')
       })
 

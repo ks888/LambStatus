@@ -7,7 +7,7 @@ dotenv.config({path: `${__dirname}/../../../.env`})
 
 const buildDir = path.normalize(`${__dirname}/../build`)
 const funcsDir = path.normalize(`${buildDir}/functions`)
-const targetFuncs = (process.argv === 2 ? [] : process.argv.slice(2))
+const targetFuncs = (process.argv.length === 2 ? undefined : process.argv.slice(2))
 
 const deploy = (cmd) => {
   return new Promise((resolve, reject) => {
@@ -30,7 +30,7 @@ const deployAll = async () => {
   const funcs = fs.readdirSync(funcsDir)
   for (let i = 0; i < funcs.length; i++) {
     const func = funcs[i]
-    if (!targetFuncs.includes(func)) continue
+    if (targetFuncs !== undefined && !targetFuncs.includes(func)) continue
 
     const cmd = `apex deploy ${func}`
     const numRetries = 5

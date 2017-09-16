@@ -36,6 +36,7 @@ export default class MaintenanceStore {
   getByID (maintenanceID) {
     return new Promise((resolve, reject) => {
       const params = {
+        TableName: MaintenanceTable,
         Key: { maintenanceID }
       }
       this.awsDynamoDb.get(params, (err, data) => {

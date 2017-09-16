@@ -42,33 +42,21 @@ export default class MetricsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
-        KeyConditionExpression: 'metricID = :hkey',
-        ExpressionAttributeValues: {
-          ':hkey': metricID
-        },
-        ProjectionExpression: 'metricID, #t, title, #u, description, decimalPlaces, #s, #or, props',
-        ExpressionAttributeNames: {
-          '#t': 'type',
-          '#u': 'unit',
-          '#s': 'status',
-          '#or': 'order'
-        }
+        Key: { metricID }
       }
-      this.awsDynamoDb.query(params, (err, queryResult) => {
+      this.awsDynamoDb.get(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        if (queryResult.Items.length === 0) {
+        if (data.Item === undefined) {
           return reject(new NotFoundError('no matched item'))
         }
 
-        queryResult.Items.forEach(item => {
-          fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, item)
-          item['props'] = JSON.parse(item['props'])
-        })
+        fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, data.Item)
+        data.Item['props'] = JSON.parse(data.Item['props'])
 
-        resolve(queryResult.Items)
+        resolve(data.Item)
       })
     })
   }

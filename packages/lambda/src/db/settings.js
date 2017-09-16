@@ -14,28 +14,18 @@ export default class SettingsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: SettingsTable,
-        KeyConditionExpression: '#k = :hkey',
-        ExpressionAttributeNames: {
-          '#k': 'key',
-          '#v': 'value'
-        },
-        ExpressionAttributeValues: {
-          ':hkey': key
-        },
-        ProjectionExpression: '#v'
+        Key: { key }
       }
-      this.awsDynamoDb.query(params, (err, queryResult) => {
+      this.awsDynamoDb.get(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        if (queryResult.Items.length === 0) {
+        if (data.Item === undefined) {
           return reject(new NotFoundError('no matched item'))
-        } else if (queryResult.Items.length !== 1) {
-          return reject(new Error('matched too many items'))
         }
 
-        resolve(queryResult.Items[0].value)
+        resolve(data.Item.value)
       })
     })
   }

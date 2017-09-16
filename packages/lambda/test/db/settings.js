@@ -11,16 +11,16 @@ describe('SettingsStore', () => {
     it('should return the value associated with the given key', async () => {
       const key = 'testkey'
       const value = 'testvalue'
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{key, value}]})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {Item: {key, value}})
       })
       const setting = await new SettingsStore().get(key)
       assert(value === setting)
     })
 
     it('should throw NotFoundError if no associated key exists', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: []})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {})
       })
 
       let error
@@ -29,25 +29,11 @@ describe('SettingsStore', () => {
       } catch (e) {
         error = e
       }
-      assert(error.name.match(/NotFoundError/))
-    })
-
-    it('should throw Error if multiple items found', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{}, {}]})
-      })
-
-      let error
-      try {
-        await new SettingsStore().get('testkey')
-      } catch (e) {
-        error = e
-      }
-      assert(error.name.match(/Error/))
+      assert(error.name === 'NotFoundError')
     })
 
     it('should call reject on error', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
         callback('Error')
       })
 

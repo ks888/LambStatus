@@ -3,7 +3,7 @@ import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import { monitoringServiceManager } from 'model/monitoringService'
 import generateID from 'utils/generateID'
-import { NotFoundError, ValidationError } from 'utils/errors'
+import { ValidationError } from 'utils/errors'
 import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/const'
 import { getDateObject } from 'utils/datetime'
 
@@ -269,14 +269,7 @@ export class Metrics {
 
   async lookup (metricID) {
     const store = new MetricsStore()
-    const metrics = await store.getByID(metricID)
-    if (metrics.length === 0) {
-      throw new NotFoundError('no matched item')
-    } else if (metrics.length === 1) {
-      const metric = metrics[0]
-      return new Metric(metric)
-    } else {
-      throw new Error('matched too many items')
-    }
+    const metric = await store.getByID(metricID)
+    return new Metric(metric)
   }
 }

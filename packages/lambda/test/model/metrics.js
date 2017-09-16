@@ -5,6 +5,7 @@ import S3 from 'aws/s3'
 import { Metrics, Metric } from 'model/metrics'
 import MetricsStore from 'db/metrics'
 import { metricStatusVisible, metricStatusHidden } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 describe('Metrics', () => {
   describe('listExternal', () => {
@@ -97,14 +98,14 @@ describe('Metrics', () => {
     })
 
     it('should return one metric', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').returns([{metricID: 1, type: 'Mock'}])
+      sinon.stub(MetricsStore.prototype, 'getByID').returns({metricID: 1, type: 'Mock'})
 
       const comp = await new Metrics().lookup(1)
       assert(comp.metricID === 1)
     })
 
     it('should return error when matched no metric', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').returns([])
+      sinon.stub(MetricsStore.prototype, 'getByID').throws(new NotFoundError())
       let error
       try {
         await new Metrics().lookup(1)
@@ -112,17 +113,6 @@ describe('Metrics', () => {
         error = e
       }
       assert(error.name === 'NotFoundError')
-    })
-
-    it('should return error when matched multiple metrics', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').returns([{metricID: 1}, {metricID: 1}])
-      let error
-      try {
-        await new Metrics().lookup(1)
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'Error')
     })
   })
 })
@@ -205,7 +195,7 @@ describe('Metric', () => {
     })
 
     it('should return error when metricID does not exist', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').returns([])
+      sinon.stub(MetricsStore.prototype, 'getByID').throws(new NotFoundError())
 
       const params = generateConstructorParams('1')
       const metric = new Metric(params)
