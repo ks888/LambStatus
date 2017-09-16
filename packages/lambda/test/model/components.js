@@ -2,6 +2,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import { Components, Component } from 'model/components'
 import ComponentsStore from 'db/components'
+import { NotFoundError } from 'utils/errors'
 
 describe('Components', () => {
   describe('all', () => {
@@ -37,14 +38,14 @@ describe('Components', () => {
     })
 
     it('should return one component', async () => {
-      sinon.stub(ComponentsStore.prototype, 'getByID').returns([{componentID: 1}])
+      sinon.stub(ComponentsStore.prototype, 'getByID').returns({componentID: 1})
 
       const comp = await new Components().lookup(1)
       assert(comp.componentID === 1)
     })
 
     it('should return error when matched no component', async () => {
-      sinon.stub(ComponentsStore.prototype, 'getByID').returns([])
+      sinon.stub(ComponentsStore.prototype, 'getByID').throws(new NotFoundError())
       let error
       try {
         await new Components().lookup(1)
@@ -52,17 +53,6 @@ describe('Components', () => {
         error = e
       }
       assert(error.name === 'NotFoundError')
-    })
-
-    it('should return error when matched multiple components', async () => {
-      sinon.stub(ComponentsStore.prototype, 'getByID').returns([{componentID: 1}, {componentID: 1}])
-      let error
-      try {
-        await new Components().lookup(1)
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'Error')
     })
   })
 })
@@ -113,7 +103,7 @@ describe('Component', () => {
     })
 
     it('should return error when componentID does not exist', async () => {
-      sinon.stub(ComponentsStore.prototype, 'getByID').returns([])
+      sinon.stub(ComponentsStore.prototype, 'getByID').throws(new NotFoundError())
       const comp = new Component({componentID: '1', name: 'name', description: 'desc', status: 'Operational', order: 1})
       let error
       try {

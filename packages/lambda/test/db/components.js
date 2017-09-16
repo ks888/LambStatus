@@ -39,17 +39,16 @@ describe('ComponentsStore', () => {
     })
 
     it('should return a component', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{componentID: '1', name: '', description: '', status: '', order: 1}]})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {Item: {componentID: '1', name: '', description: '', status: '', order: 1}})
       })
-      const comps = await new ComponentsStore().getByID('1')
-      assert(comps.length === 1)
-      assert(comps[0].componentID === '1')
-      assert(comps[0].description === '')
+      const comp = await new ComponentsStore().getByID('1')
+      assert(comp.componentID === '1')
+      assert(comp.description === '')
     })
 
     it('should call reject on error', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
         callback('Error')
       })
 
@@ -60,6 +59,20 @@ describe('ComponentsStore', () => {
         error = e
       }
       assert(error.message.match(/Error/))
+    })
+
+    it('should throw NotFoundError if there is no item', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {})
+      })
+
+      let error
+      try {
+        await new ComponentsStore().getByID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'NotFoundError')
     })
   })
 

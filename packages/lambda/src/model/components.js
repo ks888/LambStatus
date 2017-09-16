@@ -1,7 +1,7 @@
 import ComponentsStore from 'db/components'
 import generateID from 'utils/generateID'
 import { componentStatuses } from 'utils/const'
-import { NotFoundError, ValidationError } from 'utils/errors'
+import { ValidationError } from 'utils/errors'
 
 export class Component {
   constructor ({componentID, name, description = '', status, order = Math.floor(new Date().getTime() / 1000)}) {
@@ -76,13 +76,7 @@ export class Components {
 
   async lookup (componentID) {
     const store = new ComponentsStore()
-    const comps = await store.getByID(componentID)
-    if (comps.length === 0) {
-      throw new NotFoundError('no matched item')
-    } else if (comps.length === 1) {
-      return new Component(comps[0])
-    } else {
-      throw new Error('matched too many items')
-    }
+    const comp = await store.getByID(componentID)
+    return new Component(comp)
   }
 }

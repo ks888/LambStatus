@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export default class ComponentsStore {
@@ -37,27 +38,19 @@ export default class ComponentsStore {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: ServiceComponentTable,
-        KeyConditionExpression: 'componentID = :hkey',
-        ExpressionAttributeValues: {
-          ':hkey': componentID
-        },
-        ProjectionExpression: 'componentID, description, #nm, #st, #or',
-        ExpressionAttributeNames: {
-          '#nm': 'name',
-          '#st': 'status',
-          '#or': 'order'
-        }
+        Key: { componentID }
       }
-      this.awsDynamoDb.query(params, (err, queryResult) => {
+      this.awsDynamoDb.get(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        queryResult.Items.forEach(item => {
-          fillInsufficientProps({description: ''}, item)
-        })
+        if (data.Item === undefined) {
+          return reject(new NotFoundError('no matched item'))
+        }
 
-        resolve(queryResult.Items)
+        fillInsufficientProps({description: ''}, data.Item)
+        resolve(data.Item)
       })
     })
   }
