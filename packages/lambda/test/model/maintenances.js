@@ -6,6 +6,7 @@ import MaintenancesStore from 'db/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import ComponentsStore from 'db/components'
 import { maintenanceStatuses } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 describe('Maintenance', () => {
   const generateConstructorParams = (maintenanceID) => {
@@ -75,7 +76,7 @@ describe('Maintenance', () => {
     })
 
     it('should return error when maintenanceID does not exist', async () => {
-      sinon.stub(MaintenancesStore.prototype, 'getByID').returns([])
+      sinon.stub(MaintenancesStore.prototype, 'getByID').throws(new NotFoundError())
 
       const params = generateConstructorParams('1')
       const maintenance = new Maintenance(params)
@@ -284,14 +285,14 @@ describe('Maintenances', () => {
     })
 
     it('should return one maintenance', async () => {
-      sinon.stub(MaintenancesStore.prototype, 'getByID').returns([{maintenanceID: 1}])
+      sinon.stub(MaintenancesStore.prototype, 'getByID').returns({maintenanceID: 1})
 
       const maintenance = await new Maintenances().lookup(1)
       assert(maintenance.maintenanceID === 1)
     })
 
     it('should return error when matched no maintenance', async () => {
-      sinon.stub(MaintenancesStore.prototype, 'getByID').returns([])
+      sinon.stub(MaintenancesStore.prototype, 'getByID').throws(new NotFoundError())
       let error
       try {
         await new Maintenances().lookup(1)
@@ -299,17 +300,6 @@ describe('Maintenances', () => {
         error = e
       }
       assert(error.name === 'NotFoundError')
-    })
-
-    it('should return error when matched multiple maintenances', async () => {
-      sinon.stub(MaintenancesStore.prototype, 'getByID').returns([{maintenanceID: 1}, {maintenanceID: 1}])
-      let error
-      try {
-        await new Maintenances().lookup(1)
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'Error')
     })
   })
 })

@@ -6,6 +6,7 @@ import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 import ComponentsStore from 'db/components'
 import { incidentStatuses } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 describe('Incident', () => {
   const generateConstructorParams = (incidentID) => {
@@ -72,7 +73,7 @@ describe('Incident', () => {
     })
 
     it('should return error when incidentID does not exist', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').returns([])
+      sinon.stub(IncidentsStore.prototype, 'getByID').throws(new NotFoundError())
 
       const params = generateConstructorParams('1')
       const incident = new Incident(params)
@@ -253,14 +254,14 @@ describe('Incidents', () => {
     })
 
     it('should return one incident', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').returns([{incidentID: 1}])
+      sinon.stub(IncidentsStore.prototype, 'getByID').returns({incidentID: 1})
 
       const incident = await new Incidents().lookup(1)
       assert(incident.incidentID === 1)
     })
 
     it('should return error when matched no incident', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').returns([])
+      sinon.stub(IncidentsStore.prototype, 'getByID').throws(new NotFoundError())
       let error
       try {
         await new Incidents().lookup(1)
@@ -268,17 +269,6 @@ describe('Incidents', () => {
         error = e
       }
       assert(error.name === 'NotFoundError')
-    })
-
-    it('should return error when matched multiple incidents', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').returns([{incidentID: 1}, {incidentID: 1}])
-      let error
-      try {
-        await new Incidents().lookup(1)
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'Error')
     })
   })
 })

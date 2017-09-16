@@ -38,16 +38,15 @@ describe('MaintenancesStore', () => {
     })
 
     it('should return a maintenance', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
-        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}]})
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {Item: {maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}})
       })
-      const maints = await new MaintenancesStore().getByID('1')
-      assert(maints.length === 1)
-      assert(maints[0].maintenanceID === '1')
+      const maint = await new MaintenancesStore().getByID('1')
+      assert(maint.maintenanceID === '1')
     })
 
     it('should call reject on error', async () => {
-      AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
         callback('Error')
       })
 
@@ -58,6 +57,20 @@ describe('MaintenancesStore', () => {
         error = e
       }
       assert(error.message.match(/Error/))
+    })
+
+    it('should throw NotFoundError if there is no item', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {})
+      })
+
+      let error
+      try {
+        await new MaintenancesStore().getByID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'NotFoundError')
     })
   })
 

@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
 import { MaintenanceTable } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 export default class MaintenanceStore {
   constructor () {
@@ -35,23 +36,18 @@ export default class MaintenanceStore {
   getByID (maintenanceID) {
     return new Promise((resolve, reject) => {
       const params = {
-        TableName: MaintenanceTable,
-        KeyConditionExpression: 'maintenanceID = :hkey',
-        ExpressionAttributeValues: {
-          ':hkey': maintenanceID
-        },
-        ProjectionExpression: 'maintenanceID, #nm, #st, startAt, endAt, updatedAt',
-        ExpressionAttributeNames: {
-          '#nm': 'name',
-          '#st': 'status'
-        }
+        Key: { maintenanceID }
       }
-      this.awsDynamoDb.query(params, (err, queryResult) => {
+      this.awsDynamoDb.get(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        resolve(queryResult.Items)
+        if (data.Item === undefined) {
+          return reject(new NotFoundError('no matched item'))
+        }
+
+        resolve(data.Item)
       })
     })
   }

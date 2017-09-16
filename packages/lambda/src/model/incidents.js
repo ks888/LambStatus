@@ -5,7 +5,7 @@ import { Component } from 'model/components'
 import generateID from 'utils/generateID'
 import { incidentStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
-import { NotFoundError, ValidationError } from 'utils/errors'
+import { ValidationError } from 'utils/errors'
 
 export class Incident {
   constructor ({incidentID, name, status, message = '', components = [], updatedAt = new Date().toISOString()}) {
@@ -109,14 +109,7 @@ export class Incidents {
 
   async lookup (incidentID) {
     const store = new IncidentsStore()
-    const incidents = await store.getByID(incidentID)
-    if (incidents.length === 0) {
-      throw new NotFoundError('no matched item')
-    } else if (incidents.length === 1) {
-      const incident = incidents[0]
-      return new Incident(incident)
-    } else {
-      throw new Error('matched too many items')
-    }
+    const incident = await store.getByID(incidentID)
+    return new Incident(incident)
   }
 }
