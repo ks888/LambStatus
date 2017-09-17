@@ -1,14 +1,14 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
-import { lock, unlock } from 'utils/mutex'
+import Mutex from 'utils/mutex'
 
-describe('mutex', () => {
+describe('Mutex', () => {
+  afterEach(() => {
+    AWS.restore('DynamoDB.DocumentClient')
+  })
+
   describe('lock', () => {
-    afterEach(() => {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
     it('should update the locked & expiryDate attribute', async () => {
       let actual
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
@@ -17,7 +17,7 @@ describe('mutex', () => {
       })
 
       const key = {id: 1}
-      await lock('table', key)
+      await new Mutex().lock('table', key)
       assert(actual.Key.id === key.id)
       assert(actual.UpdateExpression === 'set locked = :t, expiryDate = :e')
       assert(actual.ConditionExpression === '(locked <> :t) or (expiryDate < :c)')
@@ -34,7 +34,7 @@ describe('mutex', () => {
 
       const key = {id: 1}
       const lifetime = 1000
-      await lock('table', key, lifetime)
+      await new Mutex({lifetime}).lock('table', key)
       curr.setMilliseconds(curr.getMilliseconds() + lifetime)
       assert(actual.ExpressionAttributeValues[':e'] === curr.toISOString())
 
@@ -48,7 +48,7 @@ describe('mutex', () => {
 
       let actual
       try {
-        await lock('table', {id: 1})
+        await new Mutex().lock('table', {id: 1})
       } catch (err) {
         actual = err
       }
@@ -57,10 +57,6 @@ describe('mutex', () => {
   })
 
   describe('unlock', () => {
-    afterEach(() => {
-      AWS.restore('DynamoDB.DocumentClient')
-    })
-
     it('should update the locked attribute', async () => {
       let actual
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
@@ -69,7 +65,7 @@ describe('mutex', () => {
       })
 
       const key = {id: 1}
-      await unlock('table', key)
+      await new Mutex().unlock('table', key)
       assert(actual.Key.id === key.id)
       assert(actual.UpdateExpression === 'set locked = :f')
     })
