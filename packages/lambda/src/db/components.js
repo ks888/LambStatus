@@ -2,6 +2,7 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
+import { lock } from 'utils/mutex'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export default class ComponentsStore {
@@ -55,7 +56,12 @@ export default class ComponentsStore {
     })
   }
 
-  update ({componentID, name, description, status, order}) {
+  async update ({componentID}) {
+    // await lock(ServiceComponentTable, {componentID})
+    return await this.updateInsideLock(...arguments)
+  }
+
+  updateInsideLock ({componentID, name, description, status, order}) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
         name, description, status, order

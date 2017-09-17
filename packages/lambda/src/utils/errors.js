@@ -13,3 +13,11 @@ export class NotFoundError extends Error {
     this.message = message
   }
 }
+
+export class MutexLockedError extends Error {
+  constructor (message) {
+    super()
+    this.name = 'MutexLockedError'
+    this.message = message
+  }
+}
