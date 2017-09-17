@@ -6,6 +6,10 @@ const defaultMaxRetries = 5
 const defaultIntervalBetweenRetry = 1000 // 1s
 const defaultLifetime = 60000 // 60s
 
+const sleep = async (durationInMilliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, durationInMilliseconds))
+}
+
 export default class Mutex {
   constructor ({maxRetries = defaultMaxRetries,
                 intervalBetweenRetry = defaultIntervalBetweenRetry,
@@ -13,6 +17,21 @@ export default class Mutex {
     this.maxRetries = maxRetries
     this.intervalBetweenRetry = intervalBetweenRetry
     this.lifetime = lifetime
+  }
+
+  async lockWithRetry (tableName, key) {
+    let lastError
+    for (let i = 0; i < this.maxRetries; i++) {
+      try {
+        await this.lock(tableName, key)
+        return
+      } catch (err) {
+        if (err.name !== MutexLockedError.name) throw err
+        lastError = err
+      }
+      await sleep(this.intervalBetweenRetry)
+    }
+    throw lastError
   }
 
   lock (tableName, key) {

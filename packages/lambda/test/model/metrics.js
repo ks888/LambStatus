@@ -5,7 +5,7 @@ import S3 from 'aws/s3'
 import { Metrics, Metric } from 'model/metrics'
 import MetricsStore from 'db/metrics'
 import { metricStatusVisible, metricStatusHidden } from 'utils/const'
-import { NotFoundError } from 'utils/errors'
+import { MutexLockedError, NotFoundError } from 'utils/errors'
 
 describe('Metrics', () => {
   describe('listExternal', () => {
@@ -485,6 +485,77 @@ describe('Metric', () => {
         assert(actual[k].timestamp.endsWith('00.000Z'))
         assert(actual[k].value === i)
       })
+    })
+  })
+
+  describe('insertDatapointsWithLock', () => {
+    afterEach(() => {
+      MetricsStore.prototype.lock.restore()
+      MetricsStore.prototype.unlock.restore()
+    })
+
+    it('throws mutex error if failed to lock the resource', async () => {
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.insertDatapoints = sinon.spy()
+      sinon.stub(MetricsStore.prototype, 'lock').throws(new MutexLockedError())
+      sinon.stub(MetricsStore.prototype, 'unlock').returns()
+
+      let actual
+      try {
+        await metric.insertDatapointsWithLock()
+      } catch (err) {
+        actual = err
+      }
+      assert(actual.name === 'MutexLockedError')
+      assert(metric.insertDatapoints.notCalled)
+    })
+
+    it('calls unlock on successful', async () => {
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.insertDatapoints = sinon.spy()
+      sinon.stub(MetricsStore.prototype, 'lock').returns()
+      const unlockStub = sinon.stub(MetricsStore.prototype, 'unlock').returns()
+
+      await metric.insertDatapointsWithLock()
+      assert(metric.insertDatapoints.calledOnce)
+      assert(unlockStub.calledOnce)
+    })
+
+    it('calls unlock on failed', async () => {
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      metric.insertDatapoints = () => { throw new Error() }
+      sinon.stub(MetricsStore.prototype, 'lock').returns()
+      const unlockStub = sinon.stub(MetricsStore.prototype, 'unlock').returns()
+
+      let actual
+      try {
+        await metric.insertDatapointsWithLock()
+      } catch (err) {
+        actual = err
+      }
+      assert(unlockStub.calledOnce)
+      assert(actual !== undefined)
+    })
+
+    it('throws original error on unlock failed', async () => {
+      const params = generateConstructorParams()
+      const metric = new Metric(params)
+      let expect = new Error()
+      metric.insertDatapoints = () => { throw expect }
+      sinon.stub(MetricsStore.prototype, 'lock').returns()
+      const unlockStub = sinon.stub(MetricsStore.prototype, 'unlock').throws()
+
+      let actual
+      try {
+        await metric.insertDatapointsWithLock()
+      } catch (err) {
+        actual = err
+      }
+      assert(unlockStub.calledOnce)
+      assert(actual === expect)
     })
   })
 

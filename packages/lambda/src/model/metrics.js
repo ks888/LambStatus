@@ -166,6 +166,20 @@ export class Metric {
     return insertedDatapoints
   }
 
+  async insertDatapointsWithLock (datapoints) {
+    const store = new MetricsStore()
+    await store.lock(this.metricID)
+    try {
+      await this.insertDatapoints(datapoints)
+    } finally {
+      try {
+        await store.unlock(this.metricID)
+      } catch (err) {
+        console.error(`failed to unlock mutex (metricID: ${this.metricID})`, err.toString())
+      }
+    }
+  }
+
   async insertDatapoints (datapoints) {
     datapoints = this.normalizeDatapoints(datapoints)
 

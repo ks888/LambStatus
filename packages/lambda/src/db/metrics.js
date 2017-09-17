@@ -2,12 +2,14 @@ import AWS from 'aws-sdk'
 import VError from 'verror'
 import { MetricsTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
+import Mutex from 'utils/mutex'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export default class MetricsStore {
   constructor () {
     const { AWS_REGION: region } = process.env
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
+    this.mutex = new Mutex()
   }
 
   getAll () {
@@ -101,5 +103,13 @@ export default class MetricsStore {
         resolve(data)
       })
     })
+  }
+
+  async lock (metricID) {
+    return await this.mutex.lockWithRetry(MetricsTable, {metricID})
+  }
+
+  async unlock (metricID) {
+    return await this.mutex.unlock(MetricsTable, {metricID})
   }
 }

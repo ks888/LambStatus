@@ -2,19 +2,19 @@ import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/postMetricsData'
 import { Metrics, Metric } from 'model/metrics'
-import { NotFoundError } from 'utils/errors'
+import { MutexLockedError, NotFoundError } from 'utils/errors'
 
 describe('postMetricsData', () => {
   afterEach(() => {
     Metrics.prototype.lookup.restore()
-    Metric.prototype.insertDatapoints.restore()
+    Metric.prototype.insertDatapointsWithLock.restore()
   })
 
   it('should post data and return inserted data', async () => {
     const datapoints = {
       1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
     }
-    const stub = sinon.stub(Metric.prototype, 'insertDatapoints').returns(datapoints[1])
+    const stub = sinon.stub(Metric.prototype, 'insertDatapointsWithLock').returns(datapoints[1])
     sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
 
     await handle(datapoints, null, (error, result) => {
@@ -30,7 +30,7 @@ describe('postMetricsData', () => {
     for (let i = 0; i < 3001; i++) {
       datapoints[1].push({})
     }
-    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    sinon.stub(Metric.prototype, 'insertDatapointsWithLock').returns()
     sinon.stub(Metrics.prototype, 'lookup').returns()
 
     return await handle(datapoints, null, (error, result) => {
@@ -46,7 +46,7 @@ describe('postMetricsData', () => {
       1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}],
       2: [{timestamp: '2017-07-03T01:00:00.000Z', value: 2}]
     }
-    const stub = sinon.stub(Metric.prototype, 'insertDatapoints')
+    const stub = sinon.stub(Metric.prototype, 'insertDatapointsWithLock')
     stub.onCall(0).returns(datapoints[1])
     stub.onCall(1).returns(datapoints[2])
     sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
@@ -61,7 +61,7 @@ describe('postMetricsData', () => {
   })
 
   it('should return not found error if metric ID does not exist', async () => {
-    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    sinon.stub(Metric.prototype, 'insertDatapointsWithLock').returns()
     sinon.stub(Metrics.prototype, 'lookup').throws(new NotFoundError('no matched item'))
 
     const id = 123
@@ -73,7 +73,7 @@ describe('postMetricsData', () => {
   })
 
   it('should return validation error if metric type is invalid', async () => {
-    sinon.stub(Metric.prototype, 'insertDatapoints').returns([])
+    sinon.stub(Metric.prototype, 'insertDatapointsWithLock').returns([])
     sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
     sinon.stub(MockService.prototype, 'shouldAdminPostDatapoints').returns(false)
 
@@ -87,8 +87,22 @@ describe('postMetricsData', () => {
     MockService.prototype.shouldAdminPostDatapoints.restore()
   })
 
+  it('should return mutex locked error if metric is locked', async () => {
+    const datapoints = {
+      1: [{timestamp: '2017-07-03T00:00:00.000Z', value: 1}]
+    }
+    sinon.stub(Metric.prototype, 'insertDatapointsWithLock').throws(new MutexLockedError())
+    sinon.stub(Metrics.prototype, 'lookup').returns(new Metric({metricID: '1', type: 'Mock'}))
+
+    await handle(datapoints, null, (error, result) => {
+      error = JSON.parse(error)
+      assert(error.length === 1)
+      assert(error[0].message.match(/lock/))
+    })
+  })
+
   it('should return a list of errors if there are several errors', async () => {
-    sinon.stub(Metric.prototype, 'insertDatapoints').returns()
+    sinon.stub(Metric.prototype, 'insertDatapointsWithLock').returns()
     const stub = sinon.stub(Metrics.prototype, 'lookup')
     stub.onCall(0).throws(new NotFoundError('no matched item'))
     stub.onCall(1).throws(new Error())

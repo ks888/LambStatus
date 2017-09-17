@@ -22,7 +22,7 @@ const insertDatapoints = async (dataByMetric, resp) => {
       if (!metric.monitoringService.shouldAdminPostDatapoints()) {
         throw new ValidationError(`${metric.type} type metrics does not allow a user to submit datapoints`)
       }
-      resp[metricID] = await metric.insertDatapoints(data)
+      resp[metricID] = await metric.insertDatapointsWithLock(data)
     } catch (error) {
       console.log(error.message)
       console.log(error.stack)
@@ -32,6 +32,9 @@ const insertDatapoints = async (dataByMetric, resp) => {
           break
         case 'ValidationError':
           errors.push(error.message)
+          break
+        case 'MutexLockedError':
+          errors.push(`the metric ${metricID} is locked by others. Try again later.`)
           break
         default:
           errors.push('failed to post the metric')
