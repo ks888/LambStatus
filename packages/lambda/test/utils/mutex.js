@@ -1,7 +1,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
-import { lock } from 'utils/mutex'
+import { lock, unlock } from 'utils/mutex'
 
 describe('mutex', () => {
   describe('lock', () => {
@@ -13,14 +13,14 @@ describe('mutex', () => {
       let actual
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
         actual = params
-        callback(null, {Attributes: {}})
+        callback(null, {})
       })
 
       const key = {id: 1}
       await lock('table', key)
       assert(actual.Key.id === key.id)
-      assert(actual.UpdateExpression === 'set locked = :t, expiryDate = :e + :l')
-      assert(actual.ConditionExpression === '(locked <> :t) or (expiryDate < :e)')
+      assert(actual.UpdateExpression === 'set locked = :t, expiryDate = :e')
+      assert(actual.ConditionExpression === '(locked <> :t) or (expiryDate < :c)')
     })
 
     it('should specify appropriate expiry date', async () => {
@@ -35,7 +35,8 @@ describe('mutex', () => {
       const key = {id: 1}
       const lifetime = 1000
       await lock('table', key, lifetime)
-      assert(actual.ExpressionAttributeValues[':e'] === curr.getTime())
+      curr.setMilliseconds(curr.getMilliseconds() + lifetime)
+      assert(actual.ExpressionAttributeValues[':e'] === curr.toISOString())
 
       clock.restore()
     })
@@ -52,6 +53,25 @@ describe('mutex', () => {
         actual = err
       }
       assert(actual.name === 'MutexLockedError')
+    })
+  })
+
+  describe('unlock', () => {
+    afterEach(() => {
+      AWS.restore('DynamoDB.DocumentClient')
+    })
+
+    it('should update the locked attribute', async () => {
+      let actual
+      AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
+        actual = params
+        callback(null, {})
+      })
+
+      const key = {id: 1}
+      await unlock('table', key)
+      assert(actual.Key.id === key.id)
+      assert(actual.UpdateExpression === 'set locked = :f')
     })
   })
 })
