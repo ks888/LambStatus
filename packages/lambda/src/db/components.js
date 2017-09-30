@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
 import { ServiceComponentTable } from 'utils/const'
+import { Component } from 'model/components'
 import { NotFoundError } from 'utils/errors'
+import generateID from 'utils/generateID'
 import { buildUpdateExpression, fillInsufficientProps } from './utils'
 
 export default class ComponentsStore {
@@ -10,7 +12,7 @@ export default class ComponentsStore {
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getAll () {
+  query () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: ServiceComponentTable,
@@ -21,20 +23,19 @@ export default class ComponentsStore {
           '#or': 'order'
         }
       }
+      // TODO: use query and do the pagination
       this.awsDynamoDb.scan(params, (err, scanResult) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        scanResult.Items.forEach(item => {
-          fillInsufficientProps({description: ''}, item)
-        })
 
-        resolve(scanResult.Items)
+        const components = scanResult.Items.map(comp => new Component(comp))
+        resolve(components)
       })
     })
   }
 
-  getByID (componentID) {
+  get (componentID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: ServiceComponentTable,
@@ -49,13 +50,18 @@ export default class ComponentsStore {
           return reject(new NotFoundError('no matched item'))
         }
 
-        fillInsufficientProps({description: ''}, data.Item)
-        resolve(data.Item)
+        resolve(new Component(data.Item))
       })
     })
   }
 
-  update ({componentID, name, description, status, order}) {
+  create (component) {
+    component.setComponentID(generateID())
+    return this.update(component)
+  }
+
+  update (component) {
+    const {componentID, name, description, status, order} = component
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
         name, description, status, order
@@ -72,19 +78,16 @@ export default class ComponentsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({description}, data.Attributes)
-        resolve(data.Attributes)
+        resolve(new Component(data.Attributes))
       })
     })
   }
 
-  updateStatus (id, status) {
+  updateStatus (componentID, status) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({ status })
       const params = {
-        Key: {
-          componentID: id
-        },
+        Key: { componentID },
         UpdateExpression: updateExp,
         ExpressionAttributeNames: attrNames,
         ExpressionAttributeValues: attrValues,
@@ -95,18 +98,15 @@ export default class ComponentsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({description: ''}, data.Attributes)
-        resolve(data.Attributes)
+        resolve(new Component(data.Attributes))
       })
     })
   }
 
-  delete (id) {
+  delete (componentID) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          componentID: id
-        },
+        Key: { componentID },
         TableName: ServiceComponentTable,
         ReturnValues: 'NONE'
       }

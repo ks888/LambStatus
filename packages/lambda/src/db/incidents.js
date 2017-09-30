@@ -59,7 +59,6 @@ export default class IncidentsStore {
   }
 
   update (incident) {
-    // TODO: check the existence of the specified incident.
     const {incidentID, name, status, updatedAt} = incident
     return new Promise((resolve, reject) => {
       const params = {
@@ -81,7 +80,7 @@ export default class IncidentsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        resolve(new Incident(data))
+        resolve(new Incident(data.Attributes))
       })
     })
   }
