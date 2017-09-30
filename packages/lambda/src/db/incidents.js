@@ -59,6 +59,7 @@ export default class IncidentsStore {
   }
 
   update (incident) {
+    // TODO: check the existence of the specified incident.
     const {incidentID, name, status, updatedAt} = incident
     return new Promise((resolve, reject) => {
       const params = {

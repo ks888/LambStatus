@@ -1,6 +1,7 @@
 import Feed from 'feed'
+import IncidentsStore from 'db/incidents'
+import IncidentUpdatesStore from 'db/incidentUpdates'
 import { Settings } from 'model/settings'
-import { Incidents } from 'model/incidents'
 import { Maintenances } from 'model/maintenances'
 import S3 from 'aws/s3'
 import CloudFormation from 'aws/cloudFormation'
@@ -21,7 +22,7 @@ export async function handle (event, context, callback) {
       }
     })
 
-    let events = (await new Incidents().all()).concat(await new Maintenances().all())
+    let events = (await new IncidentsStore().query()).concat(await new Maintenances().all())
     events.sort(latestToOldest)
     const maxItems = 25
     for (let i = 0; i < Math.min(events.length, maxItems); i++) {
@@ -55,7 +56,7 @@ const buildItem = async (event, statusPageURL) => {
 
   let id, link, eventUpdates
   if (event.hasOwnProperty('incidentID')) {
-    const incidentUpdates = await event.getIncidentUpdates()
+    const incidentUpdates = await new IncidentUpdatesStore().query(event.incidentID)
     incidentUpdates.sort(latestToOldest)
 
     id = `tag:${statusPageURL},2017:Incident/${event.incidentID}`
