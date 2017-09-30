@@ -55,11 +55,7 @@ export default class ComponentsStore {
     })
   }
 
-  async update ({componentID}) {
-    return await this.updateInsideLock(...arguments)
-  }
-
-  updateInsideLock ({componentID, name, description, status, order}) {
+  update ({componentID, name, description, status, order}) {
     return new Promise((resolve, reject) => {
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
         name, description, status, order
