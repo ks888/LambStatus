@@ -1,12 +1,6 @@
 import assert from 'assert'
-import sinon from 'sinon'
-import { Incidents, Incident } from 'model/incidents'
-import { Component } from 'model/components'
-import IncidentsStore from 'db/incidents'
-import IncidentUpdatesStore from 'db/incidentUpdates'
-import ComponentsStore from 'db/components'
+import { Incident, IncidentUpdate } from 'model/incidents'
 import { incidentStatuses } from 'utils/const'
-import { NotFoundError } from 'utils/errors'
 
 describe('Incident', () => {
   const generateConstructorParams = (incidentID) => {
@@ -28,19 +22,14 @@ describe('Incident', () => {
       assert(incident.incidentID === params.incidentID)
       assert(incident.name === params.name)
       assert(incident.status === params.status)
-      assert(incident.message === params.message)
-      assert(incident.components.length === params.components.length)
       assert(incident.updatedAt === params.updatedAt)
     })
 
     it('should fill in insufficient values', () => {
       const params = generateConstructorParams()
-      params.message = undefined
       params.updatedAt = undefined
 
       const incident = new Incident(params)
-      assert(incident.incidentID.length === 12)
-      assert(incident.message === '')
       assert(incident.updatedAt !== undefined)
     })
   })
@@ -57,36 +46,6 @@ describe('Incident', () => {
         error = e
       }
       assert(error === undefined)
-    })
-
-    it('should return error when incidentID is invalid', async () => {
-      const params = generateConstructorParams('')
-      const incident = new Incident(params)
-
-      let error
-      try {
-        await incident.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'ValidationError')
-    })
-
-    it('should return error when incidentID does not exist', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').throws(new NotFoundError())
-
-      const params = generateConstructorParams('1')
-      const incident = new Incident(params)
-
-      let error
-      try {
-        await incident.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'NotFoundError')
-
-      IncidentsStore.prototype.getByID.restore()
     })
 
     it('should return error when name is invalid', async () => {
@@ -117,48 +76,6 @@ describe('Incident', () => {
       assert(error.name === 'ValidationError')
     })
 
-    it('should return error when message is invalid', async () => {
-      const params = generateConstructorParams()
-      const incident = new Incident(params)
-      incident.message = undefined
-
-      let error
-      try {
-        await incident.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'ValidationError')
-    })
-
-    it('should return error when components is invalid', async () => {
-      const params = generateConstructorParams()
-      const incident = new Incident(params)
-      incident.components = ''
-
-      let error
-      try {
-        await incident.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'ValidationError')
-    })
-
-    it('should return error when components validation failed', async () => {
-      const params = generateConstructorParams()
-      params.components = [new Component({componentID: ''})]
-      const incident = new Incident(params)
-
-      let error
-      try {
-        await incident.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'ValidationError')
-    })
-
     it('should return error when updatedAt is invalid', async () => {
       const params = generateConstructorParams()
       const incident = new Incident(params)
@@ -175,6 +92,7 @@ describe('Incident', () => {
     })
   })
 
+  /*
   describe('save', () => {
     afterEach(() => {
       IncidentsStore.prototype.update.restore()
@@ -218,58 +136,106 @@ describe('Incident', () => {
       assert(error.message.match(/Error/))
     })
   })
+*/
 })
 
-describe('Incidents', () => {
-  describe('all', () => {
-    afterEach(() => {
-      IncidentsStore.prototype.getAll.restore()
+describe('IncidentUpdate', () => {
+  const generateConstructorParams = (incidentID, incidentUpdateID) => {
+    return {
+      incidentID,
+      incidentUpdateID,
+      incidentStatus: incidentStatuses[0],
+      message: 'test',
+      updatedAt: '2017-09-02T07:15:50.634Z'
+    }
+  }
+
+  describe('constructor', () => {
+    it('should construct a new instance', () => {
+      const params = generateConstructorParams('1', '1')
+      const incidentUpdate = new IncidentUpdate(params)
+
+      assert(incidentUpdate.incidentID === params.incidentID)
+      assert(incidentUpdate.incidentUpdateID === params.incidentUpdateID)
     })
 
-    it('should return a list of incidents', async () => {
-      const rawIncidents = [{incidentID: 1}, {incidentID: 2}]
-      sinon.stub(IncidentsStore.prototype, 'getAll').returns(rawIncidents)
+    it('should fill in insufficient values', () => {
+      const params = generateConstructorParams('1', '1')
+      params.message = undefined
+      params.updatedAt = undefined
 
-      const incidents = await new Incidents().all()
-      assert(incidents.length === 2)
-      assert(incidents[0].incidentID === 1)
-      assert(incidents[1].incidentID === 2)
-    })
-
-    it('should return error when the store throws exception', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getAll').throws()
-      let error
-      try {
-        await new Incidents().all()
-      } catch (e) {
-        error = e
-      }
-      assert(error.message.match(/Error/))
+      const incidentUpdate = new IncidentUpdate(params)
+      assert(incidentUpdate.message === '')
+      assert(incidentUpdate.updatedAt !== undefined)
     })
   })
 
-  describe('lookup', () => {
-    afterEach(() => {
-      IncidentsStore.prototype.getByID.restore()
+  describe('validate', async () => {
+    it('should return no error when input is valid', async () => {
+      const params = generateConstructorParams('1', '1')
+      const incidentUpdate = new IncidentUpdate(params)
+      let err
+      try {
+        await incidentUpdate.validate()
+      } catch (e) {
+        err = e
+      }
+      assert(err === undefined)
     })
 
-    it('should return one incident', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').returns({incidentID: 1})
+    it('should return error when incidentID is invalid', async () => {
+      const params = generateConstructorParams('', '1')
+      const incidentUpdate = new IncidentUpdate(params)
 
-      const incident = await new Incidents().lookup(1)
-      assert(incident.incidentID === 1)
-    })
-
-    it('should return error when matched no incident', async () => {
-      sinon.stub(IncidentsStore.prototype, 'getByID').throws(new NotFoundError())
       let error
       try {
-        await new Incidents().lookup(1)
+        await incidentUpdate.validate()
       } catch (e) {
         error = e
       }
-      assert(error.name === 'NotFoundError')
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when status is invalid', async () => {
+      const params = generateConstructorParams('1', '1')
+      const incidentUpdate = new IncidentUpdate(params)
+      incidentUpdate.incidentStatus = 'test'
+
+      let error
+      try {
+        await incidentUpdate.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when message is invalid', async () => {
+      const params = generateConstructorParams('1', '1')
+      const incidentUpdate = new IncidentUpdate(params)
+      incidentUpdate.message = undefined
+
+      let error
+      try {
+        await incidentUpdate.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when updatedAt is invalid', async () => {
+      const params = generateConstructorParams('1', '1')
+      const incidentUpdate = new IncidentUpdate(params)
+      incidentUpdate.updatedAt = ''
+
+      let error
+      try {
+        await incidentUpdate.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
     })
   })
 })
-
