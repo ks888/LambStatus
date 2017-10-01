@@ -1,33 +1,44 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/patchComponents'
-import { Component } from 'model/components'
+import ComponentsStore from 'db/components'
+import { componentStatuses } from 'utils/const'
 
 describe('patchComponents', () => {
   afterEach(() => {
-    Component.prototype.validate.restore()
-    Component.prototype.save.restore()
+    ComponentsStore.prototype.update.restore()
   })
 
-  it('should update the component', async () => {
-    const validateStub = sinon.stub(Component.prototype, 'validate').returns()
-    const saveStub = sinon.stub(Component.prototype, 'save').returns()
+  const generateEvent = () => {
+    return { params: { componentid: '1' }, body: {name: 'test', status: componentStatuses[0]} }
+  }
 
-    // TODO: check merge is successful
-    await handle({ params: { componentid: '1' }, body: {name: 'test'} }, null, (error, result) => {
+  it('should update the component', async () => {
+    const updateComponentStub = sinon.stub(ComponentsStore.prototype, 'update').returns()
+
+    const event = generateEvent()
+    await handle(event, null, (error, result) => {
       assert(error === null)
       assert(result.componentID === '1')
-      assert(result.name === 'test')
     })
-    assert(validateStub.calledOnce)
-    assert(saveStub.calledOnce)
+    assert(updateComponentStub.calledOnce)
+  })
+
+  it('should return validation error if event is invalid', async () => {
+    sinon.stub(ComponentsStore.prototype, 'update').returns()
+
+    const event = generateEvent()
+    event.body.name = undefined
+    return await handle(event, null, (error, result) => {
+      assert(error.match(/invalid/))
+    })
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Component.prototype, 'validate').throws()
-    sinon.stub(Component.prototype, 'save').returns()
+    sinon.stub(ComponentsStore.prototype, 'update').throws()
 
-    return await handle({ params: { componentid: '1' }, body: {} }, null, (error, result) => {
+    const event = generateEvent()
+    return await handle(event, null, (error, result) => {
       assert(error.match(/Error/))
     })
   })

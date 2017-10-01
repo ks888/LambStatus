@@ -11,6 +11,13 @@ export class Incident {
   }
 
   validate () {
+    if (this.incidentID === undefined || this.incidentID === '') {
+      throw new ValidationError('invalid incidentID parameter')
+    }
+    this.validateExceptID()
+  }
+
+  validateExceptID () {
     if (this.name === undefined || this.name === '') {
       throw new ValidationError('invalid name parameter')
     }
@@ -44,6 +51,13 @@ export class IncidentUpdate {
   }
 
   validate () {
+    if (this.incidentUpdateID === undefined || this.incidentUpdateID === '') {
+      throw new ValidationError('invalid incidentUpdateID parameter')
+    }
+    this.validateExceptUpdateID()
+  }
+
+  validateExceptUpdateID () {
     if (this.incidentID === undefined || this.incidentID === '') {
       throw new ValidationError('invalid incidentID parameter')
     }

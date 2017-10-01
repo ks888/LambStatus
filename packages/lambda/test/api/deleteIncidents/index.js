@@ -26,9 +26,11 @@ describe('deleteIncidents', () => {
 
     const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
+    let err
     await handle({ params: { incidentid: '1' } }, null, (error) => {
-      assert(error === null)
+      err = error
     })
+    assert(err === undefined)
     assert(deleteIncidentStub.calledOnce)
     assert(deleteIncidentUpdateStub.calledOnce)
     assert(snsStub.calledOnce)
@@ -41,8 +43,10 @@ describe('deleteIncidents', () => {
     sinon.stub(IncidentUpdatesStore.prototype, 'delete').returns()
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    return await handle({params: {incidentid: '1'}}, null, (error, result) => {
-      assert(error.match(/Error/))
+    let err
+    await handle({params: {incidentid: '1'}}, null, (error, result) => {
+      err = error
     })
+    assert(err.match(/Error/))
   })
 })

@@ -1,33 +1,45 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/postComponents'
-import { Component } from 'model/components'
+import ComponentsStore from 'db/components'
+import { componentStatuses } from 'utils/const'
 
 describe('postComponents', () => {
   afterEach(() => {
-    Component.prototype.validate.restore()
-    Component.prototype.save.restore()
+    ComponentsStore.prototype.create.restore()
   })
 
-  it('should update the component', async () => {
-    const validateStub = sinon.stub(Component.prototype, 'validate').returns()
-    const saveStub = sinon.stub(Component.prototype, 'save').returns()
+  const generateEvent = () => {
+    return {name: 'test', status: componentStatuses[0]}
+  }
 
-    await handle({ name: 'test' }, null, (error, result) => {
+  it('should create a component', async () => {
+    const createComponentStub = sinon.stub(ComponentsStore.prototype, 'create').returns()
+
+    const event = generateEvent()
+    await handle(event, null, (error, result) => {
       assert(error === null)
-      assert(result.componentID.length === 12)
       assert(result.name === 'test')
     })
 
-    assert(validateStub.calledOnce)
-    assert(saveStub.calledOnce)
+    assert(createComponentStub.calledOnce)
+  })
+
+  it('should return validation error if event is invalid', async () => {
+    sinon.stub(ComponentsStore.prototype, 'create').returns()
+
+    const event = generateEvent()
+    event.name = undefined
+    return await handle(event, null, (error, result) => {
+      assert(error.match(/invalid/))
+    })
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Component.prototype, 'validate').throws()
-    sinon.stub(Component.prototype, 'save').returns()
+    sinon.stub(ComponentsStore.prototype, 'create').throws()
 
-    return await handle({ components: [] }, null, (error, result) => {
+    const event = generateEvent()
+    return await handle(event, null, (error, result) => {
       assert(error.match(/Error/))
     })
   })

@@ -3,9 +3,8 @@ import { Incident, IncidentUpdate } from 'model/incidents'
 import { incidentStatuses } from 'utils/const'
 
 describe('Incident', () => {
-  const generateConstructorParams = (incidentID) => {
+  const generateConstructorParams = () => {
     return {
-      incidentID,
       name: 'test',
       status: incidentStatuses[0],
       message: 'test',
@@ -16,10 +15,9 @@ describe('Incident', () => {
 
   describe('constructor', () => {
     it('should construct a new instance', () => {
-      const params = generateConstructorParams('1')
+      const params = generateConstructorParams()
       const incident = new Incident(params)
 
-      assert(incident.incidentID === params.incidentID)
       assert(incident.name === params.name)
       assert(incident.status === params.status)
       assert(incident.updatedAt === params.updatedAt)
@@ -38,10 +36,39 @@ describe('Incident', () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams()
       const incident = new Incident(params)
+      incident.incidentID = '1'
 
       let error
       try {
-        await incident.validate()
+        incident.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error === undefined)
+    })
+
+    it('should return error when name is invalid', async () => {
+      const params = generateConstructorParams()
+      const incident = new Incident(params)
+
+      let error
+      try {
+        incident.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+  })
+
+  describe('validateExceptID', () => {
+    it('should return no error when input is valid', async () => {
+      const params = generateConstructorParams()
+      const incident = new Incident(params)
+
+      let error
+      try {
+        incident.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -55,7 +82,7 @@ describe('Incident', () => {
 
       let error
       try {
-        await incident.validate()
+        incident.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -69,7 +96,7 @@ describe('Incident', () => {
 
       let error
       try {
-        await incident.validate()
+        incident.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -83,7 +110,7 @@ describe('Incident', () => {
 
       let error
       try {
-        await incident.validate()
+        incident.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -91,52 +118,6 @@ describe('Incident', () => {
       assert(error.message.match(/updatedAt/))
     })
   })
-
-  /*
-  describe('save', () => {
-    afterEach(() => {
-      IncidentsStore.prototype.update.restore()
-      IncidentUpdatesStore.prototype.update.restore()
-      ComponentsStore.prototype.updateStatus.restore()
-    })
-
-    it('should updates incident, incidentUpdates, and components', async () => {
-      const incidentStoreStub = sinon.stub(IncidentsStore.prototype, 'update').returns()
-      const incidentUpdateStoreStub = sinon.stub(IncidentUpdatesStore.prototype, 'update').returns()
-      const compStoreStub = sinon.stub(ComponentsStore.prototype, 'updateStatus').returns()
-
-      const params = generateConstructorParams('1')
-      params.components = [new Component({})]
-      const incident = new Incident(params)
-      await incident.save()
-
-      assert(incidentStoreStub.calledOnce)
-      assert(incidentStoreStub.firstCall.args[0].incidentID === params.incidentID)
-      assert(incidentUpdateStoreStub.calledOnce)
-      assert(incidentUpdateStoreStub.firstCall.args[0].incidentID === params.incidentID)
-      assert(compStoreStub.calledOnce)
-    })
-
-    it('should throw error when updateStatus throws error', async () => {
-      const incidentStoreStub = sinon.stub(IncidentsStore.prototype, 'update').returns()
-      const incidentUpdateStoreStub = sinon.stub(IncidentUpdatesStore.prototype, 'update').returns()
-      sinon.stub(ComponentsStore.prototype, 'updateStatus').throws()
-
-      const params = generateConstructorParams()
-      params.components = [new Component({})]
-      const incident = new Incident(params)
-      let error
-      try {
-        await incident.save()
-      } catch (e) {
-        error = e
-      }
-      assert(incidentStoreStub.calledOnce)
-      assert(incidentUpdateStoreStub.calledOnce)
-      assert(error.message.match(/Error/))
-    })
-  })
-*/
 })
 
 describe('IncidentUpdate', () => {
@@ -156,7 +137,6 @@ describe('IncidentUpdate', () => {
       const incidentUpdate = new IncidentUpdate(params)
 
       assert(incidentUpdate.incidentID === params.incidentID)
-      assert(incidentUpdate.incidentUpdateID === params.incidentUpdateID)
     })
 
     it('should fill in insufficient values', () => {
@@ -170,13 +150,41 @@ describe('IncidentUpdate', () => {
     })
   })
 
-  describe('validate', async () => {
+  describe('validate', () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams('1', '1')
+      const incident = new IncidentUpdate(params)
+
+      let error
+      try {
+        incident.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error === undefined)
+    })
+
+    it('should return error when incident update id is invalid', async () => {
+      const params = generateConstructorParams('1')
+      const incident = new IncidentUpdate(params)
+
+      let error
+      try {
+        incident.validate()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+  })
+
+  describe('validateExceptUpdateID', async () => {
+    it('should return no error when input is valid', async () => {
+      const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       let err
       try {
-        await incidentUpdate.validate()
+        incidentUpdate.validateExceptUpdateID()
       } catch (e) {
         err = e
       }
@@ -184,12 +192,12 @@ describe('IncidentUpdate', () => {
     })
 
     it('should return error when incidentID is invalid', async () => {
-      const params = generateConstructorParams('', '1')
+      const params = generateConstructorParams('')
       const incidentUpdate = new IncidentUpdate(params)
 
       let error
       try {
-        await incidentUpdate.validate()
+        incidentUpdate.validateExceptUpdateID()
       } catch (e) {
         error = e
       }
@@ -197,13 +205,13 @@ describe('IncidentUpdate', () => {
     })
 
     it('should return error when status is invalid', async () => {
-      const params = generateConstructorParams('1', '1')
+      const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       incidentUpdate.incidentStatus = 'test'
 
       let error
       try {
-        await incidentUpdate.validate()
+        incidentUpdate.validateExceptUpdateID()
       } catch (e) {
         error = e
       }
@@ -211,13 +219,13 @@ describe('IncidentUpdate', () => {
     })
 
     it('should return error when message is invalid', async () => {
-      const params = generateConstructorParams('1', '1')
+      const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       incidentUpdate.message = undefined
 
       let error
       try {
-        await incidentUpdate.validate()
+        incidentUpdate.validateExceptUpdateID()
       } catch (e) {
         error = e
       }
@@ -225,13 +233,13 @@ describe('IncidentUpdate', () => {
     })
 
     it('should return error when updatedAt is invalid', async () => {
-      const params = generateConstructorParams('1', '1')
+      const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       incidentUpdate.updatedAt = ''
 
       let error
       try {
-        await incidentUpdate.validate()
+        incidentUpdate.validateExceptUpdateID()
       } catch (e) {
         error = e
       }

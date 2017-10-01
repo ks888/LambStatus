@@ -4,7 +4,7 @@ import { ServiceComponentTable } from 'utils/const'
 import { Component } from 'model/components'
 import { NotFoundError } from 'utils/errors'
 import generateID from 'utils/generateID'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import { buildUpdateExpression } from './utils'
 
 export default class ComponentsStore {
   constructor () {
