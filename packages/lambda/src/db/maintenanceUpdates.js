@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { MaintenanceUpdate } from 'model/maintenances'
 import { MaintenanceUpdateTable } from 'utils/const'
 import generateID from 'utils/generateID'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import { buildUpdateExpression } from './utils'
 
 export default class MaintenanceUpdatesStore {
   constructor () {
@@ -10,7 +11,7 @@ export default class MaintenanceUpdatesStore {
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getByMaintenanceID (maintenanceID) {
+  query (maintenanceID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MaintenanceUpdateTable,
@@ -25,20 +26,21 @@ export default class MaintenanceUpdatesStore {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        queryResult.Items.forEach(item => {
-          fillInsufficientProps({message: ''}, item)
-        })
-
-        resolve(queryResult.Items)
+        resolve(queryResult.Items.map(item => new MaintenanceUpdate(item)))
       })
     })
   }
 
-  update ({maintenanceID, status, message, updatedAt}) {
+  create (maintenanceUpdate) {
+    maintenanceUpdate.setMaintenanceUpdateID(generateID())
+    return this.update(maintenanceUpdate)
+  }
+
+  update (maintenanceUpdate) {
+    const {maintenanceID, maintenanceUpdateID, maintenanceStatus, message, updatedAt} = maintenanceUpdate
     return new Promise((resolve, reject) => {
-      let maintenanceUpdateID = generateID()
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-        maintenanceStatus: status, message, updatedAt
+        maintenanceStatus, message, updatedAt
       })
       const params = {
         Key: {
@@ -55,8 +57,7 @@ export default class MaintenanceUpdatesStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({message: ''}, data.Attributes)
-        resolve(data.Attributes)
+        resolve(new MaintenanceUpdate(data.Attributes))
       })
     })
   }

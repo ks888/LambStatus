@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { Maintenance } from 'model/maintenances'
 import { MaintenanceTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
+import generateID from 'utils/generateID'
 
 export default class MaintenanceStore {
   constructor () {
@@ -9,7 +11,7 @@ export default class MaintenanceStore {
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getAll () {
+  query () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MaintenanceTable,
@@ -17,23 +19,21 @@ export default class MaintenanceStore {
         ExpressionAttributeNames: {
           '#nm': 'name',
           '#st': 'status'
-        },
-        ExpressionAttributeValues: {
-          ':u': false
-        },
-        FilterExpression: 'updating = :u'
+        }
       }
+      // TODO: use query and do the pagination
       this.awsDynamoDb.scan(params, (err, scanResult) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        resolve(scanResult.Items)
+        const maints = scanResult.Items.map(maint => new Maintenance(maint))
+        resolve(maints)
       })
     })
   }
 
-  getByID (maintenanceID) {
+  get (maintenanceID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MaintenanceTable,
@@ -48,16 +48,22 @@ export default class MaintenanceStore {
           return reject(new NotFoundError('no matched item'))
         }
 
-        resolve(data.Item)
+        resolve(new Maintenance(data.Item))
       })
     })
   }
 
-  update ({maintenanceID, name, status, startAt, endAt, updatedAt}, updating = false) {
+  create (maintenance) {
+    maintenance.setMaintenanceID(generateID())
+    return this.update(maintenance)
+  }
+
+  update (maintenance) {
+    const {maintenanceID, name, status, startAt, endAt, updatedAt} = maintenance
     return new Promise((resolve, reject) => {
       const params = {
         Key: { maintenanceID },
-        UpdateExpression: `set #n = :n, #s = :s, startAt = :startAt, endAt = :endAt, updatedAt = :updatedAt, updating = :updating`,
+        UpdateExpression: `set #n = :n, #s = :s, startAt = :startAt, endAt = :endAt, updatedAt = :updatedAt`,
         ExpressionAttributeNames: {
           '#n': 'name',
           '#s': 'status'
@@ -67,8 +73,7 @@ export default class MaintenanceStore {
           ':s': status,
           ':startAt': startAt,
           ':endAt': endAt,
-          ':updatedAt': updatedAt,
-          ':updating': updating
+          ':updatedAt': updatedAt
         },
         TableName: MaintenanceTable,
         ReturnValues: 'ALL_NEW'
@@ -77,17 +82,15 @@ export default class MaintenanceStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        resolve(data.Attributes)
+        resolve(new Maintenance(data.Attributes))
       })
     })
   }
 
-  delete (id) {
+  delete (maintenanceID) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          maintenanceID: id
-        },
+        Key: { maintenanceID },
         TableName: MaintenanceTable,
         ReturnValues: 'NONE'
       }

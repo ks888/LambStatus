@@ -90,7 +90,7 @@ describe('IncidentUpdatesStore', () => {
 
       let error
       try {
-        await new IncidentUpdatesStore().update({})
+        await new IncidentUpdatesStore().update(new IncidentUpdate({}))
       } catch (e) {
         error = e
       }

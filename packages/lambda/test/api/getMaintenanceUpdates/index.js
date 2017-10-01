@@ -1,29 +1,36 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/getMaintenanceUpdates'
-import { Maintenances, Maintenance } from 'model/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
+import { MaintenanceUpdate } from 'model/maintenances'
+import { NotFoundError } from 'utils/errors'
 
 describe('getMaintenanceUpdates', () => {
   afterEach(() => {
-    Maintenances.prototype.lookup.restore()
-    Maintenance.prototype.getMaintenanceUpdates.restore()
+    MaintenanceUpdatesStore.prototype.query.restore()
   })
 
   it('should return a list of maintenance updates', async () => {
-    const maintenanceUpdates = [{ maintenanceID: '1', maintenanceUpdateID: '1' }]
-    sinon.stub(Maintenance.prototype, 'getMaintenanceUpdates').returns(maintenanceUpdates)
-    const maintenance = new Maintenance('1', undefined, undefined, undefined, undefined, undefined, [], '1')
-    sinon.stub(Maintenances.prototype, 'lookup').returns(maintenance)
+    const maintenanceUpdates = [new MaintenanceUpdate({ maintenanceID: '1', maintenanceUpdateID: '1' })]
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'query').returns(maintenanceUpdates)
 
     return await handle({ params: { maintenanceid: '1' } }, null, (error, result) => {
       assert(error === null)
-      assert.deepEqual(result, maintenanceUpdates)
+      assert(result.length === 1)
+      assert(result[0].maintenanceID === '1')
+      assert(result[0].maintenanceUpdateID === '1')
+    })
+  })
+
+  it('should return not found error if the maintenance does not exist', async () => {
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'query').throws(new NotFoundError())
+    return await handle({ params: { maintenanceid: '1' } }, null, (error, result) => {
+      assert(error.match(/not found/))
     })
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Maintenance.prototype, 'getMaintenanceUpdates').throws()
-    sinon.stub(Maintenances.prototype, 'lookup').throws()
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'query').throws()
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))
     })
