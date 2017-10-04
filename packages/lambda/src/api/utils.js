@@ -99,13 +99,12 @@ export class SettingsProxy {
       console.warn('CognitoPoolID not found')
       return
     }
-    const serviceName = await this.getServiceName()
-    const adminPageURL = await this.getAdminPageURL()
 
     const cognito = new Cognito()
     const userPool = await cognito.getUserPool(poolID)
-    const snsCallerArn = userPool.snsCallerArn
 
-    await cognito.updateUserPool(poolID, serviceName, adminPageURL, snsCallerArn)
+    userPool.serviceName = await this.getServiceName()
+    userPool.adminPageURL = await this.getAdminPageURL()
+    await cognito.updateUserPool(userPool)
   }
 }

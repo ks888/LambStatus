@@ -1,21 +1,16 @@
 import AWS from 'aws-sdk'
 
 export class UserPool {
-  constructor ({userPoolID, snsCallerArn}) {
+  constructor ({userPoolID, userPoolName, serviceName, adminPageURL, snsCallerArn}) {
     this.userPoolID = userPoolID
+    this.userPoolName = userPoolName
+    this.serviceName = serviceName
+    this.adminPageURL = adminPageURL
     this.snsCallerArn = snsCallerArn
   }
-}
 
-export default class Cognito {
-  constructor () {
-    const { AWS_REGION: region } = process.env
-    this.awsCognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
-  }
-
-  createUserPool (region, poolName, serviceName, adminPageURL, snsCallerArn) {
-    const params = this.buildUserPoolParameters(serviceName, adminPageURL, snsCallerArn)
-    params.PoolName = poolName
+  buildCreateUserPoolParameters () {
+    const params = this.buildCommonUserPoolParameters()
     params.Schema = [{
       Name: 'email',
       StringAttributeConstraints: {
@@ -28,45 +23,21 @@ export default class Cognito {
       Mutable: true
     }]
     params.AliasAttributes = ['email']
-    return new Promise((resolve, reject) => {
-      this.awsCognito.createUserPool(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result)
-      })
-    })
+    params.PoolName = this.userPoolName
+
+    return params
   }
 
-  getUserPool (poolID) {
-    return new Promise((resolve, reject) => {
-      this.awsCognito.describeUserPool({UserPoolId: poolID}, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
+  buildUpdateUserPoolParameters () {
+    const params = this.buildCommonUserPoolParameters()
+    params.UserPoolId = this.userPoolID
 
-        const snsCallerArn = result.UserPool.SmsConfiguration.SnsCallerArn
-        const userPool = new UserPool({ userPoolID: poolID, snsCallerArn })
-        resolve(userPool)
-      })
-    })
+    return params
   }
 
-  updateUserPool (poolID, serviceName, adminPageURL, snsCallerArn) {
-    const params = this.buildUserPoolParameters(serviceName, adminPageURL, snsCallerArn)
-    params.UserPoolId = poolID
-    return new Promise((resolve, reject) => {
-      this.awsCognito.updateUserPool(params, (err, result) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve(result)
-      })
-    })
-  }
-
-  buildUserPoolParameters (serviceName, adminPageURL, snsCallerArn) {
-    return {
+  buildCommonUserPoolParameters () {
+    const {serviceName, adminPageURL, snsCallerArn} = this
+    const params = {
       AdminCreateUserConfig: {
         AllowAdminCreateUserOnly: true,
         UnusedAccountValidityDays: 7,
@@ -92,9 +63,57 @@ export default class Cognito {
         ExternalId: snsCallerArn
       }
     }
+    return params
+  }
+}
+
+export default class Cognito {
+  constructor () {
+    const { AWS_REGION: region } = process.env
+    this.awsCognito = new AWS.CognitoIdentityServiceProvider({ apiVersion: '2016-04-18', region })
   }
 
-  deleteUserPool (region, userPoolID) {
+  getUserPool (poolID) {
+    return new Promise((resolve, reject) => {
+      this.awsCognito.describeUserPool({UserPoolId: poolID}, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+
+        const userPoolID = result.UserPool.Id
+        const userPoolName = result.UserPool.Name
+        const snsCallerArn = result.UserPool.SmsConfiguration.SnsCallerArn
+        const userPool = new UserPool({ userPoolID, userPoolName, snsCallerArn })
+        resolve(userPool)
+      })
+    })
+  }
+
+  createUserPool (userPool) {
+    const params = userPool.buildCreateUserPoolParameters()
+    return new Promise((resolve, reject) => {
+      this.awsCognito.createUserPool(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  updateUserPool (userPool) {
+    const params = userPool.buildUpdateUserPoolParameters()
+    return new Promise((resolve, reject) => {
+      this.awsCognito.updateUserPool(params, (err, result) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(result)
+      })
+    })
+  }
+
+  deleteUserPool (userPoolID) {
     const params = {
       UserPoolId: userPoolID
     }
@@ -108,7 +127,7 @@ export default class Cognito {
     })
   }
 
-  createUserPoolClient (region, userPoolID, clientName) {
+  createUserPoolClient (userPoolID, clientName) {
     const params = {
       UserPoolId: userPoolID,
       ClientName: clientName
@@ -123,7 +142,7 @@ export default class Cognito {
     })
   }
 
-  createUser (region, userPoolId, userName, email) {
+  createUser (userPoolId, userName, email) {
     const params = {
       UserPoolId: userPoolId,
       Username: userName,

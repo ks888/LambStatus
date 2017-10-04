@@ -182,20 +182,20 @@ describe('SettingsProxy', () => {
 
   describe('updateUserPool', () => {
     it('should update the user pool with valid params', async () => {
-      sinon.stub(Cognito.prototype, 'getUserPool').returns(new UserPool({userPoolID: '', snsCallerArn: ''}))
+      const cognitoPoolID = 'id'
+      sinon.stub(Cognito.prototype, 'getUserPool').returns(new UserPool({userPoolID: cognitoPoolID, snsCallerArn: ''}))
       const updatePoolStub = sinon.stub(Cognito.prototype, 'updateUserPool').returns()
 
       const serviceName = 'test'
       const adminPageURL = 'admin'
-      const cognitoPoolID = 'id'
       const proxy = new SettingsProxy({serviceName, adminPageURL, cognitoPoolID})
       await proxy.updateUserPool()
 
       assert(updatePoolStub.calledOnce)
-      assert(updatePoolStub.firstCall.args[0] === cognitoPoolID)
-      assert(updatePoolStub.firstCall.args[1] === serviceName)
-      assert(updatePoolStub.firstCall.args[2] === adminPageURL)
-      assert(updatePoolStub.firstCall.args[3] === '')
+      assert(updatePoolStub.firstCall.args[0].userPoolID === cognitoPoolID)
+      assert(updatePoolStub.firstCall.args[0].serviceName === serviceName)
+      assert(updatePoolStub.firstCall.args[0].adminPageURL === adminPageURL)
+      assert(updatePoolStub.firstCall.args[0].snsCallerArn === '')
 
       Cognito.prototype.getUserPool.restore()
     })
