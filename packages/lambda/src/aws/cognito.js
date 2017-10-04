@@ -1,5 +1,12 @@
 import AWS from 'aws-sdk'
 
+export class UserPool {
+  constructor ({userPoolID, snsCallerArn}) {
+    this.userPoolID = userPoolID
+    this.snsCallerArn = snsCallerArn
+  }
+}
+
 export default class Cognito {
   constructor () {
     const { AWS_REGION: region } = process.env
@@ -31,13 +38,16 @@ export default class Cognito {
     })
   }
 
-  describeUserPool (poolID) {
+  getUserPool (poolID) {
     return new Promise((resolve, reject) => {
       this.awsCognito.describeUserPool({UserPoolId: poolID}, (err, result) => {
         if (err) {
           return reject(err)
         }
-        resolve(result.UserPool)
+
+        const snsCallerArn = result.UserPool.SmsConfiguration.SnsCallerArn
+        const userPool = new UserPool({ userPoolID: poolID, snsCallerArn })
+        resolve(userPool)
       })
     })
   }

@@ -4,7 +4,82 @@ import { NotFoundError } from 'utils/errors'
 import { SettingsTable } from 'utils/const'
 import { buildUpdateExpression } from './utils'
 
+// InvocationURL, UserPoolID, and ClientID are parts of S3 object (settings.js). Do not store them here.
+
+export const settingKeys = {
+  serviceName: 'ServiceName',
+  statusPageURL: 'StatusPageURL',
+  adminPageURL: 'AdminPageURL',
+  cognitoPoolID: 'CognitoPoolID'
+}
+
 export default class SettingsStore {
+  constructor () {
+    this.store = new RawSettingsStore()
+  }
+
+  async getServiceName () {
+    try {
+      return await this.store.get(settingKeys.serviceName)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setServiceName (name) {
+    return await this.store.set(settingKeys.serviceName, name)
+  }
+
+  async getStatusPageURL () {
+    try {
+      return await this.store.get(settingKeys.statusPageURL)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setStatusPageURL (name) {
+    return await this.store.set(settingKeys.statusPageURL, name)
+  }
+
+  async getAdminPageURL () {
+    try {
+      return await this.store.get(settingKeys.adminPageURL)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setAdminPageURL (name) {
+    return await this.store.set(settingKeys.adminPageURL, name)
+  }
+
+  async getCognitoPoolID () {
+    try {
+      return await this.store.get(settingKeys.cognitoPoolID)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setCognitoPoolID (id) {
+    return await this.store.set(settingKeys.cognitoPoolID, id)
+  }
+}
+
+export class RawSettingsStore {
   constructor () {
     const { AWS_REGION: region } = process.env
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
@@ -30,7 +105,7 @@ export default class SettingsStore {
     })
   }
 
-  update (key, value) {
+  set (key, value) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({ value })
     return new Promise((resolve, reject) => {
       const params = {
@@ -44,11 +119,6 @@ export default class SettingsStore {
       this.awsDynamoDb.update(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
-        }
-        if (data.Attributes === undefined) {
-          // No item matching the given key
-          resolve('')
-          return
         }
         resolve(data.Attributes.value)
       })
