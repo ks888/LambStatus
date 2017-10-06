@@ -21,28 +21,6 @@ describe('Cognito', () => {
     AWS.restore('CognitoIdentityServiceProvider')
   })
 
-  context('createUserPool', () => {
-    it('should call createUserPool', async () => {
-      const input = {userPoolName: 'name', serviceName: 'test', adminPageURL: 'url', snsCallerArn: 'arn'}
-
-      AWS.mock('CognitoIdentityServiceProvider', 'createUserPool', (params, callback) => {
-        assert(params.PoolName === input.userPoolName)
-        callback(null)
-      })
-
-      let err
-      try {
-        const cognito = new Cognito()
-        const userPool = new UserPool(input)
-        await cognito.createUserPool(userPool)
-      } catch (error) {
-        err = error
-      }
-
-      assert(err === undefined)
-    })
-  })
-
   context('getUserPool', () => {
     it('should call describeUserPool', async () => {
       const rawOutput = {UserPool: {Id: 'id', Name: 'name', SmsConfiguration: {SnsCallerArn: 'arn'}}}
@@ -57,6 +35,30 @@ describe('Cognito', () => {
       assert(userPool.userPoolID === rawOutput.UserPool.Id)
       assert(userPool.userPoolName === rawOutput.UserPool.Name)
       assert(userPool.snsCallerArn === rawOutput.UserPool.SmsConfiguration.SnsCallerArn)
+    })
+  })
+
+  context('createUserPool', () => {
+    it('should call createUserPool', async () => {
+      const input = {userPoolName: 'name', serviceName: 'test', adminPageURL: 'url', snsCallerArn: 'arn'}
+      const id = 'id'
+      AWS.mock('CognitoIdentityServiceProvider', 'createUserPool', (params, callback) => {
+        assert(params.PoolName === input.userPoolName)
+        callback(null, {UserPool: {Id: id, Name: params.PoolName}})
+      })
+
+      let err, actual
+      try {
+        const cognito = new Cognito()
+        const userPool = new UserPool(input)
+        actual = await cognito.createUserPool(userPool)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual instanceof UserPool)
+      assert(actual.userPoolID === id)
     })
   })
 

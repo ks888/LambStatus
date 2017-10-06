@@ -96,7 +96,11 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        const createdUserPool = new UserPool({
+          userPoolID: result.UserPool.Id,
+          userPoolName: result.UserPool.Name
+        })
+        resolve(createdUserPool)
       })
     })
   }
@@ -108,7 +112,7 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        resolve()
       })
     })
   }
@@ -122,7 +126,7 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        resolve()
       })
     })
   }
@@ -137,7 +141,7 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        resolve(result.UserPoolClient)
       })
     })
   }
@@ -157,7 +161,7 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        resolve(result)
+        resolve(result.User)
       })
     })
   }
