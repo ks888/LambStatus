@@ -1,9 +1,9 @@
-import { Metrics } from 'model/metrics'
+import MetricsStore from 'db/metrics'
 import 'model/monitoringServices'  // load monitoring services
 
 export async function handle (event, context, callback) {
   try {
-    const metrics = await new Metrics().list()
+    let metrics = await new MetricsStore().query()
     await Promise.all(metrics
                       .filter(metric => !metric.monitoringService.shouldAdminPostDatapoints())
                       .map(async metric => await metric.collect()))

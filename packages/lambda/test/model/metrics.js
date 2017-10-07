@@ -4,8 +4,8 @@ import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import { Metrics, Metric } from 'model/metrics'
 import MetricsStore from 'db/metrics'
-import { metricStatusVisible, metricStatusHidden } from 'utils/const'
-import { MutexLockedError, NotFoundError } from 'utils/errors'
+import { metricStatusVisible } from 'utils/const'
+import { MutexLockedError } from 'utils/errors'
 
 describe('Metrics', () => {
   describe('listExternal', () => {
@@ -35,86 +35,6 @@ describe('Metrics', () => {
       assert(error.message.match(/Error/))
     })
   })
-
-  describe('listPublic', () => {
-    afterEach(() => {
-      MetricsStore.prototype.getAll.restore()
-    })
-
-    it('should return a list of public metrics', async () => {
-      const metrics = [
-        {metricID: 1, type: 'Mock', status: metricStatusVisible},
-        {metricID: 2, type: 'Mock', status: metricStatusHidden}
-      ]
-      sinon.stub(MetricsStore.prototype, 'getAll').returns(metrics)
-
-      const comps = await new Metrics().listPublic()
-      assert(comps.length === 1)
-      assert(comps[0].metricID === 1)
-    })
-
-    it('should return error when the store throws exception', async () => {
-      sinon.stub(MetricsStore.prototype, 'getAll').throws()
-      let error
-      try {
-        await new Metrics().listPublic()
-      } catch (e) {
-        error = e
-      }
-      assert(error.message.match(/Error/))
-    })
-  })
-
-  describe('list', () => {
-    afterEach(() => {
-      MetricsStore.prototype.getAll.restore()
-    })
-
-    it('should return a list of metrics', async () => {
-      const metrics = [{metricID: 1, type: 'Mock'}, {metricID: 2, type: 'Mock'}]
-      sinon.stub(MetricsStore.prototype, 'getAll').returns(metrics)
-
-      const comps = await new Metrics().list()
-      assert(comps.length === 2)
-      assert(comps[0].metricID === 1)
-      assert(comps[1].metricID === 2)
-    })
-
-    it('should return error when the store throws exception', async () => {
-      sinon.stub(MetricsStore.prototype, 'getAll').throws()
-      let error
-      try {
-        await new Metrics().list()
-      } catch (e) {
-        error = e
-      }
-      assert(error.message.match(/Error/))
-    })
-  })
-
-  describe('lookup', () => {
-    afterEach(() => {
-      MetricsStore.prototype.getByID.restore()
-    })
-
-    it('should return one metric', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').returns({metricID: 1, type: 'Mock'})
-
-      const comp = await new Metrics().lookup(1)
-      assert(comp.metricID === 1)
-    })
-
-    it('should return error when matched no metric', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').throws(new NotFoundError())
-      let error
-      try {
-        await new Metrics().lookup(1)
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'NotFoundError')
-    })
-  })
 })
 
 describe('Metric', () => {
@@ -123,10 +43,10 @@ describe('Metric', () => {
       metricID,
       type: 'Mock',
       title: 'title',
+      status: metricStatusVisible,
       unit: 'unit',
       description: 'description',
       decimalPlaces: 0,
-      status: metricStatusVisible,
       order: 0,
       props: {key: 'value'}
     }
@@ -150,7 +70,6 @@ describe('Metric', () => {
 
     it('should fill in insufficient values', () => {
       const params = generateConstructorParams()
-      params.metricID = undefined
       params.unit = undefined
       params.description = undefined
       params.decimalPlaces = undefined
@@ -158,7 +77,6 @@ describe('Metric', () => {
       params.order = undefined
       const metric = new Metric(params)
 
-      assert(metric.metricID.length === 12)
       assert(metric.unit === '')
       assert(metric.description === '')
       assert(metric.decimalPlaces === 0)
@@ -169,7 +87,7 @@ describe('Metric', () => {
 
   describe('validate', () => {
     it('should return no error when input is valid', async () => {
-      const params = generateConstructorParams()
+      const params = generateConstructorParams('1')
       const metric = new Metric(params)
 
       let error
@@ -193,23 +111,9 @@ describe('Metric', () => {
       }
       assert(error.name === 'ValidationError')
     })
+  })
 
-    it('should return error when metricID does not exist', async () => {
-      sinon.stub(MetricsStore.prototype, 'getByID').throws(new NotFoundError())
-
-      const params = generateConstructorParams('1')
-      const metric = new Metric(params)
-
-      let error
-      try {
-        await metric.validate()
-      } catch (e) {
-        error = e
-      }
-      assert(error.name === 'NotFoundError')
-      MetricsStore.prototype.getByID.restore()
-    })
-
+  describe('validateExceptID', () => {
     it('should return error when title is invalid', async () => {
       const params = generateConstructorParams()
       const metric = new Metric(params)
@@ -217,7 +121,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -231,7 +135,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -245,7 +149,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -259,7 +163,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -273,7 +177,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -287,7 +191,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -301,7 +205,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -315,7 +219,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -329,7 +233,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -343,7 +247,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -357,7 +261,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }
@@ -371,7 +275,7 @@ describe('Metric', () => {
 
       let error
       try {
-        await metric.validate()
+        await metric.validateExceptID()
       } catch (e) {
         error = e
       }

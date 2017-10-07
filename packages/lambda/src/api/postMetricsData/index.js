@@ -1,4 +1,4 @@
-import { Metrics } from 'model/metrics'
+import MetricsStore from 'db/metrics'
 import 'model/monitoringServices'  // load monitoring services
 import { ValidationError } from 'utils/errors'
 
@@ -12,13 +12,13 @@ const insertDatapoints = async (dataByMetric, resp) => {
     return errors
   }
 
-  const metrics = new Metrics()
   const ids = Object.keys(dataByMetric)
   for (let i = 0; i < ids.length; i++) {
     const metricID = ids[i]
     const data = dataByMetric[metricID]
     try {
-      const metric = await metrics.lookup(metricID)
+      const store = new MetricsStore()
+      const metric = await store.get(metricID)
       if (!metric.monitoringService.shouldAdminPostDatapoints()) {
         throw new ValidationError(`${metric.type} type metrics does not allow a user to submit datapoints`)
       }

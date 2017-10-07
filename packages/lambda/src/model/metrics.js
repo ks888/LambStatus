@@ -2,43 +2,33 @@ import CloudFormation from 'aws/cloudFormation'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import { monitoringServiceManager } from 'model/monitoringService'
-import generateID from 'utils/generateID'
 import { ValidationError } from 'utils/errors'
-import { metricStatuses, metricStatusVisible, region, stackName } from 'utils/const'
+import { metricStatuses, region, stackName } from 'utils/const'
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
-  constructor ({metricID, type, title, unit = '', description = '', decimalPlaces = 0, status,
+  constructor ({metricID, type, title, status, unit = '', description = '', decimalPlaces = 0,
                 order = Math.floor(new Date().getTime() / 1000), props = {}}) {
-    if (metricID === undefined) {
-      this.metricID = generateID()
-      this.needIDValidation = false
-    } else {
-      // If the user specifies the component ID, the ID must be already existed.
-      this.metricID = metricID
-      this.needIDValidation = true
-    }
+    this.metricID = metricID
     this.type = type
     this.monitoringService = monitoringServiceManager.create(this.type)
     this.title = title
+    this.status = status
     this.unit = unit
     this.description = description
     this.decimalPlaces = decimalPlaces
-    this.status = status
     this.order = order
     this.props = props
   }
 
-  async validate () {
+  validate () {
     if (this.metricID === undefined || this.metricID === '') {
       throw new ValidationError('invalid metricID parameter')
     }
+    this.validateExceptID()
+  }
 
-    if (this.needIDValidation) {
-      const metrics = new Metrics()
-      await metrics.lookup(this.metricID)
-    }
-
+  validateExceptID () {
     if (this.title === undefined || this.title === '') {
       throw new ValidationError('invalid title parameter')
     }
@@ -68,14 +58,8 @@ export class Metric {
     }
   }
 
-  async save () {
-    const store = new MetricsStore()
-    await store.update(this.objectify())
-  }
-
-  async delete () {
-    const store = new MetricsStore()
-    await store.delete(this.metricID)
+  setMetricID (metricID) {
+    this.metricID = metricID
   }
 
   async getBucketName () {
@@ -267,23 +251,5 @@ export class Metrics {
   async listExternal (type, cursor, filters) {
     const monitoringService = monitoringServiceManager.create(type)
     return await monitoringService.listMetrics(cursor, filters)
-  }
-
-  async listPublic () {
-    const metrics = await this.list()
-    return metrics.filter((metric) => {
-      return metric.status === metricStatusVisible
-    })
-  }
-
-  async list () {
-    const metrics = await new MetricsStore().getAll()
-    return metrics.map(metric => new Metric(metric))
-  }
-
-  async lookup (metricID) {
-    const store = new MetricsStore()
-    const metric = await store.getByID(metricID)
-    return new Metric(metric)
   }
 }
