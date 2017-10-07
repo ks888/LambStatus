@@ -114,6 +114,8 @@ export class SettingsProxy {
   }
 }
 
+// MetricProxy is a wrapper of Metric class. It's nicely load and save datapoints to/from S3.
+// TODO: add a factory method to create MetricProxy class transparently.
 export class MetricProxy extends Metric {
   constructor (params) {
     super(params)
@@ -175,5 +177,28 @@ export class MetricProxy extends Metric {
         console.error(`failed to unlock mutex (metricID: ${this.metricID})`, err.toString())
       }
     }
+  }
+}
+
+// MetricsStoreProxy is a wrapper of MetricsStore class. It's just wrap Metric class by MetricProxy class.
+export class MetricsStoreProxy extends MetricsStore {
+  async query () {
+    const metrics = await super.query()
+    return metrics.map(metric => new MetricProxy(metric))
+  }
+
+  async get (metricID) {
+    const metric = await super.get(metricID)
+    return new MetricProxy(metric)
+  }
+
+  async create (metric) {
+    const createdMetric = await super.create(metric)
+    return new MetricProxy(createdMetric)
+  }
+
+  async update (metric) {
+    const updatedMetric = await super.updatee(metric)
+    return new MetricProxy(updatedMetric)
   }
 }

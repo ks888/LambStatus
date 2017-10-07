@@ -1,6 +1,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import MetricsStore from 'db/metrics'
+import { MetricsStoreProxy } from 'api/utils'
 import { Metric } from 'model/metrics'
 import Self from 'model/monitoringServices/self'
 import { NotFoundError } from 'utils/errors'
@@ -42,14 +43,14 @@ describe('Self', () => {
 
   describe('getMetricData', () => {
     afterEach(() => {
-      MetricsStore.prototype.get.restore()
+      MetricsStoreProxy.prototype.get.restore()
       Metric.prototype.getDatapoints.restore()
     })
 
     it('should return metric data between start time and end time', async () => {
       const start = new Date()
       const end = new Date(start.getTime() + 1)
-      sinon.stub(MetricsStore.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
+      sinon.stub(MetricsStoreProxy.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
       const expect = [{value: 1, timestamp: start.toISOString()}, {value: 2, timestamp: end.toISOString()}]
       const stub = sinon.stub(Metric.prototype, 'getDatapoints').returns(expect)
 
@@ -64,7 +65,7 @@ describe('Self', () => {
       const startPlusOneDay = new Date(start.getTime() + 24 * 60 * 60 * 1000 /* 1 day */)
       const numDates = 3
       const end = new Date(start.getTime() + numDates * 24 * 60 * 60 * 1000)
-      sinon.stub(MetricsStore.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
+      sinon.stub(MetricsStoreProxy.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
 
       const expect = [
         {value: 1, timestamp: start.toISOString()},
@@ -85,7 +86,7 @@ describe('Self', () => {
     it('should throw an error if the start time is later than end time', async () => {
       const start = new Date()
       const end = new Date(start.getTime() - 24 * 60 * 60 * 1000)
-      sinon.stub(MetricsStore.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
+      sinon.stub(MetricsStoreProxy.prototype, 'get').returns(new Metric({metricID: '1', type: 'Self'}))
       sinon.stub(Metric.prototype, 'getDatapoints').returns(null)
 
       try {
@@ -99,7 +100,7 @@ describe('Self', () => {
     it('should throw an error if metric ID does not exist', async () => {
       const start = new Date()
       const end = new Date(start.getTime() + 1)
-      sinon.stub(MetricsStore.prototype, 'get').throws(new NotFoundError('no matched item'))
+      sinon.stub(MetricsStoreProxy.prototype, 'get').throws(new NotFoundError('no matched item'))
       sinon.stub(Metric.prototype, 'getDatapoints').returns(null)
 
       try {

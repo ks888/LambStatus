@@ -65,12 +65,10 @@ export class Metric {
   }
 
   async getDatapoints (date) {
-    console.log('get', date)
     return this.datapoints[this.buildDatapointsKey(date)]
   }
 
   async setDatapoints (date, datapoints) {
-    console.log('set', date, datapoints)
     this.datapoints[this.buildDatapointsKey(date)] = datapoints
   }
 
@@ -121,8 +119,6 @@ export class Metric {
         j++
       }
     }
-
-    console.log('insertDatapoints', datapoints, mergedDatapoints, insertedDatapoints, existingDatapoints, date)
 
     if (i < existingDatapoints.length) {
       mergedDatapoints = mergedDatapoints.concat(existingDatapoints.slice(i))

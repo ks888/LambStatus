@@ -5,7 +5,7 @@ import { MetricsTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
 import Mutex from 'utils/mutex'
 import generateID from 'utils/generateID'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import { buildUpdateExpression } from './utils'
 
 export default class MetricsStore {
   constructor () {

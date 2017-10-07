@@ -1,3 +1,4 @@
+import { MetricsStoreProxy } from 'api/utils'
 import MetricsStore from 'db/metrics'
 import { MonitoringService, monitoringServiceManager } from 'model/monitoringService'
 
@@ -10,7 +11,7 @@ export default class Self extends MonitoringService {
   }
 
   async getMetricData (metricID, props, startTime, endTime) {
-    const metric = await new MetricsStore().get(metricID)
+    const metric = await new MetricsStoreProxy().get(metricID)
 
     const startTimeStr = startTime.toISOString()
     const endTimeStr = endTime.toISOString()

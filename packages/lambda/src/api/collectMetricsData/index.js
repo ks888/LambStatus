@@ -1,9 +1,9 @@
-import MetricsStore from 'db/metrics'
+import { MetricsStoreProxy } from 'api/utils'
 import 'model/monitoringServices'  // load monitoring services
 
 export async function handle (event, context, callback) {
   try {
-    let metrics = await new MetricsStore().query()
+    let metrics = await new MetricsStoreProxy().query()
     await Promise.all(metrics
                       .filter(metric => !metric.monitoringService.shouldAdminPostDatapoints())
                       .map(async metric => await metric.collect()))
