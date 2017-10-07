@@ -1,7 +1,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import CloudWatchAPI from 'aws/cloudWatch'
-import CloudWatch from 'model/monitoringServices/cloudWatch'
+import CloudWatch from 'plugins/monitoringServices/cloudWatch'
 
 describe('CloudWatch', () => {
   it('should return a list of metrics', async () => {

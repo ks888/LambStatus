@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import MetricsStore from 'db/metrics'
 import { MetricsStoreProxy } from 'api/utils'
 import { Metric } from 'model/metrics'
-import Self from 'model/monitoringServices/self'
+import Self from 'plugins/monitoringServices/self'
 import { NotFoundError } from 'utils/errors'
 
 describe('Self', () => {

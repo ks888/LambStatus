@@ -1,4 +1,4 @@
-import 'model/monitoringServices'  // load monitoring services
+import 'plugins/monitoringServices'  // load monitoring services
 import { monitoringServiceManager } from 'model/monitoringService'
 
 export async function handle (event, context, callback) {

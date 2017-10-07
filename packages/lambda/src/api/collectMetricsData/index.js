@@ -1,5 +1,5 @@
 import { MetricsStoreProxy } from 'api/utils'
-import 'model/monitoringServices'  // load monitoring services
+import 'plugins/monitoringServices'  // load monitoring services
 
 export async function handle (event, context, callback) {
   try {

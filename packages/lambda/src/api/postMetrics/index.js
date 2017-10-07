@@ -1,6 +1,6 @@
 import MetricsStore from 'db/metrics'
 import { Metric } from 'model/metrics'
-import 'model/monitoringServices'  // load monitoring services
+import 'plugins/monitoringServices'  // load monitoring services
 
 export async function handle (event, context, callback) {
   try {
