@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { Incident } from 'model/incidents'
 import { IncidentTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
+import generateID from 'utils/generateID'
 
 export default class IncidentsStore {
   constructor () {
@@ -9,7 +11,7 @@ export default class IncidentsStore {
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getAll () {
+  query () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: IncidentTable,
@@ -17,23 +19,21 @@ export default class IncidentsStore {
         ExpressionAttributeNames: {
           '#nm': 'name',
           '#st': 'status'
-        },
-        ExpressionAttributeValues: {
-          ':u': false
-        },
-        FilterExpression: 'updating = :u'
+        }
       }
+      // TODO: use query and do the pagination
       this.awsDynamoDb.scan(params, (err, scanResult) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        resolve(scanResult.Items)
+        const incidents = scanResult.Items.map(incident => new Incident(incident))
+        resolve(incidents)
       })
     })
   }
 
-  getByID (incidentID) {
+  get (incidentID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: IncidentTable,
@@ -48,16 +48,22 @@ export default class IncidentsStore {
           return reject(new NotFoundError('no matched item'))
         }
 
-        resolve(data.Item)
+        resolve(new Incident(data.Item))
       })
     })
   }
 
-  update ({incidentID, name, status, updatedAt}, updating = false) {
+  create (incident) {
+    incident.setIncidentID(generateID())
+    return this.update(incident)
+  }
+
+  update (incident) {
+    const {incidentID, name, status, updatedAt} = incident
     return new Promise((resolve, reject) => {
       const params = {
         Key: { incidentID },
-        UpdateExpression: 'set #n = :n, #s = :s, updatedAt = :updatedAt, updating = :updating',
+        UpdateExpression: 'set #n = :n, #s = :s, updatedAt = :updatedAt',
         ExpressionAttributeNames: {
           '#n': 'name',
           '#s': 'status'
@@ -65,8 +71,7 @@ export default class IncidentsStore {
         ExpressionAttributeValues: {
           ':n': name,
           ':s': status,
-          ':updatedAt': updatedAt,
-          ':updating': updating
+          ':updatedAt': updatedAt
         },
         TableName: IncidentTable,
         ReturnValues: 'ALL_NEW'
@@ -75,17 +80,15 @@ export default class IncidentsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        resolve(data)
+        resolve(new Incident(data.Attributes))
       })
     })
   }
 
-  delete (id) {
+  delete (incidentID) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          incidentID: id
-        },
+        Key: { incidentID },
         TableName: IncidentTable,
         ReturnValues: 'NONE'
       }

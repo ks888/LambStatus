@@ -8,14 +8,13 @@ export async function handle (event, context, callback) {
   }
 
   const {
-    Region: region,
     UserPoolID: userPoolId,
     UserName: userName,
     Email: email
   } = event.ResourceProperties
 
   try {
-    await new Cognito().createUser(region, userPoolId, userName, email)
+    await new Cognito().createUser(userPoolId, userName, email)
     response.send(event, context, response.SUCCESS)
   } catch (error) {
     console.log(error.message)

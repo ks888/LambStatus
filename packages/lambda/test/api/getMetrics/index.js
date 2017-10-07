@@ -1,11 +1,12 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/getMetrics'
-import { Metrics, Metric } from 'model/metrics'
+import MetricsStore from 'db/metrics'
+import { Metric } from 'model/metrics'
 
 describe('getMetrics', () => {
   afterEach(() => {
-    Metrics.prototype.list.restore()
+    MetricsStore.prototype.query.restore()
   })
 
   it('should return a list of metrics', async () => {
@@ -13,7 +14,7 @@ describe('getMetrics', () => {
       new Metric({metricID: '2', type: 'Mock', order: 2}),
       new Metric({metricID: '1', type: 'Mock', order: 1})
     ]
-    sinon.stub(Metrics.prototype, 'list').returns(metrics.slice(0))
+    sinon.stub(MetricsStore.prototype, 'query').returns(metrics.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
@@ -24,7 +25,7 @@ describe('getMetrics', () => {
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Metrics.prototype, 'list').throws()
+    sinon.stub(MetricsStore.prototype, 'query').throws()
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))
     })

@@ -1,21 +1,34 @@
-import { Incident } from 'model/incidents'
 import SNS from 'aws/sns'
+import { Incident, IncidentUpdate } from 'model/incidents'
+import IncidentsStore from 'db/incidents'
+import IncidentUpdatesStore from 'db/incidentUpdates'
+import { updateComponentStatus } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
-    const params = Object.assign({}, {incidentID: event.params.incidentid}, event.body)
+    let params = {incidentID: event.params.incidentid, ...event.body}
     const incident = new Incident(params)
-    await incident.validate()
-    await incident.save()
+    incident.validate()
+    const incidentsStore = new IncidentsStore()
+    await incidentsStore.update(incident)
 
-    await new SNS().notifyIncident(incident)
+    let incidentUpdate = new IncidentUpdate({incidentStatus: event.body.status, ...params})
+    incidentUpdate.validateExceptUpdateID()
+    const incidentUpdatesStore = new IncidentUpdatesStore()
+    await incidentUpdatesStore.create(incidentUpdate)
 
-    const obj = incident.objectify()
-    const comps = obj.components
-    delete obj.components
+    if (event.body.components !== undefined) {
+      await Promise.all(event.body.components.map(async (component) => {
+        await updateComponentStatus(component)
+      }))
+    }
+
+    const incidentWithIncidentUpdate = Object.assign(incidentUpdate.objectify(), incident.objectify())
+    await new SNS().notifyIncident(incidentWithIncidentUpdate)
+
     callback(null, {
-      incident: obj,
-      components: comps
+      incident: incidentWithIncidentUpdate,
+      components: event.body.components
     })
   } catch (error) {
     console.log(error.message)

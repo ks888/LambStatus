@@ -1,6 +1,16 @@
 import assert from 'assert'
+import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
-import APIGateway from 'aws/apiGateway'
+import APIGateway, { APIKey } from 'aws/apiGateway'
+import { NotFoundError } from 'utils/errors'
+
+// NotFoundException class is the mock of the exception the API Gateway SDK throws
+class NotFoundException {
+  constructor (message) {
+    this.name = 'NotFoundException'
+    this.message = message
+  }
+}
 
 describe('APIGateway', () => {
   afterEach(() => {
@@ -41,9 +51,9 @@ describe('APIGateway', () => {
     })
   })
 
-  context('getApiKeys', () => {
-    it('should returns the list of api keys', async () => {
-      const expect = ['token']
+  context('queryEnabledApiKey', () => {
+    it('should returns the list of enabled api keys', async () => {
+      const expect = [{id: '1', enabled: true}, {id: '2', enabled: false}]
       AWS.mock('APIGateway', 'getApiKeys', (params, callback) => {
         callback(null, {items: expect})
       })
@@ -51,13 +61,15 @@ describe('APIGateway', () => {
 
       let err, actual
       try {
-        actual = await apiGateway.getApiKeys('name')
+        actual = await apiGateway.queryEnabledApiKey('name')
       } catch (error) {
         err = error
       }
 
       assert(err === undefined)
-      assert.deepEqual(actual, expect)
+      assert(actual.length === 1)
+      assert(actual[0] instanceof APIKey)
+      assert(actual[0].id === expect[0].id)
     })
 
     it('should throws the error if the API call failed', async () => {
@@ -68,7 +80,7 @@ describe('APIGateway', () => {
 
       let err
       try {
-        await apiGateway.getApiKeys()
+        await apiGateway.queryEnabledApiKey()
       } catch (error) {
         err = error
       }
@@ -93,7 +105,24 @@ describe('APIGateway', () => {
       }
 
       assert(err === undefined)
+      assert(actual instanceof APIKey)
       assert(actual.id, id)
+    })
+
+    it('should throws the NotFoundError if the api key is not found', async () => {
+      AWS.mock('APIGateway', 'getApiKey', (params, callback) => {
+        callback(new NotFoundException())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.getApiKey('id')
+      } catch (error) {
+        err = error
+      }
+
+      assert(err.name === NotFoundError.name)
     })
 
     it('should throws the error if the API call failed', async () => {
@@ -104,7 +133,7 @@ describe('APIGateway', () => {
 
       let err
       try {
-        await apiGateway.getApiKey()
+        await apiGateway.getApiKey('id')
       } catch (error) {
         err = error
       }
@@ -113,24 +142,37 @@ describe('APIGateway', () => {
     })
   })
 
+  context('createApiKeyWithUsagePlan', () => {
+    it('should call createApiKey and createUsagePlanKey', async () => {
+      const apiGateway = new APIGateway('ap-northeast-1')
+      const createApiKeyStub = sinon.stub(apiGateway, 'createApiKey').returns({id: 'id'})
+      apiGateway.createUsagePlanKey = sinon.spy()
+
+      await apiGateway.createApiKeyWithUsagePlan('name', 'id')
+
+      assert(createApiKeyStub.calledOnce)
+      assert(apiGateway.createUsagePlanKey.calledOnce)
+    })
+  })
+
   context('createApiKey', () => {
     it('should create the new key', async () => {
-      const name = 'key name'
+      const id = 'id'
       AWS.mock('APIGateway', 'createApiKey', (params, callback) => {
-        callback(null, {name: params.name, enabled: params.enabled})
+        callback(null, {id})
       })
       const apiGateway = new APIGateway('ap-northeast-1')
 
       let err, actual
       try {
-        actual = await apiGateway.createApiKey(name)
+        actual = await apiGateway.createApiKey('name')
       } catch (error) {
         err = error
       }
 
       assert(err === undefined)
-      assert.deepEqual(actual.name, name)
-      assert(actual.enabled)
+      assert(actual.id === id)
+      assert(actual instanceof APIKey)
     })
 
     it('should throws the error if the API call failed', async () => {
@@ -141,7 +183,43 @@ describe('APIGateway', () => {
 
       let err
       try {
-        await apiGateway.createApiKey()
+        await apiGateway.createApiKey('')
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
+
+  context('createUsagePlanKey', () => {
+    it('should create the new usage plan key', async () => {
+      const id = 'id'
+      AWS.mock('APIGateway', 'createUsagePlanKey', (params, callback) => {
+        callback(null, {id})
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err, actual
+      try {
+        actual = await apiGateway.createUsagePlanKey(id, '')
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual.id === id)
+    })
+
+    it('should throws the error if the API call failed', async () => {
+      AWS.mock('APIGateway', 'createUsagePlanKey', (params, callback) => {
+        callback(new Error())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.createUsagePlanKey('', '')
       } catch (error) {
         err = error
       }
@@ -188,6 +266,22 @@ describe('APIGateway', () => {
       }
 
       assert(err !== undefined)
+    })
+
+    it('should throws the NotFound error if key not found', async () => {
+      AWS.mock('APIGateway', 'updateApiKey', (params, callback) => {
+        callback(new NotFoundException())
+      })
+      const apiGateway = new APIGateway('ap-northeast-1')
+
+      let err
+      try {
+        await apiGateway.disableApiKey('')
+      } catch (error) {
+        err = error
+      }
+
+      assert(err.name === NotFoundError.name)
     })
   })
 

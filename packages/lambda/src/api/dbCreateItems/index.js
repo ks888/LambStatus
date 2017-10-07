@@ -1,6 +1,8 @@
 import response from 'cfn-response'
+import { SettingsProxy } from 'api/utils'
+import APIGateway from 'aws/apiGateway'
 import SNS from 'aws/sns'
-import { Settings } from 'model/settings'
+import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
@@ -16,7 +18,7 @@ export async function handle (event, context, callback) {
     UsagePlanID: usagePlanID
   } = event.ResourceProperties
 
-  const settings = new Settings()
+  const settings = new SettingsProxy()
   try {
     if (statusPageURL) {
       await settings.setStatusPageURL(statusPageURL)
@@ -37,7 +39,7 @@ export async function handle (event, context, callback) {
       await settings.setCognitoPoolID(cognitoPoolID)
     }
 
-    await settings.createApiKey(usagePlanID)
+    await new APIGateway().createApiKeyWithUsagePlan(stackName, usagePlanID)
 
     response.send(event, context, response.SUCCESS)
   } catch (error) {

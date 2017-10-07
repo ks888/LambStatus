@@ -1,29 +1,31 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/getPublicMetrics'
-import { Metrics, Metric } from 'model/metrics'
+import MetricsStore from 'db/metrics'
+import { Metric } from 'model/metrics'
+import { metricStatusVisible, metricStatusHidden } from 'utils/const'
 
 describe('getPublicMetrics', () => {
   afterEach(() => {
-    Metrics.prototype.listPublic.restore()
+    MetricsStore.prototype.query.restore()
   })
 
   it('should return a list of metrics', async () => {
     const metrics = [
-      new Metric({metricID: '2', type: 'Mock', order: 2}),
-      new Metric({metricID: '1', type: 'Mock', order: 1})
+      new Metric({metricID: '2', type: 'Mock', status: metricStatusVisible, order: 2}),
+      new Metric({metricID: '1', type: 'Mock', status: metricStatusHidden, order: 1})
     ]
-    sinon.stub(Metrics.prototype, 'listPublic').returns(metrics.slice(0))
+    sinon.stub(MetricsStore.prototype, 'query').returns(metrics.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
-      assert(result[0].metricID === metrics[1].metricID)
-      assert(result[1].metricID === metrics[0].metricID)
+      assert(result.length === 1)
+      assert(result[0].metricID === metrics[0].metricID)
     })
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Metrics.prototype, 'listPublic').throws()
+    sinon.stub(MetricsStore.prototype, 'query').throws()
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))
     })

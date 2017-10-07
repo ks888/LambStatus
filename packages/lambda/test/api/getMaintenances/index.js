@@ -1,27 +1,27 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/getMaintenances'
-import { Maintenances, Maintenance } from 'model/maintenances'
+import MaintenancesStore from 'db/maintenances'
+import { Maintenance } from 'model/maintenances'
 
 describe('getMaintenances', () => {
   afterEach(() => {
-    Maintenances.prototype.all.restore()
+    MaintenancesStore.prototype.query.restore()
   })
 
   it('should return a list of maintenances', async () => {
-    const maintenances = [
-      new Maintenance('1', undefined, undefined, undefined, undefined, undefined, [], '1')
-    ]
-    sinon.stub(Maintenances.prototype, 'all').returns(maintenances.slice(0))
+    const maintenances = [new Maintenance({maintenanceID: '1'})]
+    sinon.stub(MaintenancesStore.prototype, 'query').returns(maintenances.slice(0))
 
     return await handle({}, null, (error, result) => {
       assert(error === null)
-      assert.deepEqual(result, [maintenances[0].objectify()])
+      assert(result.length === 1)
+      assert(result[0].maintenanceID === '1')
     })
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Maintenances.prototype, 'all').throws()
+    sinon.stub(MaintenancesStore.prototype, 'query').throws()
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))
     })

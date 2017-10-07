@@ -1,11 +1,9 @@
-import { Incidents } from 'model/incidents'
+import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
   try {
-    const incidents = new Incidents()
-    const incident = await incidents.lookup(event.params.incidentid)
-    const incidentUpdates = await incident.getIncidentUpdates()
-    callback(null, incidentUpdates)
+    const incidentUpdates = await new IncidentUpdatesStore().query(event.params.incidentid)
+    callback(null, incidentUpdates.map(incidentUpdate => incidentUpdate.objectify()))
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

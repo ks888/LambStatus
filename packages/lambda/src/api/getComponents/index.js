@@ -1,8 +1,8 @@
-import { Components } from 'model/components'
+import ComponentsStore from 'db/components'
 
 export async function handle (event, context, callback) {
   try {
-    let comps = await new Components().all()
+    let comps = await new ComponentsStore().query()
     comps = comps.sort((a, b) => a.order - b.order)
     callback(null, comps.map(comp => comp.objectify()))
   } catch (error) {

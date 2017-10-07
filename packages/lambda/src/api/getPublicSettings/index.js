@@ -1,8 +1,8 @@
-import { Settings } from 'model/settings'
+import { SettingsProxy } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
-    const settings = new Settings()
+    const settings = new SettingsProxy()
     const serviceName = await settings.getServiceName()
     const statusPageURL = await settings.getStatusPageURL()
     callback(null, {serviceName, statusPageURL})

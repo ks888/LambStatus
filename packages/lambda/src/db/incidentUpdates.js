@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { IncidentUpdate } from 'model/incidents'
 import { IncidentUpdateTable } from 'utils/const'
 import generateID from 'utils/generateID'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import { buildUpdateExpression } from './utils'
 
 export default class IncidentUpdatesStore {
   constructor () {
@@ -10,7 +11,7 @@ export default class IncidentUpdatesStore {
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  getByIncidentID (incidentID) {
+  query (incidentID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: IncidentUpdateTable,
@@ -25,20 +26,21 @@ export default class IncidentUpdatesStore {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        queryResult.Items.forEach(item => {
-          fillInsufficientProps({message: ''}, item)
-        })
-
-        resolve(queryResult.Items)
+        resolve(queryResult.Items.map(item => new IncidentUpdate(item)))
       })
     })
   }
 
-  update ({incidentID, status, message, updatedAt}) {
+  create (incidentUpdate) {
+    incidentUpdate.setIncidentUpdateID(generateID())
+    return this.update(incidentUpdate)
+  }
+
+  update (incidentUpdate) {
+    const {incidentID, incidentUpdateID, incidentStatus, message, updatedAt} = incidentUpdate
     return new Promise((resolve, reject) => {
-      let incidentUpdateID = generateID()
       const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-        incidentStatus: status, message, updatedAt
+        incidentStatus, message, updatedAt
       })
       const params = {
         Key: {
@@ -55,8 +57,7 @@ export default class IncidentUpdatesStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({message: ''}, data.Attributes)
-        resolve(data)
+        resolve(new IncidentUpdate(data.Attributes))
       })
     })
   }

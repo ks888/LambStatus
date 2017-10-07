@@ -1,21 +1,34 @@
-import { Maintenance } from 'model/maintenances'
 import SNS from 'aws/sns'
+import { Maintenance, MaintenanceUpdate } from 'model/maintenances'
+import MaintenancesStore from 'db/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
+import { updateComponentStatus } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
-    const params = Object.assign({}, {maintenanceID: event.params.maintenanceid}, event.body)
+    const params = {maintenanceID: event.params.maintenanceid, ...event.body}
     const maintenance = new Maintenance(params)
-    await maintenance.validate()
-    await maintenance.save()
+    maintenance.validate()
+    const maintenancesStore = new MaintenancesStore()
+    await maintenancesStore.update(maintenance)
 
-    await new SNS().notifyIncident(maintenance)
+    let maintenanceUpdate = new MaintenanceUpdate({maintenanceStatus: event.body.status, ...params})
+    maintenanceUpdate.validateExceptUpdateID()
+    const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
+    await maintenanceUpdatesStore.create(maintenanceUpdate)
 
-    const obj = maintenance.objectify()
-    const comps = obj.components
-    delete obj.components
+    if (event.body.components !== undefined) {
+      await Promise.all(event.body.components.map(async (component) => {
+        await updateComponentStatus(component)
+      }))
+    }
+
+    const maintenanceWithMaintenanceUpdate = Object.assign(maintenanceUpdate.objectify(), maintenance.objectify())
+    await new SNS().notifyIncident(maintenanceWithMaintenanceUpdate)
+
     callback(null, {
-      maintenance: obj,
-      components: comps
+      maintenance: maintenanceWithMaintenanceUpdate,
+      components: event.body.components
     })
   } catch (error) {
     console.log(error.message)

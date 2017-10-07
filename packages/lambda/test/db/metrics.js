@@ -1,19 +1,22 @@
 import assert from 'assert'
+import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
 import MetricsStore from 'db/metrics'
+import { Metric } from 'model/metrics'
 
 describe('MetricsStore', () => {
-  describe('getAll', () => {
+  describe('query', () => {
     afterEach(() => {
       AWS.restore('DynamoDB.DocumentClient')
     })
 
     it('should return a list of metrics', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-        callback(null, {Items: [{metricID: '1', props: '{"key": "value"}'}]})
+        callback(null, {Items: [{metricID: '1', type: 'Mock', props: '{"key": "value"}'}]})
       })
-      const metrics = await new MetricsStore().getAll()
+      const metrics = await new MetricsStore().query()
       assert(metrics.length === 1)
+      assert(metrics[0] instanceof Metric)
       assert(metrics[0].metricID === '1')
       assert(metrics[0].unit === '')
       assert(metrics[0].description === '')
@@ -28,7 +31,7 @@ describe('MetricsStore', () => {
 
       let error
       try {
-        await new MetricsStore().getAll()
+        await new MetricsStore().query()
       } catch (e) {
         error = e
       }
@@ -36,16 +39,17 @@ describe('MetricsStore', () => {
     })
   })
 
-  describe('getByID', () => {
+  describe('get', () => {
     afterEach(() => {
       AWS.restore('DynamoDB.DocumentClient')
     })
 
     it('should return a metric', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
-        callback(null, {Item: {metricID: '1', props: '{"key": "value"}'}})
+        callback(null, {Item: {metricID: '1', type: 'Mock', props: '{"key": "value"}'}})
       })
-      const metric = await new MetricsStore().getByID('1')
+      const metric = await new MetricsStore().get('1')
+      assert(metric instanceof Metric)
       assert(metric.unit === '')
       assert(metric.description === '')
       assert(metric.decimalPlaces === 0)
@@ -59,7 +63,7 @@ describe('MetricsStore', () => {
 
       let error
       try {
-        await new MetricsStore().getByID()
+        await new MetricsStore().get()
       } catch (e) {
         error = e
       }
@@ -73,11 +77,26 @@ describe('MetricsStore', () => {
 
       let error
       try {
-        await new MetricsStore().getByID()
+        await new MetricsStore().get()
       } catch (e) {
         error = e
       }
       assert(error.message.match(/Error/))
+    })
+  })
+
+  describe('create', () => {
+    afterEach(() => {
+      AWS.restore('DynamoDB.DocumentClient')
+    })
+
+    it('should generate component id', async () => {
+      const store = new MetricsStore()
+      store.update = sinon.spy()
+
+      await store.create(new Metric({type: 'Mock'}))
+      assert(store.update.calledOnce)
+      assert(store.update.firstCall.args[0].metricID.length === 12)
     })
   })
 
@@ -89,7 +108,7 @@ describe('MetricsStore', () => {
     it('should update the metric', async () => {
       const params = {
         metricID: '1',
-        type: 'type',
+        type: 'Mock',
         title: 'title',
         unit: 'unit',
         description: 'description',
@@ -98,6 +117,7 @@ describe('MetricsStore', () => {
         order: 'order',
         props: {key: 'value'}
       }
+      const metric = new Metric(params)
       AWS.mock('DynamoDB.DocumentClient', 'update', (params, callback) => {
         callback(null, {Attributes: {
           metricID: params.Key.metricID,
@@ -111,10 +131,10 @@ describe('MetricsStore', () => {
           props: params.ExpressionAttributeValues[':props']
         }})
       })
-      const metric = await new MetricsStore().update(params)
-      console.log(metric)
-      assert(metric.metricID === params.metricID)
-      assert.deepEqual(metric.props, params.props)
+      const updatedMetric = await new MetricsStore().update(metric)
+      assert(updatedMetric instanceof Metric)
+      assert(updatedMetric.metricID === params.metricID)
+      assert.deepEqual(updatedMetric.props, params.props)
     })
 
     it('should return error on exception thrown', async () => {
@@ -122,10 +142,38 @@ describe('MetricsStore', () => {
         callback('Error')
       })
 
+      const metric = new Metric({metricID: '1', type: 'Mock', props: {key: 'value'}})
       let error
       try {
-        await new MetricsStore().update('1', undefined, undefined, undefined, undefined,
-                                        undefined, undefined, undefined, {key: 'value'})
+        await new MetricsStore().update(metric)
+      } catch (e) {
+        error = e
+      }
+      assert(error.message.match(/Error/))
+    })
+  })
+
+  describe('delete', () => {
+    afterEach(() => {
+      AWS.restore('DynamoDB.DocumentClient')
+    })
+
+    it('should delete the metric', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+        assert(params.Key.metricID === '1')
+        callback(null)
+      })
+      await new MetricsStore().delete('1')
+    })
+
+    it('should return error on exception thrown', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+        callback('Error')
+      })
+
+      let error
+      try {
+        await new MetricsStore().delete('1')
       } catch (e) {
         error = e
       }

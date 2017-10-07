@@ -1,9 +1,11 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { Metric } from 'model/metrics'
 import { MetricsTable } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
 import Mutex from 'utils/mutex'
-import { buildUpdateExpression, fillInsufficientProps } from './utils'
+import generateID from 'utils/generateID'
+import { buildUpdateExpression } from './utils'
 
 export default class MetricsStore {
   constructor () {
@@ -12,7 +14,7 @@ export default class MetricsStore {
     this.mutex = new Mutex()
   }
 
-  getAll () {
+  query () {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
@@ -24,23 +26,23 @@ export default class MetricsStore {
           '#or': 'order'
         }
       }
+      // TODO: use query and do the pagination
       this.awsDynamoDb.scan(params, (err, scanResult) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        let metrics = []
-        scanResult.Items.forEach((metric) => {
-          fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, metric)
-          metric['props'] = JSON.parse(metric['props'])
-          metrics.push(metric)
-        })
 
+        const metrics = scanResult.Items.map(item => {
+          const metric = new Metric(item)
+          metric.props = JSON.parse(metric.props)
+          return metric
+        })
         resolve(metrics)
       })
     })
   }
 
-  getByID (metricID) {
+  get (metricID) {
     return new Promise((resolve, reject) => {
       const params = {
         TableName: MetricsTable,
@@ -55,19 +57,24 @@ export default class MetricsStore {
           return reject(new NotFoundError('no matched item'))
         }
 
-        fillInsufficientProps({unit: '', description: '', decimalPlaces: 0}, data.Item)
-        data.Item['props'] = JSON.parse(data.Item['props'])
-
-        resolve(data.Item)
+        const metric = new Metric(data.Item)
+        metric.props = JSON.parse(metric.props)
+        resolve(metric)
       })
     })
   }
 
-  update ({metricID, type, title, unit, description, decimalPlaces, status, order, props}) {
-    const [updateExp, attrNames, attrValues] = buildUpdateExpression({
-      type, title, unit, description, decimalPlaces, status, order, props: JSON.stringify(props)
-    })
+  create (metric) {
+    metric.setMetricID(generateID())
+    return this.update(metric)
+  }
+
+  update (metric) {
+    const {metricID, type, title, unit, description, decimalPlaces, status, order, props} = metric
     return new Promise((resolve, reject) => {
+      const [updateExp, attrNames, attrValues] = buildUpdateExpression({
+        type, title, unit, description, decimalPlaces, status, order, props: JSON.stringify(props)
+      })
       const params = {
         Key: { metricID },
         UpdateExpression: updateExp,
@@ -80,19 +87,17 @@ export default class MetricsStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        fillInsufficientProps({unit, description}, data.Attributes)
-        data.Attributes['props'] = props  // string -> object
-        resolve(data.Attributes)
+        const updatedMetric = new Metric(data.Attributes)
+        updatedMetric['props'] = props  // string -> object
+        resolve(updatedMetric)
       })
     })
   }
 
-  delete (id) {
+  delete (metricID) {
     return new Promise((resolve, reject) => {
       const params = {
-        Key: {
-          metricID: id
-        },
+        Key: { metricID },
         TableName: MetricsTable,
         ReturnValues: 'NONE'
       }

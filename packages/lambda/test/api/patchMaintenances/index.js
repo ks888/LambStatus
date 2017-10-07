@@ -1,35 +1,57 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/patchMaintenances'
-import { Maintenance } from 'model/maintenances'
 import SNS from 'aws/sns'
+import MaintenancesStore from 'db/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
+import { Maintenance, MaintenanceUpdate } from 'model/maintenances'
+import { maintenanceStatuses } from 'utils/const'
 
 describe('patchMaintenances', () => {
   afterEach(() => {
-    Maintenance.prototype.validate.restore()
-    Maintenance.prototype.save.restore()
+    MaintenancesStore.prototype.update.restore()
+    MaintenanceUpdatesStore.prototype.create.restore()
     SNS.prototype.notifyIncident.restore()
   })
 
+  const createMaintenanceUpdateMock = maintenanceUpdate => {
+    maintenanceUpdate.setMaintenanceUpdateID('1')
+    return maintenanceUpdate
+  }
+
   it('should update the maintenance', async () => {
-    const validateStub = sinon.stub(Maintenance.prototype, 'validate').returns('')
-    const saveStub = sinon.stub(Maintenance.prototype, 'save').returns('')
+    const updateMaintStub = sinon.stub(MaintenancesStore.prototype, 'update').returns()
+    const createMaintUpdateStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'create', createMaintenanceUpdateMock)
     const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    await handle({ params: { maintenanceid: '1' }, body: { name: 'test' } }, null, (error, result) => {
+    const event = {
+      params: { maintenanceid: '1' },
+      body: {
+        name: 'test',
+        status: maintenanceStatuses[0],
+        startAt: 'Jan 1, 2017, 00:00 UTC',
+        endAt: 'Jan 1, 2017, 00:00 UTC'
+      }
+    }
+    await handle(event, null, (error, result) => {
       assert(error === null)
+
       assert(result.maintenance.maintenanceID === '1')
+      assert(result.maintenance.maintenanceUpdateID !== undefined)
       assert(result.maintenance.name === 'test')
-      assert(result.components.length === 0)
     })
-    assert(validateStub.calledOnce)
-    assert(saveStub.calledOnce)
+    assert(updateMaintStub.calledOnce)
+    assert(updateMaintStub.firstCall.args[0] instanceof Maintenance)
+
+    assert(createMaintUpdateStub.calledOnce)
+    assert(createMaintUpdateStub.firstCall.args[0] instanceof MaintenanceUpdate)
+
     assert(snsStub.calledOnce)
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Maintenance.prototype, 'validate').throws()
-    sinon.stub(Maintenance.prototype, 'save').returns()
+    sinon.stub(MaintenancesStore.prototype, 'update').returns()
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'create').returns()
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({ params: { maintenanceid: '1' } }, null, (error, result) => {

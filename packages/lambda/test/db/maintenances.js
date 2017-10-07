@@ -1,19 +1,22 @@
 import assert from 'assert'
+import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
+import { Maintenance } from 'model/maintenances'
 import MaintenancesStore from 'db/maintenances'
 
 describe('MaintenancesStore', () => {
-  describe('getAll', () => {
+  describe('query', () => {
     afterEach(() => {
       AWS.restore('DynamoDB.DocumentClient')
     })
 
-    it('should return a list of maintenances', async () => {
+    it('should query maintenances', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'scan', (params, callback) => {
-        callback(null, {Items: [{maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}]})
+        callback(null, {Items: [{maintenanceID: '1'}]})
       })
-      const maints = await new MaintenancesStore().getAll()
+      const maints = await new MaintenancesStore().query()
       assert(maints.length === 1)
+      assert(maints[0] instanceof Maintenance)
       assert(maints[0].maintenanceID === '1')
     })
 
@@ -24,7 +27,7 @@ describe('MaintenancesStore', () => {
 
       let error
       try {
-        await new MaintenancesStore().getAll()
+        await new MaintenancesStore().query()
       } catch (e) {
         error = e
       }
@@ -32,16 +35,17 @@ describe('MaintenancesStore', () => {
     })
   })
 
-  describe('getByID', () => {
+  describe('get', () => {
     afterEach(() => {
       AWS.restore('DynamoDB.DocumentClient')
     })
 
     it('should return a maintenance', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
-        callback(null, {Item: {maintenanceID: '1', name: '', status: '', startAt: '', endAt: '', updatedAt: ''}})
+        callback(null, {Item: {maintenanceID: '1'}})
       })
-      const maint = await new MaintenancesStore().getByID('1')
+      const maint = await new MaintenancesStore().get('1')
+      assert(maint instanceof Maintenance)
       assert(maint.maintenanceID === '1')
     })
 
@@ -52,7 +56,7 @@ describe('MaintenancesStore', () => {
 
       let error
       try {
-        await new MaintenancesStore().getByID()
+        await new MaintenancesStore().get()
       } catch (e) {
         error = e
       }
@@ -66,11 +70,22 @@ describe('MaintenancesStore', () => {
 
       let error
       try {
-        await new MaintenancesStore().getByID()
+        await new MaintenancesStore().get()
       } catch (e) {
         error = e
       }
       assert(error.name === 'NotFoundError')
+    })
+  })
+
+  describe('create', () => {
+    it('should generate maintenance id', async () => {
+      const store = new MaintenancesStore()
+      store.update = sinon.spy()
+
+      await store.create(new Maintenance({}))
+      assert(store.update.calledOnce)
+      assert(store.update.firstCall.args[0].maintenanceID.length === 12)
     })
   })
 
@@ -95,18 +110,16 @@ describe('MaintenancesStore', () => {
           status: params.ExpressionAttributeValues[':s'],
           startAt: params.ExpressionAttributeValues[':startAt'],
           endAt: params.ExpressionAttributeValues[':endAt'],
-          updatedAt: params.ExpressionAttributeValues[':updatedAt'],
-          updating: params.ExpressionAttributeValues[':updating']
+          updatedAt: params.ExpressionAttributeValues[':updatedAt']
         }})
       })
-      const maint = await new MaintenancesStore().update(params, false)
+      const maint = await new MaintenancesStore().update(new Maintenance(params))
       assert(maint.maintenanceID === maint.maintenanceID)
       assert(maint.name === maint.name)
       assert(maint.status === maint.status)
       assert(maint.startAt === maint.startAt)
       assert(maint.endAt === maint.endAt)
       assert(maint.updatedAt === maint.updatedAt)
-      assert(maint.updating === false)
     })
 
     it('should return error on exception thrown', async () => {
@@ -116,7 +129,7 @@ describe('MaintenancesStore', () => {
 
       let error
       try {
-        await new MaintenancesStore().update('1', '', '', '', '')
+        await new MaintenancesStore().update(new Maintenance({}))
       } catch (e) {
         error = e
       }

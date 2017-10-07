@@ -1,16 +1,17 @@
-import { Metrics } from 'model/metrics'
+import { MetricsStoreProxy } from 'api/utils'
+import MetricsStore from 'db/metrics'
 import { MonitoringService, monitoringServiceManager } from 'model/monitoringService'
 
 const serviceName = 'Self'
 
 export default class Self extends MonitoringService {
   async listMetrics (nextToken = undefined, filters = {}) {
-    const metrics = await new Metrics().list()
+    const metrics = await new MetricsStore().query()
     return metrics.filter(metric => metric.type === serviceName).map(metric => metric.objectify())
   }
 
   async getMetricData (metricID, props, startTime, endTime) {
-    const metric = await new Metrics().lookup(metricID)
+    const metric = await new MetricsStoreProxy().get(metricID)
 
     const startTimeStr = startTime.toISOString()
     const endTimeStr = endTime.toISOString()

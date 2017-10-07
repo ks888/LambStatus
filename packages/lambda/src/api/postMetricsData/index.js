@@ -1,5 +1,5 @@
-import { Metrics } from 'model/metrics'
-import 'model/monitoringServices'  // load monitoring services
+import { MetricsStoreProxy } from 'api/utils'
+import 'plugins/monitoringServices'  // load monitoring services
 import { ValidationError } from 'utils/errors'
 
 const maxDatapoints = 3000
@@ -12,17 +12,17 @@ const insertDatapoints = async (dataByMetric, resp) => {
     return errors
   }
 
-  const metrics = new Metrics()
   const ids = Object.keys(dataByMetric)
   for (let i = 0; i < ids.length; i++) {
     const metricID = ids[i]
     const data = dataByMetric[metricID]
     try {
-      const metric = await metrics.lookup(metricID)
+      const store = new MetricsStoreProxy()
+      const metric = await store.get(metricID)
       if (!metric.monitoringService.shouldAdminPostDatapoints()) {
         throw new ValidationError(`${metric.type} type metrics does not allow a user to submit datapoints`)
       }
-      resp[metricID] = await metric.insertDatapointsWithLock(data)
+      resp[metricID] = await metric.insertDatapoints(data)
     } catch (error) {
       console.log(error.message)
       console.log(error.stack)

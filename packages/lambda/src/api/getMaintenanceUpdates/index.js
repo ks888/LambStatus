@@ -1,11 +1,9 @@
-import { Maintenances } from 'model/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 
 export async function handle (event, context, callback) {
   try {
-    const maintenances = new Maintenances()
-    const maintenance = await maintenances.lookup(event.params.maintenanceid)
-    const maintenanceUpdates = await maintenance.getMaintenanceUpdates()
-    callback(null, maintenanceUpdates)
+    const maintenanceUpdates = await new MaintenanceUpdatesStore().query(event.params.maintenanceid)
+    callback(null, maintenanceUpdates.map(maintenanceUpdate => maintenanceUpdate.objectify()))
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

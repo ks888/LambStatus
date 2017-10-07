@@ -1,37 +1,52 @@
 import assert from 'assert'
 import sinon from 'sinon'
-import { handle } from 'api/deleteMaintenances'
-import { Maintenances, Maintenance } from 'model/maintenances'
 import SNS from 'aws/sns'
+import { handle } from 'api/deleteMaintenances'
+import MaintenancesStore from 'db/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
+import { Maintenance, MaintenanceUpdate } from 'model/maintenances'
 
 describe('deleteMaintenances', () => {
   afterEach(() => {
-    Maintenance.prototype.delete.restore()
-    Maintenances.prototype.lookup.restore()
+    MaintenancesStore.prototype.get.restore()
+    MaintenancesStore.prototype.delete.restore()
+    MaintenanceUpdatesStore.prototype.query.restore()
+    MaintenanceUpdatesStore.prototype.delete.restore()
     SNS.prototype.notifyIncident.restore()
   })
 
   it('should delete the maintenance', async () => {
-    const maint = new Maintenance('1', undefined, undefined, undefined, undefined, undefined, [], '1')
-    const lookupStub = sinon.stub(Maintenances.prototype, 'lookup').returns(maint)
-    const deleteStub = sinon.stub(Maintenance.prototype, 'delete').returns('')
+    const maintenance = new Maintenance({maintenanceID: '1'})
+    sinon.stub(MaintenancesStore.prototype, 'get').returns(maintenance)
+    const deleteMaintenanceStub = sinon.stub(MaintenancesStore.prototype, 'delete').returns()
+
+    const maintenanceUpdates = [new MaintenanceUpdate({maintenanceID: '1', maintenanceUpdateID: '1'})]
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'query').returns(maintenanceUpdates)
+    const deleteMaintenanceUpdateStub = sinon.stub(MaintenanceUpdatesStore.prototype, 'delete').returns()
+
     const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
+    let err
     await handle({ params: { maintenanceid: '1' } }, null, (error) => {
-      assert(error === null)
+      err = error
     })
-    assert(lookupStub.calledOnce)
-    assert(deleteStub.calledOnce)
+    assert(err === undefined)
+    assert(deleteMaintenanceStub.calledOnce)
+    assert(deleteMaintenanceUpdateStub.calledOnce)
     assert(snsStub.calledOnce)
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Maintenances.prototype, 'lookup').throws()
-    sinon.stub(Maintenance.prototype, 'delete').returns()
+    sinon.stub(MaintenancesStore.prototype, 'get').throws()
+    sinon.stub(MaintenancesStore.prototype, 'delete').returns()
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'query').returns()
+    sinon.stub(MaintenanceUpdatesStore.prototype, 'delete').returns()
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
-    return await handle({ components: [] }, null, (error, result) => {
-      assert(error.match(/Error/))
+    let err
+    await handle({params: {maintenanceid: '1'}}, null, (error, result) => {
+      err = error
     })
+    assert(err.match(/Error/))
   })
 })

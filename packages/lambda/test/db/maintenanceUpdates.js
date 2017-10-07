@@ -1,10 +1,12 @@
 import assert from 'assert'
+import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
+import { MaintenanceUpdate } from 'model/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import { MaintenanceUpdateTable } from 'utils/const'
 
 describe('MaintenanceUpdatesStore', () => {
-  describe('getByMaintenanceID', () => {
+  describe('query', () => {
     afterEach(() => {
       AWS.restore('DynamoDB.DocumentClient')
     })
@@ -12,11 +14,12 @@ describe('MaintenanceUpdatesStore', () => {
     it('should return a maintenance update', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'query', (params, callback) => {
         callback(null, {Items: [{
-          maintenanceID: '1', maintenanceUpdateID: '1', maintenanceStatus: '', updatedAt: ''
+          maintenanceID: '1', maintenanceUpdateID: '1'
         }]})
       })
-      const maints = await new MaintenanceUpdatesStore().getByMaintenanceID('1')
+      const maints = await new MaintenanceUpdatesStore().query('1')
       assert(maints.length === 1)
+      assert(maints[0] instanceof MaintenanceUpdate)
       assert(maints[0].maintenanceID === '1')
       assert(maints[0].maintenanceUpdateID === '1')
       assert(maints[0].message === '')
@@ -29,11 +32,22 @@ describe('MaintenanceUpdatesStore', () => {
 
       let error
       try {
-        await new MaintenanceUpdatesStore().getByMaintenanceID()
+        await new MaintenanceUpdatesStore().query()
       } catch (e) {
         error = e
       }
       assert(error.message.match(/Error/))
+    })
+  })
+
+  describe('create', () => {
+    it('should generate maintenance update id', async () => {
+      const store = new MaintenanceUpdatesStore()
+      store.update = sinon.spy()
+
+      await store.create(new MaintenanceUpdate({}))
+      assert(store.update.calledOnce)
+      assert(store.update.firstCall.args[0].maintenanceUpdateID.length === 12)
     })
   })
 
@@ -45,7 +59,8 @@ describe('MaintenanceUpdatesStore', () => {
     it('should update the maintenance update', async () => {
       const params = {
         maintenanceID: '1',
-        status: 'status',
+        maintenanceUpdateID: '1',
+        maintenanceStatus: 'status',
         message: 'message',
         updatedAt: 'updatedAt'
       }
@@ -53,16 +68,17 @@ describe('MaintenanceUpdatesStore', () => {
         callback(null, {Attributes: {
           maintenanceID: params.Key.maintenanceID,
           maintenanceUpdateID: params.Key.maintenanceUpdateID,
-          maintenanceStatus: params.ExpressionAttributeValues[':maintenanceStatus'],
+          status: params.ExpressionAttributeValues[':maintenanceStatus'],
           message: params.ExpressionAttributeValues[':message'],
           updatedAt: params.ExpressionAttributeValues[':updatedAt']
         }})
       })
 
-      const maint = await new MaintenanceUpdatesStore().update(params)
+      const maint = await new MaintenanceUpdatesStore().update(new MaintenanceUpdate(params))
+      assert(maint instanceof MaintenanceUpdate)
       assert(maint.maintenanceID === params.maintenanceID)
-      assert(maint.maintenanceUpdateID.length === 12)
-      assert(maint.maintenanceStatus === params.status)
+      assert(maint.maintenanceUpdateID === params.maintenanceUpdateID)
+      assert(maint.status === params.status)
       assert(maint.message === params.message)
       assert(maint.updatedAt === params.updatedAt)
     })
@@ -74,7 +90,7 @@ describe('MaintenanceUpdatesStore', () => {
 
       let error
       try {
-        await new MaintenanceUpdatesStore().update('1', '', '', '')
+        await new MaintenanceUpdatesStore().update(new MaintenanceUpdate({}))
       } catch (e) {
         error = e
       }
