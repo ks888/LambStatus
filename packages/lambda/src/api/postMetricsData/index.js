@@ -22,7 +22,7 @@ const insertDatapoints = async (dataByMetric, resp) => {
       if (!metric.monitoringService.shouldAdminPostDatapoints()) {
         throw new ValidationError(`${metric.type} type metrics does not allow a user to submit datapoints`)
       }
-      resp[metricID] = await metric.insertDatapointsWithLock(data)
+      resp[metricID] = await metric.insertDatapoints(data)
     } catch (error) {
       console.log(error.message)
       console.log(error.stack)

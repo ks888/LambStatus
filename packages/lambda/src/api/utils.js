@@ -1,9 +1,14 @@
+import CloudFormation from 'aws/cloudFormation'
 import Cognito from 'aws/cognito'
+import S3 from 'aws/s3'
 import SNS from 'aws/sns'
+import ComponentsStore from 'db/components'
+import MetricsStore from 'db/metrics'
+import SettingsStore from 'db/settings'
 import { Component } from 'model/components'
 import { Settings } from 'model/settings'
-import ComponentsStore from 'db/components'
-import SettingsStore from 'db/settings'
+import { Metric } from 'model/metrics'
+import { region, stackName } from 'utils/const'
 
 export const updateComponentStatus = async (componentObj) => {
   const component = new Component(componentObj)
@@ -106,5 +111,69 @@ export class SettingsProxy {
     userPool.serviceName = await this.getServiceName()
     userPool.adminPageURL = await this.getAdminPageURL()
     await cognito.updateUserPool(userPool)
+  }
+}
+
+export class MetricProxy extends Metric {
+  constructor (params) {
+    super(params)
+    this.s3 = new S3()
+    this.store = new MetricsStore()
+    this.cloudFormation = new CloudFormation(stackName)
+  }
+
+  async getBucketName () {
+    if (this.bucketName !== undefined) {
+      return this.bucketName
+    }
+    this.bucketName = await new CloudFormation(stackName).getStatusPageBucketName()
+    return this.bucketName
+  }
+
+  buildObjectName (metricID, date) {
+    return `metrics/${metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
+  }
+
+  async getDatapoints (date) {
+    const datapoints = await super.getDatapoints(date)
+    if (datapoints !== undefined) {
+      return datapoints
+    }
+
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    let storedDatapoints
+    try {
+      const obj = await this.s3.getObject(region, bucketName, objectName)
+      storedDatapoints = JSON.parse(obj.Body.toString())
+    } catch (error) {
+      // There will be no existing object at first.
+      storedDatapoints = undefined
+    }
+
+    await super.setDatapoints(date, storedDatapoints)
+    return storedDatapoints
+  }
+
+  async setDatapoints (date, datapoints) {
+    await super.setDatapoints(date, datapoints)
+
+    const objectName = this.buildObjectName(this.metricID, date)
+    const bucketName = await this.getBucketName()
+    await this.s3.putObject(region, bucketName, objectName, JSON.stringify(datapoints))
+  }
+
+  async insertDatapoints (datapoints) {
+    const store = new MetricsStore()
+    await store.lock(this.metricID)
+    try {
+      await super.insertDatapoints(datapoints)
+    } finally {
+      try {
+        await store.unlock(this.metricID)
+      } catch (err) {
+        console.error(`failed to unlock mutex (metricID: ${this.metricID})`, err.toString())
+      }
+    }
   }
 }

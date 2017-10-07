@@ -1,9 +1,6 @@
-import CloudFormation from 'aws/cloudFormation'
-import S3 from 'aws/s3'
-import MetricsStore from 'db/metrics'
 import { monitoringServiceManager } from 'model/monitoringService'
 import { ValidationError } from 'utils/errors'
-import { metricStatuses, region, stackName } from 'utils/const'
+import { metricStatuses } from 'utils/const'
 import { getDateObject } from 'utils/datetime'
 
 export class Metric {
@@ -19,6 +16,7 @@ export class Metric {
     this.decimalPlaces = decimalPlaces
     this.order = order
     this.props = props
+    this.datapoints = {}
   }
 
   validate () {
@@ -62,29 +60,18 @@ export class Metric {
     this.metricID = metricID
   }
 
-  async getBucketName () {
-    if (this.bucketName !== undefined) {
-      return this.bucketName
-    }
-    this.bucketName = await new CloudFormation(stackName).getStatusPageBucketName()
-    return this.bucketName
-  }
-
-  buildObjectName (metricID, date) {
-    return `metrics/${metricID}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}.json`
+  buildDatapointsKey (date) {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
   }
 
   async getDatapoints (date) {
-    const objectName = this.buildObjectName(this.metricID, date)
-    const bucketName = await this.getBucketName()
-    try {
-      const s3 = new S3()
-      const obj = await s3.getObject(region, bucketName, objectName)
-      return JSON.parse(obj.Body.toString())
-    } catch (error) {
-      // There will be no existing object at first.
-      return null
-    }
+    console.log('get', date)
+    return this.datapoints[this.buildDatapointsKey(date)]
+  }
+
+  async setDatapoints (date, datapoints) {
+    console.log('set', date, datapoints)
+    this.datapoints[this.buildDatapointsKey(date)] = datapoints
   }
 
   normalizeDatapoints (datapoints) {
@@ -108,10 +95,8 @@ export class Metric {
   }
 
   async insertNormalizedDatapointsAtDate (datapoints, date) {
-    const objectName = this.buildObjectName(this.metricID, date)
-    const bucketName = await this.getBucketName()
     let existingDatapoints = await this.getDatapoints(date)
-    if (existingDatapoints === null) {
+    if (existingDatapoints === undefined) {
       existingDatapoints = []
     }
 
@@ -137,6 +122,8 @@ export class Metric {
       }
     }
 
+    console.log('insertDatapoints', datapoints, mergedDatapoints, insertedDatapoints, existingDatapoints, date)
+
     if (i < existingDatapoints.length) {
       mergedDatapoints = mergedDatapoints.concat(existingDatapoints.slice(i))
     } else if (j < datapoints.length) {
@@ -145,23 +132,8 @@ export class Metric {
       insertedDatapoints = insertedDatapoints.concat(rest)
     }
 
-    const s3 = new S3()
-    await s3.putObject(region, bucketName, objectName, JSON.stringify(mergedDatapoints))
+    await this.setDatapoints(date, mergedDatapoints)
     return insertedDatapoints
-  }
-
-  async insertDatapointsWithLock (datapoints) {
-    const store = new MetricsStore()
-    await store.lock(this.metricID)
-    try {
-      await this.insertDatapoints(datapoints)
-    } finally {
-      try {
-        await store.unlock(this.metricID)
-      } catch (err) {
-        console.error(`failed to unlock mutex (metricID: ${this.metricID})`, err.toString())
-      }
-    }
   }
 
   async insertDatapoints (datapoints) {
@@ -225,7 +197,6 @@ export class Metric {
       console.log(`collected ${datapoints.length} datapoints (metricID: ${this.metricID}, i: ${i})`)
 
       if (datapoints.length > 0 || !existingDatapoints) {
-        datapoints = (existingDatapoints === null ? [] : existingDatapoints).concat(datapoints)
         datapoints = this.normalizeDatapoints(datapoints)
         await this.insertNormalizedDatapointsAtDate(datapoints, begin)
       }
@@ -244,12 +215,5 @@ export class Metric {
       order: this.order,
       props: this.props
     }
-  }
-}
-
-export class Metrics {
-  async listExternal (type, cursor, filters) {
-    const monitoringService = monitoringServiceManager.create(type)
-    return await monitoringService.listMetrics(cursor, filters)
   }
 }

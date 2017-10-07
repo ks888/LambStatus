@@ -1,9 +1,11 @@
-import { Metrics } from 'model/metrics'
 import 'model/monitoringServices'  // load monitoring services
+import { monitoringServiceManager } from 'model/monitoringService'
 
 export async function handle (event, context, callback) {
   try {
-    const externalMetrics = await new Metrics().listExternal(event.type, event.cursor, JSON.parse(event.filters))
+    const monitoringService = monitoringServiceManager.create(event.type)
+    const externalMetrics = await monitoringService.listMetrics(event.cursor, JSON.parse(event.filters))
+
     callback(null, externalMetrics)
   } catch (error) {
     console.log(error.message)
