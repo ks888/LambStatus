@@ -1,16 +1,19 @@
 import assert from 'assert'
 import sinon from 'sinon'
+import APIGateway, { APIKey } from 'aws/apiGateway'
+import CloudFormation from 'aws/cloudFormation'
 import { handle } from 'api/postApiKeys'
-import { Settings, ApiKey } from 'model/settings'
 
 describe('postApiKeys', () => {
   afterEach(() => {
-    Settings.prototype.createApiKey.restore()
+    APIGateway.prototype.createApiKeyWithUsagePlan.restore()
+    CloudFormation.prototype.getUsagePlanID.restore()
   })
 
   it('should create the api key', async () => {
-    const apiKey = new ApiKey({id: '1', value: 'a'})
-    sinon.stub(Settings.prototype, 'createApiKey').returns(apiKey)
+    const apiKey = new APIKey({id: '1', value: 'a'})
+    sinon.stub(APIGateway.prototype, 'createApiKeyWithUsagePlan').returns(apiKey)
+    sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns('')
 
     await handle({}, null, (error, result) => {
       assert(error === null)
@@ -20,7 +23,8 @@ describe('postApiKeys', () => {
   })
 
   it('should return error on exception thrown', async () => {
-    sinon.stub(Settings.prototype, 'createApiKey').throws()
+    sinon.stub(APIGateway.prototype, 'createApiKeyWithUsagePlan').throws()
+    sinon.stub(CloudFormation.prototype, 'getUsagePlanID').returns('')
 
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))

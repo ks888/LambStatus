@@ -1,7 +1,7 @@
 import Feed from 'feed'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import { Settings } from 'model/settings'
+import { SettingsProxy } from 'api/utils'
 import { Maintenances } from 'model/maintenances'
 import S3 from 'aws/s3'
 import CloudFormation from 'aws/cloudFormation'
@@ -10,7 +10,7 @@ import { getDateTimeFormat } from 'utils/datetime'
 
 export async function handle (event, context, callback) {
   try {
-    const settings = new Settings()
+    const settings = new SettingsProxy()
     const statusPageURL = await settings.getStatusPageURL()
     const serviceName = await settings.getServiceName()
     const feed = new Feed({

@@ -39,9 +39,9 @@ export default class APIGateway {
     })
   }
 
-  queryEnabledApiKey (queryName) {
+  queryEnabledApiKey (nameQuery) {
     const params = {
-      nameQuery: queryName,
+      nameQuery,
       includeValues: true
     }
     return new Promise((resolve, reject) => {

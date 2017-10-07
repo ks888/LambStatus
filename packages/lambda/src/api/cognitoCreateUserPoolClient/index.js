@@ -10,14 +10,13 @@ export async function handle (event, context, callback) {
   }
 
   const {
-    Region: region,
     UserPoolID: userPoolID,
     ClientName: clientName
   } = event.ResourceProperties
 
   try {
-    const userPoolClient = await new Cognito().createUserPoolClient(region, userPoolID, clientName)
-    const clientID = userPoolClient.UserPoolClient.ClientId
+    const userPoolClient = await new Cognito().createUserPoolClient(userPoolID, clientName)
+    const clientID = userPoolClient.ClientId
     response.send(event, context, response.SUCCESS, {UserPoolClientID: clientID}, clientID)
   } catch (error) {
     console.log(error.message)

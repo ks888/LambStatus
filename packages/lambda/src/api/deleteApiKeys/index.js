@@ -1,10 +1,8 @@
-import { Settings } from 'model/settings'
+import APIGateway from 'aws/apiGateway'
 
 export async function handle (event, context, callback) {
   try {
-    const settings = new Settings()
-    const apiKey = await settings.lookupApiKey(event.params.apikeyid)
-    await apiKey.delete()
+    await new APIGateway().disableAndDeleteApiKey(event.params.apikeyid)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

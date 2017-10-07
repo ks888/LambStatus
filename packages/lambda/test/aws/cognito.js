@@ -110,7 +110,7 @@ describe('Cognito', () => {
       AWS.mock('CognitoIdentityServiceProvider', 'createUserPoolClient', (params, callback) => {
         assert(params.UserPoolId === userPoolID)
         assert(params.ClientName === clientName)
-        callback(null)
+        callback(null, {UserPoolClient: {}})
       })
 
       const cognito = new Cognito()
@@ -133,7 +133,7 @@ describe('Cognito', () => {
         assert(params.UserPoolId === userPoolID)
         assert(params.Username === userName)
         assert(params.UserAttributes[0].Value === email)
-        callback(null)
+        callback(null, {User: {}})
       })
 
       const cognito = new Cognito()

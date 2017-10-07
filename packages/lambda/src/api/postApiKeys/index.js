@@ -1,9 +1,11 @@
-import { Settings } from 'model/settings'
+import APIGateway from 'aws/apiGateway'
+import CloudFormation from 'aws/cloudFormation'
+import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   try {
-    const settings = new Settings()
-    const apiKey = await settings.createApiKey()
+    const usagePlanID = await new CloudFormation(stackName).getUsagePlanID()
+    const apiKey = await new APIGateway().createApiKeyWithUsagePlan(stackName, usagePlanID)
     callback(null, apiKey.objectify())
   } catch (error) {
     console.log(error.message)

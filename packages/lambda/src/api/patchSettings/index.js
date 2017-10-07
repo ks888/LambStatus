@@ -1,4 +1,4 @@
-import { Settings } from 'model/settings'
+import { SettingsProxy } from 'api/utils'
 
 export async function handle (event, context, callback) {
   const {
@@ -7,7 +7,7 @@ export async function handle (event, context, callback) {
     statusPageURL
   } = event.body
   try {
-    const settings = new Settings()
+    const settings = new SettingsProxy()
     if (serviceName !== undefined && serviceName !== await settings.getServiceName()) {
       await settings.setServiceName(serviceName)
     }

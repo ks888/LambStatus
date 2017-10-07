@@ -1,10 +1,9 @@
 import response from 'cfn-response'
-import Cognito from 'aws/cognito'
-import { Settings } from 'model/settings'
+import Cognito, { UserPool } from 'aws/cognito'
+import { SettingsProxy } from 'api/utils'
 
 export async function handle (event, context, callback) {
   const {
-    Region: region,
     PoolName: poolName,
     AdminPageURL: adminPageURL,
     SnsCallerArn: snsCallerArn
@@ -13,7 +12,7 @@ export async function handle (event, context, callback) {
   if (event.RequestType === 'Delete') {
     try {
       const poolID = event.PhysicalResourceId
-      await new Cognito().deleteUserPool(region, poolID)
+      await new Cognito().deleteUserPool(poolID)
       response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
     } catch (error) {
       console.log(error.message)
@@ -31,11 +30,12 @@ export async function handle (event, context, callback) {
   }
 
   try {
-    const settings = new Settings()
+    const settings = new SettingsProxy()
     const serviceName = await settings.getServiceName()
 
-    const userPool = await new Cognito().createUserPool(region, poolName, serviceName, adminPageURL, snsCallerArn)
-    const poolID = userPool.UserPool.Id
+    const userPool = new UserPool({userPoolName: poolName, serviceName, adminPageURL, snsCallerArn})
+    const createdUserPool = await new Cognito().createUserPool(userPool)
+    const poolID = createdUserPool.userPoolID
     response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
