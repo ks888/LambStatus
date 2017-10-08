@@ -1,35 +1,56 @@
 import AWS from 'aws-sdk'
 import VError from 'verror'
+import { NotFoundError } from 'utils/errors'
 import { buildUpdateExpression } from './utils'
 
-export default class EventUpdatesStore {
+export default class EventsStore {
   constructor () {
     const { AWS_REGION: region } = process.env
     this.awsDynamoDb = new AWS.DynamoDB.DocumentClient({ region })
   }
 
-  query (id) {
+  query () {
+    const attrNames = this.getAttributeNames()
     return new Promise((resolve, reject) => {
       const params = {
         TableName: this.getTableName(),
-        KeyConditionExpression: `${this.getPartitionKeyName()} = :hkey`,
-        ExpressionAttributeValues: {
-          ':hkey': id
-        },
-        ProjectionExpression: this.getAttributeNames().join(', ')
+        ProjectionExpression: `#${attrNames.join(', #')}`,
+        ExpressionAttributeNames: attrNames.reduce((prev, attrName) => { prev[`#${attrName}`] = attrName; return prev }, {})
       }
-      this.awsDynamoDb.query(params, (err, queryResult) => {
+      // TODO: use query and do the pagination
+      this.awsDynamoDb.scan(params, (err, scanResult) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
 
-        resolve(queryResult.Items.map(item => this.createEventUpdate(item)))
+        const items = scanResult.Items.map(item => this.createEvent(item))
+        resolve(items)
+      })
+    })
+  }
+
+  get (id) {
+    return new Promise((resolve, reject) => {
+      const params = {
+        TableName: this.getTableName(),
+        Key: { [this.getPartitionKeyName()]: id }
+      }
+      this.awsDynamoDb.get(params, (err, data) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+
+        if (data.Item === undefined) {
+          return reject(new NotFoundError('no matched item'))
+        }
+
+        resolve(this.createEvent(data.Item))
       })
     })
   }
 
   create (event) {
-    this.setUpdateID(event)
+    this.setID(event)
     return this.update(event)
   }
 
@@ -48,28 +69,20 @@ export default class EventUpdatesStore {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
-        resolve(this.createEventUpdate(data.Attributes))
+        resolve(this.createEvent(data.Attributes))
       })
     })
   }
 
-  delete (eventID, eventUpdateIDs) {
+  delete (eventID) {
     const partitionKeyName = this.getPartitionKeyName()
-    const sortKeyName = this.getSortKeyName()
-    let requests = eventUpdateIDs.map((eventUpdateID) => {
-      return {DeleteRequest: {Key: {
-        [partitionKeyName]: eventID,
-        [sortKeyName]: eventUpdateID
-      }}}
-    })
-
     return new Promise((resolve, reject) => {
       const params = {
-        RequestItems: {
-          [this.getTableName()]: requests
-        }
+        Key: { [partitionKeyName]: eventID },
+        TableName: this.getTableName(),
+        ReturnValues: 'NONE'
       }
-      this.awsDynamoDb.batchWrite(params, (err, data) => {
+      this.awsDynamoDb.delete(params, (err, data) => {
         if (err) {
           return reject(new VError(err, 'DynamoDB'))
         }
@@ -86,25 +99,19 @@ export default class EventUpdatesStore {
     throw new Error('not implemented')
   }
 
-  getSortKeyName () {
-    throw new Error('not implemented')
-  }
-
   getAttributeNamesExceptKeys () {
     throw new Error('not implemented')
   }
 
   getAttributeNames () {
     const partitionKeyName = this.getPartitionKeyName()
-    const sortKeyName = this.getSortKeyName()
     const attrs = this.getAttributeNamesExceptKeys()
-    return [partitionKeyName, sortKeyName, ...attrs]
+    return [partitionKeyName, ...attrs]
   }
 
   getKeys (event) {
     const partitionKeyName = this.getPartitionKeyName()
-    const sortKeyName = this.getSortKeyName()
-    return [partitionKeyName, sortKeyName].reduce((prev, attr) => { prev[attr] = event[attr]; return prev }, {})
+    return { [partitionKeyName]: event[partitionKeyName] }
   }
 
   getAttributesExceptKeys (event) {
@@ -112,11 +119,11 @@ export default class EventUpdatesStore {
     return attrs.reduce((prev, attr) => { prev[attr] = event[attr]; return prev }, {})
   }
 
-  createEventUpdate (item) {
+  createEvent (item) {
     throw new Error('not implemented')
   }
 
-  setUpdateID (item) {
+  setID () {
     throw new Error('not implemented')
   }
 }
