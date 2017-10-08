@@ -25,10 +25,12 @@ export default class IncidentDialog extends React.Component {
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
+      createdAt: PropTypes.string.isRequired,
       incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
         incidentUpdateID: PropTypes.string.isRequired,
         incidentStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
     }),
@@ -125,6 +127,7 @@ export default class IncidentDialog extends React.Component {
   handleClickUpdateButton = (e) => {
     const params = Object.assign({}, this.state, {
       incidentID: this.props.incident.incidentID,
+      createdAt: this.props.incident.createdAt,
       message: this.state.incidentMessage
     })
     this.props.updateIncident(params, this.updateCallbacks)

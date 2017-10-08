@@ -14,10 +14,12 @@ export default class IncidentItem extends React.Component {
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string,
+      updatedAt: PropTypes.string,
       incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
         incidentUpdateID: PropTypes.string.isRequired,
         incidentStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
     }).isRequired,
@@ -44,7 +46,7 @@ export default class IncidentItem extends React.Component {
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {getFormattedDateTime(incidentUpdate.updatedAt)}
+          {getFormattedDateTime(incidentUpdate.createdAt)}
         </div>
       </div>
     )

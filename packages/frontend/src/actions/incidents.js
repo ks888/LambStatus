@@ -90,14 +90,15 @@ export const postIncident = ({name, incidentStatus, message, components}, callba
   }
 }
 
-export const updateIncident = ({incidentID, name, incidentStatus, message, components}, callbacks = {}) => {
+export const updateIncident = ({incidentID, name, incidentStatus, message, components, createdAt}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = {
         name,
         status: incidentStatus,
         message,
-        components
+        components,
+        createdAt
       }
       const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
         headers: await buildHeaders(),

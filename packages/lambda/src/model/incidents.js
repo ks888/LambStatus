@@ -3,10 +3,11 @@ import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
 export class Incident {
-  constructor ({incidentID, name, status, updatedAt = new Date().toISOString()}) {
+  constructor ({incidentID, name, status, createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
     this.incidentID = incidentID
     this.name = name
     this.status = status
+    this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
 
@@ -26,6 +27,10 @@ export class Incident {
       throw new ValidationError('invalid incident status parameter')
     }
 
+    if (!isValidDate(this.createdAt)) {
+      throw new ValidationError('invalid createdAt parameter')
+    }
+
     if (!isValidDate(this.updatedAt)) {
       throw new ValidationError('invalid updatedAt parameter')
     }
@@ -36,17 +41,19 @@ export class Incident {
   }
 
   objectify () {
-    const { incidentID, name, status, updatedAt } = this
-    return { incidentID, name, status, updatedAt }
+    const { incidentID, name, status, createdAt, updatedAt } = this
+    return { incidentID, name, status, createdAt, updatedAt }
   }
 }
 
 export class IncidentUpdate {
-  constructor ({incidentID, incidentUpdateID, incidentStatus, message = '', updatedAt = new Date().toISOString()}) {
+  constructor ({incidentID, incidentUpdateID, incidentStatus, message = '', createdAt = new Date().toISOString(),
+                updatedAt = new Date().toISOString()}) {
     this.incidentID = incidentID
     this.incidentUpdateID = incidentUpdateID
     this.incidentStatus = incidentStatus
     this.message = message
+    this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
 
@@ -70,6 +77,10 @@ export class IncidentUpdate {
       throw new ValidationError('invalid message parameter')
     }
 
+    if (!isValidDate(this.createdAt)) {
+      throw new ValidationError('invalid createdAt parameter')
+    }
+
     if (!isValidDate(this.updatedAt)) {
       throw new ValidationError('invalid updatedAt parameter')
     }
@@ -80,7 +91,7 @@ export class IncidentUpdate {
   }
 
   objectify () {
-    const { incidentID, incidentUpdateID, incidentStatus, message, updatedAt } = this
-    return { incidentID, incidentUpdateID, incidentStatus, message, updatedAt }
+    const { incidentID, incidentUpdateID, incidentStatus, message, createdAt, updatedAt } = this
+    return { incidentID, incidentUpdateID, incidentStatus, message, createdAt, updatedAt }
   }
 }

@@ -8,7 +8,7 @@ import { incidentStatuses } from 'utils/const'
 
 describe('patchIncidentUpdates', () => {
   const generateParams = () => {
-    return {params: {incidentid: '1', incidentupdateid: '1'}, status: incidentStatuses[0], body: {}}
+    return {params: {incidentid: '1', incidentupdateid: '1'}, body: {status: incidentStatuses[0]}}
   }
 
   afterEach(() => {
@@ -38,7 +38,7 @@ describe('patchIncidentUpdates', () => {
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     const params = generateParams()
-    params.status = undefined
+    params.body.status = undefined
     return await handle(params, null, (error, result) => {
       assert(error.match(/invalid/))
     })

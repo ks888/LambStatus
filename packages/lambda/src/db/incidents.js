@@ -13,10 +13,13 @@ export default class IncidentsStore extends EventsStore {
   }
 
   getAttributeNamesExceptKeys () {
-    return ['name', 'status', 'updatedAt']
+    return ['name', 'status', 'createdAt', 'updatedAt']
   }
 
   createEvent (item) {
+    if (!item.hasOwnProperty('createdAt')) {
+      item.createdAt = item.updatedAt  // for backward compatibility
+    }
     return new Incident(item)
   }
 
