@@ -11,7 +11,7 @@ export default class TextField extends React.Component {
     onChange: PropTypes.func.isRequired,
     // onEnterKey will be called if the enter key is pressed.
     onEnterKey: PropTypes.func,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string,
     text: PropTypes.string,
     rows: PropTypes.number,
     hideText: PropTypes.bool,
@@ -50,6 +50,11 @@ export default class TextField extends React.Component {
       )
     }
 
+    let label
+    if (this.props.label) {
+      label = <label className={classes.label} htmlFor='textfield'>{this.props.label}{infoIcon}</label>
+    }
+
     let textfield
     if (!this.props.rows || this.props.rows === 1) {
       textfield = (<input className='mdl-textfield__input' type={textfieldType} id='textfield'
@@ -62,7 +67,7 @@ export default class TextField extends React.Component {
     return (
       <div className={classnames('mdl-textfield', 'mdl-js-textfield',
         classes.textfield)} ref='textfield'>
-        <label className={classes.label} htmlFor='textfield'>{this.props.label}{infoIcon}</label>
+        {label}
         {tooltip}
         {textfield}
       </div>

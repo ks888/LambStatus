@@ -1,4 +1,4 @@
-import { listIncidents, listIncidentUpdates, addIncident, editIncident,
+import { listIncidents, listIncidentUpdates, addIncident, editIncident, editIncidentUpdate,
          removeIncident } from 'actions/incidents'
 import incidentsReducer from 'reducers/incidents'
 
@@ -7,19 +7,20 @@ describe('Reducers/incidents', () => {
     incidentID: '1',
     name: 'name1',
     status: 'status1',
-    updatedAt: '1'
+    createdAt: '1'
   }
   const incidentUpdate1 = {
+    incidentID: '1',
     incidentUpdateID: '1',
     incidentStatus: 'status1',
     message: 'message1',
-    updatedAt: '1'
+    createdAt: '1'
   }
   const incident2 = {
     incidentID: '2',
     name: 'name2',
     status: 'status2',
-    updatedAt: '2'
+    createdAt: '2'
   }
 
   describe('listIncidentsHandler', () => {
@@ -44,7 +45,7 @@ describe('Reducers/incidents', () => {
     })
 
     it('should sort the incident updates.', () => {
-      const updates = [incidentUpdate1, {...incidentUpdate1, incidentUpdateID: '2', updatedAt: '2'}]
+      const updates = [incidentUpdate1, {...incidentUpdate1, incidentUpdateID: '2', createdAt: '2'}]
       const state = incidentsReducer({incidents: [incident1]},
                                      listIncidentUpdates(updates, incident1.incidentID))
       assert(state.incidents.length === 1)
@@ -66,6 +67,15 @@ describe('Reducers/incidents', () => {
       const newIncident = { ...incident1, name: newName }
       const state = incidentsReducer({incidents: [incident1]}, editIncident({incident: newIncident}))
       assert.deepEqual([newIncident], state.incidents)
+    })
+  })
+
+  describe('editIncidentUpdateHandler', () => {
+    it('should update the incident update.', () => {
+      const existingIncident = {...incident1, incidentUpdates: [incidentUpdate1]}
+      const newIncidentUpdate = {...incidentUpdate1, message: 'new'}
+      const state = incidentsReducer({incidents: [existingIncident]}, editIncidentUpdate(newIncidentUpdate))
+      assert(state.incidents[0].incidentUpdates[0].message === 'new')
     })
   })
 

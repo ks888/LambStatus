@@ -1,4 +1,4 @@
-import { LIST_INCIDENTS, LIST_INCIDENT_UPDATES, ADD_INCIDENT, EDIT_INCIDENT,
+import { LIST_INCIDENTS, LIST_INCIDENT_UPDATES, ADD_INCIDENT, EDIT_INCIDENT, EDIT_INCIDENT_UPDATE,
   REMOVE_INCIDENT } from 'actions/incidents'
 
 function listIncidentsHandler (state = { }, action) {
@@ -62,6 +62,28 @@ function editIncidentHandler (state = { }, action) {
   })
 }
 
+function editIncidentUpdateHandler (state = { }, action) {
+  const updatedIncidentUpdate = action.response
+
+  const newIncidents = state.incidents.map((incident) => {
+    if (incident.incidentID !== updatedIncidentUpdate.incidentID) {
+      return incident
+    }
+
+    const newIncidentUpdates = incident.incidentUpdates.map((incidentUpdate) => {
+      if (incidentUpdate.incidentUpdateID !== updatedIncidentUpdate.incidentUpdateID) {
+        return incidentUpdate
+      }
+      return updatedIncidentUpdate
+    })
+    return {...incident, incidentUpdates: newIncidentUpdates}
+  })
+
+  return Object.assign({}, state, {
+    incidents: newIncidents
+  })
+}
+
 function removeIncidentHandler (state = { }, action) {
   const newIncidents = state.incidents.filter((incident) => {
     return incident.incidentID !== action.incidentID
@@ -77,6 +99,7 @@ const ACTION_HANDLERS = {
   [LIST_INCIDENT_UPDATES]: listIncidentUpdatesHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [EDIT_INCIDENT]: editIncidentHandler,
+  [EDIT_INCIDENT_UPDATE]: editIncidentUpdateHandler,
   [REMOVE_INCIDENT]: removeIncidentHandler
 }
 

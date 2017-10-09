@@ -143,10 +143,9 @@ export default class IncidentDialog extends React.Component {
       return
     }
     const updates = this.props.incident.incidentUpdates.map((incidentUpdate) => {
-      incidentUpdate.updateID = incidentUpdate.incidentUpdateID
-      incidentUpdate.status = incidentUpdate.incidentStatus
+      const updateID = incidentUpdate.incidentUpdateID
       return (
-        <IncidentUpdateItem key={incidentUpdate.updateID} incidentUpdate={incidentUpdate} />
+        <IncidentUpdateItem key={updateID} incidentID={this.props.incidentID} incidentUpdateID={updateID} />
       )
     })
     return (
