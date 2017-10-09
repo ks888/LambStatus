@@ -4,11 +4,13 @@ import {
   LIST_MAINTENANCE_UPDATES,
   ADD_MAINTENANCE,
   EDIT_MAINTENANCE,
+  EDIT_MAINTENANCE_UPDATE,
   REMOVE_MAINTENANCE,
   fetchMaintenances,
   fetchMaintenanceUpdates,
   postMaintenance,
   updateMaintenance,
+  updateMaintenanceUpdate,
   deleteMaintenance
 } from 'actions/maintenances'
 
@@ -124,7 +126,7 @@ describe('Actions/Maintenances', () => {
       assert(typeof updateMaintenance({}) === 'function')
     })
 
-    it('should post a new maintenance.', async () => {
+    it('should update the existing maintenance.', async () => {
       fetchMock.patch(/.*\/maintenances\/.*/,
                       { body: [maintenance], headers: {'Content-Type': 'application/json'} })
 
@@ -146,6 +148,40 @@ describe('Actions/Maintenances', () => {
       assert(callbacks.onFailure.calledOnce)
 
       assert(!dispatchSpy.called)
+    })
+  })
+
+  describe('updateMaintenanceUpdate', () => {
+    it('should return a function.', () => {
+      assert(typeof updateMaintenanceUpdate({}) === 'function')
+    })
+
+    it('should update the existing maintenance update.', () => {
+      fetchMock.patch(/.*\/maintenances\/.*\/maintenanceupdates\/.*/,
+                      { body: maintenanceUpdate, headers: {'Content-Type': 'application/json'} })
+
+      return updateMaintenanceUpdate({maintenanceID: 'id', maintenanceUpdateID: 'id'}, callbacks)(dispatchSpy)
+        .then(() => {
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
+
+          assert(dispatchSpy.firstCall.args[0].type === EDIT_MAINTENANCE_UPDATE)
+          assert.deepEqual(maintenanceUpdate, dispatchSpy.firstCall.args[0].response)
+        })
+    })
+
+    it('should handle error properly.', () => {
+      fetchMock.patch(/.*\/maintenances\/.*\/maintenanceupdates\/.*/, { status: 400, body: {} })
+
+      return updateMaintenanceUpdate({maintenanceID: 'id', maintenanceUpdateID: 'id'}, callbacks)(dispatchSpy)
+        .then(() => {
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
+
+          assert(!dispatchSpy.called)
+        })
     })
   })
 

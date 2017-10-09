@@ -17,10 +17,13 @@ export default class MaintenanceUpdatesStore extends EventUpdatesStore {
   }
 
   getAttributeNamesExceptKeys () {
-    return ['maintenanceStatus', 'message', 'updatedAt']
+    return ['maintenanceStatus', 'message', 'createdAt', 'updatedAt']
   }
 
   createEventUpdate (item) {
+    if (!item.hasOwnProperty('createdAt')) {
+      item.createdAt = item.updatedAt  // for backward compatibility
+    }
     return new MaintenanceUpdate(item)
   }
 

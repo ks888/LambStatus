@@ -12,7 +12,11 @@ export async function handle (event, context, callback) {
     const maintenancesStore = new MaintenancesStore()
     await maintenancesStore.update(maintenance)
 
-    let maintenanceUpdate = new MaintenanceUpdate({maintenanceStatus: event.body.status, ...params})
+    let maintenanceUpdate = new MaintenanceUpdate({
+      maintenanceID: event.params.maintenanceid,
+      maintenanceStatus: event.body.status,
+      message: event.body.message
+    })
     maintenanceUpdate.validateExceptUpdateID()
     const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
     await maintenanceUpdatesStore.create(maintenanceUpdate)

@@ -6,6 +6,7 @@ export const LIST_MAINTENANCES = 'LIST_MAINTENANCES'
 export const LIST_MAINTENANCE_UPDATES = 'LIST_MAINTENANCE_UPDATES'
 export const ADD_MAINTENANCE = 'ADD_MAINTENANCE'
 export const EDIT_MAINTENANCE = 'EDIT_MAINTENANCE'
+export const EDIT_MAINTENANCE_UPDATE = 'EDIT_MAINTENANCE_UPDATE'
 export const REMOVE_MAINTENANCE = 'REMOVE_MAINTENANCE'
 
 export function listMaintenances (json) {
@@ -33,6 +34,13 @@ export function addMaintenance (json) {
 export function editMaintenance (json) {
   return {
     type: EDIT_MAINTENANCE,
+    response: json
+  }
+}
+
+export function editMaintenanceUpdate (json) {
+  return {
+    type: EDIT_MAINTENANCE_UPDATE,
     response: json
   }
 }
@@ -86,16 +94,38 @@ export const postMaintenance = ({name, maintenanceStatus, startAt, endAt, messag
 }
 
 export const updateMaintenance = ({maintenanceID, name, maintenanceStatus, startAt, endAt, message,
-                                   components}, callbacks = {}) => {
+                                   components, createdAt}, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
+      const body = { name, status: maintenanceStatus, startAt, endAt, message, components, createdAt }
       const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)
       dispatch(editMaintenance(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
+export const updateMaintenanceUpdate = ({maintenanceID, maintenanceUpdateID, maintenanceStatus, message, createdAt},
+                                        callbacks = {}) => {
+  return async dispatch => {
+    try {
+      const body = {
+        status: maintenanceStatus,
+        message,
+        createdAt
+      }
+      const json = await sendRequest(`${apiURL}maintenances/${maintenanceID}/maintenanceupdates/${maintenanceUpdateID}`, {
+        headers: await buildHeaders(),
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(editMaintenanceUpdate(json))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

@@ -21,6 +21,7 @@ export default class MaintenanceItem extends React.Component {
         maintenanceUpdateID: PropTypes.string.isRequired,
         maintenanceStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
     }).isRequired,
@@ -47,7 +48,7 @@ export default class MaintenanceItem extends React.Component {
           </span>
         </div>
         <div className={classnames(classes.inner_item_updatedat)}>
-          {getFormattedDateTime(maintUpdate.updatedAt)}
+          {getFormattedDateTime(maintUpdate.createdAt)}
         </div>
       </div>
     )
