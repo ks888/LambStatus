@@ -1,9 +1,7 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import AutolinkedText from 'components/common/AutolinkedText'
-import Button from 'components/common/Button'
-import ErrorMessage from 'components/common/ErrorMessage'
-import TextField from 'components/common/TextField'
+import MiniEditor from 'components/common/MiniEditor'
 import { getFormattedDateTime } from 'utils/datetime'
 import classes from './IncidentUpdateItem.scss'
 
@@ -45,13 +43,8 @@ export default class IncidentUpdateItem extends React.Component {
     this.setState({isEditing: false})
   }
 
-  save = () => {
-    this.props.updateIncidentUpdate({...this.props.incidentUpdate, message: this.state.message},
-                                    this.updateCallbacks)
-  }
-
-  handleChangeMessage = (value) => {
-    this.setState({message: value})
+  save = (message) => {
+    this.props.updateIncidentUpdate({...this.props.incidentUpdate, message}, this.updateCallbacks)
   }
 
   render () {
@@ -59,15 +52,8 @@ export default class IncidentUpdateItem extends React.Component {
     let message
     if (this.state.isEditing) {
       message = (
-        <div>
-          <ErrorMessage message={this.state.errorMessage} />
-          <TextField text={this.state.message} rows={1} onChange={this.handleChangeMessage} />
-          <div className={classes['message-bottons']}>
-            <Button onClick={this.cancelEdit} name='Cancel' />
-            <Button onClick={this.save} name='Save'
-              class='mdl-button--accent' disabled={this.state.isUpdating} />
-          </div>
-        </div>
+        <MiniEditor onSave={this.save} onCancel={this.cancelEdit} initialText={this.props.incidentUpdate.message}
+          errorMessage={this.state.errorMessage} isUpdating={this.state.isUpdating} />
       )
     } else {
       message = <AutolinkedText text={incidentUpdate.message} />
