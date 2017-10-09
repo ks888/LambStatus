@@ -116,7 +116,7 @@ export const updateMaintenanceUpdate = ({maintenanceID, maintenanceUpdateID, mai
   return async dispatch => {
     try {
       const body = {
-        status: maintenanceStatus,
+        maintenanceStatus,
         message,
         createdAt
       }

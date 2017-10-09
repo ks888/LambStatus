@@ -7,7 +7,6 @@ export async function handle (event, context, callback) {
     const maintenanceUpdate = new MaintenanceUpdate({
       maintenanceID: event.params.maintenanceid,
       maintenanceUpdateID: event.params.maintenanceupdateid,
-      maintenanceStatus: event.body.status,
       ...event.body
     })
     maintenanceUpdate.validate()

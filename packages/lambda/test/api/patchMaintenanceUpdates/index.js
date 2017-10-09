@@ -8,7 +8,10 @@ import { maintenanceStatuses } from 'utils/const'
 
 describe('patchMaintenanceUpdates', () => {
   const generateParams = () => {
-    return {params: {maintenanceid: '1', maintenanceupdateid: '1'}, body: {status: maintenanceStatuses[0]}}
+    return {
+      params: {maintenanceid: '1', maintenanceupdateid: '1'},
+      body: {maintenanceStatus: maintenanceStatuses[0]}
+    }
   }
 
   afterEach(() => {
@@ -38,7 +41,7 @@ describe('patchMaintenanceUpdates', () => {
     sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     const params = generateParams()
-    params.body.status = undefined
+    params.body.maintenanceStatus = undefined
     return await handle(params, null, (error, result) => {
       assert(error.match(/invalid/))
     })

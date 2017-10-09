@@ -7,7 +7,6 @@ export async function handle (event, context, callback) {
     const incidentUpdate = new IncidentUpdate({
       incidentID: event.params.incidentid,
       incidentUpdateID: event.params.incidentupdateid,
-      incidentStatus: event.body.status,
       ...event.body
     })
     incidentUpdate.validate()

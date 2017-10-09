@@ -126,7 +126,7 @@ export const updateIncidentUpdate = ({incidentID, incidentUpdateID, incidentStat
   return async dispatch => {
     try {
       const body = {
-        status: incidentStatus,
+        incidentStatus,
         message,
         createdAt
       }
