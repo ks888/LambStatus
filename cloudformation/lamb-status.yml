@@ -475,7 +475,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates/{incidentupdateid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/incidents/{incidentid}/incidentupdates/{incidentupdateid}
   GetMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -641,6 +641,39 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/maintenances/{maintenanceid}/maintenanceupdates
+  PatchMaintenanceUpdatesLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/PatchMaintenanceUpdates.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Patch maintenance update"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-PatchMaintenanceUpdates
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  PatchMaintenanceUpdatesLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "PatchMaintenanceUpdatesLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/maintenances/{maintenanceid}/maintenanceupdates/{maintenanceupdateid}
   GetSettingsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1163,6 +1196,8 @@ Resources:
       - "OptionsMaintenanceApiMethod"
       - "GetMaintenanceUpdatesApiMethod"
       - "OptionsMaintenanceUpdatesApiMethod"
+      - "PatchMaintenanceUpdateApiMethod"
+      - "OptionsMaintenanceUpdateApiMethod"
       - "GetExternalMetricsApiMethod"
       - "OptionsExternalMetricsApiMethod"
       - "GetPublicMetricsApiMethod"
@@ -2154,6 +2189,90 @@ Resources:
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
               method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Max-Age: "'600'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Max-Age: true
+  MaintenanceUpdateApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "MaintenanceUpdatesApiResource"
+      PathPart: "{maintenanceupdateid}"
+  PatchMaintenanceUpdateApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceUpdateApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "COGNITO_USER_POOLS"
+      AuthorizerId:
+        Ref: "Authorizer"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchMaintenanceUpdatesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+  OptionsMaintenanceUpdateApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceUpdateApiResource"
+      HttpMethod: "OPTIONS"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "MOCK"
+        RequestTemplates:
+          application/json: "{ \"statusCode\": 200 }"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
               method.response.header.Access-Control-Max-Age: "'600'"
       MethodResponses:
@@ -3470,8 +3589,6 @@ Resources:
         Fn::GetAtt:
           - CognitoCreateUserPoolFunction
           - Arn
-      Region: !Sub |-
-        ${AWS::Region}
       PoolName: !Sub |-
         ${AWS::StackName}
       AdminPageURL: !Sub |-
@@ -3485,8 +3602,6 @@ Resources:
         Fn::GetAtt:
           - CognitoCreateUserPoolClientFunction
           - Arn
-      Region: !Sub |-
-        ${AWS::Region}
       ClientName: Browser
       UserPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}

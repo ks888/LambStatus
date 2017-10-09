@@ -7,7 +7,7 @@ import TextField from 'components/common/TextField'
 import ErrorMessage from 'components/common/ErrorMessage'
 import ComponentStatusSelector from 'components/adminPage/ComponentStatusSelector'
 import TimeSelector from 'components/adminPage/TimeSelector'
-import IncidentUpdateItem from 'components/adminPage/IncidentUpdateItem'
+import MaintenanceUpdateItem from 'components/adminPage/MaintenanceUpdateItem'
 import { getDateTime } from 'utils/datetime'
 import { maintenanceStatuses } from 'utils/status'
 import { mountDialog, unmountDialog } from 'utils/dialog'
@@ -29,10 +29,12 @@ export default class MaintenanceDialog extends React.Component {
       status: PropTypes.string.isRequired,
       startAt: PropTypes.string.isRequired,
       endAt: PropTypes.string.isRequired,
+      createdAt: PropTypes.string.isRequired,
       maintenanceUpdates: PropTypes.arrayOf(PropTypes.shape({
         maintenanceUpdateID: PropTypes.string.isRequired,
         maintenanceStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
     }),
@@ -147,6 +149,7 @@ export default class MaintenanceDialog extends React.Component {
   handleClickUpdateButton = (e) => {
     const params = Object.assign({}, this.state, {
       maintenanceID: this.props.maintenance.maintenanceID,
+      createdAt: this.props.maintenance.createdAt,
       startAt: this.state.startAt.toISOString(),
       endAt: this.state.endAt.toISOString(),
       message: this.state.maintenanceMessage
@@ -164,10 +167,9 @@ export default class MaintenanceDialog extends React.Component {
       return
     }
     const updates = this.props.maintenance.maintenanceUpdates.map((maintenanceUpdate) => {
-      maintenanceUpdate.updateID = maintenanceUpdate.maintenanceUpdateID
-      maintenanceUpdate.status = maintenanceUpdate.maintenanceStatus
+      const updateID = maintenanceUpdate.maintenanceUpdateID
       return (
-        <IncidentUpdateItem key={maintenanceUpdate.updateID} incidentUpdate={maintenanceUpdate} />
+        <MaintenanceUpdateItem key={updateID} maintenanceID={this.props.maintenanceID} maintenanceUpdateID={updateID} />
       )
     })
     return (

@@ -1,8 +1,9 @@
 import Feed from 'feed'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
+import MaintenancesStore from 'db/maintenances'
+import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import { SettingsProxy } from 'api/utils'
-import { Maintenances } from 'model/maintenances'
 import S3 from 'aws/s3'
 import CloudFormation from 'aws/cloudFormation'
 import { stackName } from 'utils/const'
@@ -22,7 +23,7 @@ export async function handle (event, context, callback) {
       }
     })
 
-    let events = (await new IncidentsStore().query()).concat(await new Maintenances().all())
+    let events = (await new IncidentsStore().query()).concat(await new MaintenancesStore().query())
     events.sort(latestToOldest)
     const maxItems = 25
     for (let i = 0; i < Math.min(events.length, maxItems); i++) {
@@ -43,8 +44,8 @@ export async function handle (event, context, callback) {
 }
 
 const latestToOldest = (a, b) => {
-  if (a.updatedAt < b.updatedAt) return 1
-  else if (b.updatedAt < a.updatedAt) return -1
+  if (a.createdAt < b.createdAt) return 1
+  else if (b.createdAt < a.createdAt) return -1
   return 0
 }
 
@@ -66,7 +67,7 @@ const buildItem = async (event, statusPageURL) => {
       return update
     })
   } else if (event.hasOwnProperty('maintenanceID')) {
-    const maintenanceUpdates = await event.getMaintenanceUpdates()
+    const maintenanceUpdates = await new MaintenanceUpdatesStore().query(event.maintenanceID)
     maintenanceUpdates.sort(latestToOldest)
 
     id = `tag:${statusPageURL},2017:Maintenance/${event.maintenanceID}`
@@ -80,14 +81,14 @@ const buildItem = async (event, statusPageURL) => {
   }
 
   const content = eventUpdates.map(update => {
-    return `<p><small>${getDateTimeFormat(update.updatedAt)}</small><br><strong>${update.status}</strong> - ${update.message}</p>`
+    return `<p><small>${getDateTimeFormat(update.createdAt)}</small><br><strong>${update.status}</strong> - ${update.message}</p>`
   }).join('')
   return {
     id,
     link,
     content,
-    published: new Date(eventUpdates[0].updatedAt),
-    date: new Date(event.updatedAt),
+    published: new Date(eventUpdates[0].createdAt),
+    date: new Date(event.createdAt),
     title: event.name
   }
 }

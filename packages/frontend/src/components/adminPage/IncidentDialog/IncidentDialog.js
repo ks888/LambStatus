@@ -25,10 +25,12 @@ export default class IncidentDialog extends React.Component {
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
+      createdAt: PropTypes.string.isRequired,
       incidentUpdates: PropTypes.arrayOf(PropTypes.shape({
         incidentUpdateID: PropTypes.string.isRequired,
         incidentStatus: PropTypes.string.isRequired,
         message: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
         updatedAt: PropTypes.string.isRequired
       }).isRequired)
     }),
@@ -125,6 +127,7 @@ export default class IncidentDialog extends React.Component {
   handleClickUpdateButton = (e) => {
     const params = Object.assign({}, this.state, {
       incidentID: this.props.incident.incidentID,
+      createdAt: this.props.incident.createdAt,
       message: this.state.incidentMessage
     })
     this.props.updateIncident(params, this.updateCallbacks)
@@ -140,10 +143,9 @@ export default class IncidentDialog extends React.Component {
       return
     }
     const updates = this.props.incident.incidentUpdates.map((incidentUpdate) => {
-      incidentUpdate.updateID = incidentUpdate.incidentUpdateID
-      incidentUpdate.status = incidentUpdate.incidentStatus
+      const updateID = incidentUpdate.incidentUpdateID
       return (
-        <IncidentUpdateItem key={incidentUpdate.updateID} incidentUpdate={incidentUpdate} />
+        <IncidentUpdateItem key={updateID} incidentID={this.props.incidentID} incidentUpdateID={updateID} />
       )
     })
     return (

@@ -9,6 +9,7 @@ describe('Incident', () => {
       status: incidentStatuses[0],
       message: 'test',
       components: [],
+      createdAt: '2017-09-02T07:15:50.634Z',
       updatedAt: '2017-09-02T07:15:50.634Z'
     }
   }
@@ -20,14 +21,17 @@ describe('Incident', () => {
 
       assert(incident.name === params.name)
       assert(incident.status === params.status)
+      assert(incident.createdAt === params.createdAt)
       assert(incident.updatedAt === params.updatedAt)
     })
 
     it('should fill in insufficient values', () => {
       const params = generateConstructorParams()
+      params.createdAt = undefined
       params.updatedAt = undefined
 
       const incident = new Incident(params)
+      assert(incident.createdAt !== undefined)
       assert(incident.updatedAt !== undefined)
     })
   })
@@ -103,6 +107,21 @@ describe('Incident', () => {
       assert(error.name === 'ValidationError')
     })
 
+    it('should return error when createdAt is invalid', async () => {
+      const params = generateConstructorParams()
+      const incident = new Incident(params)
+      incident.createdAt = ''
+
+      let error
+      try {
+        incident.validateExceptID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+      assert(error.message.match(/createdAt/))
+    })
+
     it('should return error when updatedAt is invalid', async () => {
       const params = generateConstructorParams()
       const incident = new Incident(params)
@@ -127,6 +146,7 @@ describe('IncidentUpdate', () => {
       incidentUpdateID,
       incidentStatus: incidentStatuses[0],
       message: 'test',
+      createdAt: '2017-09-02T07:15:50.634Z',
       updatedAt: '2017-09-02T07:15:50.634Z'
     }
   }
@@ -222,6 +242,20 @@ describe('IncidentUpdate', () => {
       const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       incidentUpdate.message = undefined
+
+      let error
+      try {
+        incidentUpdate.validateExceptUpdateID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when createdAt is invalid', async () => {
+      const params = generateConstructorParams('1')
+      const incidentUpdate = new IncidentUpdate(params)
+      incidentUpdate.createdAt = ''
 
       let error
       try {

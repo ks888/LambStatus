@@ -17,10 +17,13 @@ export default class IncidentUpdatesStore extends EventUpdatesStore {
   }
 
   getAttributeNamesExceptKeys () {
-    return ['incidentStatus', 'message', 'updatedAt']
+    return ['incidentStatus', 'message', 'createdAt', 'updatedAt']
   }
 
   createEventUpdate (item) {
+    if (!item.hasOwnProperty('createdAt')) {
+      item.createdAt = item.updatedAt  // for backward compatibility
+    }
     return new IncidentUpdate(item)
   }
 

@@ -6,6 +6,7 @@ export const LIST_INCIDENTS = 'LIST_INCIDENTS'
 export const LIST_INCIDENT_UPDATES = 'LIST_INCIDENT_UPDATES'
 export const ADD_INCIDENT = 'ADD_INCIDENT'
 export const EDIT_INCIDENT = 'EDIT_INCIDENT'
+export const EDIT_INCIDENT_UPDATE = 'EDIT_INCIDENT_UPDATE'
 export const REMOVE_INCIDENT = 'REMOVE_INCIDENT'
 
 export function listIncidents (json) {
@@ -33,6 +34,13 @@ export function addIncident (json) {
 export function editIncident (json) {
   return {
     type: EDIT_INCIDENT,
+    response: json
+  }
+}
+
+export function editIncidentUpdate (json) {
+  return {
+    type: EDIT_INCIDENT_UPDATE,
     response: json
   }
 }
@@ -90,14 +98,15 @@ export const postIncident = ({name, incidentStatus, message, components}, callba
   }
 }
 
-export const updateIncident = ({incidentID, name, incidentStatus, message, components}, callbacks = {}) => {
+export const updateIncident = ({incidentID, name, incidentStatus, message, components, createdAt}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = {
         name,
         status: incidentStatus,
         message,
-        components
+        components,
+        createdAt
       }
       const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
         headers: await buildHeaders(),
@@ -105,6 +114,28 @@ export const updateIncident = ({incidentID, name, incidentStatus, message, compo
         body: JSON.stringify(body)
       }, callbacks)
       dispatch(editIncident(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
+export const updateIncidentUpdate = ({incidentID, incidentUpdateID, incidentStatus, message, createdAt},
+                                     callbacks = {}) => {
+  return async dispatch => {
+    try {
+      const body = {
+        incidentStatus,
+        message,
+        createdAt
+      }
+      const json = await sendRequest(`${apiURL}incidents/${incidentID}/incidentupdates/${incidentUpdateID}`, {
+        headers: await buildHeaders(),
+        method: 'PATCH',
+        body: JSON.stringify(body)
+      }, callbacks)
+      dispatch(editIncidentUpdate(json))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

@@ -9,6 +9,7 @@ describe('Maintenance', () => {
       status: maintenanceStatuses[0],
       startAt: '2017-09-02T07:15:50.634Z',
       endAt: '2017-09-03T07:15:50.634Z',
+      createdAt: '2017-09-01T07:15:50.634Z',
       updatedAt: '2017-09-01T07:15:50.634Z'
     }
   }
@@ -21,14 +22,17 @@ describe('Maintenance', () => {
       assert(maint.name === params.name)
       assert(maint.startAt === params.startAt)
       assert(maint.endAt === params.endAt)
+      assert(maint.createdAt === params.createdAt)
       assert(maint.updatedAt === params.updatedAt)
     })
 
     it('should fill in insufficient values', () => {
       const params = generateConstructorParams()
+      params.createdAt = undefined
       params.updatedAt = undefined
 
       const maint = new Maintenance(params)
+      assert(maint.createdAt !== undefined)
       assert(maint.updatedAt !== undefined)
     })
   })
@@ -132,6 +136,21 @@ describe('Maintenance', () => {
       assert(error.name === 'ValidationError')
     })
 
+    it('should return error when createdAt is invalid', async () => {
+      const params = generateConstructorParams()
+      const maintenance = new Maintenance(params)
+      maintenance.createdAt = ''
+
+      let error
+      try {
+        await maintenance.validateExceptID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+      assert(error.message.match(/createdAt/))
+    })
+
     it('should return error when updatedAt is invalid', async () => {
       const params = generateConstructorParams()
       const maintenance = new Maintenance(params)
@@ -156,6 +175,7 @@ describe('MaintenanceUpdate', () => {
       maintenanceUpdateID,
       maintenanceStatus: maintenanceStatuses[0],
       message: 'test',
+      createdAt: '2017-09-02T07:15:50.634Z',
       updatedAt: '2017-09-02T07:15:50.634Z'
     }
   }
@@ -252,6 +272,20 @@ describe('MaintenanceUpdate', () => {
       const params = generateConstructorParams('1')
       const maintenanceUpdate = new MaintenanceUpdate(params)
       maintenanceUpdate.message = undefined
+
+      let error
+      try {
+        maintenanceUpdate.validateExceptUpdateID()
+      } catch (e) {
+        error = e
+      }
+      assert(error.name === 'ValidationError')
+    })
+
+    it('should return error when createdAt is invalid', async () => {
+      const params = generateConstructorParams('1')
+      const maintenanceUpdate = new MaintenanceUpdate(params)
+      maintenanceUpdate.createdAt = ''
 
       let error
       try {

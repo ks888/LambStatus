@@ -3,12 +3,14 @@ import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
 export class Maintenance {
-  constructor ({maintenanceID, name, status, startAt, endAt, updatedAt = new Date().toISOString()}) {
+  constructor ({maintenanceID, name, status, startAt, endAt, createdAt = new Date().toISOString(),
+                updatedAt = new Date().toISOString()}) {
     this.maintenanceID = maintenanceID
     this.name = name
     this.status = status
     this.startAt = startAt
     this.endAt = endAt
+    this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
 
@@ -40,6 +42,10 @@ export class Maintenance {
       throw new ValidationError('startAt is later than endAt')
     }
 
+    if (!isValidDate(this.createdAt)) {
+      throw new ValidationError('invalid createdAt parameter')
+    }
+
     if (!isValidDate(this.updatedAt)) {
       throw new ValidationError('invalid updatedAt parameter')
     }
@@ -50,18 +56,19 @@ export class Maintenance {
   }
 
   objectify () {
-    const { maintenanceID, name, status, startAt, endAt, updatedAt } = this
-    return { maintenanceID, name, status, startAt, endAt, updatedAt }
+    const { maintenanceID, name, status, startAt, endAt, createdAt, updatedAt } = this
+    return { maintenanceID, name, status, startAt, endAt, createdAt, updatedAt }
   }
 }
 
 export class MaintenanceUpdate {
   constructor ({maintenanceID, maintenanceUpdateID, maintenanceStatus, message = '',
-                updatedAt = new Date().toISOString()}) {
+                createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
     this.maintenanceID = maintenanceID
     this.maintenanceUpdateID = maintenanceUpdateID
     this.maintenanceStatus = maintenanceStatus
     this.message = message
+    this.createdAt = createdAt
     this.updatedAt = updatedAt
   }
 
@@ -85,6 +92,10 @@ export class MaintenanceUpdate {
       throw new ValidationError('invalid message parameter')
     }
 
+    if (!isValidDate(this.createdAt)) {
+      throw new ValidationError('invalid createdAt parameter')
+    }
+
     if (!isValidDate(this.updatedAt)) {
       throw new ValidationError('invalid updatedAt parameter')
     }
@@ -95,7 +106,7 @@ export class MaintenanceUpdate {
   }
 
   objectify () {
-    const { maintenanceID, maintenanceUpdateID, maintenanceStatus, message, updatedAt } = this
-    return { maintenanceID, maintenanceUpdateID, maintenanceStatus, message, updatedAt }
+    const { maintenanceID, maintenanceUpdateID, maintenanceStatus, message, createdAt, updatedAt } = this
+    return { maintenanceID, maintenanceUpdateID, maintenanceStatus, message, createdAt, updatedAt }
   }
 }

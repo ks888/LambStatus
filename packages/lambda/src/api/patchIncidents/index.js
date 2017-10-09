@@ -12,7 +12,11 @@ export async function handle (event, context, callback) {
     const incidentsStore = new IncidentsStore()
     await incidentsStore.update(incident)
 
-    let incidentUpdate = new IncidentUpdate({incidentStatus: event.body.status, ...params})
+    let incidentUpdate = new IncidentUpdate({
+      incidentID: event.params.incidentid,
+      incidentStatus: event.body.status,
+      message: event.body.message
+    })
     incidentUpdate.validateExceptUpdateID()
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.create(incidentUpdate)
