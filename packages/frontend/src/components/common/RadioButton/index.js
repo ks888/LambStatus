@@ -27,7 +27,7 @@ export default class RadioButton extends React.Component {
   render () {
     let input = (
       <input type='radio' id={this.props.label} className='mdl-radio__button' name={this.props.groupName}
-        onChange={this.handleChange} ref='radiobutton_input' />
+        onClick={this.handleChange} ref='radiobutton_input' />
     )
     return (
       <label className={classnames(classes.label, 'mdl-radio', 'mdl-js-radio', 'mdl-js-ripple-effect')}
