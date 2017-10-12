@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.4.1](https://github.com/ks888/LambStatus/tree/v0.4.1) (2017-10-12)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.0...v0.4.1)
+
+### Added
+
+- [\#56](https://github.com/ks888/LambStatus/issues/56): Add ability to edit Incident timeline (thanks [@ryangravetteadmin](https://github.com/ryangravetteadmin))
+
+### Fixed
+
+- [\#58](https://github.com/ks888/LambStatus/pull/58): Improve frontend performance
+- [\#59](https://github.com/ks888/LambStatus/pull/59): Refactoring model
+
 ## [v0.4.0](https://github.com/ks888/LambStatus/tree/v0.4.0) (2017-08-13)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.2...v0.4.0)
 
