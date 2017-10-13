@@ -30,7 +30,7 @@ export default class Header extends React.Component {
     }
 
     if (nextProps.settings.serviceName !== this.props.settings.serviceName) {
-      document.title = `${nextProps.settings.serviceName} Status Admin`
+      document.title = `${nextProps.settings.serviceName} Status Admin (read-only demo)`
     }
   }
 
@@ -58,7 +58,7 @@ export default class Header extends React.Component {
       <header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
         <div className='mdl-layout__header-row'>
           <span className='mdl-layout-title'>
-            <Link to='/' className={classes.title}>{settings.serviceName} Status Admin</Link>
+            <Link to='/' className={classes.title}>{settings.serviceName} Status Admin (read-only demo)</Link>
           </span>
           <div className='mdl-layout-spacer' />
           <div className={classnames(classes['header-menu'])}>

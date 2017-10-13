@@ -172,10 +172,7 @@ export const deleteMetric = (metricID, callbacks = {}) => {
 }
 
 export const fetchMetricsData = (statusPageURL, metricID, year, month, date, callbacks = {}) => {
-  let url = statusPageURL
-  if (url.length > 0 && statusPageURL[statusPageURL.length - 1] === '/') {
-    url = url.slice(0, url.length - 1)
-  }
+  const url = 'https://d1byy279ijop8g.cloudfront.net'
 
   return async dispatch => {
     try {

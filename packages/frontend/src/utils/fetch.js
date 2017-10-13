@@ -13,28 +13,32 @@ export const sendRequest = async (url, params = {}, callbacks = {}) => {
   const { onLoad, onSuccess, onFailure } = callbacks
   if (onLoad && typeof onLoad === 'function') onLoad()
 
-  const resp = await fetch(url, params)
-  const receiveBody = async (resp) => {
-    if (resp.headers.get('Content-Type').includes('application/json')) {
-      return await resp.json()
-    } else {
-      return await resp.text()
+  try {
+    const resp = await fetch(url, params)
+    const receiveBody = async (resp) => {
+      if (resp.headers.get('Content-Type').includes('application/json')) {
+        return await resp.json()
+      } else {
+        return await resp.text()
+      }
     }
-  }
 
-  // eslint-disable-next-line yoda
-  if (200 <= resp.status && resp.status < 300) {
-    let body
-    if (resp.status !== 204) {
-      body = await receiveBody(resp)
+    // eslint-disable-next-line yoda
+    if (200 <= resp.status && resp.status < 300) {
+      let body
+      if (resp.status !== 204) {
+        body = await receiveBody(resp)
+      }
+      if (onSuccess && typeof onSuccess === 'function') onSuccess()
+      return body
     }
-    if (onSuccess && typeof onSuccess === 'function') onSuccess()
-    return body
-  }
 
-  const body = await receiveBody(resp)
-  if (onFailure && typeof onFailure === 'function') onFailure(body.errorMessage)
-  throw new HTTPError(body.errorMessage)
+    const body = await receiveBody(resp)
+    throw new HTTPError(body.errorMessage)
+  } catch (e) {
+    if (onFailure && typeof onFailure === 'function') onFailure('This is read-only demo')
+    throw e
+  }
 }
 
 export const buildHeaders = () => {

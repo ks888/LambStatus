@@ -23,7 +23,27 @@ export async function handle (event, context, callback) {
       }
     })
 
-    let events = (await new IncidentsStore().query()).concat(await new MaintenancesStore().query())
+    let incidents = await new IncidentsStore().query()
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayDate = yesterday.toISOString().replace(/T[0-9:.]+Z$/, '')
+    incidents = incidents.map((incident) => {
+      incident.createdAt = yesterdayDate + incident.createdAt.replace(/^[0-9-]+/, '')
+      incident.updatedAt = yesterdayDate + incident.updatedAt.replace(/^[0-9-]+/, '')
+      return incident
+    })
+
+    let maintenances = await new MaintenancesStore().query()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const tomorrowDate = tomorrow.toISOString().replace(/T[0-9:.]+Z$/, '')
+    maintenances = maintenances.map((maintenance) => {
+      maintenance.createdAt = tomorrowDate + maintenance.createdAt.replace(/^[0-9-]+/, '')
+      maintenance.updatedAt = tomorrowDate + maintenance.updatedAt.replace(/^[0-9-]+/, '')
+      return maintenance
+    })
+
+    let events = incidents.concat(maintenances)
     events.sort(latestToOldest)
     const maxItems = 25
     for (let i = 0; i < Math.min(events.length, maxItems); i++) {
