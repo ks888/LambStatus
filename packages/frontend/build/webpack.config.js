@@ -18,7 +18,8 @@ export default function (config) {
     devtool: config.compiler_devtool,
     resolve: {
       root: paths.client(),
-      extensions: ['', '.js', '.jsx', '.json']
+      extensions: ['', '.js', '.jsx', '.json'],
+      alias: config.compiler_alias
     },
     module: {},
     devMiddlewareOptions: {

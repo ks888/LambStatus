@@ -52,9 +52,9 @@ export default function () {
       'react-router',
       'react-router-redux',
       'redux',
-      'moment-timezone',
-      'c3'
+      'moment-timezone'
     ],
+    compiler_alias: {},
 
     // ----------------------------------
     // Test Configuration
