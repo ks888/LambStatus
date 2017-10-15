@@ -3167,6 +3167,7 @@ Resources:
             Headers:
               - "Origin"
           ViewerProtocolPolicy: "allow-all"
+          Compress: "true"
         PriceClass: "PriceClass_200"
         ViewerCertificate:
           CloudFrontDefaultCertificate: "true"
@@ -3217,6 +3218,7 @@ Resources:
             Cookies:
               Forward: "none"
           ViewerProtocolPolicy: "allow-all"
+          Compress: "true"
         PriceClass: "PriceClass_200"
         ViewerCertificate:
           CloudFrontDefaultCertificate: "true"
