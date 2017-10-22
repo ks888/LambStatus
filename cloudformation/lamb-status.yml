@@ -3557,7 +3557,7 @@ Resources:
         Ref: StatusPageS3
       Key: settings.js
       Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/';
+        __LAMBSTATUS_API_URL__ = 'https://${StatusPageDistribution.DomainName}';
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -3571,7 +3571,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.js
       Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+        __LAMBSTATUS_API_URL__ = 'https://${AdminPageDistribution.DomainName}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
   DBInitialItems:
     Type: Custom::DBCreateItems
     Properties:

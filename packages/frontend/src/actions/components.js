@@ -38,7 +38,7 @@ export function removeComponent (componentID) {
 export const fetchComponents = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'components', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/components', {}, callbacks)
       dispatch(listComponents(json))
     } catch (error) {
       console.error(error.message)
@@ -51,7 +51,7 @@ export const postComponent = ({name, description, status}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { name, description, status }
-      const json = await sendRequest(apiURL + 'components', {
+      const json = await sendRequest(apiURL + '/api/components', {
         headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
@@ -68,7 +68,7 @@ export const updateComponent = ({componentID, name, description, status, order},
   return async dispatch => {
     try {
       const body = { name, description, status, order }
-      const json = await sendRequest(apiURL + 'components/' + componentID, {
+      const json = await sendRequest(apiURL + '/api/components/' + componentID, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -84,7 +84,7 @@ export const updateComponent = ({componentID, name, description, status, order},
 export const deleteComponent = (componentID, callbacks = {}) => {
   return async dispatch => {
     try {
-      await sendRequest(apiURL + 'components/' + componentID, {
+      await sendRequest(apiURL + '/api/components/' + componentID, {
         headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)

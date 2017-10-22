@@ -60,7 +60,7 @@ export function removeMetric (metricID) {
 export const fetchMetrics = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'metrics', {
+      const json = await sendRequest(apiURL + '/api/metrics', {
         headers: await buildHeaders()
       }, callbacks)
       dispatch(listMetrics(json))
@@ -74,7 +74,7 @@ export const fetchMetrics = (callbacks = {}) => {
 export const fetchPublicMetrics = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'public-metrics', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/public-metrics', {}, callbacks)
       dispatch(listMetrics(json))
     } catch (error) {
       console.error(error.message)
@@ -96,7 +96,7 @@ export const fetchExternalMetrics = (metricsType, filters = {}, callbacks = {}) 
       let nextCursor
       let metrics = []
       while (true) {
-        let url = `${apiURL}external-metrics?${queryParam}`
+        let url = `${apiURL}/api/external-metrics?${queryParam}`
         if (nextCursor) {
           url += `&cursor=${encodeURIComponent(nextCursor)}`
         }
@@ -125,7 +125,7 @@ export const postMetric = ({type, props, title, status, unit, description, decim
   return async dispatch => {
     try {
       const body = { type, props, title, status, unit, description, decimalPlaces }
-      const json = await sendRequest(apiURL + 'metrics', {
+      const json = await sendRequest(apiURL + '/api/metrics', {
         headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
@@ -143,7 +143,7 @@ export const updateMetric = ({metricID, type, props, title, status, unit, descri
   return async dispatch => {
     try {
       const body = { type, props, title, status, unit, description, decimalPlaces, order }
-      const json = await sendRequest(apiURL + 'metrics/' + metricID, {
+      const json = await sendRequest(apiURL + '/api/metrics/' + metricID, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -159,7 +159,7 @@ export const updateMetric = ({metricID, type, props, title, status, unit, descri
 export const deleteMetric = (metricID, callbacks = {}) => {
   return async dispatch => {
     try {
-      await sendRequest(apiURL + 'metrics/' + metricID, {
+      await sendRequest(apiURL + '/api/metrics/' + metricID, {
         headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
