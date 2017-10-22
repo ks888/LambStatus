@@ -2313,6 +2313,7 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
           - Function:
@@ -3176,11 +3177,13 @@ Resources:
             TargetOriginId: !Sub |-
               ${RestApi}-${AWS::Region}
             ForwardedValues:
-              QueryString: "false"
+              QueryString: "true"
               Cookies:
                 Forward: "none"
               Headers:
                 - "Origin"
+                - "Authorization"
+                - "Content-Type"
             ViewerProtocolPolicy: "allow-all"
             AllowedMethods:
               - "DELETE"
@@ -3259,11 +3262,13 @@ Resources:
             TargetOriginId: !Sub |-
               ${RestApi}-${AWS::Region}
             ForwardedValues:
-              QueryString: "false"
+              QueryString: "true"
               Cookies:
                 Forward: "none"
               Headers:
                 - "Origin"
+                - "Authorization"
+                - "Content-Type"
             ViewerProtocolPolicy: "allow-all"
             AllowedMethods:
               - "DELETE"
