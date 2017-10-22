@@ -18,7 +18,7 @@ export default class Message extends React.Component {
   }
 
   render () {
-    const hostname = encodeURIComponent(this.props.apiHostname.replace('https://', '').replace('/prod/', ''))
+    const hostname = encodeURIComponent(this.props.apiHostname.replace('https://', ''))
     let linkToScript = `/metrics/${this.props.metricID}/scripts/python?hostname=${hostname}`
     if (this.props.settings !== undefined && this.props.settings.apiKeys.length > 0) {
       const apiKey = encodeURIComponent(this.props.settings.apiKeys[0].value)

@@ -67,7 +67,8 @@ export const fetchMaintenances = (callbacks = {}) => {
 export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + '/api/maintenances/' + maintenanceID + '/maintenanceupdates', {}, callbacks)
+      const url = `${apiURL}/api/maintenances/${maintenanceID}/maintenanceupdates`
+      const json = await sendRequest(url, {}, callbacks)
       dispatch(listMaintenanceUpdates(json, maintenanceID))
     } catch (error) {
       console.error(error.message)
