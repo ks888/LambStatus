@@ -33,7 +33,7 @@ for i in range(total_points):
 body = json.dumps({metric_id: datapoints})
 headers = {'Content-Type': 'application/json', 'x-api-key': api_key}
 conn = httplib.HTTPSConnection(hostname)
-conn.request('POST', '/prod/v0/metrics/data', body, headers)
+conn.request('POST', '/api/v0/metrics/data', body, headers)
 resp = conn.getresponse()
 if resp.status == 200:
     print 'Successfully submitted', str(total_points), 'datapoints'

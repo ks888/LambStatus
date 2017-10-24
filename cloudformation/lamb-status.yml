@@ -178,7 +178,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/components
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/components
   PostComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -211,7 +211,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/components
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/components
   PatchComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -244,7 +244,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/components/{componentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/components/{componentid}
   DeleteComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -277,7 +277,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/components/{componentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/components/{componentid}
   GetIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -310,7 +310,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/incidents
   PostIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -343,7 +343,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/incidents
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/incidents
   PatchIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -376,7 +376,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/incidents/{incidentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/incidents/{incidentid}
   DeleteIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -409,7 +409,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/incidents/{incidentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/incidents/{incidentid}
   GetIncidentUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -442,7 +442,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/incidents/{incidentid}/incidentupdates
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/incidents/{incidentid}/incidentupdates
   PatchIncidentUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -475,7 +475,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/incidents/{incidentid}/incidentupdates/{incidentupdateid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/incidents/{incidentid}/incidentupdates/{incidentupdateid}
   GetMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -508,7 +508,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/maintenances
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/maintenances
   PostMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -541,7 +541,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/maintenances
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/maintenances
   PatchMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -574,7 +574,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/maintenances/{maintenanceid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/maintenances/{maintenanceid}
   DeleteMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -607,7 +607,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/maintenances/{maintenanceid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/maintenances/{maintenanceid}
   GetMaintenanceUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -640,7 +640,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/maintenances/{maintenanceid}/maintenanceupdates
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/maintenances/{maintenanceid}/maintenanceupdates
   PatchMaintenanceUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -673,7 +673,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/maintenances/{maintenanceid}/maintenanceupdates/{maintenanceupdateid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/maintenances/{maintenanceid}/maintenanceupdates/{maintenanceupdateid}
   GetSettingsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -706,7 +706,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/settings
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/settings
   GetPublicSettingsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -739,7 +739,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/public-settings
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/public-settings
   PatchSettingsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -772,7 +772,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/settings
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/settings
   PostApiKeysLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -805,7 +805,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/settings/apikeys
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/settings/apikeys
   DeleteApiKeysLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -838,7 +838,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/settings/apikeys/{apikeyid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/settings/apikeys/{apikeyid}
   GetExternalMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -871,7 +871,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/external-metrics
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/external-metrics
   GetPublicMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -904,7 +904,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/public-metrics
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/public-metrics
   GetMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -937,7 +937,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/metrics
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/metrics
   PostMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -970,7 +970,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/metrics
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/metrics
   PatchMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1003,7 +1003,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/metrics/{metricid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/metrics/{metricid}
   DeleteMetricsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1036,7 +1036,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/metrics/{metricid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/metrics/{metricid}
   PostMetricsDataLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1069,7 +1069,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/v0/metrics/data
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/v0/metrics/data
   CollectMetricsDataLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1235,7 +1235,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       Type: COGNITO_USER_POOLS
-  ComponentsApiResource:
+  RootApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
       RestApiId:
@@ -1244,6 +1244,14 @@ Resources:
         Fn::GetAtt:
           - "RestApi"
           - "RootResourceId"
+      PathPart: "api"
+  ComponentsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "RootApiResource"
       PathPart: "components"
   ComponentApiResource:
     Type: "AWS::ApiGateway::Resource"
@@ -1480,9 +1488,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "incidents"
   GetIncidentsApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -1884,9 +1890,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "maintenances"
   GetMaintenancesApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -2288,9 +2292,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "external-metrics"
   GetExternalMetricsApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -2311,6 +2313,7 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
           - Function:
@@ -2373,9 +2376,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "public-metrics"
   GetPublicMetricsApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -2445,9 +2446,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "metrics"
   MetricApiResource:
     Type: "AWS::ApiGateway::Resource"
@@ -2686,9 +2685,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "public-settings"
   GetPublicSettingsApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -2758,9 +2755,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "settings"
   GetSettingsApiMethod:
     Type: "AWS::ApiGateway::Method"
@@ -3035,9 +3030,7 @@ Resources:
       RestApiId:
         Ref: "RestApi"
       ParentId:
-        Fn::GetAtt:
-          - "RestApi"
-          - "RootResourceId"
+        Ref: "RootApiResource"
       PathPart: "v0"
   V0MetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
@@ -3152,6 +3145,17 @@ Resources:
               Ref: "StatusPageS3"
             CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
+          - DomainName: !Sub |-
+              ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
+            OriginPath: "/prod"
+            Id: !Sub |-
+              ${RestApi}-${AWS::Region}
+            CustomOriginConfig:
+              OriginProtocolPolicy: "https-only"
+              OriginSSLProtocols:
+                - TLSv1
+                - TLSv1.1
+                - TLSv1.2
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for status page of LambStatus"
@@ -3168,6 +3172,29 @@ Resources:
               - "Origin"
           ViewerProtocolPolicy: "allow-all"
           Compress: "true"
+        CacheBehaviors:
+          - PathPattern: "api/*"
+            TargetOriginId: !Sub |-
+              ${RestApi}-${AWS::Region}
+            ForwardedValues:
+              QueryString: "true"
+              Cookies:
+                Forward: "none"
+              Headers:
+                - "Origin"
+                - "Authorization"
+                - "Content-Type"
+            ViewerProtocolPolicy: "allow-all"
+            AllowedMethods:
+              - "DELETE"
+              - "GET"
+              - "HEAD"
+              - "OPTIONS"
+              - "PATCH"
+              - "POST"
+              - "PUT"
+            Compress: "true"
+            DefaultTTL: "10"
         PriceClass: "PriceClass_200"
         ViewerCertificate:
           CloudFrontDefaultCertificate: "true"
@@ -3205,6 +3232,17 @@ Resources:
               Ref: "AdminPageS3"
             CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
+          - DomainName: !Sub |-
+              ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
+            OriginPath: "/prod"
+            Id: !Sub |-
+              ${RestApi}-${AWS::Region}
+            CustomOriginConfig:
+              OriginProtocolPolicy: "https-only"
+              OriginSSLProtocols:
+                - TLSv1
+                - TLSv1.1
+                - TLSv1.2
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for admin page of LambStatus"
@@ -3219,6 +3257,29 @@ Resources:
               Forward: "none"
           ViewerProtocolPolicy: "allow-all"
           Compress: "true"
+        CacheBehaviors:
+          - PathPattern: "api/*"
+            TargetOriginId: !Sub |-
+              ${RestApi}-${AWS::Region}
+            ForwardedValues:
+              QueryString: "true"
+              Cookies:
+                Forward: "none"
+              Headers:
+                - "Origin"
+                - "Authorization"
+                - "Content-Type"
+            ViewerProtocolPolicy: "allow-all"
+            AllowedMethods:
+              - "DELETE"
+              - "GET"
+              - "HEAD"
+              - "OPTIONS"
+              - "PATCH"
+              - "POST"
+              - "PUT"
+            Compress: "true"
+            DefaultTTL: "0"
         PriceClass: "PriceClass_200"
         ViewerCertificate:
           CloudFrontDefaultCertificate: "true"
@@ -3501,7 +3562,7 @@ Resources:
         Ref: StatusPageS3
       Key: settings.js
       Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/';
+        __LAMBSTATUS_API_URL__ = 'https://${StatusPageDistribution.DomainName}';
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -3515,7 +3576,7 @@ Resources:
         Ref: AdminPageS3
       Key: settings.js
       Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+        __LAMBSTATUS_API_URL__ = 'https://${AdminPageDistribution.DomainName}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
   DBInitialItems:
     Type: Custom::DBCreateItems
     Properties:

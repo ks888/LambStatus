@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactTooltip from 'react-tooltip'
 import LabeledDropdownList from 'components/common/LabeledDropdownList'
-import { apiURL } from 'utils/settings'
+import { userPoolId } from 'utils/settings'
 import { regions } from 'utils/status'
 import classes from './CloudWatchMetricsSelector.scss'
 
@@ -34,11 +34,12 @@ export default class CloudWatchMetricsSelector extends React.Component {
   constructor (props) {
     super(props)
 
-    const matched = apiURL.match(/execute-api.([a-z0-9-]+).amazonaws.com/)
+    const matched = userPoolId.match(/([a-z0-9-]+)_.+/)
     if (matched && matched.length === 2) {
       this.region = matched[1]
     } else {
-      console.error('failed to get region from', apiURL)
+      console.error('failed to get region from', userPoolId)
+      this.region = 'us-east-1'
     }
 
     this.regionNames = regions.map(r => r.name)

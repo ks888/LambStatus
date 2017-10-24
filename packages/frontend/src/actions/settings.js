@@ -38,7 +38,7 @@ export function removeApiKey (keyID) {
 export const fetchSettings = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'settings', {
+      const json = await sendRequest(apiURL + '/api/settings', {
         headers: await buildHeaders()
       }, callbacks)
       dispatch(listSettings(json))
@@ -52,7 +52,7 @@ export const fetchSettings = (callbacks = {}) => {
 export const fetchPublicSettings = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'public-settings', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/public-settings', {}, callbacks)
       dispatch(listSettings(json))
     } catch (error) {
       console.error(error.message)
@@ -65,7 +65,7 @@ export const updateSettings = (serviceName, adminPageURL, statusPageURL, callbac
   return async dispatch => {
     try {
       const body = { serviceName, adminPageURL, statusPageURL }
-      const json = await sendRequest(apiURL + 'settings', {
+      const json = await sendRequest(apiURL + '/api/settings', {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -81,7 +81,7 @@ export const updateSettings = (serviceName, adminPageURL, statusPageURL, callbac
 export const postApiKey = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'settings/apikeys', {
+      const json = await sendRequest(apiURL + '/api/settings/apikeys', {
         headers: await buildHeaders(),
         method: 'POST'
       }, callbacks)
@@ -96,7 +96,7 @@ export const postApiKey = (callbacks = {}) => {
 export const deleteApiKey = (keyID, callbacks = {}) => {
   return async dispatch => {
     try {
-      await sendRequest(`${apiURL}settings/apikeys/${keyID}`, {
+      await sendRequest(`${apiURL}/api/settings/apikeys/${keyID}`, {
         headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)

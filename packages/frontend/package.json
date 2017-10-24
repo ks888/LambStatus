@@ -10,42 +10,34 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint src",
-    "build": "better-npm-run build",
-    "build:dev": "better-npm-run build:dev",
+    "build": "npm run clean && better-npm-run build",
     "start": "npm run start:admin",
     "start:admin": "better-npm-run start admin",
     "start:status": "better-npm-run start status",
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "codecov": "cat coverage/lcov.info | codecov",
-    "deploy": "better-npm-run deploy",
-    "release": "better-npm-run release",
+    "deploy": "npm run build && better-npm-run deploy",
+    "release": "npm run build && better-npm-run release",
     "release:force": "npm run release -- --force"
   },
   "betterScripts": {
     "build": {
-      "command": "npm run clean && babel-node bin/fetch-settings.js && babel-node bin/compile",
+      "command": "babel-node bin/compile",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
-    "build:dev": {
-      "command": "babel-node bin/fetch-settings.js && babel-node bin/compile",
-      "env": {
-        "NODE_ENV": "development",
-        "DEBUG": "app:*"
-      }
-    },
     "start": {
-      "command": "npm run clean && babel-node bin/fetch-settings.js && babel-node bin/server",
+      "command": "babel-node bin/server",
       "env": {
         "NODE_ENV": "development",
         "DEBUG": "app:*"
       }
     },
     "deploy": {
-      "command": "npm run build && babel-node bin/deploy",
+      "command": "babel-node bin/deploy",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"
@@ -59,7 +51,7 @@
       }
     },
     "release": {
-      "command": "npm run build && babel-node bin/release",
+      "command": "babel-node bin/release",
       "env": {
         "NODE_ENV": "production",
         "DEBUG": "app:*"

@@ -55,7 +55,7 @@ export function removeIncident (incidentID) {
 export const fetchIncidents = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'incidents', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/incidents', {}, callbacks)
       dispatch(listIncidents(json))
     } catch (error) {
       console.error(error.message)
@@ -67,7 +67,7 @@ export const fetchIncidents = (callbacks = {}) => {
 export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'incidents/' + incidentID + '/incidentupdates', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/incidents/' + incidentID + '/incidentupdates', {}, callbacks)
       dispatch(listIncidentUpdates(json, incidentID))
     } catch (error) {
       console.error(error.message)
@@ -85,7 +85,7 @@ export const postIncident = ({name, incidentStatus, message, components}, callba
         message,
         components
       }
-      const json = await sendRequest(apiURL + 'incidents', {
+      const json = await sendRequest(apiURL + '/api/incidents', {
         headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
@@ -108,7 +108,7 @@ export const updateIncident = ({incidentID, name, incidentStatus, message, compo
         components,
         createdAt
       }
-      const json = await sendRequest(apiURL + 'incidents/' + incidentID, {
+      const json = await sendRequest(apiURL + '/api/incidents/' + incidentID, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -130,7 +130,7 @@ export const updateIncidentUpdate = ({incidentID, incidentUpdateID, incidentStat
         message,
         createdAt
       }
-      const json = await sendRequest(`${apiURL}incidents/${incidentID}/incidentupdates/${incidentUpdateID}`, {
+      const json = await sendRequest(`${apiURL}/api/incidents/${incidentID}/incidentupdates/${incidentUpdateID}`, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -146,7 +146,7 @@ export const updateIncidentUpdate = ({incidentID, incidentUpdateID, incidentStat
 export const deleteIncident = (incidentID, callbacks = {}) => {
   return async dispatch => {
     try {
-      await sendRequest(apiURL + 'incidents/' + incidentID, {
+      await sendRequest(apiURL + '/api/incidents/' + incidentID, {
         headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)

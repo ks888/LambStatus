@@ -55,7 +55,7 @@ export function removeMaintenance (maintenanceID) {
 export const fetchMaintenances = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'maintenances', {}, callbacks)
+      const json = await sendRequest(apiURL + '/api/maintenances', {}, callbacks)
       dispatch(listMaintenances(json))
     } catch (error) {
       console.error(error.message)
@@ -67,7 +67,8 @@ export const fetchMaintenances = (callbacks = {}) => {
 export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID + '/maintenanceupdates', {}, callbacks)
+      const url = `${apiURL}/api/maintenances/${maintenanceID}/maintenanceupdates`
+      const json = await sendRequest(url, {}, callbacks)
       dispatch(listMaintenanceUpdates(json, maintenanceID))
     } catch (error) {
       console.error(error.message)
@@ -80,7 +81,7 @@ export const postMaintenance = ({name, maintenanceStatus, startAt, endAt, messag
   return async dispatch => {
     try {
       const body = { name, status: maintenanceStatus, startAt, endAt, message, components }
-      const json = await sendRequest(apiURL + 'maintenances', {
+      const json = await sendRequest(apiURL + '/api/maintenances', {
         headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
@@ -98,7 +99,7 @@ export const updateMaintenance = ({maintenanceID, name, maintenanceStatus, start
   return async dispatch => {
     try {
       const body = { name, status: maintenanceStatus, startAt, endAt, message, components, createdAt }
-      const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
+      const json = await sendRequest(apiURL + '/api/maintenances/' + maintenanceID, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -120,7 +121,7 @@ export const updateMaintenanceUpdate = ({maintenanceID, maintenanceUpdateID, mai
         message,
         createdAt
       }
-      const json = await sendRequest(`${apiURL}maintenances/${maintenanceID}/maintenanceupdates/${maintenanceUpdateID}`, {
+      const json = await sendRequest(`${apiURL}/api/maintenances/${maintenanceID}/maintenanceupdates/${maintenanceUpdateID}`, {
         headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
@@ -136,7 +137,7 @@ export const updateMaintenanceUpdate = ({maintenanceID, maintenanceUpdateID, mai
 export const deleteMaintenance = (maintenanceID, callbacks = {}) => {
   return async dispatch => {
     try {
-      await sendRequest(apiURL + 'maintenances/' + maintenanceID, {
+      await sendRequest(apiURL + '/api/maintenances/' + maintenanceID, {
         headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
