@@ -40,8 +40,7 @@ export default function (config) {
   webpackConfig.entry = {
     app: __DEV__
       ? APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
-      : APP_ENTRY_PATHS,
-    vendor: config.compiler_vendor
+      : APP_ENTRY_PATHS
   }
 
   // ------------------------------------
@@ -51,6 +50,13 @@ export default function (config) {
     filename: `[name].[${config.compiler_hash_type}].js`,
     path: paths.dist(),
     publicPath: config.compiler_public_path
+  }
+  webpackConfig.externals = {
+    'c3': 'c3',
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+    'react-router': 'ReactRouter',
+    'moment-timezone': 'moment'
   }
 
   // ------------------------------------
@@ -91,15 +97,6 @@ export default function (config) {
           dead_code: true,
           warnings: false
         }
-      })
-    )
-  }
-
-  // Don't split bundles during testing, since we only want import one bundle
-  if (!__TEST__) {
-    webpackConfig.plugins.push(
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor']
       })
     )
   }
