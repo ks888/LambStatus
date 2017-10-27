@@ -4,25 +4,35 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import _debug from 'debug'
-import { buildURL } from './cdn'
+import { buildScriptURL, buildCSSURL } from './cdn'
 
 const debug = _debug('app:webpack:config')
 
 // These modules are served from cdnjs.
 // 'moduleName' and 'dependedBy' are used to resolve the module version.
-// 'libraryName' and 'filePath' are used to build the cdn url.
+// 'libraryName', 'cssPath' and 'scriptPath' are used to build the cdn url.
 // If defined, 'external' is used to build the 'externals' option of webpack.
 /* eslint-disable max-len */
 const modulesServedFromCDN = [
-  {moduleName: 'c3', dependedBy: [], libraryName: 'c3', filePath: 'c3.js', external: 'c3'},
-  {moduleName: 'd3', dependedBy: ['c3'], libraryName: 'd3', filePath: 'd3.js'},
-  {moduleName: 'react', dependedBy: [], libraryName: 'react', filePath: 'react.js', external: 'React'},
-  {moduleName: 'react-dom', dependedBy: [], libraryName: 'react', filePath: 'react-dom.js', external: 'ReactDOM'},
-  {moduleName: 'react-router', dependedBy: [], libraryName: 'react-router', filePath: 'ReactRouter.js', external: 'ReactRouter'},
-  {moduleName: 'moment', dependedBy: ['moment-timezone'], libraryName: 'moment.js', filePath: 'moment.js'},
-  {moduleName: 'moment-timezone', dependedBy: [], libraryName: 'moment-timezone', filePath: 'moment-timezone-with-data.js', external: 'moment'}
+  {moduleName: 'c3', dependedBy: [], libraryName: 'c3', cssPath: 'c3.css', scriptPath: 'c3.js', external: 'c3'},
+  {moduleName: 'd3', dependedBy: ['c3'], libraryName: 'd3', scriptPath: 'd3.js'},
+  {moduleName: 'react', dependedBy: [], libraryName: 'react', scriptPath: 'react.js', external: 'React'},
+  {moduleName: 'react-dom', dependedBy: [], libraryName: 'react', scriptPath: 'react-dom.js', external: 'ReactDOM'},
+  {moduleName: 'react-router', dependedBy: [], libraryName: 'react-router', scriptPath: 'ReactRouter.js', external: 'ReactRouter'},
+  {moduleName: 'moment', dependedBy: ['moment-timezone'], libraryName: 'moment.js', scriptPath: 'moment.js'},
+  {moduleName: 'moment-timezone', dependedBy: [], libraryName: 'moment-timezone', scriptPath: 'moment-timezone-with-data.js', external: 'moment'}
 ]
 /* eslint-enable max-len */
+
+const cssServedFromCDN = modulesServedFromCDN.reduce(function (prev, curr) {
+  if (curr.cssPath !== undefined) prev.push(buildCSSURL(curr))
+  return prev
+}, [])
+
+const scriptsServedFromCDN = modulesServedFromCDN.reduce(function (prev, curr) {
+  if (curr.scriptPath !== undefined) prev.push(buildScriptURL(curr))
+  return prev
+}, [])
 
 export default function (config) {
   const paths = config.utils_paths
@@ -87,7 +97,8 @@ export default function (config) {
       minify: {
         collapseWhitespace: true
       },
-      scripts: modulesServedFromCDN.map(buildURL)
+      stylesheets: cssServedFromCDN,
+      scripts: scriptsServedFromCDN
     }),
     new CopyWebpackPlugin([
       { from: 'config/settings.js' }

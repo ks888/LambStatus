@@ -18,7 +18,12 @@ const getVersion = function (cdnModule) {
   return curr.dependencies[cdnModule.moduleName].version
 }
 
-export const buildURL = function (cdnModule) {
+export const buildScriptURL = function (cdnModule) {
   const version = getVersion(cdnModule)
-  return `https://cdnjs.cloudflare.com/ajax/libs/${cdnModule.libraryName}/${version}/${cdnModule.filePath}`
+  return `https://cdnjs.cloudflare.com/ajax/libs/${cdnModule.libraryName}/${version}/${cdnModule.scriptPath}`
+}
+
+export const buildCSSURL = function (cdnModule) {
+  const version = getVersion(cdnModule)
+  return `https://cdnjs.cloudflare.com/ajax/libs/${cdnModule.libraryName}/${version}/${cdnModule.cssPath}`
 }
