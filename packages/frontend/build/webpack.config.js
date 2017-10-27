@@ -78,10 +78,12 @@ export default function (config) {
     path: paths.dist(),
     publicPath: config.compiler_public_path
   }
-  webpackConfig.externals = modulesServedFromCDN.reduce(function (prev, curr) {
-    if (curr.external !== undefined) prev[curr.moduleName] = curr.external
-    return prev
-  }, {})
+  if (!__TEST__) {
+    webpackConfig.externals = modulesServedFromCDN.reduce(function (prev, curr) {
+      if (curr.external !== undefined) prev[curr.moduleName] = curr.external
+      return prev
+    }, {})
+  }
 
   // ------------------------------------
   // Plugins
