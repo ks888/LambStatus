@@ -1,5 +1,6 @@
 const oneYearBySeconds = 31536000
 const oneDayBySeconds = 86400
+const tenSeconds = 10
 
 export const getCacheControl = (contentType) => {
   const prefix = 'max-age='
@@ -12,6 +13,6 @@ export const getCacheControl = (contentType) => {
     case 'text/html':
     case 'application/json':
     default:
-      return prefix + 0
+      return prefix + tenSeconds
   }
 }
