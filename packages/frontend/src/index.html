@@ -7,9 +7,15 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
   <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-amber.min.css" />
+  <% for (var i in htmlWebpackPlugin.options.stylesheets) { %>
+  <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.stylesheets[i] %>" />
+  <% } %>
 </head>
 <body style="height: 100%">
   <div id="root" style="height: 100%"></div>
+  <% for (var i in htmlWebpackPlugin.options.scripts) { %>
+  <script src="<%= htmlWebpackPlugin.options.scripts[i] %>"></script>
+  <% } %>
   <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
   <script src="/settings.js"></script>
 </body>

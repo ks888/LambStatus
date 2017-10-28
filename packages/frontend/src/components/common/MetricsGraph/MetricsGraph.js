@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import c3 from 'c3'
-import 'c3/c3.css'
 import { timeframes, getXAxisFormat, getTooltipTitleFormat, getIncrementTimestampFunc, getNumDates } from 'utils/status'
 import classes from './MetricsGraph.scss'
 import './MetricsGraph.global.scss'

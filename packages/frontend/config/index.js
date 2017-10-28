@@ -44,16 +44,6 @@ export default function () {
       chunkModules : false,
       colors : true
     },
-    compiler_vendor : [
-      'history',
-      'react',
-      'react-dom',
-      'react-redux',
-      'react-router',
-      'react-router-redux',
-      'redux',
-      'moment-timezone'
-    ],
     compiler_alias: {},
 
     // ----------------------------------
@@ -87,22 +77,6 @@ export default function () {
     '__COVERAGE__' : !argv.watch && config.env === 'test',
     '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
   }
-
-  // ------------------------------------
-  // Validate Vendor Dependencies
-  // ------------------------------------
-  const pkg = require('../package.json')
-
-  config.compiler_vendor = config.compiler_vendor
-    .filter((dep) => {
-      if (pkg.dependencies[dep]) return true
-
-      debug(
-        `Package "${dep}" was not found as an npm dependency in package.json; ` +
-        `it won't be included in the webpack vendor bundle.
-         Consider removing it from vendor_dependencies in ~/config/index.js`
-      )
-    })
 
   // ------------------------------------
   // Utilities

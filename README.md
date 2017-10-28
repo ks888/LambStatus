@@ -7,7 +7,7 @@
   <img src="https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/TwitterButton_h42.png" alt="Twitter" height="20px">
 </a>
 
-LambStatus is a status page system inspired by [StatusPage.io](https://www.statuspage.io/), built on AWS Lambda.
+LambStatus is a serverless status page system inspired by [StatusPage.io](https://www.statuspage.io/).
 
 With a few clicks, You can build a status page like this:
 
@@ -20,18 +20,19 @@ The demo pages are available:
 ## Goals of this project
 
 * Offers an open source and serverless status page system.
-* Enables you to deploy and maintain the status page system at minimum effort.
+* Offers a pay-as-you-go pricing approach like AWS. We estimate the system takes just *$1 to handle 30,000 visitors* ([see details](https://github.com/ks888/LambStatus/wiki/Cost-estimate)).
+* Enables you to build and maintain the status page system at minimum effort.
 
 ## Why Serverless?
 
 Status page system is great with the Serverless architecture, because:
 
-* It dramatically eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
-* It reduces your infrastructure cost. A status page usually gets very low traffic and occasionally huge traffic. You only pay for the traffic that you handle.
+* It eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
+* It enables you to pay only for what you use. A status page only occasionally gets huge traffic. The system takes only $1 per 30,000 visitors and almost $0 if no visitors.
 
 Apart from the Serverless architecture, LambStatus enables you to:
 
-* Easily build and update the system (by the power of the CloudFormation)
+* Build and update the system with a few clicks (by the power of the CloudFormation)
 * Choose the AWS region different from your service's region. If both your service and its status page rely on the same region, [the region outage](https://aws.amazon.com/message/41926/) may stop both.
 
 ## Installation

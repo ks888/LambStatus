@@ -4,8 +4,35 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import _debug from 'debug'
+import { buildScriptURL, buildCSSURL } from './cdn'
 
 const debug = _debug('app:webpack:config')
+
+// These modules are served from cdnjs.
+// 'moduleName' and 'dependedBy' are used to resolve the module version.
+// 'libraryName', 'cssPath' and 'scriptPath' are used to build the cdn url.
+// If defined, 'external' is used to build the 'externals' option of webpack.
+/* eslint-disable max-len */
+const modulesServedFromCDN = [
+  {moduleName: 'c3', dependedBy: [], libraryName: 'c3', cssPath: 'c3.css', scriptPath: 'c3.js', external: 'c3'},
+  {moduleName: 'd3', dependedBy: ['c3'], libraryName: 'd3', scriptPath: 'd3.js'},
+  {moduleName: 'react', dependedBy: [], libraryName: 'react', scriptPath: 'react.js', external: 'React'},
+  {moduleName: 'react-dom', dependedBy: [], libraryName: 'react', scriptPath: 'react-dom.js', external: 'ReactDOM'},
+  {moduleName: 'react-router', dependedBy: [], libraryName: 'react-router', scriptPath: 'ReactRouter.js', external: 'ReactRouter'},
+  {moduleName: 'moment', dependedBy: ['moment-timezone'], libraryName: 'moment.js', scriptPath: 'moment.js'},
+  {moduleName: 'moment-timezone', dependedBy: [], libraryName: 'moment-timezone', scriptPath: 'moment-timezone-with-data.js', external: 'moment'}
+]
+/* eslint-enable max-len */
+
+const cssServedFromCDN = modulesServedFromCDN.reduce(function (prev, curr) {
+  if (curr.cssPath !== undefined) prev.push(buildCSSURL(curr))
+  return prev
+}, [])
+
+const scriptsServedFromCDN = modulesServedFromCDN.reduce(function (prev, curr) {
+  if (curr.scriptPath !== undefined) prev.push(buildScriptURL(curr))
+  return prev
+}, [])
 
 export default function (config) {
   const paths = config.utils_paths
@@ -40,8 +67,7 @@ export default function (config) {
   webpackConfig.entry = {
     app: __DEV__
       ? APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
-      : APP_ENTRY_PATHS,
-    vendor: config.compiler_vendor
+      : APP_ENTRY_PATHS
   }
 
   // ------------------------------------
@@ -51,6 +77,12 @@ export default function (config) {
     filename: `[name].[${config.compiler_hash_type}].js`,
     path: paths.dist(),
     publicPath: config.compiler_public_path
+  }
+  if (!__TEST__) {
+    webpackConfig.externals = modulesServedFromCDN.reduce(function (prev, curr) {
+      if (curr.external !== undefined) prev[curr.moduleName] = curr.external
+      return prev
+    }, {})
   }
 
   // ------------------------------------
@@ -66,12 +98,13 @@ export default function (config) {
       inject: 'body',
       minify: {
         collapseWhitespace: true
-      }
+      },
+      stylesheets: cssServedFromCDN,
+      scripts: scriptsServedFromCDN
     }),
     new CopyWebpackPlugin([
       { from: 'config/settings.js' }
-    ]),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    ])
   ]
 
   if (__DEV__) {
@@ -91,15 +124,6 @@ export default function (config) {
           dead_code: true,
           warnings: false
         }
-      })
-    )
-  }
-
-  // Don't split bundles during testing, since we only want import one bundle
-  if (!__TEST__) {
-    webpackConfig.plugins.push(
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor']
       })
     )
   }
