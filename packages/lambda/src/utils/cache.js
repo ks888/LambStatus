@@ -12,7 +12,8 @@ export const getCacheControl = (contentType) => {
       return prefix + oneDayBySeconds
     case 'text/html':
     case 'application/json':
-    default:
       return prefix + tenSeconds
+    default:
+      return prefix + 0
   }
 }

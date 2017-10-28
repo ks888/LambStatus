@@ -46,7 +46,7 @@ describe('S3', () => {
       const objectName = 'test.html'
       const body = 'data'
       const contentType = 'text/html'
-      const cacheControl = 'max-age=0'
+      const cacheControl = 'max-age=10'
       let actual
       AWS.mock('S3', 'putObject', (params, callback) => {
         actual = params
@@ -119,7 +119,7 @@ describe('S3', () => {
       const destBucketName = 'test'
       const destObjectName = 'test.html'
       const contentType = 'text/html'
-      const cacheControl = 'max-age=0'
+      const cacheControl = 'max-age=10'
       let actual
       AWS.mock('S3', 'copyObject', (params, callback) => {
         actual = params
