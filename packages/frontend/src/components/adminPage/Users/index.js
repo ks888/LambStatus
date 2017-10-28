@@ -15,11 +15,15 @@ export default class Users extends React.Component {
         <h4>Users</h4>
       </div>
       <div className='mdl-cell mdl-cell--12-col'>
-        Operations like creating a user are not supported. Access
+        Access
         <a href={linkToUsersPage} className={classes.link} target='_blank'>
           the Amazon Cognito Management Console
         </a>
-        for these operations.
+        to manage the users of the admin page. Please see
+        <a href='https://github.com/ks888/LambStatus/wiki/Create-a-new-user' className={classes.link} target='_blank'>
+          the document
+        </a>
+        to create a new user.
       </div>
     </div>)
   }
