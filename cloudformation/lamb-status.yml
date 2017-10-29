@@ -178,7 +178,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/components
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PostComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -3032,6 +3032,43 @@ Resources:
       ParentId:
         Ref: "RootApiResource"
       PathPart: "v0"
+  V0ComponentsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0ApiResource"
+      PathPart: "components"
+  V0GetComponentsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0ComponentsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetComponentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
   V0MetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
