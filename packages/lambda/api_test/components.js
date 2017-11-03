@@ -9,7 +9,7 @@ describe('V0Components', () => {
     }))
   })
 
-  describe('V0GetComponentsApiMethod', () => {
+  describe('Get', () => {
     it('should return the list of components', async () => {
       const {response, body} = await v0GetComponents()
       assert(response.status === 200)
@@ -17,7 +17,7 @@ describe('V0Components', () => {
     })
   })
 
-  describe('V0PostComponentsApiMethod', () => {
+  describe('Post', () => {
     it('should create a new component', async () => {
       const {response, body} = await v0PostComponents()
       assert(response.status === 200)
@@ -32,20 +32,20 @@ describe('V0Components', () => {
     })
   })
 
-  describe('V0PatchComponentApiMethod', () => {
+  describe('Patch', () => {
     it('should update the existing component', async () => {
       const postResult = await v0PostComponents()
       postResult.body.name = 'C2'
-      const {response, body} = await v0PatchComponents(postResult.body.componentID, postResult.body)
+      const {response, body} = await v0PatchComponents(postResult.body.componentID, {name: 'C2'})
 
       assert(response.status === 200)
       assert(body.name === 'C2')
+      assert(body.status === postResult.body.status)
     })
 
     it('should return validation error if invalid param', async () => {
       const postResult = await v0PostComponents()
-      postResult.body.name = ''
-      const {response, body} = await v0PatchComponents(postResult.body.componentID, postResult.body)
+      const {response, body} = await v0PatchComponents(postResult.body.componentID, {name: ''})
 
       assert(response.status === 400)
       assert(body.errors.length === 1)
@@ -53,7 +53,7 @@ describe('V0Components', () => {
     })
   })
 
-  describe('V0DeleteComponentApiMethod', () => {
+  describe('Delete', () => {
     it('should delete the existing component', async () => {
       const {body} = await v0PostComponents()
       const {response} = await v0DeleteComponent(body.componentID)
