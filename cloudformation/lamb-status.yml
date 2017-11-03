@@ -178,7 +178,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/components
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PostComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -211,7 +211,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/components
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -244,7 +244,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/components/{componentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   DeleteComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -277,7 +277,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/components/{componentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   GetIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -3032,6 +3032,158 @@ Resources:
       ParentId:
         Ref: "RootApiResource"
       PathPart: "v0"
+  V0ComponentsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0ApiResource"
+      PathPart: "components"
+  V0ComponentApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0ComponentsApiResource"
+      PathPart: "{componentid}"
+  V0GetComponentsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0ComponentsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetComponentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PostComponentsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0ComponentsApiResource"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostComponentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PatchComponentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0ComponentApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchComponentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0DeleteComponentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0ComponentApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteComponentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "204"
+        - StatusCode: "400"
   V0MetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
