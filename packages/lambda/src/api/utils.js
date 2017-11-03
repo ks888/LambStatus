@@ -168,8 +168,10 @@ export class MetricProxy extends Metric {
   async insertDatapoints (datapoints) {
     const store = new MetricsStore()
     await store.lock(this.metricID)
+
+    let insertedDatapoints
     try {
-      await super.insertDatapoints(datapoints)
+      insertedDatapoints = await super.insertDatapoints(datapoints)
     } finally {
       try {
         await store.unlock(this.metricID)
@@ -177,6 +179,8 @@ export class MetricProxy extends Metric {
         console.error(`failed to unlock mutex (metricID: ${this.metricID})`, err.toString())
       }
     }
+
+    return insertedDatapoints
   }
 }
 
