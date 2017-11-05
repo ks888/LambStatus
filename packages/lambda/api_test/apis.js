@@ -44,10 +44,9 @@ export const v0GetIncidents = async () => {
   return {response, body}
 }
 
-export const v0PostIncidents = async ({name = 'I1', status = incidentStatuses[0], message = '',
-                                       components = []} = {}) => {
+export const v0PostIncidents = async ({name = 'I1', status = incidentStatuses[0], message = ''} = {}) => {
   const url = `${urlPrefix}/api/v0/incidents`
-  const reqbody = {name, status, message, components}
+  const reqbody = {name, status, message}
   const response = await fetch(url, {method: 'POST', headers, body: JSON.stringify(reqbody)})
   const body = await response.json()
   return {response, body}

@@ -24,24 +24,27 @@ describe('V0Incidents', () => {
       const {response, body} = await v0GetIncident(incident.incidentID)
       assert(response.status === 200)
       assert(body.incidentID === incident.incidentID)
-      assert(body.incidentUpdates === incident.incidentUpdates)
+      assert(body.incidentUpdates.length === incident.incidentUpdates.length)
+      assert(body.incidentUpdates[0].incidentUpdateID === incident.incidentUpdates[0].incidentUpdateID)
     })
   })
 
-  // describe('Post', () => {
-  //   it('should create a new incident', async () => {
-  //     const {response, body} = await v0PostIncidents()
-  //     assert(response.status === 200)
-  //     assert(body.incidentID.length === 12)
-  //   })
+  describe('Post', () => {
+    it('should create a new incident', async () => {
+      const {response, body} = await v0PostIncidents()
+      assert(response.status === 200)
+      assert(body.incidentID !== '')
+      assert(body.incidentUpdates.incidentUpdateID !== '')
+      assert(body.components === undefined)
+    })
 
-  //   it('should return validation error if invalid param', async () => {
-  //     const {response, body} = await v0PostIncidents({name: ''})
-  //     assert(response.status === 400)
-  //     assert(body.errors.length === 1)
-  //     assert(body.errors[0].message.match(/valid/))
-  //   })
-  // })
+    it('should return validation error if invalid param', async () => {
+      const {response, body} = await v0PostIncidents({name: ''})
+      assert(response.status === 400)
+      assert(body.errors.length === 1)
+      assert(body.errors[0].message.match(/valid/))
+    })
+  })
 
   // describe('Patch', () => {
   //   it('should update the existing incident', async () => {

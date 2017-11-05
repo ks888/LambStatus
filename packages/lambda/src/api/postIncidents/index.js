@@ -20,19 +20,22 @@ export async function handle (event, context, callback) {
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.create(incidentUpdate)
 
+    const incidentWithIncidentUpdate = {
+      ...incident.objectify(),
+      incidentUpdates: [incidentUpdate.objectify()]
+    }
+
     if (event.components !== undefined) {
       await Promise.all(event.components.map(async (component) => {
         await updateComponentStatus(component)
       }))
+
+      incidentWithIncidentUpdate.components = event.components
     }
 
-    const incidentWithIncidentUpdate = Object.assign(incidentUpdate.objectify(), incident.objectify())
     await new SNS().notifyIncident(incidentWithIncidentUpdate)
 
-    callback(null, {
-      incident: incidentWithIncidentUpdate,
-      components: event.components
-    })
+    callback(null, incidentWithIncidentUpdate)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
