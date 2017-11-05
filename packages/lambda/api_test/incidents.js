@@ -11,9 +11,12 @@ describe('V0Incidents', () => {
 
   describe('Get Incidents', () => {
     it('should return the list of incidents', async () => {
+      await v0PostIncidents()
+
       const {response, body} = await v0GetIncidents()
       assert(response.status === 200)
-      assert(body.length === 0)
+      assert(body.length === 1)
+      assert(body[0].incidentID !== '')
     })
   })
 
@@ -87,7 +90,7 @@ describe('V0Incidents', () => {
 
     it('should return no error even if the incident doesn\'t exist', async () => {
       const {response} = await v0DeleteIncident('1')
-      assert(response.status === 400)
+      assert(response.status === 204)
     })
   })
 })

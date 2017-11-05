@@ -5,6 +5,7 @@ import { handle } from 'api/deleteIncidents'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 import { Incident, IncidentUpdate } from 'model/incidents'
+import { NotFoundError } from 'utils/errors'
 
 describe('deleteIncidents', () => {
   afterEach(() => {
@@ -34,6 +35,20 @@ describe('deleteIncidents', () => {
     assert(deleteIncidentStub.calledOnce)
     assert(deleteIncidentUpdateStub.calledOnce)
     assert(snsStub.calledOnce)
+  })
+
+  it('should return no error if incident does not found', async () => {
+    sinon.stub(IncidentsStore.prototype, 'get').throws(new NotFoundError('not found'))
+    sinon.stub(IncidentsStore.prototype, 'delete').returns()
+    sinon.stub(IncidentUpdatesStore.prototype, 'query').returns()
+    sinon.stub(IncidentUpdatesStore.prototype, 'delete').returns()
+    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+
+    let err
+    await handle({params: {incidentid: '1'}}, null, (error, result) => {
+      err = error
+    })
+    assert(err === undefined)
   })
 
   it('should return error on exception thrown', async () => {
