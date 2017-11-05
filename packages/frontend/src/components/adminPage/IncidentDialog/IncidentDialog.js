@@ -40,7 +40,7 @@ export default class IncidentDialog extends React.Component {
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
-    fetchIncidentUpdates: PropTypes.func.isRequired,
+    fetchIncident: PropTypes.func.isRequired,
     postIncident: PropTypes.func.isRequired,
     updateIncident: PropTypes.func.isRequired
   }
@@ -72,7 +72,7 @@ export default class IncidentDialog extends React.Component {
     }
     this.props.fetchComponents(fetchCallbacks)
     if (this.props.incident) {
-      this.props.fetchIncidentUpdates(this.props.incident.incidentID, fetchCallbacks)
+      this.props.fetchIncident(this.props.incident.incidentID, fetchCallbacks)
     }
 
     mountDialog(ReactDOM.findDOMNode(this.refs.dialog))

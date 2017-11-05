@@ -3,7 +3,7 @@ import { sendRequest, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_INCIDENTS = 'LIST_INCIDENTS'
-export const LIST_INCIDENT_UPDATES = 'LIST_INCIDENT_UPDATES'
+export const LIST_INCIDENT = 'LIST_INCIDENT'
 export const ADD_INCIDENT = 'ADD_INCIDENT'
 export const EDIT_INCIDENT = 'EDIT_INCIDENT'
 export const EDIT_INCIDENT_UPDATE = 'EDIT_INCIDENT_UPDATE'
@@ -16,10 +16,10 @@ export function listIncidents (json) {
   }
 }
 
-export function listIncidentUpdates (json, incidentID) {
+export function listIncident (json, incidentID) {
   return {
-    type: LIST_INCIDENT_UPDATES,
-    incidentUpdates: json,
+    type: LIST_INCIDENT,
+    incident: json,
     incidentID: incidentID
   }
 }
@@ -64,11 +64,11 @@ export const fetchIncidents = (callbacks = {}) => {
   }
 }
 
-export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
+export const fetchIncident = (incidentID, callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + '/api/incidents/' + incidentID + '/incidentupdates', {}, callbacks)
-      dispatch(listIncidentUpdates(json, incidentID))
+      const json = await sendRequest(apiURL + '/api/incidents/' + incidentID, {}, callbacks)
+      dispatch(listIncident(json, incidentID))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

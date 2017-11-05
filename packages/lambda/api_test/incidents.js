@@ -77,17 +77,17 @@ describe('V0Incidents', () => {
     })
   })
 
-  // describe('Delete', () => {
-  //   it('should delete the existing incident', async () => {
-  //     const {body} = await v0PostIncidents()
-  //     const {response} = await v0DeleteIncident(body.incidentID)
+  describe('Delete', () => {
+    it('should delete the existing incident', async () => {
+      const {body} = await v0PostIncidents()
+      const {response} = await v0DeleteIncident(body.incidentID)
 
-  //     assert(response.status === 204)
-  //   })
+      assert(response.status === 204)
+    })
 
-  //   it('should return no error even if the incident doesn\'t exist', async () => {
-  //     const {response} = await v0DeleteIncident(1)
-  //     assert(response.status === 204)
-  //   })
-  // })
+    it('should return no error even if the incident doesn\'t exist', async () => {
+      const {response} = await v0DeleteIncident('1')
+      assert(response.status === 400)
+    })
+  })
 })

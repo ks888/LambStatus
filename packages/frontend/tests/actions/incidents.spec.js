@@ -1,13 +1,13 @@
 import fetchMock from 'fetch-mock'
 import {
   LIST_INCIDENTS,
-  LIST_INCIDENT_UPDATES,
+  LIST_INCIDENT,
   ADD_INCIDENT,
   EDIT_INCIDENT,
   EDIT_INCIDENT_UPDATE,
   REMOVE_INCIDENT,
   fetchIncidents,
-  fetchIncidentUpdates,
+  fetchIncident,
   postIncident,
   updateIncident,
   updateIncidentUpdate,
@@ -65,31 +65,31 @@ describe('Actions/Incidents', () => {
     })
   })
 
-  describe('fetchIncidentUpdates', () => {
+  describe('fetchIncident', () => {
     it('should return a function.', () => {
-      assert(typeof fetchIncidentUpdates() === 'function')
+      assert(typeof fetchIncident() === 'function')
     })
 
-    it('should fetch incidents.', () => {
-      fetchMock.get(/.*\/incidents\/.*\/incidentupdates/,
-                    { body: [incidentUpdate], headers: {'Content-Type': 'application/json'} })
+    it('should fetch incident.', () => {
+      fetchMock.get(/.*\/incidents\/.*/,
+                    { body: incident, headers: {'Content-Type': 'application/json'} })
 
-      return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
+      return fetchIncident('id', callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
           assert(!callbacks.onFailure.called)
 
-          assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENT_UPDATES)
-          assert.deepEqual([incidentUpdate], dispatchSpy.firstCall.args[0].incidentUpdates)
+          assert(dispatchSpy.firstCall.args[0].type === LIST_INCIDENT)
+          assert.deepEqual(incident, dispatchSpy.firstCall.args[0].incident)
           assert(dispatchSpy.firstCall.args[0].incidentID === 'id')
         })
     })
 
     it('should handle error properly.', () => {
-      fetchMock.get(/.*\/incidents\/.*\/incidentupdates/, { status: 400, body: {} })
+      fetchMock.get(/.*\/incidents\/.*/, { status: 400, body: {} })
 
-      return fetchIncidentUpdates('id', callbacks)(dispatchSpy)
+      return fetchIncident('id', callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
