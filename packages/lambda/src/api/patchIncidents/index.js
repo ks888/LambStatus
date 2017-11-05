@@ -6,34 +6,40 @@ import { updateComponentStatus } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
-    let params = {incidentID: event.params.incidentid, ...event.body}
-    const incident = new Incident(params)
-    incident.validate()
     const incidentsStore = new IncidentsStore()
-    await incidentsStore.update(incident)
+    const incident = await incidentsStore.get(event.params.incidentid)
+    delete incident.updatedAt
+
+    const newIncident = new Incident({...incident.objectify(), ...event.body})
+    newIncident.validate()
+    await incidentsStore.update(newIncident)
 
     let incidentUpdate = new IncidentUpdate({
       incidentID: event.params.incidentid,
-      incidentStatus: event.body.status,
+      incidentStatus: (event.body.status === undefined ? newIncident.status : event.body.status),
       message: event.body.message
     })
     incidentUpdate.validateExceptUpdateID()
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.create(incidentUpdate)
 
+    const incidentUpdates = await incidentUpdatesStore.query(event.params.incidentid)
+    const incidentWithIncidentUpdate = {
+      ...newIncident.objectify(),
+      incidentUpdates: incidentUpdates.map(upd => upd.objectify())
+    }
+
     if (event.body.components !== undefined) {
       await Promise.all(event.body.components.map(async (component) => {
         await updateComponentStatus(component)
       }))
+
+      incidentWithIncidentUpdate.components = event.components
     }
 
-    const incidentWithIncidentUpdate = Object.assign(incidentUpdate.objectify(), incident.objectify())
     await new SNS().notifyIncident(incidentWithIncidentUpdate)
 
-    callback(null, {
-      incident: incidentWithIncidentUpdate,
-      components: event.body.components
-    })
+    callback(null, incidentWithIncidentUpdate)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

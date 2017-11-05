@@ -46,26 +46,36 @@ describe('V0Incidents', () => {
     })
   })
 
-  // describe('Patch', () => {
-  //   it('should update the existing incident', async () => {
-  //     const postResult = await v0PostIncidents()
-  //     postResult.body.name = 'C2'
-  //     const {response, body} = await v0PatchIncidents(postResult.body.incidentID, {name: 'C2'})
+  describe('Patch', () => {
+    it('should update the existing incident', async () => {
+      const {body: incident} = await v0PostIncidents()
+      const {response, body} = await v0PatchIncidents(incident.incidentID, {name: 'I2'})
 
-  //     assert(response.status === 200)
-  //     assert(body.name === 'C2')
-  //     assert(body.status === postResult.body.status)
-  //   })
+      assert(response.status === 200)
+      assert(body.name === 'I2')
+      assert(body.status === incident.status)
+      assert(body.updatedAt !== incident.updatedAt)
+      assert(body.incidentUpdates.length === incident.incidentUpdates.length + 1)
+      assert(body.components === undefined)
+    })
 
-  //   it('should return validation error if invalid param', async () => {
-  //     const postResult = await v0PostIncidents()
-  //     const {response, body} = await v0PatchIncidents(postResult.body.incidentID, {name: ''})
+    it('should return not found error if id not found', async () => {
+      const {response, body} = await v0PatchIncidents('1')
 
-  //     assert(response.status === 400)
-  //     assert(body.errors.length === 1)
-  //     assert(body.errors[0].message.match(/valid/))
-  //   })
-  // })
+      assert(response.status === 400)
+      assert(body.errors.length === 1)
+      assert(body.errors[0].message.match(/not found/))
+    })
+
+    it('should return validation error if invalid param', async () => {
+      const {body: incident} = await v0PostIncidents()
+      const {response, body} = await v0PatchIncidents(incident.incidentID, {name: ''})
+
+      assert(response.status === 400)
+      assert(body.errors.length === 1)
+      assert(body.errors[0].message.match(/valid/))
+    })
+  })
 
   // describe('Delete', () => {
   //   it('should delete the existing incident', async () => {
