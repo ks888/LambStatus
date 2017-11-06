@@ -1,4 +1,4 @@
-import { LIST_INCIDENTS, LIST_INCIDENT_UPDATES, ADD_INCIDENT, EDIT_INCIDENT, EDIT_INCIDENT_UPDATE,
+import { LIST_INCIDENTS, LIST_INCIDENT, ADD_INCIDENT, EDIT_INCIDENT, EDIT_INCIDENT_UPDATE,
   REMOVE_INCIDENT } from 'actions/incidents'
 
 function listIncidentsHandler (state = { }, action) {
@@ -12,17 +12,14 @@ function listIncidentsHandler (state = { }, action) {
   })
 }
 
-function listIncidentUpdatesHandler (state = { }, action) {
-  const incidentUpdates = action.incidentUpdates
-  incidentUpdates.sort((a, b) => {
+function listIncidentHandler (state = { }, action) {
+  action.incident.incidentUpdates.sort((a, b) => {
     return a.createdAt < b.createdAt
   })
 
   const newIncidents = state.incidents.map((incident) => {
     if (incident.incidentID === action.incidentID) {
-      return Object.assign({}, incident, {
-        incidentUpdates: incidentUpdates
-      })
+      return action.incident
     }
     return incident
   })
@@ -33,26 +30,22 @@ function listIncidentUpdatesHandler (state = { }, action) {
 }
 
 function addIncidentHandler (state = { }, action) {
-  const {
-    incident
-  } = action.response
+  delete action.response.components
 
   return Object.assign({}, state, {
     incidents: [
-      incident,
+      action.response,
       ...state.incidents
     ]
   })
 }
 
 function editIncidentHandler (state = { }, action) {
-  const {
-    incident: updatedIncident
-  } = action.response
+  delete action.response.components
 
   const newIncidents = state.incidents.map((incident) => {
-    if (incident.incidentID === updatedIncident.incidentID) {
-      return updatedIncident
+    if (incident.incidentID === action.response.incidentID) {
+      return action.response
     }
     return incident
   })
@@ -96,7 +89,7 @@ function removeIncidentHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LIST_INCIDENTS]: listIncidentsHandler,
-  [LIST_INCIDENT_UPDATES]: listIncidentUpdatesHandler,
+  [LIST_INCIDENT]: listIncidentHandler,
   [ADD_INCIDENT]: addIncidentHandler,
   [EDIT_INCIDENT]: editIncidentHandler,
   [EDIT_INCIDENT_UPDATE]: editIncidentUpdateHandler,

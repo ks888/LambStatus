@@ -24,17 +24,17 @@ export default class IncidentItem extends React.Component {
       }).isRequired)
     }).isRequired,
     autoloadDetail: PropTypes.bool,
-    fetchIncidentUpdates: PropTypes.func.isRequired
+    fetchIncident: PropTypes.func.isRequired
   }
 
   componentDidMount () {
     if (this.props.autoloadDetail) {
-      this.props.fetchIncidentUpdates(this.props.incident.incidentID)
+      this.props.fetchIncident(this.props.incident.incidentID)
     }
   }
 
   handleClickDetailButton = () => {
-    this.props.fetchIncidentUpdates(this.props.incident.incidentID)
+    this.props.fetchIncident(this.props.incident.incidentID)
   }
 
   renderIncidentUpdateItem = (incidentUpdate) => {

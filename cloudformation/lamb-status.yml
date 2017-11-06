@@ -310,7 +310,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/incidents
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PostIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -343,7 +343,40 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/incidents
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
+  GetIncidentLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/GetIncident.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Get an incident"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GetIncident
+      Handler: "_apex_index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs4.3"
+      Timeout: 30
+  GetIncidentLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GetIncidentLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub |-
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -376,7 +409,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/incidents/{incidentid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   DeleteIncidentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -409,40 +442,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/incidents/{incidentid}
-  GetIncidentUpdatesLambdaFunction:
-    Type: "AWS::Lambda::Function"
-    Properties:
-      Code:
-        S3Bucket: !Sub |-
-          lambstatus-${AWS::Region}
-        S3Key: !Sub
-          - fn/${Version}/GetIncidentUpdates.zip
-          - Version:
-              Fn::FindInMap: [ Constants, LambStatus, Version ]
-      Description: "Get incident updates"
-      # The prefix of function name must be stack name
-      FunctionName: !Sub |-
-        ${AWS::StackName}-GetIncidentUpdates
-      Handler: "_apex_index.handle"
-      MemorySize: 128
-      Role:
-        Fn::GetAtt:
-          - "LambdaRole"
-          - "Arn"
-      Runtime: "nodejs4.3"
-      Timeout: 30
-  GetIncidentUpdatesLambdaInvokePermission:
-    Type: "AWS::Lambda::Permission"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-          - "GetIncidentUpdatesLambdaFunction"
-          - "Arn"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/incidents/{incidentid}/incidentupdates
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchIncidentUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -475,7 +475,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/incidents/{incidentid}/incidentupdates/{incidentupdateid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   GetMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1184,8 +1184,6 @@ Resources:
       - "PatchIncidentApiMethod"
       - "DeleteIncidentApiMethod"
       - "OptionsIncidentApiMethod"
-      - "GetIncidentUpdatesApiMethod"
-      - "OptionsIncidentUpdatesApiMethod"
       - "PatchIncidentUpdateApiMethod"
       - "OptionsIncidentUpdateApiMethod"
       - "GetMaintenancesApiMethod"
@@ -1596,6 +1594,51 @@ Resources:
       ParentId:
         Ref: "IncidentsApiResource"
       PathPart: "{incidentid}"
+  GetIncidentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "IncidentApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetIncidentLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
   PatchIncidentApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -1709,7 +1752,7 @@ Resources:
           - StatusCode: "200"
             ResponseParameters:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,PATCH,DELETE,OPTIONS'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
               method.response.header.Access-Control-Max-Age: "'600'"
       MethodResponses:
@@ -1727,79 +1770,6 @@ Resources:
       ParentId:
         Ref: "IncidentApiResource"
       PathPart: "incidentupdates"
-  GetIncidentUpdatesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "IncidentUpdatesApiResource"
-      HttpMethod: "GET"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "AWS"
-        IntegrationHttpMethod: "POST"
-        PassthroughBehavior: "WHEN_NO_TEMPLATES"
-        RequestTemplates:
-          application/json: !Sub |-
-            {
-              "params":{
-                #foreach($param in $input.params().path.keySet())
-                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-                #if($foreach.hasNext),#end
-                #end
-              }
-            }
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function:
-              Fn::GetAtt:
-                - "GetIncidentUpdatesLambdaFunction"
-                - "Arn"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: "400"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: ".*Error.*"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: "400"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-  OptionsIncidentUpdatesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "IncidentUpdatesApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   IncidentUpdateApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -3181,6 +3151,204 @@ Resources:
           - StatusCode: "204"
           - StatusCode: "400"
             SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "204"
+        - StatusCode: "400"
+  V0IncidentsApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0ApiResource"
+      PathPart: "incidents"
+  V0IncidentApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0IncidentsApiResource"
+      PathPart: "{incidentid}"
+  V0GetIncidentsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0IncidentsApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetIncidentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PostIncidentsApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0IncidentsApiResource"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostIncidentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0GetIncidentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0IncidentApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetIncidentLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PatchIncidentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0IncidentApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchIncidentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0DeleteIncidentApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0IncidentApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteIncidentsLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
       MethodResponses:
         - StatusCode: "204"
         - StatusCode: "400"

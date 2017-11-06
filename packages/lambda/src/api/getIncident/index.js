@@ -1,9 +1,12 @@
+import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
   try {
+    const incident = await new IncidentsStore().get(event.params.incidentid)
     const incidentUpdates = await new IncidentUpdatesStore().query(event.params.incidentid)
-    callback(null, incidentUpdates.map(incidentUpdate => incidentUpdate.objectify()))
+
+    callback(null, {...incident.objectify(), incidentUpdates: incidentUpdates.map(upd => upd.objectify())})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
@@ -12,7 +15,7 @@ export async function handle (event, context, callback) {
         callback('Error: an item not found')
         break
       default:
-        callback('Error: failed to get incident updates')
+        callback('Error: failed to get an incident')
     }
   }
 }

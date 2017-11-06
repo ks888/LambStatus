@@ -1,4 +1,4 @@
-import { listIncidents, listIncidentUpdates, addIncident, editIncident, editIncidentUpdate,
+import { listIncidents, listIncident, addIncident, editIncident, editIncidentUpdate,
          removeIncident } from 'actions/incidents'
 import incidentsReducer from 'reducers/incidents'
 
@@ -35,19 +35,26 @@ describe('Reducers/incidents', () => {
     })
   })
 
-  describe('listIncidentUpdatesHandler', () => {
-    it('should update the incident updates.', () => {
+  describe('listIncidentHandler', () => {
+    it('should update the incident.', () => {
+      const incident = {
+        ...incident1,
+        incidentUpdates: [incidentUpdate1]
+      }
       const state = incidentsReducer({incidents: [incident1]},
-                                     listIncidentUpdates([incidentUpdate1], incident1.incidentID))
+                                     listIncident(incident, incident1.incidentID))
       assert(state.incidents.length === 1)
       assert(state.incidents[0].incidentUpdates.length === 1)
       assert.deepEqual(state.incidents[0].incidentUpdates[0], incidentUpdate1)
     })
 
-    it('should sort the incident updates.', () => {
-      const updates = [incidentUpdate1, {...incidentUpdate1, incidentUpdateID: '2', createdAt: '2'}]
+    it('should sort the incident.', () => {
+      const incident = {
+        ...incident1,
+        incidentUpdates: [incidentUpdate1, {...incidentUpdate1, incidentUpdateID: '2', createdAt: '2'}]
+      }
       const state = incidentsReducer({incidents: [incident1]},
-                                     listIncidentUpdates(updates, incident1.incidentID))
+                                     listIncident(incident, incident.incidentID))
       assert(state.incidents.length === 1)
       assert(state.incidents[0].incidentUpdates.length === 2)
       assert(state.incidents[0].incidentUpdates[0].incidentUpdateID === '2')
@@ -56,7 +63,7 @@ describe('Reducers/incidents', () => {
 
   describe('addIncidentHandler', () => {
     it('should add the new incident.', () => {
-      const state = incidentsReducer({incidents: [incident1]}, addIncident({incident: incident2}))
+      const state = incidentsReducer({incidents: [incident1]}, addIncident(incident2))
       assert.deepEqual([incident2, incident1], state.incidents)
     })
   })
@@ -65,7 +72,7 @@ describe('Reducers/incidents', () => {
     it('should update the `incidents` state.', () => {
       const newName = 'newName'
       const newIncident = { ...incident1, name: newName }
-      const state = incidentsReducer({incidents: [incident1]}, editIncident({incident: newIncident}))
+      const state = incidentsReducer({incidents: [incident1]}, editIncident(newIncident))
       assert.deepEqual([newIncident], state.incidents)
     })
   })

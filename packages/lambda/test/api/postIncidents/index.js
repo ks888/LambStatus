@@ -32,8 +32,9 @@ describe('postIncidents', () => {
     await handle({ name: 'test', status: incidentStatuses[0] }, null, (error, result) => {
       assert(error === null)
 
-      assert(result.incident.incidentID !== undefined)
-      assert(result.incident.incidentUpdateID !== undefined)
+      assert(result.incidentID !== undefined)
+      assert(result.incidentUpdates.length === 1)
+      assert(result.incidentUpdates[0].incidentUpdateID !== undefined)
     })
     assert(createIncidentStub.calledOnce)
     assert(createIncidentStub.firstCall.args[0] instanceof Incident)

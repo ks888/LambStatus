@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchIncidentUpdates, postIncident, updateIncident } from 'actions/incidents'
+import { fetchIncident, postIncident, updateIncident } from 'actions/incidents'
 import { fetchComponents } from 'actions/components'
 import IncidentDialog, { dialogType } from './IncidentDialog'
 
@@ -18,7 +18,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchComponents, fetchIncidentUpdates, postIncident, updateIncident}, dispatch)
+  return bindActionCreators({fetchComponents, fetchIncident, postIncident, updateIncident}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(IncidentDialog)

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchIncidentUpdates } from 'actions/incidents'
+import { fetchIncident } from 'actions/incidents'
 import IncidentItem from './IncidentItem'
 
 const mapStateToProps = (state, ownProps) => {
@@ -16,7 +16,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchIncidentUpdates}, dispatch)
+  return bindActionCreators({fetchIncident}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(IncidentItem)

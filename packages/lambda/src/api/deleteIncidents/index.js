@@ -3,9 +3,20 @@ import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
+  const store = new IncidentsStore()
+  let incident
   try {
-    const store = new IncidentsStore()
-    const incident = await store.get(event.params.incidentid)
+    incident = await store.get(event.params.incidentid)
+  } catch (error) {
+    console.log(error.message)
+    console.log(error.stack)
+    if (error.name !== 'NotFoundError') {
+      callback('Error: failed to delete the incident')
+    }
+    return
+  }
+
+  try {
     await store.delete(incident.incidentID)
 
     const updateStore = new IncidentUpdatesStore()
