@@ -107,6 +107,8 @@ Here is the contents of each directory:
 
    `npm run deploy`
 
+   Note: LambStatus depends on [apex](http://apex.run/) to deploy lambda functions. [Please install it](http://apex.run/#installation) if `apex` command is not found.
+
 ### To change client-side code
 
 1. Go to the `frontend` directory

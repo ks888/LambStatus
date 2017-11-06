@@ -26,7 +26,6 @@
   "author": "Kishin Yagami <k.yagami.suou@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "apex-bin": "^0.10.3",
     "aws-sdk": "^2.5.3",
     "babel-core": "^6.13.2",
     "babel-loader": "^6.2.5",
