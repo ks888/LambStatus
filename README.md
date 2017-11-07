@@ -54,7 +54,7 @@ Click Next again.
 
 ![CloudFormationWizard3](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard3.png)
 
-Check the acknowledgment checkbox at the bottom and click Create.
+Check the acknowledgment checkbox at the bottom ([see here](https://github.com/ks888/LambStatus/blob/master/cloudformation/lamb-status.yml#L21-L148) to check IAM resources) and click Create.
 
 ![CloudFormationWizard4](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard4.png)
 

@@ -160,7 +160,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetComponents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -193,7 +193,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostComponents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -226,7 +226,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchComponents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -259,7 +259,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteComponents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -292,7 +292,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncidents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -325,7 +325,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostIncidents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -358,7 +358,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetIncident
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -391,7 +391,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchIncidents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -424,7 +424,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteIncidents
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -457,7 +457,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchIncidentUpdates
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -490,7 +490,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetMaintenances
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -523,7 +523,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostMaintenances
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -556,7 +556,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchMaintenances
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -589,7 +589,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteMaintenances
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -622,7 +622,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetMaintenanceUpdates
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -655,7 +655,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchMaintenanceUpdates
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -688,7 +688,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetSettings
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -721,7 +721,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetPublicSettings
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -754,7 +754,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchSettings
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -787,7 +787,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostApiKeys
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -820,7 +820,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteApiKeys
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -853,7 +853,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetExternalMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 512
       Role:
         Fn::GetAtt:
@@ -886,7 +886,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetPublicMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -919,7 +919,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-GetMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -952,7 +952,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -985,7 +985,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PatchMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -1018,7 +1018,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DeleteMetrics
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -1051,7 +1051,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-PostMetricsData
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -1084,7 +1084,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-CollectMetricsData
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 512
       Role:
         Fn::GetAtt:
@@ -1130,7 +1130,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-UpdateFeeds
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
@@ -3735,7 +3735,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-S3PutObject
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3756,7 +3756,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-S3SyncObjects
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3777,7 +3777,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-CognitoCreateUserPool
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3798,7 +3798,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-CognitoCreateUserPoolClient
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3819,7 +3819,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-CognitoCreateUser
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3840,7 +3840,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-APIGatewayDeploy
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       Role:
         Fn::GetAtt:
           - LambdaRole
@@ -3861,7 +3861,7 @@ Resources:
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
         ${AWS::StackName}-DBCreateItems
-      Handler: "_apex_index.handle"
+      Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
