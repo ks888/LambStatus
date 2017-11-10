@@ -1,5 +1,18 @@
 # Change Log
 
+## [v0.4.2](https://github.com/ks888/LambStatus/tree/v0.4.2) (2017-11-10)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.1...v0.4.2)
+
+### Added
+
+- [\#62](https://github.com/ks888/LambStatus/issues/62): Support API to get, create, update and delete a component and an incident (thanks [@J4cku](https://github.com/J4cku))
+- [the API documentation](https://lambstatus.github.io/apidocs/), thanks to the excellent documentation tool [slate](https://github.com/lord/slate)
+
+### Fixed
+
+- [\#65](https://github.com/ks888/LambStatus/pull/65): Serve dependent modules from cdnjs
+- [\#63](https://github.com/ks888/LambStatus/issues/63): Set CloudFront in front of API gateway
+
 ## [v0.4.1](https://github.com/ks888/LambStatus/tree/v0.4.1) (2017-10-12)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.0...v0.4.1)
 
