@@ -8,14 +8,35 @@ Parameters:
     Default: admin
     MinLength: 1
   UserEmail:
-    Description: Your email address. The initial login information will be sent to the address.
+    Description: Your email address. The initial login information will be sent to the address
     Type: String
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  StatusPageSSLCertificate:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/CloudFormation-Parameters for usage
+    Type: String
+  StatusPageURL:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/CloudFormation-Parameters for usage
+    Type: CommaDelimitedList
+  AdminPageSSLCertificate:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/CloudFormation-Parameters for usage
+    Type: String
+  AdminPageURL:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/CloudFormation-Parameters for usage
+    Type: CommaDelimitedList
 Mappings:
   Constants:
     LambStatus:
       Version: 0.4.2
+Conditions:
+  UseDefaultStatusPageSSLCertificate:
+    !Equals [ !Ref StatusPageSSLCertificate, "" ]
+  UseDefaultStatusPageURL:
+    !Equals [ !Join [ ",", !Ref StatusPageURL ], "" ]
+  UseDefaultAdminPageSSLCertificate:
+    !Equals [ !Ref AdminPageSSLCertificate, "" ]
+  UseDefaultAdminPageURL:
+    !Equals [ !Join [ ",", !Ref AdminPageURL ], "" ]
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -3476,9 +3497,22 @@ Resources:
                 - TLSv1
                 - TLSv1.1
                 - TLSv1.2
+        Aliases:
+          !If
+          - UseDefaultStatusPageURL
+          - !Ref AWS::NoValue
+          - !Ref StatusPageURL
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for status page of LambStatus"
+        ViewerCertificate:
+          !If
+            - UseDefaultStatusPageSSLCertificate
+            - !Ref AWS::NoValue
+            - MinimumProtocolVersion: TLSv1
+              SslSupportMethod: sni-only
+              AcmCertificateArn:
+                !Ref StatusPageSSLCertificate
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -3516,8 +3550,6 @@ Resources:
             Compress: "true"
             DefaultTTL: "10"
         PriceClass: "PriceClass_200"
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
@@ -3563,9 +3595,21 @@ Resources:
                 - TLSv1
                 - TLSv1.1
                 - TLSv1.2
+        Aliases:
+          !If
+          - UseDefaultAdminPageURL
+          - !Ref AWS::NoValue
+          - !Ref AdminPageURL
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for admin page of LambStatus"
+        ViewerCertificate:
+          !If
+            - UseDefaultAdminPageSSLCertificate
+            - !Ref AWS::NoValue
+            - SslSupportMethod: sni-only
+              AcmCertificateArn:
+                !Ref AdminPageSSLCertificate
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -3601,8 +3645,6 @@ Resources:
             Compress: "true"
             DefaultTTL: "0"
         PriceClass: "PriceClass_200"
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
