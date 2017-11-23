@@ -3923,8 +3923,12 @@ Resources:
       Bucket:
         Ref: StatusPageS3
       Key: settings.js
-      Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${StatusPageDistribution.DomainName}';
+      Body: !Sub
+        - __LAMBSTATUS_API_URL__ = 'https://${Domain}';
+        - Domain: !If
+          - UseDefaultStatusPageURL
+          - !Sub ${StatusPageDistribution.DomainName}
+          - !Select ["0", !Ref StatusPageURL]
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -3937,8 +3941,12 @@ Resources:
       Bucket:
         Ref: AdminPageS3
       Key: settings.js
-      Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${AdminPageDistribution.DomainName}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+      Body: !Sub
+        - __LAMBSTATUS_API_URL__ = 'https://${Domain}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+        - Domain: !If
+          - UseDefaultAdminPageURL
+          - !Sub ${AdminPageDistribution.DomainName}
+          - !Select ["0", !Ref AdminPageURL]
   DBInitialItems:
     Type: Custom::DBCreateItems
     Properties:
@@ -3948,10 +3956,6 @@ Resources:
           - Arn
       CognitoPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}
-      AdminPageURL: !Sub |-
-        https://${AdminPageDistribution.DomainName}
-      StatusPageURL: !Sub |-
-        https://${StatusPageDistribution.DomainName}
       IncidentNotificationTopic:
         Ref: "IncidentNotificationTopic"
       UsagePlanID:
@@ -4016,8 +4020,12 @@ Resources:
           - Arn
       PoolName: !Sub |-
         ${AWS::StackName}
-      AdminPageURL: !Sub |-
-        https://${AdminPageDistribution.DomainName}
+      AdminPageURL: !Sub
+        - https://${Domain}
+        - Domain: !If
+          - UseDefaultAdminPageURL
+          - !Sub ${AdminPageDistribution.DomainName}
+          - !Select ["0", !Ref AdminPageURL]
       SnsCallerArn: !Sub |-
         ${CognitoSMSCallerRole.Arn}
   CognitoUserPoolClient:
@@ -4070,8 +4078,12 @@ Outputs:
     Value:
       Ref: "AdminPageS3"
   AdminPageCloudFrontURL:
-    Value: !Sub |-
-      https://${AdminPageDistribution.DomainName}
+    Value: !Sub
+      - https://${Domain}
+      - Domain: !If
+        - UseDefaultAdminPageURL
+        - !Sub ${AdminPageDistribution.DomainName}
+        - !Select ["0", !Ref AdminPageURL]
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -4082,8 +4094,12 @@ Outputs:
     Value:
       Ref: "StatusPageS3"
   StatusPageCloudFrontURL:
-    Value: !Sub |-
-      https://${StatusPageDistribution.DomainName}
+    Value: !Sub
+      - https://${Domain}
+      - Domain: !If
+        - UseDefaultStatusPageURL
+        - !Sub ${StatusPageDistribution.DomainName}
+        - !Select ["0", !Ref StatusPageURL]
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
