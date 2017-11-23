@@ -8,8 +8,6 @@ describe('Settings', () => {
   const generateProps = () => {
     return {
       settings: {
-        adminPageURL: 'admin',
-        statusPageURL: 'status',
         serviceName: 'service',
         apiKeys: [{id: '1', value: '1'}, {id: '2', value: '2'}]
       },
@@ -24,8 +22,6 @@ describe('Settings', () => {
     it('should initialize the state', () => {
       const props = generateProps()
       const settings = shallow(<Settings {...props} />)
-      assert(settings.state('adminPageURL') === props.settings.adminPageURL)
-      assert(settings.state('statusPageURL') === props.settings.statusPageURL)
       assert(settings.state('serviceName') === props.settings.serviceName)
       assert.deepEqual(settings.state('apiKeys')[0].id, props.settings.apiKeys[0].id)
       assert.deepEqual(settings.state('apiKeys')[0].status, apiKeyStatuses.created)

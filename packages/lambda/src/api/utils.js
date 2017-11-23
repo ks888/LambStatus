@@ -23,7 +23,7 @@ export class SettingsProxy {
   constructor (params) {
     this.settings = new Settings(params)
     this.store = new SettingsStore()
-    this.cloudFormation = new CloudFormation()
+    this.cloudFormation = new CloudFormation(stackName)
     this.sns = new SNS()
   }
 

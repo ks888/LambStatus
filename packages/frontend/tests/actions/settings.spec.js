@@ -107,7 +107,7 @@ describe('Actions/Settings', () => {
     it('should update the existing settings.', () => {
       fetchMock.patch(/.*\/settings/, { body: settings, headers: {'Content-Type': 'application/json'} })
 
-      return updateSettings('', '', '', callbacks)(dispatchSpy)
+      return updateSettings('', callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -121,7 +121,7 @@ describe('Actions/Settings', () => {
     it('should handle error properly.', () => {
       fetchMock.patch(/.*\/settings/, { status: 400, body: {} })
 
-      return updateSettings('', '', '', callbacks)(dispatchSpy)
+      return updateSettings('', callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)

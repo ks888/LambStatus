@@ -61,10 +61,10 @@ export const fetchPublicSettings = (callbacks = {}) => {
   }
 }
 
-export const updateSettings = (serviceName, adminPageURL, statusPageURL, callbacks = {}) => {
+export const updateSettings = (serviceName, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { serviceName, adminPageURL, statusPageURL }
+      const body = { serviceName }
       const json = await sendRequest(apiURL + '/api/settings', {
         headers: await buildHeaders(),
         method: 'PATCH',

@@ -9,8 +9,6 @@ import classes from './Settings.scss'
 export default class Settings extends React.Component {
   static propTypes = {
     settings: PropTypes.shape({
-      adminPageURL: PropTypes.string,
-      statusPageURL: PropTypes.string,
       serviceName: PropTypes.string,
       apiKeys: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -29,8 +27,6 @@ export default class Settings extends React.Component {
     this.state = {
       isFetching: false,
       message: '',
-      adminPageURL: props.settings.adminPageURL || '',
-      statusPageURL: props.settings.statusPageURL || '',
       serviceName: props.settings.serviceName || '',
       apiKeys: props.settings.apiKeys ? props.settings.apiKeys.map(key => {
         return { ...key, status: apiKeyStatuses.created }
@@ -52,8 +48,6 @@ export default class Settings extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     this.setState({
-      adminPageURL: nextProps.settings.adminPageURL,
-      statusPageURL: nextProps.settings.statusPageURL,
       serviceName: nextProps.settings.serviceName,
       apiKeys: nextProps.settings.apiKeys.map(key => {
         return { ...key, status: apiKeyStatuses.created }
@@ -103,8 +97,7 @@ export default class Settings extends React.Component {
           throw new Error('unknown status', key.status)
       }
     })
-    this.props.updateSettings(this.state.serviceName, this.state.adminPageURL, this.state.statusPageURL,
-                              this.callbacks)
+    this.props.updateSettings(this.state.serviceName, this.callbacks)
   }
 
   renderApiKeysSelector = () => {
@@ -130,9 +123,7 @@ export default class Settings extends React.Component {
     // eslint-disable-next-line
     const urlSettingInfo = 'Affects the links in email notifications, RSS feeds, and so on. It doesn\'t change your DNS setting.'
     const settings = [
-      {key: 'serviceName'},
-      {key: 'statusPageURL', info: urlSettingInfo},
-      {key: 'adminPageURL', info: urlSettingInfo}
+      {key: 'serviceName'}
     ]
     const settingItems = settings.map(this.renderItem)
     settingItems.push(this.renderApiKeysSelector())
