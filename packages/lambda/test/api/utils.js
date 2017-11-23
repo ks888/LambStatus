@@ -86,29 +86,11 @@ describe('SettingsProxy', () => {
     })
   })
 
-  describe('setStatusPageURL', () => {
-    it('should update the StatusPage URL and user pool and publish notification', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.setStatusPageURL = sinon.spy()
-      proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
-
-      const statusPageURL = 'https://example.com'
-      await proxy.setStatusPageURL(statusPageURL)
-
-      assert(proxy.settings.statusPageURL === statusPageURL)
-      assert(proxy.store.setStatusPageURL.calledOnce)
-      assert(proxy.store.setStatusPageURL.firstCall.args[0] === statusPageURL)
-      assert(proxy.updateUserPool.notCalled)
-      assert(proxy.sns.notifyIncident.calledOnce)
-    })
-  })
-
   describe('getStatusPageURL', () => {
-    it('should get the StatusPage URL from store if not cached', async () => {
+    it('should get the StatusPage URL from CloudFormation if not cached', async () => {
       const statusPageURL = 'https://example.com'
       const proxy = new SettingsProxy()
-      proxy.store.getStatusPageURL = async () => statusPageURL
+      proxy.cloudFormation.getStatusPageCloudFrontURL = async () => statusPageURL
 
       const actual = await proxy.getStatusPageURL()
       assert(statusPageURL === actual)

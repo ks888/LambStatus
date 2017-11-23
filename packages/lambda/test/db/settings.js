@@ -67,69 +67,6 @@ describe('SettingsStore', () => {
     })
   })
 
-  describe('getStatusPageURL', () => {
-    it('should return the StatusPage URL', async () => {
-      const url = 'test'
-      const store = new SettingsStore()
-      store.store.get = (key) => {
-        assert(key === settingKeys.statusPageURL)
-        return url
-      }
-
-      const actual = await store.getStatusPageURL()
-      assert(url === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new Error() }
-
-      let error
-      try {
-        await store.getStatusPageURL()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-
-    it('should return empty string if not found', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new NotFoundError() }
-
-      const actual = await store.getStatusPageURL()
-      assert(actual === '')
-    })
-  })
-
-  describe('setStatusPageURL', () => {
-    it('should set the StatusPage URL', async () => {
-      const url = 'test'
-      const store = new SettingsStore()
-      store.store.set = (key, value) => {
-        assert(key === settingKeys.statusPageURL)
-        assert(value === url)
-        return value
-      }
-
-      const actual = await store.setStatusPageURL(url)
-      assert(url === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.set = () => { throw new Error() }
-
-      let error
-      try {
-        await store.setStatusPageURL()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
   describe('getCognitoPoolID', () => {
     it('should return the CognitoPool ID', async () => {
       const id = 'test'

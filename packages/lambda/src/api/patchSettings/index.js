@@ -2,18 +2,14 @@ import { SettingsProxy } from 'api/utils'
 
 export async function handle (event, context, callback) {
   const {
-    serviceName,
-    statusPageURL
+    serviceName
   } = event.body
   try {
     const settings = new SettingsProxy()
     if (serviceName !== undefined && serviceName !== await settings.getServiceName()) {
       await settings.setServiceName(serviceName)
     }
-    if (statusPageURL !== undefined && statusPageURL !== await settings.getStatusPageURL()) {
-      await settings.setStatusPageURL(statusPageURL)
-    }
-    callback(null, {serviceName, adminPageURL, statusPageURL})
+    callback(null, {serviceName})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

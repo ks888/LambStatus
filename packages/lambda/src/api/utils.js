@@ -57,20 +57,13 @@ export class SettingsProxy {
     return storedAdminPageURL
   }
 
-  async setStatusPageURL (statusPageURL) {
-    await this.settings.setStatusPageURL(statusPageURL)
-
-    await this.store.setStatusPageURL(await this.settings.getStatusPageURL())
-    await this.sns.notifyIncident()
-  }
-
   async getStatusPageURL () {
     const statusPageURL = await this.settings.getStatusPageURL()
     if (statusPageURL !== undefined) {
       return statusPageURL
     }
 
-    const storedStatusPageURL = await this.store.getStatusPageURL()
+    const storedStatusPageURL = await this.cloudFormation.getStatusPageCloudFrontURL()
     await this.settings.setStatusPageURL(storedStatusPageURL)
     return storedStatusPageURL
   }

@@ -8,7 +8,6 @@ import { buildUpdateExpression } from './utils'
 
 export const settingKeys = {
   serviceName: 'ServiceName',
-  statusPageURL: 'StatusPageURL',
   cognitoPoolID: 'CognitoPoolID'
 }
 
@@ -30,21 +29,6 @@ export default class SettingsStore {
 
   async setServiceName (name) {
     return await this.store.set(settingKeys.serviceName, name)
-  }
-
-  async getStatusPageURL () {
-    try {
-      return await this.store.get(settingKeys.statusPageURL)
-    } catch (err) {
-      if (err.name === NotFoundError.name) {
-        return ''
-      }
-      throw err
-    }
-  }
-
-  async setStatusPageURL (name) {
-    return await this.store.set(settingKeys.statusPageURL, name)
   }
 
   async getCognitoPoolID () {
