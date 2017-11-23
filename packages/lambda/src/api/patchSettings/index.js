@@ -3,16 +3,12 @@ import { SettingsProxy } from 'api/utils'
 export async function handle (event, context, callback) {
   const {
     serviceName,
-    adminPageURL,
     statusPageURL
   } = event.body
   try {
     const settings = new SettingsProxy()
     if (serviceName !== undefined && serviceName !== await settings.getServiceName()) {
       await settings.setServiceName(serviceName)
-    }
-    if (adminPageURL !== undefined && adminPageURL !== await settings.getAdminPageURL()) {
-      await settings.setAdminPageURL(adminPageURL)
     }
     if (statusPageURL !== undefined && statusPageURL !== await settings.getStatusPageURL()) {
       await settings.setStatusPageURL(statusPageURL)

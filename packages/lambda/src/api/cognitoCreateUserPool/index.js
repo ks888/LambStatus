@@ -33,9 +33,9 @@ const updateUserPool = async (event, context) => {
 
   const cognito = new Cognito()
   const userPool = await cognito.getUserPool(poolID)
-  const settings = new SettingsProxy()
-  userPool.serviceName = await settings.getServiceName()
+  userPool.serviceName = await new SettingsProxy().getServiceName()
   userPool.adminPageURL = adminPageURL
+
   await cognito.updateUserPool(userPool)
 
   // Note: If `physicalResourceId` is changed, the custom resource will be deleted.

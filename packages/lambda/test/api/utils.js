@@ -63,29 +63,11 @@ describe('SettingsProxy', () => {
     })
   })
 
-  describe('setAdminPageURL', () => {
-    it('should update the AdminPage URL and user pool and publish notification', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.setAdminPageURL = sinon.spy()
-      proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
-
-      const adminPageURL = 'https://example.com'
-      await proxy.setAdminPageURL(adminPageURL)
-
-      assert(proxy.settings.adminPageURL === adminPageURL)
-      assert(proxy.store.setAdminPageURL.calledOnce)
-      assert(proxy.store.setAdminPageURL.firstCall.args[0] === adminPageURL)
-      assert(proxy.updateUserPool.calledOnce)
-      assert(proxy.sns.notifyIncident.notCalled)
-    })
-  })
-
   describe('getAdminPageURL', () => {
-    it('should get the AdminPage URL from store if not cached', async () => {
+    it('should get the AdminPage URL from CloudFormation if not cached', async () => {
       const adminPageURL = 'https://example.com'
       const proxy = new SettingsProxy()
-      proxy.store.getAdminPageURL = async () => adminPageURL
+      proxy.cloudFormation.getAdminPageCloudFrontURL = async () => adminPageURL
 
       const actual = await proxy.getAdminPageURL()
       assert(adminPageURL === actual)

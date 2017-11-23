@@ -9,7 +9,6 @@ import { buildUpdateExpression } from './utils'
 export const settingKeys = {
   serviceName: 'ServiceName',
   statusPageURL: 'StatusPageURL',
-  adminPageURL: 'AdminPageURL',
   cognitoPoolID: 'CognitoPoolID'
 }
 
@@ -46,21 +45,6 @@ export default class SettingsStore {
 
   async setStatusPageURL (name) {
     return await this.store.set(settingKeys.statusPageURL, name)
-  }
-
-  async getAdminPageURL () {
-    try {
-      return await this.store.get(settingKeys.adminPageURL)
-    } catch (err) {
-      if (err.name === NotFoundError.name) {
-        return ''
-      }
-      throw err
-    }
-  }
-
-  async setAdminPageURL (name) {
-    return await this.store.set(settingKeys.adminPageURL, name)
   }
 
   async getCognitoPoolID () {

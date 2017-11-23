@@ -32,9 +32,6 @@ export async function handle (event, context, callback) {
   try {
     await new SNS().notifyIncidentToTopic(incidentNotificationTopic)
 
-    if (adminPageURL) {
-      await settings.setAdminPageURL(adminPageURL)
-    }
     if (cognitoPoolID) {
       await settings.setCognitoPoolID(cognitoPoolID)
     }

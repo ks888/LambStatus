@@ -130,69 +130,6 @@ describe('SettingsStore', () => {
     })
   })
 
-  describe('getAdminPageURL', () => {
-    it('should return the AdminPage URL', async () => {
-      const url = 'test'
-      const store = new SettingsStore()
-      store.store.get = (key) => {
-        assert(key === settingKeys.adminPageURL)
-        return url
-      }
-
-      const actual = await store.getAdminPageURL()
-      assert(url === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new Error() }
-
-      let error
-      try {
-        await store.getAdminPageURL()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-
-    it('should return empty string if not found', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new NotFoundError() }
-
-      const actual = await store.getAdminPageURL()
-      assert(actual === '')
-    })
-  })
-
-  describe('setAdminPageURL', () => {
-    it('should set the AdminPage URL', async () => {
-      const url = 'test'
-      const store = new SettingsStore()
-      store.store.set = (key, value) => {
-        assert(key === settingKeys.adminPageURL)
-        assert(value === url)
-        return value
-      }
-
-      const actual = await store.setAdminPageURL(url)
-      assert(url === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.set = () => { throw new Error() }
-
-      let error
-      try {
-        await store.setAdminPageURL()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
   describe('getCognitoPoolID', () => {
     it('should return the CognitoPool ID', async () => {
       const id = 'test'
