@@ -4,7 +4,7 @@ Thank you for seeing this page! The page has the resources to start working on t
 
 * [Coding rules](#coding-rules)
 * [Project structure](#project-structure)
-* [How to set up the local environment](#set-up-the-local-environment)
+* [How to set up the development environment](#set-up-the-development-environment)
 
 ## Coding Rules
 
@@ -57,7 +57,7 @@ Here is the contents of each directory:
         └── package.json       --- package.json file for frontend
 ```
 
-## Set up the Local Environment
+## Set up the Development Environment
 
 ### Prerequisite Software
 
