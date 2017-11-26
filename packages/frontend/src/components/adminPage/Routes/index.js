@@ -14,11 +14,11 @@ import NotFound from 'components/adminPage/NotFound'
 import { isAuthorized } from 'actions/users'
 
 function requireAuth (nextState, replace) {
-  isAuthorized(authorized => {
-    if (!authorized) {
-      replace({ pathname: '/signin' })
-    }
-  })
+  // isAuthorized(authorized => {
+  //   if (!authorized) {
+  //     replace({ pathname: '/signin' })
+  //   }
+  // })
 }
 
 function guestOnly (nextState, replace) {
