@@ -1,6 +1,6 @@
 # LambStatus
 
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.2/lamb-status.yml)
+[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.3/lamb-status.yml)
 [![wercker status](https://app.wercker.com/status/fcb6fb7398629e934ae0538737021d14/s/master "wercker status")](https://app.wercker.com/project/byKey/fcb6fb7398629e934ae0538737021d14)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/ks888/LambStatus)
 [![API Document](https://img.shields.io/badge/api-v0-blue.svg)](https://lambstatus.github.io/apidocs/)
@@ -40,9 +40,9 @@ Apart from the Serverless architecture, LambStatus enables you to:
 
 Launch your cloudformation stack by clicking the button below:
 
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.2/lamb-status.yml)
+[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.3/lamb-status.yml)
 
-When a window to create a new CloudFormation stack is opened (like below), click Next.
+When a window to create a new CloudFormation stack is opened, click Next.
 
 ![CloudFormationWizard1](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard1.png)
 
@@ -68,7 +68,7 @@ Click the link in the email, and sign in to admin console.
 
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
 
-See [the demo page](https://demo-admin.lambstatus.org) for the usage example of admin console and [the wiki](https://github.com/ks888/LambStatus/wiki) for advanced usage.
+See [the demo page](https://demo-admin.lambstatus.org) for the usage example and [the wiki](https://github.com/ks888/LambStatus/wiki) for advanced usage.
 
 ## Join our Community
 
