@@ -15,8 +15,8 @@ With a few clicks, You can build a status page like this:
 ![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo.png)
 
 The demo pages are available:
-* [Status page](https://lambstatus.github.io/demo-status/) (the page to tell your service's status to your users)
-* [Admin page](https://lambstatus.github.io/demo-admin/) (the page to change your service's status)
+* [Status page](https://demo-status.lambstatus.org) (the page to tell your service's status to your users)
+* [Admin page](https://demo-admin.lambstatus.org) (the page to change your service's status)
 
 ## Goals of this project
 
@@ -68,7 +68,7 @@ Click the link in the email, and sign in to admin console.
 
 ![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
 
-See [the demo page](https://lambstatus.github.io/demo-admin/) for the usage example of admin console.
+See [the demo page](https://demo-admin.lambstatus.org) for the usage example of admin console and [the wiki](https://github.com/ks888/LambStatus/wiki) for advanced usage.
 
 ## Join our Community
 

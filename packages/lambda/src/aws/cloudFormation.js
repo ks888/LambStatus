@@ -45,8 +45,18 @@ export default class CloudFormation {
     return value
   }
 
+  async getAdminPageCloudFrontURL () {
+    const key = 'AdminPageCloudFrontURL'
+    return await this.getOutputValue(key)
+  }
+
   async getAdminPageBucketName () {
     const key = 'AdminPageS3BucketName'
+    return await this.getOutputValue(key)
+  }
+
+  async getStatusPageCloudFrontURL () {
+    const key = 'StatusPageCloudFrontURL'
     return await this.getOutputValue(key)
   }
 
