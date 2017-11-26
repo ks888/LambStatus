@@ -3,10 +3,11 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "AWS resources for serverless status pages"
 Parameters:
   UserName:
-    Description: Your user name
+    Description: Your user name (email addresses are not allowed).
     Type: String
     Default: admin
     MinLength: 1
+    AllowedPattern: "^[a-zA-Z0-9_-]*$"
   UserEmail:
     Description: Your email address. The initial login information will be sent to the address.
     Type: String
