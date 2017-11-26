@@ -9,14 +9,35 @@ Parameters:
     MinLength: 1
     AllowedPattern: "^[a-zA-Z0-9_-]*$"
   UserEmail:
-    Description: Your email address. The initial login information will be sent to the address.
+    Description: Your email address. The initial login information will be sent to the address
     Type: String
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  StatusPageSSLCertificate:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Type: String
+  StatusPageURL:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Type: CommaDelimitedList
+  AdminPageSSLCertificate:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Type: String
+  AdminPageURL:
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Type: CommaDelimitedList
 Mappings:
   Constants:
     LambStatus:
       Version: 0.4.2
+Conditions:
+  UseDefaultStatusPageSSLCertificate:
+    !Equals [ !Ref StatusPageSSLCertificate, "" ]
+  UseDefaultStatusPageURL:
+    !Equals [ !Join [ ",", !Ref StatusPageURL ], "" ]
+  UseDefaultAdminPageSSLCertificate:
+    !Equals [ !Ref AdminPageSSLCertificate, "" ]
+  UseDefaultAdminPageURL:
+    !Equals [ !Join [ ",", !Ref AdminPageURL ], "" ]
 Resources:
   LambdaRole:
     Type: AWS::IAM::Role
@@ -3477,9 +3498,22 @@ Resources:
                 - TLSv1
                 - TLSv1.1
                 - TLSv1.2
+        Aliases:
+          !If
+          - UseDefaultStatusPageURL
+          - !Ref AWS::NoValue
+          - !Ref StatusPageURL
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for status page of LambStatus"
+        ViewerCertificate:
+          !If
+            - UseDefaultStatusPageSSLCertificate
+            - !Ref AWS::NoValue
+            - MinimumProtocolVersion: TLSv1
+              SslSupportMethod: sni-only
+              AcmCertificateArn:
+                !Ref StatusPageSSLCertificate
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -3517,8 +3551,6 @@ Resources:
             Compress: "true"
             DefaultTTL: "10"
         PriceClass: "PriceClass_200"
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
@@ -3564,9 +3596,21 @@ Resources:
                 - TLSv1
                 - TLSv1.1
                 - TLSv1.2
+        Aliases:
+          !If
+          - UseDefaultAdminPageURL
+          - !Ref AWS::NoValue
+          - !Ref AdminPageURL
         Enabled: "true"
         HttpVersion: "http2"
         Comment: "Distribution for admin page of LambStatus"
+        ViewerCertificate:
+          !If
+            - UseDefaultAdminPageSSLCertificate
+            - !Ref AWS::NoValue
+            - SslSupportMethod: sni-only
+              AcmCertificateArn:
+                !Ref AdminPageSSLCertificate
         DefaultRootObject: "index.html"
         DefaultCacheBehavior:
           DefaultTTL: 0
@@ -3602,8 +3646,6 @@ Resources:
             Compress: "true"
             DefaultTTL: "0"
         PriceClass: "PriceClass_200"
-        ViewerCertificate:
-          CloudFrontDefaultCertificate: "true"
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
@@ -3882,8 +3924,12 @@ Resources:
       Bucket:
         Ref: StatusPageS3
       Key: settings.js
-      Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${StatusPageDistribution.DomainName}';
+      Body: !Sub
+        - __LAMBSTATUS_API_URL__ = 'https://${Domain}';
+        - Domain: !If
+          - UseDefaultStatusPageURL
+          - !Sub ${StatusPageDistribution.DomainName}
+          - !Select ["0", !Ref StatusPageURL]
   AdminPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -3896,8 +3942,12 @@ Resources:
       Bucket:
         Ref: AdminPageS3
       Key: settings.js
-      Body: !Sub |-
-        __LAMBSTATUS_API_URL__ = 'https://${AdminPageDistribution.DomainName}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+      Body: !Sub
+        - __LAMBSTATUS_API_URL__ = 'https://${Domain}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
+        - Domain: !If
+          - UseDefaultAdminPageURL
+          - !Sub ${AdminPageDistribution.DomainName}
+          - !Select ["0", !Ref AdminPageURL]
   DBInitialItems:
     Type: Custom::DBCreateItems
     Properties:
@@ -3907,10 +3957,6 @@ Resources:
           - Arn
       CognitoPoolID: !Sub |-
         ${CognitoUserPool.UserPoolID}
-      AdminPageURL: !Sub |-
-        https://${AdminPageDistribution.DomainName}
-      StatusPageURL: !Sub |-
-        https://${StatusPageDistribution.DomainName}
       IncidentNotificationTopic:
         Ref: "IncidentNotificationTopic"
       UsagePlanID:
@@ -3975,8 +4021,12 @@ Resources:
           - Arn
       PoolName: !Sub |-
         ${AWS::StackName}
-      AdminPageURL: !Sub |-
-        https://${AdminPageDistribution.DomainName}
+      AdminPageURL: !Sub
+        - https://${Domain}
+        - Domain: !If
+          - UseDefaultAdminPageURL
+          - !Sub ${AdminPageDistribution.DomainName}
+          - !Select ["0", !Ref AdminPageURL]
       SnsCallerArn: !Sub |-
         ${CognitoSMSCallerRole.Arn}
   CognitoUserPoolClient:
@@ -4029,8 +4079,12 @@ Outputs:
     Value:
       Ref: "AdminPageS3"
   AdminPageCloudFrontURL:
-    Value: !Sub |-
-      https://${AdminPageDistribution.DomainName}
+    Value: !Sub
+      - https://${Domain}
+      - Domain: !If
+        - UseDefaultAdminPageURL
+        - !Sub ${AdminPageDistribution.DomainName}
+        - !Select ["0", !Ref AdminPageURL]
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -4041,8 +4095,12 @@ Outputs:
     Value:
       Ref: "StatusPageS3"
   StatusPageCloudFrontURL:
-    Value: !Sub |-
-      https://${StatusPageDistribution.DomainName}
+    Value: !Sub
+      - https://${Domain}
+      - Domain: !If
+        - UseDefaultStatusPageURL
+        - !Sub ${StatusPageDistribution.DomainName}
+        - !Select ["0", !Ref StatusPageURL]
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/

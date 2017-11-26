@@ -63,29 +63,11 @@ describe('SettingsProxy', () => {
     })
   })
 
-  describe('setAdminPageURL', () => {
-    it('should update the AdminPage URL and user pool and publish notification', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.setAdminPageURL = sinon.spy()
-      proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
-
-      const adminPageURL = 'https://example.com'
-      await proxy.setAdminPageURL(adminPageURL)
-
-      assert(proxy.settings.adminPageURL === adminPageURL)
-      assert(proxy.store.setAdminPageURL.calledOnce)
-      assert(proxy.store.setAdminPageURL.firstCall.args[0] === adminPageURL)
-      assert(proxy.updateUserPool.calledOnce)
-      assert(proxy.sns.notifyIncident.notCalled)
-    })
-  })
-
   describe('getAdminPageURL', () => {
-    it('should get the AdminPage URL from store if not cached', async () => {
+    it('should get the AdminPage URL from CloudFormation if not cached', async () => {
       const adminPageURL = 'https://example.com'
       const proxy = new SettingsProxy()
-      proxy.store.getAdminPageURL = async () => adminPageURL
+      proxy.cloudFormation.getAdminPageCloudFrontURL = async () => adminPageURL
 
       const actual = await proxy.getAdminPageURL()
       assert(adminPageURL === actual)
@@ -104,29 +86,11 @@ describe('SettingsProxy', () => {
     })
   })
 
-  describe('setStatusPageURL', () => {
-    it('should update the StatusPage URL and user pool and publish notification', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.setStatusPageURL = sinon.spy()
-      proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
-
-      const statusPageURL = 'https://example.com'
-      await proxy.setStatusPageURL(statusPageURL)
-
-      assert(proxy.settings.statusPageURL === statusPageURL)
-      assert(proxy.store.setStatusPageURL.calledOnce)
-      assert(proxy.store.setStatusPageURL.firstCall.args[0] === statusPageURL)
-      assert(proxy.updateUserPool.notCalled)
-      assert(proxy.sns.notifyIncident.calledOnce)
-    })
-  })
-
   describe('getStatusPageURL', () => {
-    it('should get the StatusPage URL from store if not cached', async () => {
+    it('should get the StatusPage URL from CloudFormation if not cached', async () => {
       const statusPageURL = 'https://example.com'
       const proxy = new SettingsProxy()
-      proxy.store.getStatusPageURL = async () => statusPageURL
+      proxy.cloudFormation.getStatusPageCloudFrontURL = async () => statusPageURL
 
       const actual = await proxy.getStatusPageURL()
       assert(statusPageURL === actual)

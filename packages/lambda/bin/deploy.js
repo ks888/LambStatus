@@ -11,7 +11,7 @@ const targetFuncs = (process.argv.length === 2 ? undefined : process.argv.slice(
 
 const deploy = (cmd) => {
   return new Promise((resolve, reject) => {
-    exec(cmd, { cwd: buildDir, maxBuffer: 100 * 1024 * 1024, timeout: 10 * 1000 }, (error, stdout, stderr) => {
+    exec(cmd, { cwd: buildDir, maxBuffer: 100 * 1024 * 1024, timeout: 30 * 1000 }, (error, stdout, stderr) => {
       if (error) {
         reject(error)
         return

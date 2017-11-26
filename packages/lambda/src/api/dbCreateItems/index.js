@@ -11,8 +11,6 @@ export async function handle (event, context, callback) {
   }
 
   const {
-    AdminPageURL: adminPageURL,
-    StatusPageURL: statusPageURL,
     CognitoPoolID: cognitoPoolID,
     IncidentNotificationTopic: incidentNotificationTopic,
     UsagePlanID: usagePlanID
@@ -20,21 +18,8 @@ export async function handle (event, context, callback) {
 
   const settings = new SettingsProxy()
   try {
-    if (statusPageURL) {
-      await settings.setStatusPageURL(statusPageURL)
-    }
-  } catch (error) {
-    // setStatusPageURL always fails due to the unknown SNS topic. So ignore the error here.
-    // TODO: improve error handling. There may be other kinds of errors.
-    console.warn(error.message)
-  }
-
-  try {
     await new SNS().notifyIncidentToTopic(incidentNotificationTopic)
 
-    if (adminPageURL) {
-      await settings.setAdminPageURL(adminPageURL)
-    }
     if (cognitoPoolID) {
       await settings.setCognitoPoolID(cognitoPoolID)
     }

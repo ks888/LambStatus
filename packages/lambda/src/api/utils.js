@@ -23,6 +23,7 @@ export class SettingsProxy {
   constructor (params) {
     this.settings = new Settings(params)
     this.store = new SettingsStore()
+    this.cloudFormation = new CloudFormation(stackName)
     this.sns = new SNS()
   }
 
@@ -45,29 +46,15 @@ export class SettingsProxy {
     return storedServiceName
   }
 
-  async setAdminPageURL (adminPageURL) {
-    await this.settings.setAdminPageURL(adminPageURL)
-
-    await this.store.setAdminPageURL(await this.settings.getAdminPageURL())
-    await this.updateUserPool()
-  }
-
   async getAdminPageURL () {
     const adminPageURL = await this.settings.getAdminPageURL()
     if (adminPageURL !== undefined) {
       return adminPageURL
     }
 
-    const storedAdminPageURL = await this.store.getAdminPageURL()
+    const storedAdminPageURL = await this.cloudFormation.getAdminPageCloudFrontURL()
     await this.settings.setAdminPageURL(storedAdminPageURL)
     return storedAdminPageURL
-  }
-
-  async setStatusPageURL (statusPageURL) {
-    await this.settings.setStatusPageURL(statusPageURL)
-
-    await this.store.setStatusPageURL(await this.settings.getStatusPageURL())
-    await this.sns.notifyIncident()
   }
 
   async getStatusPageURL () {
@@ -76,7 +63,7 @@ export class SettingsProxy {
       return statusPageURL
     }
 
-    const storedStatusPageURL = await this.store.getStatusPageURL()
+    const storedStatusPageURL = await this.cloudFormation.getStatusPageCloudFrontURL()
     await this.settings.setStatusPageURL(storedStatusPageURL)
     return storedStatusPageURL
   }
