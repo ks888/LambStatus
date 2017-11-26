@@ -1,5 +1,16 @@
 # Change Log
 
+## [v0.4.3](https://github.com/ks888/LambStatus/tree/v0.4.3) (2017-11-26)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.2...v0.4.3)
+
+### Added
+
+- [\#70](https://github.com/ks888/LambStatus/pull/70): Support custom domain. See the [wiki page](https://github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain) for the usage.
+
+### Fixed
+
+- [\#71](https://github.com/ks888/LambStatus/pull/71): Enforce non-email address in username (thanks [@jpike88](https://github.com/jpike88))
+
 ## [v0.4.2](https://github.com/ks888/LambStatus/tree/v0.4.2) (2017-11-10)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.1...v0.4.2)
 
