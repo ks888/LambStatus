@@ -2,16 +2,19 @@ import fs from 'fs'
 import path from 'path'
 import AWS from 'aws-sdk'
 import mime from 'mime'
+import { getCacheControl } from '../../../lambda/src/utils/cache'
 
 export const uploadFile = (filepath, region, bucketName, objectName) => {
   const awsS3 = new AWS.S3({ region })
   return new Promise((resolve, reject) => {
     const contentType = mime.lookup(objectName)
+    const cacheControl = getCacheControl(contentType)
     const params = {
       Bucket: bucketName,
       Body: fs.readFileSync(filepath),
       Key: objectName,
-      ContentType: contentType
+      ContentType: contentType,
+      CacheControl: cacheControl
     }
     awsS3.putObject(params, (err, result) => {
       if (err) {
