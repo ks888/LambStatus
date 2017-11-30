@@ -72,9 +72,8 @@ See [the demo page](https://demo-admin.lambstatus.org) for the usage example and
 
 ## Join our Community
 
-*LambStatus is still under development, and any contributions are very welcome!*
+*Any contributions are very welcome!*
 
-* Get the release information and interesting topics on [Twitter](https://twitter.com/LambStatus).
-* Ask any questions at [Gitter Chatroom](https://gitter.im/ks888/LambStatus)
-* Have a feature request or bug report? [Open a new issue](https://github.com/ks888/LambStatus/issues).
-* Read our [Contributing Document](https://github.com/ks888/LambStatus/blob/master/CONTRIBUTING.md) to learn how you can start working on the LambStatus yourself.
+* Ask a question at [Gitter Chatroom](https://gitter.im/ks888/LambStatus) or [GitHub Issues](https://github.com/ks888/LambStatus/issues/new)
+* Read our [contributing document](https://github.com/ks888/LambStatus/blob/master/CONTRIBUTING.md) to set up the development environment
+

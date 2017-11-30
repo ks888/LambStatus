@@ -5,6 +5,7 @@ Thank you for seeing this page! The page has the resources to start working on t
 * [Coding rules](#coding-rules)
 * [Project structure](#project-structure)
 * [How to set up the development environment](#set-up-the-development-environment)
+* [Good First Issues](#good-first-issues)
 
 ## Coding Rules
 
@@ -126,3 +127,7 @@ Here is the contents of each directory:
    `npm run start         # Run the local server for the admin page. Visit http://localhost:3000`
 
    `npm run start:status  # Run the local server for the status page. Visit http://localhost:3001`
+
+## Good First Issues
+
+Good issues for first-time contributors have the label [*good first issue*](https://github.com/ks888/LambStatus/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). 
