@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "AWS resources for serverless status pages"
 Parameters:
   UserName:
-    Description: Your user name (email addresses are not allowed).
+    Description: Your user name (email addresses are not allowed)
     Type: String
     Default: admin
     MinLength: 1
@@ -14,16 +14,18 @@ Parameters:
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
   StatusPageSSLCertificate:
-    Description: Optional. Certificate must be based in us-east-1 region. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    ConstraintDescription: Certificate must be based in us-east-1 region
     Type: String
-    AllowedPattern: "^(arn:aws:acm:us-east-1:)[\w:/-]+"
+    AllowedPattern: "^(arn:aws:acm:us-east-1:.+|)"
   StatusPageURL:
     Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
     Type: CommaDelimitedList
   AdminPageSSLCertificate:
-    Description: Optional. Certificate must be based in us-east-1 region. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    ConstraintDescription: Certificate must be based in us-east-1 region
     Type: String
-    AllowedPattern: "^(arn:aws:acm:us-east-1:)[\w:/-]+"
+    AllowedPattern: "^(arn:aws:acm:us-east-1:.+|)"
   AdminPageURL:
     Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
     Type: CommaDelimitedList
