@@ -80,7 +80,7 @@ Here is the contents of each directory:
 
    `npm run cloudformation:create`
 
-   If the command returns an error, make sure you properly configured [the AWS credentials](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence).
+   If the command returns an error, make sure you properly configured [the AWS credentials](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration).
 
    When the stack is created, the email will be sent to the email address.
 
