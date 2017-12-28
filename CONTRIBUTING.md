@@ -62,7 +62,7 @@ Here is the contents of each directory:
 
 ### Prerequisite Software
 
-* Node.js (v4.3.2)
+* Node.js (v6.10.0)
 
 ### Initial set up
 
