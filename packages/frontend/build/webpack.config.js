@@ -17,7 +17,7 @@ const modulesServedFromCDN = [
   {moduleName: 'c3', dependedBy: [], libraryName: 'c3', cssPath: 'c3.css', scriptPath: 'c3.js', external: 'c3'},
   {moduleName: 'd3', dependedBy: ['c3'], libraryName: 'd3', scriptPath: 'd3.js'},
   {moduleName: 'react', dependedBy: [], libraryName: 'react', scriptPath: 'react.js', external: 'React'},
-  {moduleName: 'react-dom', dependedBy: [], libraryName: 'react', scriptPath: 'react-dom.js', external: 'ReactDOM'},
+  {moduleName: 'react-dom', dependedBy: [], libraryName: 'react-dom', scriptPath: 'react-dom.js', external: 'ReactDOM'},
   {moduleName: 'react-router', dependedBy: [], libraryName: 'react-router', scriptPath: 'ReactRouter.js', external: 'ReactRouter'},
   {moduleName: 'moment', dependedBy: ['moment-timezone'], libraryName: 'moment.js', scriptPath: 'moment.js'},
   {moduleName: 'moment-timezone', dependedBy: [], libraryName: 'moment-timezone', scriptPath: 'moment-timezone-with-data.js', external: 'moment'}
