@@ -4,7 +4,7 @@
   "description": "Frontend for LambStatus",
   "main": "index.js",
   "engines": {
-    "node": ">=4.2.0",
+    "node": "^6.10.0",
     "npm": "^3.0.0"
   },
   "scripts": {

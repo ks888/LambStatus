@@ -3,7 +3,7 @@
   "version": "0.4.3",
   "description": "AWS Lambda functions for LambStatus",
   "engines": {
-    "node": ">=4.2.0",
+    "node": "^6.10.0",
     "npm": "^3.0.0"
   },
   "scripts": {
