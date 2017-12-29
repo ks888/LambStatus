@@ -62,7 +62,7 @@
     "build": "gatsby build",
     "build:pp": "gatsby build --prefix-paths",
     "deploy": "npm run clean && npm run build && gh-pages -d public -b master --remote gh-pages",
-    "clean": "rm -rf public",
+    "clean": "rm -rf public .cache",
     "lint:js": "eslint --ext .js,.jsx --ignore-pattern public,static .",
     "lint:md": "remark content/posts/",
     "write-good": "write-good $(glob 'content/posts/**/*.md')",

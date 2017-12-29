@@ -20,7 +20,7 @@ const Button = styled.a`
 class GetStarted extends React.Component {
   render() {
     return (
-      <Button>Get Started</Button>
+      <Button href='/get-started'>Get Started</Button>
     );
   }
 }
