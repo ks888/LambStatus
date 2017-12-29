@@ -23,6 +23,11 @@ export default class MainLayout extends React.Component {
   }
 
   render() {
+    if (this.props.location.pathname === "apidocs") {
+      // The other app manages apidocs
+      this.props.location.reload();
+    }
+
     const { children } = this.props;
     return (
       <div>

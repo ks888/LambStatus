@@ -1,7 +1,7 @@
 module.exports = {
   siteTitleInHeader: "LambStatus", // Site title.
   siteTitle: "Pay-as-you-go Status Page system", // Site title.
-  siteUrl: "https://www.lambstatus.org", // Domain of your website without pathPrefix.
+  siteUrl: "https://lambstatus.github.io", // Domain of your website without pathPrefix.
   pathPrefix: "/", // Prefixes all links. For cases when deployed to example.github.io/gatsby-advanced-starter/.
   siteDescription: "Handle 30,000 visitors for $1", // Website description used for meta description tag.
   logoForMetatag: "/logos/logo-metatag.png",

@@ -61,7 +61,7 @@
     "serve": "gatsby serve",
     "build": "gatsby build",
     "build:pp": "gatsby build --prefix-paths",
-    "deploy": "npm run clean && npm run build && gh-pages -d public -b master",
+    "deploy": "npm run clean && npm run build && gh-pages -d public -b master --remote gh-pages",
     "clean": "rm -rf public",
     "lint:js": "eslint --ext .js,.jsx --ignore-pattern public,static .",
     "lint:md": "remark content/posts/",
