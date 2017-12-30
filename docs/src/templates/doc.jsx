@@ -19,10 +19,10 @@ export default class DocTemplate extends React.Component {
           <title>{`${post.title} | ${config.siteTitleInHeader}`}</title>
         </Helmet>
         <SEO postPath={slug} postNode={postNode} postSEO />
+        <HeaderContainer>
+          <SiteHeader location={this.props.location} />
+        </HeaderContainer>
         <BodyGrid>
-          <HeaderContainer>
-            <SiteHeader location={this.props.location} />
-          </HeaderContainer>
           <ToCContainer>
             <TableOfContents
               posts={this.props.data.allPostTitles.edges}
@@ -45,14 +45,13 @@ export default class DocTemplate extends React.Component {
 
 const BodyGrid = styled.div`
   height: 100vh;
-  display: grid;
-  grid-template-rows: 75px 1fr;
-  grid-template-columns: 300px 1fr;
+  padding-top: 75px;
+  display: flex;
+  flex-direction: row;
 `
 
 const BodyContainer = styled.div`
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
+  flex: 1;
   overflow: scroll;
   justify-self: center;
   width: 100%;
@@ -69,14 +68,15 @@ const BodyContainer = styled.div`
 `
 
 const HeaderContainer = styled.div`
-  grid-column: 1 / 3;
-  grid-row: 1 / 2;
+  position: fixed;
+  top: 0;
+  height: 75px;
+  width: 100%;
   z-index: 2;
 `
 
 const ToCContainer = styled.div`
-  grid-column: 1 / 2;
-  grid-row: 2 / 3;
+  width: 300px;
   background: ${props => props.theme.gray};
   overflow: scroll;
 `
