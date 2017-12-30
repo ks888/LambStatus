@@ -21,7 +21,7 @@ The demo pages are available:
 ## Goals of this project
 
 * Offers an open source and serverless status page system.
-* Offers a pay-as-you-go pricing approach like AWS. We estimate the system takes just *$1 to handle 30,000 visitors* ([see details](https://github.com/ks888/LambStatus/wiki/Cost-estimate)).
+* Offers a pay-as-you-go pricing approach like AWS. We estimate the system takes just *$1 to handle 30,000 visitors* ([see details](https://lambstatus.github.io/cost-estimate)).
 * Enables you to build and maintain the status page system at minimum effort.
 
 ## Why Serverless?
@@ -38,42 +38,12 @@ Apart from the Serverless architecture, LambStatus enables you to:
 
 ## Installation
 
-Launch your cloudformation stack by clicking the button below:
-
-[![Launch CloudFormation Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.3/lamb-status.yml)
-
-When a window to create a new CloudFormation stack is opened, click Next.
-
-![CloudFormationWizard1](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard1.png)
-
-Then, enter your email address and click Next.
-
-![CloudFormationWizard2](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard2.png)
-
-Click Next again.
-
-![CloudFormationWizard3](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard3.png)
-
-Check the acknowledgment checkbox at the bottom ([see here](https://github.com/ks888/LambStatus/blob/master/cloudformation/lamb-status.yml#L21-L148) to check IAM resources) and click Create.
-
-![CloudFormationWizard4](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard4.png)
-
-When the stack is created, the email will be sent to the email address of the initial user. It may take 20-25 minutes, mainly due to the settings of CloudFront Distribution.
-
-![CloudFormationWizard5](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard5.png)
-
-&nbsp;&nbsp;_NOTE: if you don't receive the email after 30 minutes, check the spam folder. The email comes from `no-reply@verificationemail.com`._
-
-Click the link in the email, and sign in to admin console.
-
-![CloudFormationWizard6](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/CloudFormationWizard6.png)
-
-See [the demo page](https://demo-admin.lambstatus.org) for the usage example and [the wiki](https://github.com/ks888/LambStatus/wiki) for advanced usage.
+See [the Get Started page](https://lambstatus.github.io/get-started) to build your first status page!
 
 ## Join our Community
 
 *Any contributions are very welcome!*
 
 * Ask a question at [Gitter Chatroom](https://gitter.im/ks888/LambStatus) or [GitHub Issues](https://github.com/ks888/LambStatus/issues/new)
-* Read our [contributing document](https://github.com/ks888/LambStatus/blob/master/CONTRIBUTING.md) to set up the development environment
+* Read our [contributing document](https://lambstatus.github.io/contributing) to set up the development environment
 
