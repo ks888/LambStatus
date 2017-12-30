@@ -40,13 +40,13 @@ class Demo extends React.Component {
           <Text>
             <FaCaretRight />
             <Link href={statusPageDemoLink} target='_blank' >
-              Status page (the page to tell your service's status to your users) <FaExternalLink />
+              Status page: the page to tell your service's status to your users <FaExternalLink />
             </Link>
           </Text>
           <Text>
             <FaCaretRight />
             <Link href={adminPageDemoLink} target='_blank' >
-              Admin page (the page to manage your service's status) <FaExternalLink />
+              Admin page: the page to manage your service's status <FaExternalLink />
             </Link>
           </Text>
         </InnerContainer>

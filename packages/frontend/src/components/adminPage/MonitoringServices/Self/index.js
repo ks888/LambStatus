@@ -16,7 +16,7 @@ class SelfMetricsSelector extends React.Component {
   }
 
   render () {
-    const linkToDoc = 'https://github.com/ks888/LambStatus/wiki/The-usage-of-%22Self%22-type-metrics'
+    const linkToDoc = 'https://lambstatus.github.io/integrate-with-other-monitoring-systems'
     return (
       <div className={classes['container']}>
         <div>

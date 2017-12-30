@@ -4,8 +4,8 @@ import Highlight, {iconTypes} from '../components/Highlight'
 
 class RegionHighlight extends React.Component {
   render() {
-    const headline = 'Choose your region';
-    const desc = 'Choose the AWS region different from your service\'s region. If both your service and its status page rely on the same region, the region outage may stop both.';
+    const headline = 'Choose a Different Region';
+    const desc = 'You can choose the region different from your service\'s region, to reduce the influence of the region outage!';
 
     return (
       <Highlight headline={headline} description={desc} iconType={iconTypes.globe} />

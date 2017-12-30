@@ -32,13 +32,14 @@ class Features extends React.Component {
             Features
           </Title>
           <Items>
-            <FeatureItem text='Status by service components' />
+            <FeatureItem text='Status management by service components' />
             <FeatureItem text='Incidents' />
             <FeatureItem text='Scheduled maintenance' />
             <FeatureItem text='Metrics' />
-            <FeatureItem text='API' />
-            <FeatureItem text='Notification via RSS' />
+            <FeatureItem text='Notification via email (coming soon!) and RSS' />
             <FeatureItem text='Custom domain' />
+            <FeatureItem text='API' />
+            <FeatureItem text='Integration with other monitoring systems' />
           </Items>
         </InnerContainer>
       </Container>

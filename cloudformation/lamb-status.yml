@@ -14,20 +14,20 @@ Parameters:
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
   StatusPageSSLCertificate:
-    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See lambstatus.github.io/set-up-custom-domain for usage
     ConstraintDescription: Certificate must be based in us-east-1 region
     Type: String
     AllowedPattern: "^(arn:aws:acm:us-east-1:.+|)"
   StatusPageURL:
-    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See lambstatus.github.io/set-up-custom-domain for usage
     Type: CommaDelimitedList
   AdminPageSSLCertificate:
-    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See lambstatus.github.io/set-up-custom-domain for usage
     ConstraintDescription: Certificate must be based in us-east-1 region
     Type: String
     AllowedPattern: "^(arn:aws:acm:us-east-1:.+|)"
   AdminPageURL:
-    Description: Optional. See github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain for usage
+    Description: Optional. See lambstatus.github.io/set-up-custom-domain for usage
     Type: CommaDelimitedList
 Mappings:
   Constants:
