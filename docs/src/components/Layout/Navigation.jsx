@@ -16,6 +16,20 @@ const NavContainer = styled.div`
     margin-right: 15px;
     font-weight: 200;
     vertical-align: 35%;
+
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+`
+
+const LogoLink = styled.a`
+  text-decoration: none;
+  border: 0 none;
+
+  :hover {
+    text-decoration: none;
+    border: 0 none;
   }
 `
 
@@ -29,10 +43,10 @@ class Navigation extends React.Component {
     let logo;
     let style;
     if (this.props.light) {
-      logo = <Logo src='/logos/logo-medium-light.png' alt='' />
+      logo = <LogoLink href='/'><Logo src='/logos/logo-medium-light.png' alt='' /></LogoLink>
       style = {color: 'white'};
     } else {
-      logo = <Logo src='/logos/logo-medium-normal.png' alt='' />
+      logo = <LogoLink href='/'><Logo src='/logos/logo-medium-normal.png' alt='' /></LogoLink>
       style = {color: 'black'};
     }
     return (

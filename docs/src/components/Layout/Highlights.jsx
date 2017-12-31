@@ -13,6 +13,11 @@ const HighlightContainer = styled.div`
 
   display: flex;
   flex-wrap: wrap;
+
+  @media screen and (max-width: 768px) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
 `
 
 class Highlights extends React.Component {

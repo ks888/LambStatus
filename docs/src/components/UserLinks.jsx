@@ -6,11 +6,10 @@ import config from "../../data/SiteConfig"
 
 const Container = styled.div`
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: no-wrap;
     justify-content: center;
     align-items: center;
     max-width: 100%;
-    
 `
 
 const UserIcon = styled.a`
@@ -20,8 +19,6 @@ const UserIcon = styled.a`
     color: rgba(0, 0, 0, .2);
     border-bottom: none;
   }
-  
-  
 `
 
 const iconStyle = {
