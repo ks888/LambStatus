@@ -39,13 +39,13 @@ export default class IncidentItem extends React.Component {
 
   renderIncidentUpdateItem = (incidentUpdate) => {
     return (
-      <div className={classnames(classes.inner_item)} key={incidentUpdate.incidentUpdateID}>
+      <div className={classes['update-item']} key={incidentUpdate.incidentUpdateID}>
         <div>
           {incidentUpdate.incidentStatus}
-          <span className={classnames(classes.inner_item_message)}> - <AutolinkedText text={incidentUpdate.message} />
+          <span className={classes['update-item-message']}> - <AutolinkedText text={incidentUpdate.message} />
           </span>
         </div>
-        <div className={classnames(classes.inner_item_updatedat)}>
+        <div className={classes['update-item-updatedat']}>
           {getFormattedDateTime(incidentUpdate.createdAt)}
         </div>
       </div>
@@ -74,10 +74,10 @@ export default class IncidentItem extends React.Component {
     }
 
     return (
-      <li className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.item)}>
-        <div className={classes.item_headline}>
-          <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}>
-            <Link to={`/incidents/${this.props.incidentID}`} className={classes.item_primary_link}
+      <li className={classnames('mdl-shadow--2dp', classes.item)}>
+        <div className={classes['item-headline']}>
+          <span className={classes['item-primary']}>
+            <Link to={`/incidents/${this.props.incidentID}`} className={classes['item-primary-link']}
               style={{color: statusColor}}>
               {incident.status} - {incident.name}
             </Link>

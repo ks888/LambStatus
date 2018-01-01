@@ -1,0 +1,34 @@
+.container {
+  padding: 8px;
+}
+
+.item {
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  letter-spacing: .04em;
+  padding: 16px;
+
+  @media screen and (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+.item-primary {
+  display: block;
+  flex-grow: 2;
+}
+
+.item-subtitle {
+  color: rgba(0,0,0,.54);
+  display: block;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 18px;
+}
+
+.item-secondary {
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
+}

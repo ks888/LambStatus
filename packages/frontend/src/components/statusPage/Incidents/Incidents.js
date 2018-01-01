@@ -49,16 +49,9 @@ export default class Incidents extends React.Component {
     })
 
     return (
-      <li key={date} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.date_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.date_item_primary)}>
-          <div className={classnames(classes.border)}>{date}</div>
-          <span className='mdl-list__item-sub-title'>
-            <ul className='mdl-list'>
-              {dateItems}
-            </ul>
-          </span>
-        </span>
+      <li key={date} className={classnames(classes['date-item'], 'mdl-shadow--2dp')}>
+        <div className={classnames(classes.border)}>{date}</div>
+        <ul className={classes.container}>{dateItems}</ul>
       </li>
     )
   }
@@ -87,12 +80,12 @@ export default class Incidents extends React.Component {
     Object.keys(dates).map(date => dates[date].sort((a, b) => { return a.createdAt < b.createdAt }))
 
     return (
-      <div className={this.props.classNames}>
+      <ul className={classes.container}>
         <h4 className={classnames(classes.title)}>Incidents</h4>
         {Object.keys(dates).map(date =>
           this.renderDateItem(date, dates[date])
         )}
-      </div>
+      </ul>
     )
   }
 }

@@ -41,13 +41,13 @@ export default class MaintenanceItem extends React.Component {
 
   renderMaintenanceUpdateItem = (maintUpdate) => {
     return (
-      <div className={classnames(classes.inner_item)} key={maintUpdate.maintenanceUpdateID}>
+      <div className={classes['update-item']} key={maintUpdate.maintenanceUpdateID}>
         <div>
           {maintUpdate.maintenanceStatus}
-          <span className={classnames(classes.inner_item_message)}> - <AutolinkedText text={maintUpdate.message} />
+          <span className={classes['update-item-message']}> - <AutolinkedText text={maintUpdate.message} />
           </span>
         </div>
-        <div className={classnames(classes.inner_item_updatedat)}>
+        <div className={classes['update-item-updatedat']}>
           {getFormattedDateTime(maintUpdate.createdAt)}
         </div>
       </div>
@@ -73,15 +73,15 @@ export default class MaintenanceItem extends React.Component {
     const endAt = getFormattedDateTime(maintenance.endAt, 'MMM DD, HH:mm (z)')
 
     return (
-      <li className={classnames('mdl-list__item', 'mdl-list__item--two-line', 'mdl-shadow--4dp', classes.item)}>
-        <div className={classes.item_headline}>
-          <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}>
-            <Link to={`/maintenances/${this.props.maintenanceID}`} className={classes.item_primary_link}
+      <li className={classnames('mdl-shadow--2dp', classes.item)}>
+        <div className={classes['item-headline']}>
+          <span className={classes['item-primary']}>
+            <Link to={`/maintenances/${this.props.maintenanceID}`} className={classes['item-primary-link']}
               style={{color: statusColor}}>
               {maintenance.status} - {maintenance.name}
             </Link>
           </span>
-          <span className={classnames('mdl-list__item-secondary-content', classes.item_secondary)}>
+          <span className={classes['item-secondary']}>
             Scheduled for {startAt} - {endAt}
           </span>
           {detailButton}
