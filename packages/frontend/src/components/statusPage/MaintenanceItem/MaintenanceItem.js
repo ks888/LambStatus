@@ -64,9 +64,7 @@ export default class MaintenanceItem extends React.Component {
       // now loading...
     } else {
       detailButton = (
-        <span className='mdl-list__item-secondary-content'>
-          <Button plain name='Detail' onClick={this.handleClickDetailButton} />
-        </span>
+        <Button plain name='Detail' onClick={this.handleClickDetailButton} />
       )
     }
     const startAt = getFormattedDateTime(maintenance.startAt, 'MMM DD, HH:mm ')

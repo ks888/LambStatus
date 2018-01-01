@@ -62,14 +62,12 @@ export default class IncidentItem extends React.Component {
       // now loading...
     } else {
       updatedAt = (
-        <span className='mdl-list__item-sub-title'>
+        <div className={classes['update-item-updatedat']}>
           {getFormattedDateTime(incident.updatedAt)}
-        </span>
+        </div>
       )
       detailButton = (
-        <span className='mdl-list__item-secondary-content'>
-          <Button plain name='Detail' onClick={this.handleClickDetailButton} />
-        </span>
+        <Button plain name='Detail' onClick={this.handleClickDetailButton} />
       )
     }
 

@@ -50,14 +50,12 @@ export default class Maintenance extends React.Component {
     }
 
     return (
-      <div className={classnames(classes.layout, 'mdl-grid')}>
-        <div className='mdl-cell mdl-cell--12-col'>
-          <h4>Scheduled Maintenance Report for {settings.serviceName}</h4>
-        </div>
-        <div className='mdl-cell mdl-cell--12-col mdl-list'>
+      <div>
+        <h4>Scheduled Maintenance Report for {settings.serviceName}</h4>
+        <ul className={classes.container} >
           {maintenance}
-        </div>
-        <Link link='/' text='Current Incidents' />
+        </ul>
+        <span className={classnames(classes.link)}><Link link='/' text='Current Incidents' /></span>
       </div>
     )
   }
