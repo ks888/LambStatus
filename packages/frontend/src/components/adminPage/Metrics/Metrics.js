@@ -173,23 +173,23 @@ export default class Metrics extends React.Component {
       Metric
     </div>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
-        <h4>Metrics</h4>
-      </div>
-      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
-        <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
-      </div>
-      <div className='mdl-cell mdl-cell--12-col mdl-list'>
+    return (
+      <div className={classnames(classes.layout, 'mdl-grid')}
+        style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
+        <div className={classes.headline}>
+          <h4>Metrics</h4>
+          <span className={classes.showDialogButton}>
+            <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
+          </span>
+        </div>
         <ErrorMessage message={this.state.message} />
+        <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+          {metricItems}
+        </ul>
+        <div id={innerDialogID}>
+          {dialog}
+        </div>
       </div>
-      <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-        {metricItems}
-      </ul>
-      <div id={innerDialogID}>
-        {dialog}
-      </div>
-    </div>)
+    )
   }
 }

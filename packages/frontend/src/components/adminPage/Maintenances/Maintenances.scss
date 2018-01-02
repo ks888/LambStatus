@@ -5,6 +5,14 @@
   padding-bottom: 10px;
 }
 
+.headline {
+  align-content: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .showDialogButton {
+  margin: 24px 0 16px;
   text-align: right;
 }

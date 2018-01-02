@@ -117,23 +117,23 @@ export default class Maintenances extends React.Component {
       Maintenance
     </div>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--10-col mdl-cell--middle'>
-        <h4>Scheduled Maintenance</h4>
-      </div>
-      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--2-col mdl-cell--middle')}>
-        <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
-      </div>
-      <div className='mdl-cell mdl-cell--12-col mdl-list'>
+    return (
+      <div className={classnames(classes.layout, 'mdl-grid')}
+        style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
+        <div className={classes.headline}>
+          <h4>Scheduled Maintenance</h4>
+          <span className={classes.showDialogButton}>
+            <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
+          </span>
+        </div>
         <ErrorMessage message={this.state.message} />
+        <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+          {maintenanceItems}
+        </ul>
+        <div id={innerDialogID}>
+          {dialog}
+        </div>
       </div>
-      <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-        {maintenanceItems}
-      </ul>
-      <div id={innerDialogID}>
-        {dialog}
-      </div>
-    </div>)
+    )
   }
 }

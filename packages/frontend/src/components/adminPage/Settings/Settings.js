@@ -130,22 +130,15 @@ export default class Settings extends React.Component {
 
     let errMsg
     if (this.state.message) {
-      errMsg = (
-        <div className='mdl-cell mdl-cell--12-col mdl-cell--middle'>
-          <ErrorMessage message={this.state.message} />
-        </div>
-      )
+      errMsg = (<ErrorMessage message={this.state.message} />)
     }
 
     return (
-      <div className={classnames(classes.layout, 'mdl-grid')}
+      <div className={classnames(classes.layout)}
         style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-        <div className='mdl-cell mdl-cell--12-col mdl-cell--middle'>
-          <h4>Settings</h4>
-        </div>
+        <h4>Settings</h4>
         {errMsg}
         {settingItems}
-        <div className='mdl-cell mdl-cell--8-col mdl-cell--middle' />
         <div className='mdl-cell mdl-cell--1-col'>
           <Button onClick={this.handleClickSaveButton} name='Save'
             class='mdl-button--accent' disabled={this.state.isFetching} />
