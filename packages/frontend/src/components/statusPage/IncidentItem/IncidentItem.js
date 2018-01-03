@@ -67,7 +67,8 @@ export default class IncidentItem extends React.Component {
         </div>
       )
       detailButton = (
-        <Button plain name='Detail' onClick={this.handleClickDetailButton} />
+        <i className={classnames(classes['details-icon'], 'material-icons')}
+          onClick={this.handleClickDetailButton}>details</i>
       )
     }
 
