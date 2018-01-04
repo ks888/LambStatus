@@ -1,8 +1,13 @@
 .layout {
+  padding-bottom: 10px;
   padding-left: 40px;
   padding-right: 40px;
   padding-top: 10px;
-  padding-bottom: 10px;
+
+  @media screen and (max-width: 768px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 .headline {
@@ -12,26 +17,83 @@
   width: 100%;
 }
 
+.container {
+  padding-left: 0;
+}
+
+.primary-content {
+  display: flex;
+  flex-grow: 2;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subtitle {
+    color: rgba(0,0,0,.54);
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 18px;
+
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.item {
+  display: flex;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  padding: 16px;
+}
+
 .icon {
-  background-color: #FFFFFF !important;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  font-size: 40px;
+  height: 40px;
+  margin-right: 16px;
+  width: 40px;
 }
 
-.buttons {
-  flex-direction: row !important;
+.secondary-content {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-left: 16px;
 }
 
-.order-buttons {
-  padding-right: 16px;
-  padding-left: 16px;
-}
-
-.order-icon {
-  background-color: #FFFFFF !important;
+.menu-icon {
+  background-color: #FFFFFF;
   color: #757575;
+  cursor: pointer;
+  display: block;
   font-size: 18px;
   height: 36px;
   line-height: 36px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.menu-icon {
+  background-color: #FFFFFF;
+  color: #757575;
   cursor: pointer;
+  display: block;
+  font-size: 18px;
+  height: 36px;
+  line-height: 36px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.showDialogButton {
+  margin: 24px 0 16px;
+  text-align: right;
 }
 
 .showDialogButton {

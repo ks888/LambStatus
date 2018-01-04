@@ -104,28 +104,34 @@ export default class Metrics extends React.Component {
   renderListItem = (metric, i) => {
     let statusColor = getMetricColor(metric.status)
     return (
-      <li key={metric.metricID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
-        <span className='mdl-list__item-primary-content'>
-          <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
+      <li key={metric.metricID} className={classnames(classes.item, 'mdl-shadow--2dp')}>
+        <div className={classes['primary-content']}>
+          <i className={classnames(classes.icon, 'material-icons')}
             style={{color: statusColor}} data-tip={metric.status}>insert_chart</i>
           <Tooltip />
-          <span>{metric.title}</span>
-          <span className='mdl-list__item-sub-title'>{metric.description}</span>
-        </span>
-        <span className={classnames('mdl-list__item-secondary-content', classes['buttons'])}>
-          <Button plain name='Preview' onClick={this.handleShowPreviewDialog(metric.metricID)} />
-          <Button plain name='Edit' onClick={this.handleShowEditDialog(metric.metricID)} />
-          <Button plain name='Delete' onClick={this.handleShowDeleteDialog(metric.metricID)} />
-          <div className={classnames(classes['order-buttons'])}>
-            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
-              arrow_upward
-            </i>
-            <i className={classnames(classes['order-icon'], 'material-icons')}
-              onClick={this.handleClickArrowDownward(i)}>
-              arrow_downward
-            </i>
+          <div>
+            <div>{metric.title}</div>
+            <div className={classes.subtitle}>{metric.description}</div>
           </div>
-        </span>
+        </div>
+        <div className={classes['secondary-content']}>
+          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowPreviewDialog(metric.metricID)}>
+            show_chart
+          </i>
+          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowEditDialog(metric.metricID)}>
+            edit
+          </i>
+          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowDeleteDialog(metric.metricID)}>
+            delete
+          </i>
+          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
+            arrow_upward
+          </i>
+          <i className={classnames(classes['menu-icon'], 'material-icons')}
+            onClick={this.handleClickArrowDownward(i)}>
+            arrow_downward
+          </i>
+        </div>
       </li>
     )
   }
@@ -168,10 +174,7 @@ export default class Metrics extends React.Component {
     const { metrics } = this.props
     const metricItems = metrics.map(this.renderListItem)
     const dialog = this.renderDialog()
-    const textInButton = (<div>
-      <i className='material-icons'>add</i>
-      Metric
-    </div>)
+    const addButton = (<span><i className='material-icons'>add</i>Add</span>)
 
     return (
       <div className={classnames(classes.layout, 'mdl-grid')}
@@ -179,11 +182,11 @@ export default class Metrics extends React.Component {
         <div className={classes.headline}>
           <h4>Metrics</h4>
           <span className={classes.showDialogButton}>
-            <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
+            <Button onClick={this.handleShowAddDialog()} name={addButton} class='mdl-button--accent' />
           </span>
         </div>
         <ErrorMessage message={this.state.message} />
-        <ul className='mdl-cell mdl-cell--12-col mdl-list'>
+        <ul className={classnames(classes.container, 'mdl-cell', 'mdl-cell--12-col')}>
           {metricItems}
         </ul>
         <div id={innerDialogID}>

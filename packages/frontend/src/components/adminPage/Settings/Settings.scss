@@ -6,6 +6,11 @@
   padding-left: 40px;
   padding-right: 40px;
   padding-top: 10px;
+
+  @media screen and (max-width: 768px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 .item {
