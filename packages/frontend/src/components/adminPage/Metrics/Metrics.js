@@ -6,6 +6,7 @@ import Tooltip from 'components/common/Tooltip'
 import MetricDialog, { metricDialogType } from 'components/adminPage/MetricDialog'
 import MetricPreviewDialog from 'components/adminPage/MetricPreviewDialog'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
+import MenuIcon from 'components/adminPage/MenuIcon'
 import { getMetricColor } from 'utils/status'
 import { innerDialogID } from 'utils/dialog'
 import classes from './Metrics.scss'
@@ -115,22 +116,12 @@ export default class Metrics extends React.Component {
           </div>
         </div>
         <div className={classes['secondary-content']}>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowPreviewDialog(metric.metricID)}>
-            show_chart
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowEditDialog(metric.metricID)}>
-            edit
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowDeleteDialog(metric.metricID)}>
-            delete
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
-            arrow_upward
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')}
-            onClick={this.handleClickArrowDownward(i)}>
-            arrow_downward
-          </i>
+          <MenuIcon iconName='show_chart' description='Preview'
+            onClick={this.handleShowPreviewDialog(metric.metricID)} />
+          <MenuIcon iconName='edit' description='Edit' onClick={this.handleShowEditDialog(metric.metricID)} />
+          <MenuIcon iconName='delete' description='Delete' onClick={this.handleShowDeleteDialog(metric.metricID)} />
+          <MenuIcon iconName='arrow_upward' description='Move upward' onClick={this.handleClickArrowUpward(i)} />
+          <MenuIcon iconName='arrow_downward' description='Move downward' onClick={this.handleClickArrowDownward(i)} />
         </div>
       </li>
     )

@@ -5,6 +5,7 @@ import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import Tooltip from 'components/common/Tooltip'
 import ErrorMessage from 'components/common/ErrorMessage'
+import MenuIcon from 'components/adminPage/MenuIcon'
 import { getComponentColor } from 'utils/status'
 import { innerDialogID } from 'utils/dialog'
 import classes from './Components.scss'
@@ -104,19 +105,10 @@ export default class Components extends React.Component {
           </div>
         </div>
         <div className={classes['secondary-content']}>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowEditDialog(component)}>
-            edit
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleShowDeleteDialog(component)}>
-            delete
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
-            arrow_upward
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')}
-            onClick={this.handleClickArrowDownward(i)}>
-            arrow_downward
-          </i>
+          <MenuIcon iconName='edit' description='Edit' onClick={this.handleShowEditDialog(component)} />
+          <MenuIcon iconName='delete' description='Delete' onClick={this.handleShowDeleteDialog(component)} />
+          <MenuIcon iconName='arrow_upward' description='Move upward' onClick={this.handleClickArrowUpward(i)} />
+          <MenuIcon iconName='arrow_downward' description='Move downward' onClick={this.handleClickArrowDownward(i)} />
         </div>
       </li>
     )

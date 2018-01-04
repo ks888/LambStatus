@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import Button from 'components/common/Button'
 import Tooltip from 'components/common/Tooltip'
+import MenuIcon from 'components/adminPage/MenuIcon'
 import { getFormattedDateTime } from 'utils/datetime'
 import classes from './IncidentItem.scss'
 
@@ -43,12 +43,8 @@ export default class IncidentItem extends React.Component {
           </div>
         </div>
         <div className={classes['secondary-content']}>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleClickUpdateButton}>
-            edit
-          </i>
-          <i className={classnames(classes['menu-icon'], 'material-icons')} onClick={this.handleClickDeleteButton}>
-            delete
-          </i>
+          <MenuIcon iconName='edit' description='Edit' onClick={this.handleClickUpdateButton} />
+          <MenuIcon iconName='delete' description='Delete' onClick={this.handleClickDeleteButton} />
         </div>
       </li>
     )
