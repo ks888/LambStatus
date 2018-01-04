@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
 import classnames from 'classnames'
-import Button from 'components/common/Button'
 import AutolinkedText from 'components/common/AutolinkedText'
 import { getIncidentColor } from 'utils/status'
 import { getFormattedDateTime } from 'utils/datetime'
