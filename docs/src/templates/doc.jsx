@@ -36,6 +36,12 @@ export default class DocTemplate extends React.Component {
               </h1>
               <div dangerouslySetInnerHTML={{ __html: html }} />
             </div>
+            <ToCFooter>
+              <TableOfContents
+                posts={this.props.data.allPostTitles.edges}
+                contentsType="doc"
+              />
+            </ToCFooter>
           </BodyContainer>
         </BodyGrid>
       </div>
@@ -79,6 +85,16 @@ const ToCContainer = styled.div`
   width: 300px;
   background: ${props => props.theme.gray};
   overflow: scroll;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`
+
+const ToCFooter = styled.div`
+  @media screen and (min-width: 768px) {
+    display: none;
+  }
 `
 
 /* eslint no-undef: "off"*/

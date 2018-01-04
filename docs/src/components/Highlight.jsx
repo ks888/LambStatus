@@ -4,14 +4,13 @@ import {FaServer, FaCreditCard, FaMousePointer, FaGlobe} from 'react-icons/lib/f
 
 const Container = styled.div`
   display: flex;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding: 25px;
+  width: 50%;
 
-  width: 100%;
-  @media screen and (min-width: 480px) {
-    width: 50%;
+  @media screen and (max-width: 768px) {
+    padding-left: 0px;
+    padding-right: 0px;
+    width: 100%;
   }
 `
 
@@ -45,7 +44,7 @@ export const iconTypes = {
 class Highlight extends React.Component {
   render() {
     let icon;
-    const iconSize = 60;
+    const iconSize = 50;
     const iconColor = 'gray';
     switch (this.props.iconType) {
       case iconTypes.server:

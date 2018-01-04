@@ -4,6 +4,13 @@ import styled from 'styled-components'
 import Navigation from './Navigation'
 import GetStarted from '../../components/GetStarted'
 
+const Logo = styled.img`
+  width: 500px;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`
+
 class MainHeader extends React.Component {
   getHeader() {
     if (this.props.location) {
@@ -12,7 +19,7 @@ class MainHeader extends React.Component {
           <IndexHeadContainer>
             <Navigation />
             <Hero>
-              <img src={this.props.logo} alt='' width='500px' />
+              <Logo src={this.props.logo} alt='' />
               <h1>{this.props.siteTitle}</h1>
               <h4>{this.props.siteDescription}</h4>
               <GetStarted />

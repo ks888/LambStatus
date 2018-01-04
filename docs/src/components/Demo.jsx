@@ -1,7 +1,8 @@
 import React from "react"
 import styled from "styled-components"
-
 import {FaCaretRight, FaExternalLink} from 'react-icons/lib/fa'
+
+import GetStarted from '../components/GetStarted'
 
 const Container = styled.div`
   padding: ${props => props.theme.sitePadding};
@@ -28,6 +29,15 @@ const Link = styled.a`
   color: ${props => props.theme.inkLight};
 `
 
+const GetStartedContainer = styled.div`
+  padding-top: 35px;
+  text-align: center;
+
+  @media screen and (min-width: 768px) {
+    display: none;
+  }
+`
+
 const statusPageDemoLink = 'https://demo-status.lambstatus.org/'
 const adminPageDemoLink = 'https://demo-admin.lambstatus.org/'
 
@@ -49,6 +59,9 @@ class Demo extends React.Component {
               Admin page: the page to manage your service's status <FaExternalLink />
             </Link>
           </Text>
+          <GetStartedContainer>
+            <GetStarted />
+          </GetStartedContainer>
         </InnerContainer>
       </Container>
     );

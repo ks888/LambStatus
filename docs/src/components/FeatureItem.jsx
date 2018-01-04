@@ -7,6 +7,10 @@ const Item = styled.div`
   font-size: 2.0rem;
   width: 50%;
   padding-bottom: 10px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 `
 
 class FeatureItem extends React.Component {

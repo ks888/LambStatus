@@ -29,6 +29,10 @@
   padding: 4px 4px;
   color: rgba(0,0,0,.30);
   white-space: nowrap;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 }
 
 .delete-icon {

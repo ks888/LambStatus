@@ -104,6 +104,10 @@ const TableOfContentsContainer = styled.div`
      color: ${props => props.theme.brand};
      margin-bottom: 10px;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 0px;
+  }
 `
 
 const DocContainer = styled.div`
