@@ -12,7 +12,7 @@ AWS account
 
 ### Launch your stack
 
-1. Launch a CloudFormation stack by clicking this button <a target="_blank" style="text-decoration: none; border-style: none;" href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.4.3/lamb-status.yml"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch CloudFormation Stack" style="vertical-align: bottom;" /></a>
+1. Launch a CloudFormation stack by clicking this button <a target="_blank" style="text-decoration: none; border-style: none;" href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=StatusPage&templateURL=https://s3-ap-northeast-1.amazonaws.com/lambstatus/cf-template/0.5.0/lamb-status.yml"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch CloudFormation Stack" style="vertical-align: bottom;" /></a>
 
 2. At the 'Create stack' page, click 'Next' (the CloudFormation template is already specified)!
 
