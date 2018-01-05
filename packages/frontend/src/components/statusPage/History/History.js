@@ -57,7 +57,7 @@ export default class History extends React.Component {
     })
 
     return (
-      <li key={month} className={classnames(classes['date-item'], 'mdl-shadow--2dp')}>
+      <li key={month} className={classes['date-item']}>
         <div className={classnames(classes.border)}>{month}</div>
         <ul className={classnames(classes.container)}>{eventItems}</ul>
       </li>

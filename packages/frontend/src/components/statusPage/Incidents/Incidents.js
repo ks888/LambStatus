@@ -48,10 +48,17 @@ export default class Incidents extends React.Component {
       }
     })
 
+    let container = null
+    if (dateItems.length > 0) {
+      container = (<ul className={classes.container}>{dateItems}</ul>)
+    } else {
+      container = (<span className={classes['no-incidents']}>No incidents reported.</span>)
+    }
+
     return (
-      <li key={date} className={classnames(classes['date-item'], 'mdl-shadow--2dp')}>
+      <li key={date} className={classnames(classes['date-item'])}>
         <div className={classnames(classes.border)}>{date}</div>
-        <ul className={classes.container}>{dateItems}</ul>
+        {container}
       </li>
     )
   }
