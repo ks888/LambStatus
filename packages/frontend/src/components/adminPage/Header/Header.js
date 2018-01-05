@@ -18,7 +18,6 @@ export default class Header extends React.Component {
 
   componentDidMount () {
     this.props.fetchUser()
-    this.props.fetchSettings()
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)

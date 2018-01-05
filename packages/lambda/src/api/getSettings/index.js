@@ -5,11 +5,14 @@ import { stackName } from 'utils/const'
 export async function handle (event, context, callback) {
   try {
     const settings = new SettingsProxy()
-    const serviceName = await settings.getServiceName()
-    const adminPageURL = await settings.getAdminPageURL()
-    const statusPageURL = await settings.getStatusPageURL()
+    const apiGateway = await new APIGateway()
+    const [serviceName, adminPageURL, apiKeys] = await Promise.all([
+      settings.getServiceName(),
+      settings.getAdminPageURL(),
+      apiGateway.queryEnabledApiKey(stackName)
+    ])
+    const statusPageURL = await settings.getStatusPageURL()  // expect the cache is used
 
-    const apiKeys = await new APIGateway().queryEnabledApiKey(stackName)
     callback(null, {serviceName, adminPageURL, statusPageURL, apiKeys})
   } catch (error) {
     console.log(error.message)
