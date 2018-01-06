@@ -1,19 +1,16 @@
-import React from 'react'
-import classnames from 'classnames'
-import Header from 'components/statusPage/Header'
-import classes from './StatusPageLayout.scss'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { fetchPublicSettings } from 'actions/settings'
+import StatusPageLayout from './StatusPageLayout'
 
-export const StatusPageLayout = ({ children }) => (
-  <div className={classnames(classes.root, 'mdl-layout')}>
-    <Header />
-    <main className={classnames(classes.main, 'mdl-layout__content')}>
-      {children}
-    </main>
-  </div>
-)
-
-StatusPageLayout.propTypes = {
-  children: React.PropTypes.element.isRequired
+const mapStateToProps = (state) => {
+  return {
+    settings: state.settings.settings
+  }
 }
 
-export default StatusPageLayout
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({fetchSettings: fetchPublicSettings}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StatusPageLayout)

@@ -18,7 +18,6 @@ export default class Header extends React.Component {
 
   componentDidMount () {
     this.props.fetchUser()
-    this.props.fetchSettings()
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)
@@ -55,21 +54,19 @@ export default class Header extends React.Component {
     const { settings } = this.props
     const userMenu = this.renderUserMenu()
     return (
-      <header className={classnames('mdl-layout__header', 'mdl-layout--no-drawer-button', classes.header)}>
-        <div className='mdl-layout__header-row'>
-          <span className='mdl-layout-title'>
-            <Link to='/' className={classes.title}>{settings.serviceName} Status Admin (read-only demo)</Link>
-          </span>
-          <div className='mdl-layout-spacer' />
-          <div className={classnames(classes['header-menu'])}>
-            <div>
-              <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}
-                href={settings.statusPageURL} target='_blank'>
-                View Status Page
-              </a>
-            </div>
-            {userMenu}
+      <header className={classes.header}>
+        <span className='mdl-layout-title'>
+          <Link to='/' className={classes.title}>{settings.serviceName} Status Admin (read-only demo)</Link>
+        </span>
+        <div className='mdl-layout-spacer' />
+        <div className={classnames(classes['header-menu'])}>
+          <div>
+            <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}
+              href={settings.statusPageURL} target='_blank'>
+              View Status Page
+            </a>
           </div>
+          {userMenu}
         </div>
       </header>
     )

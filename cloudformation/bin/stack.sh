@@ -34,7 +34,11 @@ put_stack() {
       --capabilities CAPABILITY_IAM \
       --parameters \
         ParameterKey=UserName,ParameterValue=${USER_NAME},UsePreviousValue=false \
-        ParameterKey=UserEmail,ParameterValue=${USER_EMAIL},UsePreviousValue=false
+        ParameterKey=UserEmail,ParameterValue=${USER_EMAIL},UsePreviousValue=false \
+        ParameterKey=StatusPageSSLCertificate,ParameterValue=${STATUSPAGE_SSL_CERTIFICATE},UsePreviousValue=false \
+        ParameterKey=StatusPageURL,ParameterValue=${STATUSPAGE_URL},UsePreviousValue=false \
+        ParameterKey=AdminPageSSLCertificate,ParameterValue=${ADMINPAGE_SSL_CERTIFICATE},UsePreviousValue=false \
+        ParameterKey=AdminPageURL,ParameterValue=${ADMINPAGE_URL},UsePreviousValue=false
 }
 
 delete_stack() {

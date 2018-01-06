@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react'
+import classes from './StatusPageLayout.scss'
 
-export default class Header extends React.Component {
+export default class StatusPageLayout extends React.Component {
   static propTypes = {
     settings: PropTypes.shape({
       serviceName: PropTypes.string
     }).isRequired,
-    fetchSettings: PropTypes.func.isRequired
+    fetchSettings: PropTypes.func.isRequired,
+    children: React.PropTypes.element.isRequired
   }
 
   componentDidMount () {
@@ -19,6 +21,10 @@ export default class Header extends React.Component {
   }
 
   render () {
-    return null
+    return (
+      <main className={classes.main}>
+        {this.props.children}
+      </main>
+    )
   }
 }

@@ -57,16 +57,9 @@ export default class History extends React.Component {
     })
 
     return (
-      <li key={month} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.date_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.date_item_primary)}>
-          <div className={classnames(classes.border)}>{month}</div>
-          <span className='mdl-list__item-sub-title'>
-            <ul className='mdl-list'>
-              {eventItems}
-            </ul>
-          </span>
-        </span>
+      <li key={month} className={classes['date-item']}>
+        <div className={classnames(classes.border)}>{month}</div>
+        <ul className={classnames(classes.container)}>{eventItems}</ul>
       </li>
     )
   }
@@ -95,19 +88,16 @@ export default class History extends React.Component {
     const eventsByMonth = this.renderEventsByMonth(events)
 
     return (
-      <div className={classnames(classes.layout, 'mdl-grid')}
-        style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
+      <div>
         <div className={classnames(classes.top)}>
           <Title service_name={settings.serviceName} />
           <SubscribeButton />
         </div>
-        <div className='mdl-cell mdl-cell--12-col'>
-          <h4>Incident History</h4>
-        </div>
-        <div className='mdl-cell mdl-cell--12-col mdl-list'>
+        <ul className={classes.container} >
+          <h4 className={classnames(classes.title)}>Incident History</h4>
           {eventsByMonth}
-        </div>
-        <Link link='/' text='Current Incidents' />
+        </ul>
+        <span className={classnames(classes.link)}><Link link='/' text='Current Incidents' /></span>
       </div>
     )
   }

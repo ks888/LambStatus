@@ -1,21 +1,34 @@
-.date_item {
-  height: auto;
+.container {
+  list-style: none;
+  padding: 8px;
 }
 
-.date_item_primary {
-  height: auto !important;
+.title {
+  margin-bottom: 16px;
+  margin-top: 16px;
+}
+
+.date-item {
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 16px;
+  letter-spacing: .04em;
+  padding: 16px;
+
+  @media screen and (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .border {
   border: 0;
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  padding-bottom: 3px;
-  margin-bottom: 10px;
   border-color: #E0E0E0;
+  margin-bottom: 10px;
+  padding-bottom: 3px;
 }
 
-.title {
-  margin-top: 32px;
-  margin-bottom: 16px;
+.no-incidents {
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
 }

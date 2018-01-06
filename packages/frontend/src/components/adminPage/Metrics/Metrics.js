@@ -6,6 +6,7 @@ import Tooltip from 'components/common/Tooltip'
 import MetricDialog, { metricDialogType } from 'components/adminPage/MetricDialog'
 import MetricPreviewDialog from 'components/adminPage/MetricPreviewDialog'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
+import MenuIcon from 'components/adminPage/MenuIcon'
 import { getMetricColor } from 'utils/status'
 import { innerDialogID } from 'utils/dialog'
 import classes from './Metrics.scss'
@@ -104,28 +105,24 @@ export default class Metrics extends React.Component {
   renderListItem = (metric, i) => {
     let statusColor = getMetricColor(metric.status)
     return (
-      <li key={metric.metricID} className='mdl-list__item mdl-list__item--two-line mdl-shadow--2dp'>
-        <span className='mdl-list__item-primary-content'>
-          <i className={classnames(classes.icon, 'material-icons', 'mdl-list__item-avatar')}
+      <li key={metric.metricID} className={classnames(classes.item, 'mdl-shadow--2dp')}>
+        <div className={classes['primary-content']}>
+          <i className={classnames(classes.icon, 'material-icons')}
             style={{color: statusColor}} data-tip={metric.status}>insert_chart</i>
           <Tooltip />
-          <span>{metric.title}</span>
-          <span className='mdl-list__item-sub-title'>{metric.description}</span>
-        </span>
-        <span className={classnames('mdl-list__item-secondary-content', classes['buttons'])}>
-          <Button plain name='Preview' onClick={this.handleShowPreviewDialog(metric.metricID)} />
-          <Button plain name='Edit' onClick={this.handleShowEditDialog(metric.metricID)} />
-          <Button plain name='Delete' onClick={this.handleShowDeleteDialog(metric.metricID)} />
-          <div className={classnames(classes['order-buttons'])}>
-            <i className={classnames(classes['order-icon'], 'material-icons')} onClick={this.handleClickArrowUpward(i)}>
-              arrow_upward
-            </i>
-            <i className={classnames(classes['order-icon'], 'material-icons')}
-              onClick={this.handleClickArrowDownward(i)}>
-              arrow_downward
-            </i>
+          <div>
+            <div>{metric.title}</div>
+            <div className={classes.subtitle}>{metric.description}</div>
           </div>
-        </span>
+        </div>
+        <div className={classes['secondary-content']}>
+          <MenuIcon iconName='show_chart' description='Preview'
+            onClick={this.handleShowPreviewDialog(metric.metricID)} />
+          <MenuIcon iconName='edit' description='Edit' onClick={this.handleShowEditDialog(metric.metricID)} />
+          <MenuIcon iconName='delete' description='Delete' onClick={this.handleShowDeleteDialog(metric.metricID)} />
+          <MenuIcon iconName='arrow_upward' description='Move upward' onClick={this.handleClickArrowUpward(i)} />
+          <MenuIcon iconName='arrow_downward' description='Move downward' onClick={this.handleClickArrowDownward(i)} />
+        </div>
       </li>
     )
   }
@@ -168,28 +165,25 @@ export default class Metrics extends React.Component {
     const { metrics } = this.props
     const metricItems = metrics.map(this.renderListItem)
     const dialog = this.renderDialog()
-    const textInButton = (<div>
-      <i className='material-icons'>add</i>
-      Metric
-    </div>)
+    const addButton = (<span><i className='material-icons'>add</i>Add</span>)
 
-    return (<div className={classnames(classes.layout, 'mdl-grid')}
-      style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
-      <div className='mdl-cell mdl-cell--9-col mdl-cell--middle'>
-        <h4>Metrics</h4>
-      </div>
-      <div className={classnames(classes.showDialogButton, 'mdl-cell mdl-cell--3-col mdl-cell--middle')}>
-        <Button onClick={this.handleShowAddDialog()} name={textInButton} class='mdl-button--accent' />
-      </div>
-      <div className='mdl-cell mdl-cell--12-col mdl-list'>
+    return (
+      <div className={classnames(classes.layout, 'mdl-grid')}
+        style={{ opacity: this.state.isFetching ? 0.5 : 1 }}>
+        <div className={classes.headline}>
+          <h4>Metrics</h4>
+          <span className={classes.showDialogButton}>
+            <Button onClick={this.handleShowAddDialog()} name={addButton} class='mdl-button--accent' />
+          </span>
+        </div>
         <ErrorMessage message={this.state.message} />
+        <ul className={classnames(classes.container, 'mdl-cell', 'mdl-cell--12-col')}>
+          {metricItems}
+        </ul>
+        <div id={innerDialogID}>
+          {dialog}
+        </div>
       </div>
-      <ul className='mdl-cell mdl-cell--12-col mdl-list'>
-        {metricItems}
-      </ul>
-      <div id={innerDialogID}>
-        {dialog}
-      </div>
-    </div>)
+    )
   }
 }

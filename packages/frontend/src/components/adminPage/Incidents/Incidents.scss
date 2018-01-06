@@ -1,10 +1,27 @@
 .layout {
+  padding-bottom: 10px;
   padding-left: 40px;
   padding-right: 40px;
   padding-top: 10px;
-  padding-bottom: 10px;
+
+  @media screen and (max-width: 768px) {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.headline {
+  align-content: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.container {
+  padding-left: 0;
 }
 
 .showDialogButton {
+  margin: 24px 0 16px;
   text-align: right;
 }

@@ -1,5 +1,30 @@
 # Change Log
 
+## [v0.5.0](https://github.com/ks888/LambStatus/tree/v0.5.0) (2018-01-06)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.3...v0.5.0)
+
+### Added
+
+- [\#80](https://github.com/ks888/LambStatus/pull/80): Add [the landing and documentation page](https://lambstatus.github.io/)
+- [\#81](https://github.com/ks888/LambStatus/pull/81): Mobile UI support
+- [\#79](https://github.com/ks888/LambStatus/pull/79): nodejs 6.10 support
+
+### Fixed
+
+- [\#73](https://github.com/ks888/LambStatus/issues/73): Hide empty incident cards (thanks [@jpike88](https://github.com/jpike88))
+- [\#75](https://github.com/ks888/LambStatus/issues/75): SSL Certificate reject if not in US-east region (thanks [@jpike88](https://github.com/jpike88))
+
+## [v0.4.3](https://github.com/ks888/LambStatus/tree/v0.4.3) (2017-11-26)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.2...v0.4.3)
+
+### Added
+
+- [\#70](https://github.com/ks888/LambStatus/pull/70): Support custom domain. See the [wiki page](https://github.com/ks888/LambStatus/wiki/Set-up-your-custom-domain) for the usage.
+
+### Fixed
+
+- [\#71](https://github.com/ks888/LambStatus/pull/71): Enforce non-email address in username (thanks [@jpike88](https://github.com/jpike88))
+
 ## [v0.4.2](https://github.com/ks888/LambStatus/tree/v0.4.2) (2017-11-10)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.1...v0.4.2)
 
