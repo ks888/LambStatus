@@ -21,7 +21,6 @@ class Index extends React.Component {
             siteTitle={config.siteTitle}
             siteDescription={config.siteDescription}
             location={this.props.location}
-            logo='/logos/logo-large-normal.png'
           />
           <Highlights />
           <Features />
