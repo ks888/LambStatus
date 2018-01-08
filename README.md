@@ -4,19 +4,12 @@
 [![wercker status](https://app.wercker.com/status/fcb6fb7398629e934ae0538737021d14/s/master "wercker status")](https://app.wercker.com/project/byKey/fcb6fb7398629e934ae0538737021d14)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/ks888/LambStatus)
 [![API Document](https://img.shields.io/badge/api-v0-blue.svg)](https://lambstatus.github.io/apidocs/)
-<a href="https://twitter.com/LambStatus">
-  <img src="https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/TwitterButton_h42.png" alt="Twitter" height="20px">
-</a>
 
-LambStatus is a serverless status page system inspired by [StatusPage.io](https://www.statuspage.io/).
+LambStatus is the pay-as-you-go and serverless status page system. See [our website](https://lambstatus.github.io/) for details.
 
-With a few clicks, You can build a status page like this:
+## Get Started
 
-![StatusPage Demo](https://raw.githubusercontent.com/wiki/ks888/LambStatus/images/StatusPageDemo.png)
-
-The demo pages are available:
-* [Status page](https://demo-status.lambstatus.org) (the page to tell your service's status to your users)
-* [Admin page](https://demo-admin.lambstatus.org) (the page to change your service's status)
+See [the getting started page](https://lambstatus.github.io/get-started) to build your first status page with just a few clicks!
 
 ## Goals of this project
 
@@ -31,19 +24,9 @@ Status page system is great with the Serverless architecture, because:
 * It eases your pain caused by the scaling / availability issues. It is terrible if your service is down AND heavy traffic from stuck users stops your status page.
 * It enables you to pay only for what you use. A status page only occasionally gets huge traffic. The system takes only $1 per 30,000 visitors and almost $0 if no visitors.
 
-Apart from the Serverless architecture, LambStatus enables you to:
-
-* Build and update the system with a few clicks (by the power of the CloudFormation)
-* Choose the AWS region different from your service's region. If both your service and its status page rely on the same region, [the region outage](https://aws.amazon.com/message/41926/) may stop both.
-
-## Installation
-
-See [the Get Started page](https://lambstatus.github.io/get-started) to build your first status page!
-
 ## Join our Community
 
-*Any contributions are very welcome!*
-
-* Ask a question at [Gitter Chatroom](https://gitter.im/ks888/LambStatus) or [GitHub Issues](https://github.com/ks888/LambStatus/issues/new)
-* Read our [contributing document](https://lambstatus.github.io/contributing) to set up the development environment
-
+* Follow [our twitter account](https://twitter.com/LambStatus) to get the latest news.
+* Ask a question at the [Gitter Chatroom](https://gitter.im/ks888/LambStatus) or [GitHub Issues](https://github.com/ks888/LambStatus/issues/new).
+* Report a bug, a feature request, a design issue and even typo at [GitHub Issues](https://github.com/ks888/LambStatus/issues/new).
+* Open a first pull request reading our [contributing document](https://lambstatus.github.io/contributing)!
