@@ -5,7 +5,12 @@
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/ks888/LambStatus)
 [![API Document](https://img.shields.io/badge/api-v0-blue.svg)](https://lambstatus.github.io/apidocs/)
 
-LambStatus is the pay-as-you-go and serverless status page system. See [our website](https://lambstatus.github.io/) for details.
+LambStatus is the serverless status page system. [See our website](https://lambstatus.github.io/) for features.
+
+## Demo
+
+* [Status page](https://demo-status.lambstatus.org): the page to tell your service's status to your users
+* [Admin page](https://demo-admin.lambstatus.org): the page to change your service's status
 
 ## Get Started
 
