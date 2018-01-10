@@ -20,7 +20,7 @@ See [the getting started page](https://lambstatus.github.io/get-started) to buil
 
 * Offers an open source and serverless status page system.
 * Offers a pay-as-you-go pricing approach like AWS. We estimate the system takes just *$1 to handle 30,000 visitors* ([see details](https://lambstatus.github.io/cost-estimate)).
-* Enables you to build and maintain the status page system at minimum effort.
+* Enables you to build and maintain the status page system with minimum effort.
 
 ## Why Serverless?
 

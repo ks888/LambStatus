@@ -27,11 +27,23 @@ const Title = styled.h2`
   @media screen and (max-width: 500px) {
     font-size: 2.6rem;
   }
+
+  @media screen and (max-width: 400px) {
+    font-size: 2.3rem;
+  }
 `
 
 const Description = styled.h4`
+  @media screen and (max-width: 600px) {
+    font-size: 2.2rem;
+  }
+
   @media screen and (max-width: 500px) {
     font-size: 2.0rem;
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: 1.8rem;
   }
 `
 
