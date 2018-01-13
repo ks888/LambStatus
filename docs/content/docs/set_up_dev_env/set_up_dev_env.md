@@ -27,7 +27,7 @@ This page describes how to set up the development environment. Also, the project
 
 `npm run install`
 
-3. Configure the '.env' file. At least, you need to write your email address to the 'USER_EMAIL' line because the initial login information will be sent to the address.
+3. Add a '.env' file at the root of this repo based on `.env-example`. At least, you need to write your email address to the 'USER_EMAIL' line because the initial login information will be sent to the address.
 
 4. Launch CloudFormation stack
 
