@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getComponentColor } from 'utils/status';
+import { getComponentColor } from 'utils/status'
 
 import Title from './Title'
 
@@ -13,7 +13,7 @@ const mapStateToProps = (state) => {
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return bindActionCreators({}, dispatch)
 }
 
