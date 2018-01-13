@@ -25,7 +25,7 @@ export default class Statuses extends React.Component {
     return (
       <div>
         <div className={classnames(classes.top)}>
-          <Title service_name={this.props.settings.serviceName} />
+          <Title />
           <SubscribeButton />
         </div>
         {components}
