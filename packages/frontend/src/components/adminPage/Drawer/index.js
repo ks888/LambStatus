@@ -37,11 +37,12 @@ const components = {
 
 const Drawer = () => {
   const drawerItems = Object.keys(components).map((key) => {
+    const icon = <i className='material-icons'>{ components[key].icon }</i>
     return (
       <Link key={key} to={components[key].path} className={classes['navi-link']}
         activeClassName={classes.active} onlyActiveOnIndex>
-        <span className={classes['large-window']}>{ components[key].name }</span>
-        <span className={classes['small-window']}><i className='material-icons'>{ components[key].icon }</i></span>
+        <span className={classes['large-window']}>{icon}{ components[key].name }</span>
+        <span className={classes['small-window']}>{icon}</span>
       </Link>
     )
   })
