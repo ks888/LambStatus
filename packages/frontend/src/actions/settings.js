@@ -119,12 +119,11 @@ export const deleteApiKey = (keyID, callbacks = {}) => {
 export const uploadLogo = (file, callbacks = {}) => {
   return async dispatch => {
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const fileContent = await readImageFile(file)
       const json = await sendRequest(apiURL + '/api/settings/images/logo', {
         headers: await buildHeaders(),
         method: 'POST',
-        body: formData
+        body: fileContent
       }, callbacks)
 
       dispatch(editLogo(json))
@@ -133,4 +132,22 @@ export const uploadLogo = (file, callbacks = {}) => {
       console.error(error.stack)
     }
   }
+}
+
+export const readImageFile = (file) => {
+  const reader = new FileReader()
+  return new Promise((resolve, reject) => {
+    if (file.type.match('image') === null) {
+      return reject('invalid image type')
+    }
+
+    reader.onload = (event) => {
+      return resolve(event.target.result)
+    }
+    reader.onerror = (event) => {
+      return reject(event)
+    }
+
+    reader.readAsArrayBuffer(file)
+  })
 }

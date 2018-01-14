@@ -10,7 +10,8 @@ import {
   updateSettings,
   postApiKey,
   deleteApiKey,
-  uploadLogo
+  uploadLogo,
+  readImageFile
 } from 'actions/settings'
 
 describe('Actions/Settings', () => {
@@ -210,7 +211,8 @@ describe('Actions/Settings', () => {
     it('should upload a logo file.', () => {
       fetchMock.post(/.*\/settings\/images\/logo/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
 
-      return uploadLogo('', callbacks)(dispatchSpy)
+      const file = new File([''], 'image.png', {type: 'image/png'})
+      return uploadLogo(file, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(callbacks.onSuccess.calledOnce)
@@ -224,7 +226,8 @@ describe('Actions/Settings', () => {
     it('should handle error properly.', () => {
       fetchMock.post(/.*\/settings\/images\/logo/, { status: 400, body: {} })
 
-      return uploadLogo('', callbacks)(dispatchSpy)
+      const file = new File([''], 'image.png', {type: 'image/png'})
+      return uploadLogo(file, callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)
@@ -232,6 +235,27 @@ describe('Actions/Settings', () => {
 
           assert(!dispatchSpy.called)
         })
+    })
+  })
+
+  describe('readImageFile', () => {
+    it('should read an image file.', async () => {
+      const expect = 'test'
+      const file = new File([expect], 'image.png', {type: 'image/png'})
+      const actual = await readImageFile(file)
+      assert(expect.length === actual.byteLength)
+    })
+
+    it('should return error for non image file.', async () => {
+      const expect = 'test'
+      const file = new File([expect], 'image.txt', {type: 'text/plain'})
+      let err
+      try {
+        await readImageFile(file)
+      } catch (e) {
+        err = e
+      }
+      assert(err !== undefined)
     })
   })
 })
