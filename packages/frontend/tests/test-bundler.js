@@ -22,6 +22,11 @@ settings.apiURL = 'https://XXXXXXXXXX.execute-api.ap-northeast-1.amazonaws.com/p
 settings.userPoolId = 'ap-northeast-1_XXXXXXXXX'
 settings.clientId = 'test'
 
+import Enzyme from 'enzyme'
+import Adapter from 'enzyme-adapter-react-15'
+
+Enzyme.configure({ adapter: new Adapter() })
+
 // ---------------------------------------
 // Require Tests
 // ---------------------------------------

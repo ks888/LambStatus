@@ -1,4 +1,4 @@
-import { listSettings, editSettings, addApiKey, removeApiKey } from 'actions/settings'
+import { listSettings, editSettings, editLogo, addApiKey, removeApiKey } from 'actions/settings'
 import settingsReducer from 'reducers/settings'
 
 describe('Reducers/Settings', () => {
@@ -37,6 +37,18 @@ describe('Reducers/Settings', () => {
       assert(state.settings.adminPageURL === newSettings.adminPageURL)
       assert(state.settings.statusPageURL === newSettings.statusPageURL)
       assert(state.settings.serviceName === newSettings.serviceName)
+      assert.deepEqual(state.settings.apiKeys, settings.apiKeys)
+    })
+  })
+
+  context('editLogoHandler', () => {
+    it('should update the logo id keeping other props.', () => {
+      const resp = {
+        id: '1'
+      }
+      const state = settingsReducer({settings}, editLogo(resp))
+      assert(state.settings.logoID === resp.id)
+      assert(state.settings.serviceName === settings.serviceName)
       assert.deepEqual(state.settings.apiKeys, settings.apiKeys)
     })
   })

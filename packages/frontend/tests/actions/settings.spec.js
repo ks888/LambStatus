@@ -2,13 +2,15 @@ import fetchMock from 'fetch-mock'
 import {
   LIST_SETTINGS,
   EDIT_SETTINGS,
+  EDIT_LOGO,
   ADD_API_KEY,
   REMOVE_API_KEY,
   fetchSettings,
   fetchPublicSettings,
   updateSettings,
   postApiKey,
-  deleteApiKey
+  deleteApiKey,
+  uploadLogo
 } from 'actions/settings'
 
 describe('Actions/Settings', () => {
@@ -190,6 +192,39 @@ describe('Actions/Settings', () => {
       fetchMock.delete(/.*\/settings\/apikeys\/.*/, { status: 400, body: {} })
 
       return deleteApiKey('', callbacks)(dispatchSpy)
+        .then(() => {
+          assert(callbacks.onLoad.calledOnce)
+          assert(!callbacks.onSuccess.called)
+          assert(callbacks.onFailure.calledOnce)
+
+          assert(!dispatchSpy.called)
+        })
+    })
+  })
+
+  describe('uploadLogo', () => {
+    it('should return a function.', () => {
+      assert(typeof uploadLogo() === 'function')
+    })
+
+    it('should upload a logo file.', () => {
+      fetchMock.post(/.*\/settings\/images\/logo/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
+
+      return uploadLogo('', callbacks)(dispatchSpy)
+        .then(() => {
+          assert(callbacks.onLoad.calledOnce)
+          assert(callbacks.onSuccess.calledOnce)
+          assert(!callbacks.onFailure.called)
+
+          assert(dispatchSpy.firstCall.args[0].type === EDIT_LOGO)
+          assert(settings, dispatchSpy.firstCall.args[0].id === '1')
+        })
+    })
+
+    it('should handle error properly.', () => {
+      fetchMock.post(/.*\/settings\/images\/logo/, { status: 400, body: {} })
+
+      return uploadLogo('', callbacks)(dispatchSpy)
         .then(() => {
           assert(callbacks.onLoad.calledOnce)
           assert(!callbacks.onSuccess.called)

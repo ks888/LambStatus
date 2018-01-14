@@ -1,0 +1,14 @@
+.container {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+}
+
+.disable {
+  color: rgba(0,0,0,.12);
+  cursor: default;
+}
+
+.icon {
+  font-size: 22px;
+}

@@ -18,11 +18,11 @@ export default class Users extends React.Component {
           <a href={linkToUsersPage} className={classes.link} target='_blank'>
             the Amazon Cognito Management Console
           </a>
-          to manage the users of the admin page. Please see
+          to manage the admin users. See
           <a href='https://lambstatus.github.io/create-a-new-admin-user' className={classes.link} target='_blank'>
             the document
           </a>
-          to create a new user.
+          to create a new admin.
         </div>
       </div>
     )

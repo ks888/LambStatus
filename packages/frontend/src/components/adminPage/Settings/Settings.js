@@ -4,6 +4,7 @@ import TextField from 'components/common/TextField'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import ApiKeysSelector, { apiKeyStatuses } from 'components/adminPage/ApiKeysSelector'
+import LogoUploader from 'components/adminPage/LogoUploader'
 import classes from './Settings.scss'
 
 export default class Settings extends React.Component {
@@ -108,6 +109,14 @@ export default class Settings extends React.Component {
     )
   }
 
+  renderLogoUploader = () => {
+    return (
+      <ul key='logoUploader' className={classnames(classes.item, 'mdl-cell', 'mdl-cell--9-col', 'mdl-list')}>
+        <LogoUploader onAdd={this.handleApiKeyAdd} onDelete={this.handleApiKeyDelete} />
+      </ul>
+    )
+  }
+
   renderItem = (setting) => {
     const { key, info } = setting
     const text = key.charAt(0).toUpperCase() + key.slice(1)
@@ -126,6 +135,7 @@ export default class Settings extends React.Component {
       {key: 'serviceName'}
     ]
     const settingItems = settings.map(this.renderItem)
+    settingItems.push(this.renderLogoUploader())
     settingItems.push(this.renderApiKeysSelector())
 
     let errMsg
