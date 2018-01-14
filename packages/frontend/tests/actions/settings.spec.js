@@ -243,7 +243,7 @@ describe('Actions/Settings', () => {
       const expect = 'test'
       const file = new File([expect], 'image.png', {type: 'image/png'})
       const actual = await readImageFile(file)
-      assert(expect.length === actual.byteLength)
+      assert(actual === 'data:image/png;base64,dGVzdA==')
     })
 
     it('should return error for non image file.', async () => {

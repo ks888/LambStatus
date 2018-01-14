@@ -1282,10 +1282,6 @@ Resources:
       Description: "API for page status"
       Name:
         Ref: "AWS::StackName"
-      BinaryMediaTypes:
-        - image/png
-        - image/gif
-        - image/jpeg
   Authorizer:
     Type: "AWS::ApiGateway::Authorizer"
     Properties:
@@ -2926,14 +2922,6 @@ Resources:
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
-        PassthroughBehavior: "WHEN_NO_TEMPLATES"
-        RequestTemplates:
-          image/jpeg: !Sub |-
-            { "base64body": "$input.body" }
-          image/png: !Sub |-
-            { "base64body": "$input.body" }
-          image/gif: !Sub |-
-            { "base64body": "$input.body" }
         Uri: !Sub
           - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
           - Function:

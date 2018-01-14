@@ -119,11 +119,11 @@ export const deleteApiKey = (keyID, callbacks = {}) => {
 export const uploadLogo = (file, callbacks = {}) => {
   return async dispatch => {
     try {
-      const fileContent = await readImageFile(file)
+      const dataURL = await readImageFile(file)
       const json = await sendRequest(apiURL + '/api/settings/logos', {
         headers: await buildHeaders(),
         method: 'POST',
-        body: fileContent
+        body: `{"data": "${dataURL}"}`
       }, callbacks)
 
       dispatch(editLogo(json))
@@ -154,6 +154,6 @@ export const readImageFile = (file) => {
       return reject(event)
     }
 
-    reader.readAsArrayBuffer(file)
+    reader.readAsDataURL(file)
   })
 }
