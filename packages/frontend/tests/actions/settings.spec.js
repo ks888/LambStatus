@@ -209,7 +209,7 @@ describe('Actions/Settings', () => {
     })
 
     it('should upload a logo file.', () => {
-      fetchMock.post(/.*\/settings\/images\/logo/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
+      fetchMock.post(/.*\/settings\/logos/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
 
       const file = new File([''], 'image.png', {type: 'image/png'})
       return uploadLogo(file, callbacks)(dispatchSpy)
@@ -224,7 +224,7 @@ describe('Actions/Settings', () => {
     })
 
     it('should handle error properly.', () => {
-      fetchMock.post(/.*\/settings\/images\/logo/, { status: 400, body: {} })
+      fetchMock.post(/.*\/settings\/logos/, { status: 400, body: {} })
 
       const file = new File([''], 'image.png', {type: 'image/png'})
       return uploadLogo(file, callbacks)(dispatchSpy)

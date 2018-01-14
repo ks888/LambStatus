@@ -120,7 +120,7 @@ export const uploadLogo = (file, callbacks = {}) => {
   return async dispatch => {
     try {
       const fileContent = await readImageFile(file)
-      const json = await sendRequest(apiURL + '/api/settings/images/logo', {
+      const json = await sendRequest(apiURL + '/api/settings/logos', {
         headers: await buildHeaders(),
         method: 'POST',
         body: fileContent
@@ -134,10 +134,16 @@ export const uploadLogo = (file, callbacks = {}) => {
   }
 }
 
+const validFileTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif'
+]
+
 export const readImageFile = (file) => {
   const reader = new FileReader()
   return new Promise((resolve, reject) => {
-    if (file.type.match('image') === null) {
+    if (!validFileTypes.includes(file.type)) {
       return reject('invalid image type')
     }
 
