@@ -136,15 +136,14 @@ export const uploadLogo = (file, callbacks = {}) => {
 
 const validFileTypes = [
   'image/jpeg',
-  'image/png',
-  'image/gif'
+  'image/png'
 ]
 
 export const readImageFile = (file) => {
   const reader = new FileReader()
   return new Promise((resolve, reject) => {
     if (!validFileTypes.includes(file.type)) {
-      return reject('invalid image type')
+      return reject('not supported image type')
     }
 
     reader.onload = (event) => {

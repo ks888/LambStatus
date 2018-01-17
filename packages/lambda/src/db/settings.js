@@ -8,7 +8,8 @@ import { buildUpdateExpression } from './utils'
 
 export const settingKeys = {
   serviceName: 'ServiceName',
-  cognitoPoolID: 'CognitoPoolID'
+  cognitoPoolID: 'CognitoPoolID',
+  logoID: 'logoID'
 }
 
 export default class SettingsStore {
@@ -44,6 +45,21 @@ export default class SettingsStore {
 
   async setCognitoPoolID (id) {
     return await this.store.set(settingKeys.cognitoPoolID, id)
+  }
+
+  async getLogoID () {
+    try {
+      return await this.store.get(settingKeys.logoID)
+    } catch (err) {
+      if (err.name === NotFoundError.name) {
+        return ''
+      }
+      throw err
+    }
+  }
+
+  async setLogoID (id) {
+    return await this.store.set(settingKeys.logoID, id)
   }
 }
 

@@ -37,4 +37,12 @@ export class Settings {
   async getCognitoPoolID () {
     return this.cognitoPoolID
   }
+
+  async setLogoID (logoID) {
+    this.logoID = logoID
+  }
+
+  async getLogoID () {
+    return this.logoID
+  }
 }

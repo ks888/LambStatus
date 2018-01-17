@@ -110,7 +110,7 @@ describe('SettingsProxy', () => {
   })
 
   describe('setCognitoPoolID', () => {
-    it('should update the CognitoPoolID and user pool and publish notification', async () => {
+    it('should update the CognitoPoolID', async () => {
       const proxy = new SettingsProxy()
       proxy.store.setCognitoPoolID = sinon.spy()
       proxy.updateUserPool = sinon.spy()
@@ -147,6 +147,43 @@ describe('SettingsProxy', () => {
       const actual = await proxy.getCognitoPoolID()
       assert(cognitoPoolID === actual)
       assert(proxy.store.getCognitoPoolID.notCalled)
+    })
+  })
+
+  describe('setLogoID', () => {
+    it('should update the LogoID', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.setLogoID = sinon.spy()
+
+      const logoID = 'id'
+      await proxy.setLogoID(logoID)
+
+      assert(proxy.settings.logoID === logoID)
+      assert(proxy.store.setLogoID.calledOnce)
+      assert(proxy.store.setLogoID.firstCall.args[0] === logoID)
+    })
+  })
+
+  describe('getLogoID', () => {
+    it('should get the LogoID from store if not cached', async () => {
+      const logoID = 'id'
+      const proxy = new SettingsProxy()
+      proxy.store.getLogoID = async () => logoID
+
+      const actual = await proxy.getLogoID()
+      assert(logoID === actual)
+      assert(logoID === proxy.settings.logoID)
+    })
+
+    it('should get the LogoID from cache if available', async () => {
+      const logoID = 'id'
+      const proxy = new SettingsProxy()
+      proxy.settings.setLogoID(logoID)
+      proxy.store.getLogoID = sinon.spy()
+
+      const actual = await proxy.getLogoID()
+      assert(logoID === actual)
+      assert(proxy.store.getLogoID.notCalled)
     })
   })
 

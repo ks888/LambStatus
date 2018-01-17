@@ -129,6 +129,69 @@ describe('SettingsStore', () => {
       assert(error !== undefined)
     })
   })
+
+  describe('getLogoID', () => {
+    it('should return the logo ID', async () => {
+      const id = 'test'
+      const store = new SettingsStore()
+      store.store.get = (key) => {
+        assert(key === settingKeys.logoID)
+        return id
+      }
+
+      const actual = await store.getLogoID()
+      assert(id === actual)
+    })
+
+    it('should pass through throwed error', async () => {
+      const store = new SettingsStore()
+      store.store.get = () => { throw new Error() }
+
+      let error
+      try {
+        await store.getLogoID()
+      } catch (err) {
+        error = err
+      }
+      assert(error !== undefined)
+    })
+
+    it('should return empty string if not found', async () => {
+      const store = new SettingsStore()
+      store.store.get = () => { throw new NotFoundError() }
+
+      const actual = await store.getLogoID()
+      assert(actual === '')
+    })
+  })
+
+  describe('setLogoID', () => {
+    it('should set the Logo ID', async () => {
+      const id = 'test'
+      const store = new SettingsStore()
+      store.store.set = (key, value) => {
+        assert(key === settingKeys.logoID)
+        assert(value === id)
+        return value
+      }
+
+      const actual = await store.setLogoID(id)
+      assert(id === actual)
+    })
+
+    it('should pass through throwed error', async () => {
+      const store = new SettingsStore()
+      store.store.set = () => { throw new Error() }
+
+      let error
+      try {
+        await store.setLogoID()
+      } catch (err) {
+        error = err
+      }
+      assert(error !== undefined)
+    })
+  })
 })
 
 describe('RawSettingsStore', () => {

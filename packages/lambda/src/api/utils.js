@@ -85,6 +85,23 @@ export class SettingsProxy {
     return storedCognitoPoolID
   }
 
+  async setLogoID (logoID) {
+    await this.settings.setLogoID(logoID)
+
+    await this.store.setLogoID(await this.settings.getLogoID())
+  }
+
+  async getLogoID () {
+    const logoID = await this.settings.getLogoID()
+    if (logoID !== undefined) {
+      return logoID
+    }
+
+    const storedLogoID = await this.store.getLogoID()
+    await this.settings.setLogoID(storedLogoID)
+    return storedLogoID
+  }
+
   async updateUserPool () {
     const poolID = await this.getCognitoPoolID()
     if (poolID === '') {

@@ -137,6 +137,10 @@ export default {
       'babel-polyfill',
       './src/api/patchSettings/index.js'
     ],
+    PostLogos: [
+      'babel-polyfill',
+      './src/api/postLogos/index.js'
+    ],
     PostApiKeys: [
       'babel-polyfill',
       './src/api/postApiKeys/index.js'
