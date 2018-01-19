@@ -5,7 +5,8 @@ import LogoUploader from './LogoUploader'
 
 const mapStateToProps = (state) => {
   return {
-    logoID: state.settings.settings.logoID
+    logoID: state.settings.settings.logoID,
+    statusPageURL: state.settings.settings.statusPageURL
   }
 }
 

@@ -18,10 +18,12 @@ export async function handle (event, context, callback) {
       const body = await image.toBuffer()
 
       const objectName = `${imageID}${image.suffixForImageName()}`
-      await new S3().putObject(region, bucketName, objectName, body)
+      await new S3().putObject(region, bucketName, objectName, body, image.mimeType)
     }
 
     await new SettingsProxy().setLogoID(imageID)
+
+    callback(null, {id: imageID})
   } catch (err) {
     callback('Error: ' + err.message)
   }

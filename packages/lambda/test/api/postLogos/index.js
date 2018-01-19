@@ -37,14 +37,15 @@ describe('postLogos', () => {
     assert(getStatusPageBucketNameStub.calledOnce)
     assert(putObjectStub.calledTwice)
     assert(putObjectStub.firstCall.args[1] === bucketName)
-    assert(putObjectStub.firstCall.args[2].endsWith('@2x.png'))
-    assert(putObjectStub.secondCall.args[2].endsWith('.png'))
+    assert(putObjectStub.firstCall.args[2].endsWith('@2x'))
+    assert(putObjectStub.firstCall.args[4] === 'image/png')
   })
 
   it('should save logo ID in the DB', async () => {
     const event = generateEvent()
     await handle(event, null, (error, result) => {
       assert(error === null)
+      assert(result.id !== undefined)
     })
 
     assert(setLogoIDStub.calledOnce)

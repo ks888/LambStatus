@@ -1,7 +1,7 @@
 import gmOrg from 'gm'
 const gm = gmOrg.subClass({ imageMagick: true })
 
-const expectedHeight = 70  // px
+const expectedHeight = 140  // px
 const supportedTypes = [
   {mime: 'image/png', ext: 'png'},
   {mime: 'image/jpeg', ext: 'jpg'}
@@ -62,7 +62,7 @@ export class RetinaImage extends Image {
   }
 
   suffixForImageName () {
-    return `@2x.${this.extension()}`
+    return `@2x`
   }
 }
 
@@ -78,6 +78,6 @@ export class NormalImage extends Image {
   }
 
   suffixForImageName () {
-    return `.${this.extension()}`
+    return ''
   }
 }

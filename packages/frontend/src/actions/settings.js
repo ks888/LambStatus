@@ -118,8 +118,15 @@ export const deleteApiKey = (keyID, callbacks = {}) => {
 
 export const uploadLogo = (file, callbacks = {}) => {
   return async dispatch => {
+    let dataURL
     try {
-      const dataURL = await readImageFile(file)
+      dataURL = await readImageFile(file)
+    } catch (error) {
+      callbacks.onFailure(error.message)
+      return
+    }
+
+    try {
       const json = await sendRequest(apiURL + '/api/settings/logos', {
         headers: await buildHeaders(),
         method: 'POST',
@@ -143,7 +150,7 @@ export const readImageFile = (file) => {
   const reader = new FileReader()
   return new Promise((resolve, reject) => {
     if (!validFileTypes.includes(file.type)) {
-      return reject('not supported image type')
+      return reject(new Error('Unsupported image type'))
     }
 
     reader.onload = (event) => {

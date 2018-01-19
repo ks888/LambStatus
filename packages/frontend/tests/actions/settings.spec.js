@@ -208,33 +208,29 @@ describe('Actions/Settings', () => {
       assert(typeof uploadLogo() === 'function')
     })
 
-    it('should upload a logo file.', () => {
+    it('should upload a logo file.', async () => {
       fetchMock.post(/.*\/settings\/logos/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
 
       const file = new File([''], 'image.png', {type: 'image/png'})
-      return uploadLogo(file, callbacks)(dispatchSpy)
-        .then(() => {
-          assert(callbacks.onLoad.calledOnce)
-          assert(callbacks.onSuccess.calledOnce)
-          assert(!callbacks.onFailure.called)
+      await uploadLogo(file, callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
 
-          assert(dispatchSpy.firstCall.args[0].type === EDIT_LOGO)
-          assert(settings, dispatchSpy.firstCall.args[0].id === '1')
-        })
+      assert(dispatchSpy.firstCall.args[0].type === EDIT_LOGO)
+      assert(settings, dispatchSpy.firstCall.args[0].id === '1')
     })
 
-    it('should handle error properly.', () => {
+    it('should handle error properly.', async () => {
       fetchMock.post(/.*\/settings\/logos/, { status: 400, body: {} })
 
       const file = new File([''], 'image.png', {type: 'image/png'})
-      return uploadLogo(file, callbacks)(dispatchSpy)
-        .then(() => {
-          assert(callbacks.onLoad.calledOnce)
-          assert(!callbacks.onSuccess.called)
-          assert(callbacks.onFailure.calledOnce)
+      await uploadLogo(file, callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(!callbacks.onSuccess.called)
+      assert(callbacks.onFailure.calledOnce)
 
-          assert(!dispatchSpy.called)
-        })
+      assert(!dispatchSpy.called)
     })
   })
 

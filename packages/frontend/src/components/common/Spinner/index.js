@@ -5,15 +5,10 @@ import classes from './Spinner.scss'
 // based on SpinKit http://tobiasahlin.com/spinkit/
 export default class Spinner extends React.Component {
   static propTypes = {
-    class: PropTypes.string,
-    enable: PropTypes.bool
+    class: PropTypes.string
   }
 
   render () {
-    if (!this.props.enable) {
-      return null
-    }
-
     return (
       <div className={classnames(this.props.class, classes['sk-fading-circle'])}>
         <div className={classnames(classes['sk-circle1'], classes['sk-circle'])} />

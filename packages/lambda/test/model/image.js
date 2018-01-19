@@ -56,8 +56,8 @@ describe('RetinaImage', () => {
     it('create RetinaImage instance', () => {
       const actual = new RetinaImage(dataURL)
       assert(actual instanceof Image)
-      assert(actual.height === 140)
-      assert.deepEqual(['-resize', 'x140'], actual.image._out)
+      assert(actual.height === 280)
+      assert.deepEqual(['-resize', 'x280'], actual.image._out)
     })
   })
 })
@@ -67,8 +67,8 @@ describe('NormalImage', () => {
     it('create NormalImage instance', () => {
       const actual = new NormalImage(dataURL)
       assert(actual instanceof Image)
-      assert(actual.height === 70)
-      assert.deepEqual(['-resize', 'x70'], actual.image._out)
+      assert(actual.height === 140)
+      assert.deepEqual(['-resize', 'x140'], actual.image._out)
     })
   })
 })
