@@ -23,7 +23,7 @@
 .navi-link {
   color: #757575;
   opacity: .87;
-  padding: 16px 40px;
+  padding: 16px 24px;
   text-decoration: none;
 
   @media screen and (max-width: 768px) {
@@ -38,6 +38,13 @@
 .large-window {
   @media screen and (max-width: 768px) {
     display: none;
+  }
+
+  align-items: center;
+  display: inline-flex;
+
+  i {
+    padding-right: 5px;
   }
 }
 

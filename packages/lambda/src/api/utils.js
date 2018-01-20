@@ -9,6 +9,7 @@ import { Component } from 'model/components'
 import { Settings } from 'model/settings'
 import { Metric } from 'model/metrics'
 import { region, stackName } from 'utils/const'
+import { NotFoundError } from 'utils/errors'
 
 export const updateComponentStatus = async (componentObj) => {
   const component = new Component(componentObj)
@@ -41,7 +42,14 @@ export class SettingsProxy {
       return serviceName
     }
 
-    const storedServiceName = await this.store.getServiceName()
+    let storedServiceName
+    try {
+      storedServiceName = await this.store.getServiceName()
+    } catch (err) {
+      if (err.name !== NotFoundError.name) throw err
+      storedServiceName = ''
+    }
+
     await this.settings.setServiceName(storedServiceName)
     return storedServiceName
   }
@@ -80,9 +88,46 @@ export class SettingsProxy {
       return cognitoPoolID
     }
 
-    const storedCognitoPoolID = await this.store.getCognitoPoolID()
+    let storedCognitoPoolID
+    try {
+      storedCognitoPoolID = await this.store.getCognitoPoolID()
+    } catch (err) {
+      if (err.name !== NotFoundError.name) throw err
+      storedCognitoPoolID = ''
+    }
+
     await this.settings.setCognitoPoolID(storedCognitoPoolID)
     return storedCognitoPoolID
+  }
+
+  async setLogoID (logoID) {
+    await this.settings.setLogoID(logoID)
+
+    await this.store.setLogoID(await this.settings.getLogoID())
+  }
+
+  async getLogoID () {
+    const logoID = await this.settings.getLogoID()
+    if (logoID !== undefined) {
+      return logoID
+    }
+
+    let storedLogoID
+    try {
+      storedLogoID = await this.store.getLogoID()
+    } catch (err) {
+      if (err.name !== NotFoundError.name) throw err
+      storedLogoID = ''
+    }
+
+    await this.settings.setLogoID(storedLogoID)
+    return storedLogoID
+  }
+
+  async deleteLogoID () {
+    await this.settings.deleteLogoID()
+
+    await this.store.deleteLogoID()
   }
 
   async updateUserPool () {

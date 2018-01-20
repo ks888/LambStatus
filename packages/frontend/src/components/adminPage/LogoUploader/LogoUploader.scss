@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  width: 100%;
+
+  > input {
+    display: none;
+  }
+}
+
+.label {
+  color: #607D8B;
+  font-size: 14px;
+}
+
+.logo {
+  padding-bottom: 8px;
+  padding-top: 8px;
+
+  > img {
+    width: 300px;
+  }
+}
+
+.icons {
+  > span {
+    margin-right: 10px;
+  }
+}

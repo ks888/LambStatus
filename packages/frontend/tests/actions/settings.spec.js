@@ -2,13 +2,18 @@ import fetchMock from 'fetch-mock'
 import {
   LIST_SETTINGS,
   EDIT_SETTINGS,
+  EDIT_LOGO,
+  REMOVE_LOGO,
   ADD_API_KEY,
   REMOVE_API_KEY,
   fetchSettings,
   fetchPublicSettings,
   updateSettings,
   postApiKey,
-  deleteApiKey
+  deleteApiKey,
+  uploadLogo,
+  deleteLogo,
+  readImageFile
 } from 'actions/settings'
 
 describe('Actions/Settings', () => {
@@ -197,6 +202,76 @@ describe('Actions/Settings', () => {
 
           assert(!dispatchSpy.called)
         })
+    })
+  })
+
+  describe('uploadLogo', () => {
+    it('should return a function.', () => {
+      assert(typeof uploadLogo() === 'function')
+    })
+
+    it('should upload a logo file.', async () => {
+      fetchMock.post(/.*\/settings\/logos/, { body: {id: '1'}, headers: {'Content-Type': 'application/json'} })
+
+      const file = new File([''], 'image.png', {type: 'image/png'})
+      await uploadLogo(file, callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
+
+      assert(dispatchSpy.firstCall.args[0].type === EDIT_LOGO)
+      assert(settings, dispatchSpy.firstCall.args[0].id === '1')
+    })
+
+    it('should handle error properly.', async () => {
+      fetchMock.post(/.*\/settings\/logos/, { status: 400, body: {} })
+
+      const file = new File([''], 'image.png', {type: 'image/png'})
+      await uploadLogo(file, callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(!callbacks.onSuccess.called)
+      assert(callbacks.onFailure.calledOnce)
+
+      assert(!dispatchSpy.called)
+    })
+  })
+
+  describe('deleteLogo', () => {
+    it('should return a function.', () => {
+      assert(typeof deleteLogo() === 'function')
+    })
+
+    it('should delete the logo file.', async () => {
+      fetchMock.delete(/.*\/settings\/logos\/.*/, 204)
+
+      await deleteLogo('1', callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
+
+      assert(dispatchSpy.firstCall.args[0].type === REMOVE_LOGO)
+      assert(settings, dispatchSpy.firstCall.args[0].id === '1')
+    })
+  })
+
+  describe('readImageFile', () => {
+    it('should read an image file.', async () => {
+      const expect = 'test'
+      const file = new File([expect], 'image.png', {type: 'image/png'})
+      const actual = await readImageFile(file)
+      assert(actual === 'data:image/png;base64,dGVzdA==')
+    })
+
+    it('should return error for non image file.', async () => {
+      const expect = 'test'
+      const file = new File([expect], 'image.txt', {type: 'text/plain'})
+      let err
+      try {
+        await readImageFile(file)
+      } catch (e) {
+        err = e
+      }
+      assert(err !== undefined)
     })
   })
 })

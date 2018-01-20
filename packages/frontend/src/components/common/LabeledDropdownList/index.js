@@ -19,7 +19,7 @@ export default class LabeledDropdownList extends React.Component {
   render () {
     let spinner
     if (this.props.showSpinner) {
-      spinner = <Spinner enable class={classes['spinner']} />
+      spinner = <Spinner class={classes['spinner']} />
     }
 
     let infoIcon

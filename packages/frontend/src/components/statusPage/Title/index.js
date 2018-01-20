@@ -9,6 +9,7 @@ const anyMajorOutage = (components) => !!components.filter(component => componen
 const mapStateToProps = (state) => {
   return {
     serviceName: state.settings.settings.serviceName,
+    logoID: state.settings.settings.logoID,
     statusColor: getComponentColor(anyMajorOutage(state.components.components) ? 'Major Outage' : 'Operational')
   }
 }

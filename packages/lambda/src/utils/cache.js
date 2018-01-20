@@ -7,6 +7,8 @@ export const getCacheControl = (contentType) => {
   switch (contentType) {
     case 'application/javascript':
     case 'text/css':
+    case 'image/png':
+    case 'image/jpeg':
       return prefix + oneYearBySeconds
     case 'image/x-icon':
       return prefix + oneDayBySeconds
