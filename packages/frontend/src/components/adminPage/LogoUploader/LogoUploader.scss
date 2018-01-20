@@ -15,8 +15,12 @@
 }
 
 .logo {
-  padding-bottom: 4px;
-  padding-top: 4px;
+  padding-bottom: 8px;
+  padding-top: 8px;
+
+  > img {
+    width: 300px;
+  }
 }
 
 .icons {

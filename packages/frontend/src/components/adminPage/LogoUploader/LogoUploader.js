@@ -56,7 +56,7 @@ export default class LogoUploader extends React.Component {
       const retinaLogoURL = `${defaultLogoURL}@2x`
       logo = (
         <span className={classes['logo']}>
-          <img src={defaultLogoURL} srcSet={`${defaultLogoURL} 1x, ${retinaLogoURL} 2x`} alt='Logo' />
+          <img src={defaultLogoURL} srcSet={`${defaultLogoURL} 1x, ${retinaLogoURL} 2x`} alt='' />
         </span>
       )
     } else {

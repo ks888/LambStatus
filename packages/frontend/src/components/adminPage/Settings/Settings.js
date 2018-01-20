@@ -48,7 +48,7 @@ export default class Settings extends React.Component {
       tabClass = 'selected-tab'
     }
     return (
-      <span className={classnames(classes['tab'], classes[tabClass])} onClick={this.handleSelectTab(i)}>
+      <span key={tab.name} className={classnames(classes['tab'], classes[tabClass])} onClick={this.handleSelectTab(i)}>
         {tab.name}
       </span>
     )
@@ -58,7 +58,7 @@ export default class Settings extends React.Component {
     return (
       <div className={classes.tabs}>
         {tabs.map(this.renderTab)}
-        <span className={classes['padding']} />
+        <span key='padding' className={classes['padding']} />
       </div>
     )
   }
