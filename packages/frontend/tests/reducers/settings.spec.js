@@ -56,9 +56,9 @@ describe('Reducers/Settings', () => {
   })
 
   context('removeLogoHandler', () => {
-    it('should remove the logo id keeping other props.', () => {
+    it('should make the logo id empty.', () => {
       const state = settingsReducer({settings}, removeLogo(settings.logoID))
-      assert(state.settings.logoID === undefined)
+      assert(state.settings.logoID === '')
       assert(state.settings.serviceName === settings.serviceName)
     })
   })

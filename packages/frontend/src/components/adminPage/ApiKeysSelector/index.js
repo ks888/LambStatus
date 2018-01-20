@@ -76,9 +76,11 @@ export default class ApiKeysSelector extends React.Component {
       <div className={classnames(classes.container)}>
         <label className={classes.label}>API Keys</label>
         {apiKeys}
-        <i className={classnames(classes['add-icon'], 'material-icons')} onClick={this.props.onAdd}>
-          add_circle_outline
-        </i>
+        <div className={classes['add-icon']}>
+          <i className='material-icons' onClick={this.props.onAdd}>
+            add_circle_outline
+          </i>
+        </div>
       </div>
     )
   }

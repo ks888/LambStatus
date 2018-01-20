@@ -30,9 +30,12 @@ function editLogoHandler (state = { }, action) {
 }
 
 function removeLogoHandler (state = { }, action) {
-  const copiedState = { settings: { ...state.settings } }
-  delete copiedState.settings.logoID
-  return copiedState
+  return Object.assign({}, state, {
+    settings: {
+      ...state.settings,
+      logoID: ''
+    }
+  })
 }
 
 function addApiKeyHandler (state = { }, action) {

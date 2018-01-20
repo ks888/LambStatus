@@ -46,17 +46,21 @@ export default class LogoUploader extends React.Component {
   getLogo () {
     let logo
     if (this.state.isUploading) {
-      logo = (<Spinner />)
-    } else if (this.props.logoID !== undefined) {
+      logo = (
+        <span className={classes['logo']}>
+          <Spinner />
+        </span>
+      )
+    } else if (this.props.logoID !== undefined && this.props.logoID !== '') {
       const defaultLogoURL = `${this.props.statusPageURL}/${this.props.logoID}`
       const retinaLogoURL = `${defaultLogoURL}@2x`
       logo = (
-        <span>
+        <span className={classes['logo']}>
           <img src={defaultLogoURL} srcSet={`${defaultLogoURL} 1x, ${retinaLogoURL} 2x`} alt='Logo' />
         </span>
       )
     } else {
-      logo = (<span className={classes['no-logo']} />)
+      logo = (<span className={classes['logo']} />)
     }
     return logo
   }
@@ -64,7 +68,7 @@ export default class LogoUploader extends React.Component {
   render () {
     const logo = this.getLogo()
     let deleteIcon
-    if (this.state.isUploading || this.props.logoID === undefined) {
+    if (this.state.isUploading || this.props.logoID === '' || this.props.logoID === undefined) {
       deleteIcon = <IconButton onClick={this.handleClickDeleteButton} iconName='delete' name='Delete' disabled />
     } else {
       deleteIcon = <IconButton onClick={this.handleClickDeleteButton} iconName='delete' name='Delete' />
