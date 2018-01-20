@@ -34,14 +34,16 @@ export default class ScheduledMaintenaces extends React.Component {
     }
 
     return (
-      <ul className={classes.container}>
+      <div className={classes.container}>
         <h4 className={classnames(classes.title)}>Scheduled Maintenance</h4>
-        {filteredMaintenances.map(maint => {
-          return (
-            <MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} autoloadDetail />
-          )
-        })}
-      </ul>
+        <ul>
+          {filteredMaintenances.map(maint => {
+            return (
+              <MaintenanceItem key={maint.maintenanceID} maintenanceID={maint.maintenanceID} autoloadDetail />
+            )
+          })}
+        </ul>
+      </div>
     )
   }
 }

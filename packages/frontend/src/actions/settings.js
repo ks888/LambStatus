@@ -77,7 +77,7 @@ export const fetchPublicSettings = (callbacks = {}) => {
   }
 }
 
-export const updateSettings = ({serviceName, backgroundColor}, callbacks = {}) => {
+export const updateSettings = ({serviceName, backgroundColor} = {}, callbacks = {}) => {
   return async dispatch => {
     try {
       const body = { serviceName, backgroundColor }

@@ -1,4 +1,4 @@
-.container {
+.dates-container {
   list-style: none;
   padding: 8px;
 }
@@ -12,7 +12,7 @@
   font-family: "Roboto","Helvetica","Arial",sans-serif;
   font-size: 16px;
   letter-spacing: .04em;
-  padding: 16px;
+  padding: 12px;
 
   @media screen and (max-width: 768px) {
     padding: 12px;
@@ -26,6 +26,16 @@
   border-color: #E0E0E0;
   margin-bottom: 10px;
   padding-bottom: 3px;
+}
+
+.incidents-container {
+  padding: 8px;
+
+  > ul {
+    background-color: #FFFFFF;
+    list-style: none;
+    padding-left: 0;
+  }
 }
 
 .no-incidents {

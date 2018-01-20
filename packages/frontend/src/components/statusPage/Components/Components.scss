@@ -1,5 +1,10 @@
 .container {
   padding: 8px;
+
+  > ul {
+    background-color: #FFFFFF;
+    padding-left: 0;
+  }
 }
 
 .item {

@@ -4,6 +4,18 @@
   padding-bottom: 8px;
   padding-left: 8px;
   padding-right: 8px;
+
+  > ul {
+    background-color: #FFFFFF;
+    list-style: none;
+    padding-left: 0;
+  }
+}
+
+.title {
+  font-size: 20px;
+  margin-bottom: 18px;
+  margin-top: 8px;
 }
 
 .link {
