@@ -92,7 +92,7 @@ export default class GeneralSettings extends React.Component {
           throw new Error('unknown status', key.status)
       }
     })
-    this.props.updateSettings(this.state.serviceName, this.callbacks)
+    this.props.updateSettings({serviceName: this.state.serviceName}, this.callbacks)
   }
 
   renderApiKeysSelector = () => {
