@@ -2,14 +2,19 @@ import { SettingsProxy } from 'api/utils'
 
 export async function handle (event, context, callback) {
   const {
-    serviceName
+    serviceName,
+    backgroundColor
   } = event.body
   try {
     const settings = new SettingsProxy()
-    if (serviceName !== undefined && serviceName !== await settings.getServiceName()) {
+    if (serviceName !== undefined) {
       await settings.setServiceName(serviceName)
     }
-    callback(null, {serviceName})
+    if (backgroundColor !== undefined) {
+      await settings.setBackgroundColor(backgroundColor)
+    }
+
+    callback(null, {serviceName, backgroundColor})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

@@ -130,6 +130,30 @@ export class SettingsProxy {
     await this.store.deleteLogoID()
   }
 
+  async setBackgroundColor (color) {
+    await this.settings.setBackgroundColor(color)
+
+    await this.store.setBackgroundColor(await this.settings.getBackgroundColor())
+  }
+
+  async getBackgroundColor () {
+    const color = await this.settings.getBackgroundColor()
+    if (color !== undefined) {
+      return color
+    }
+
+    let storedColor
+    try {
+      storedColor = await this.store.getBackgroundColor()
+    } catch (err) {
+      if (err.name !== NotFoundError.name) throw err
+      storedColor = ''
+    }
+
+    await this.settings.setBackgroundColor(storedColor)
+    return storedColor
+  }
+
   async updateUserPool () {
     const poolID = await this.getCognitoPoolID()
     if (poolID === '') {

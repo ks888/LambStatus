@@ -49,4 +49,12 @@ export class Settings {
   async deleteLogoID () {
     return delete this.logoID
   }
+
+  async setBackgroundColor (backgroundColor) {
+    this.backgroundColor = backgroundColor
+  }
+
+  async getBackgroundColor () {
+    return this.backgroundColor
+  }
 }

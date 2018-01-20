@@ -82,7 +82,7 @@ export default class LogoUploader extends React.Component {
     /* eslint-disable react/jsx-no-bind */  // refs callback
     return (
       <div className={classes.container}>
-        <label className={classes.label}>Logo Image</label>
+        <label className={classes.label}>Logo</label>
         {errMsg}
         {logo}
         <input type='file' ref={input => { this.fileSelector = input }} onChange={this.upload} />

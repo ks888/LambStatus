@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Link from 'components/common/Link'
 import ErrorMessage from 'components/common/ErrorMessage'
+import Header from 'components/statusPage/Header'
 import IncidentItem from 'components/statusPage/IncidentItem'
 import classes from './Incident.scss'
 
@@ -13,9 +14,6 @@ export default class Incident extends React.Component {
       name: PropTypes.string.isRequired,
       status: PropTypes.string
     }),
-    settings: PropTypes.shape({
-      serviceName: PropTypes.string
-    }).isRequired,
     fetchIncidents: PropTypes.func.isRequired
   }
 
@@ -37,7 +35,7 @@ export default class Incident extends React.Component {
   }
 
   render () {
-    const { incidentID, settings } = this.props
+    const { incidentID } = this.props
 
     let incident = ''
     if (this.props.incident) {
@@ -48,10 +46,11 @@ export default class Incident extends React.Component {
 
     return (
       <div>
-        <h4>Incident Report for {settings.serviceName}</h4>
-        <ul className={classes.container} >
-          {incident}
-        </ul>
+        <Header />
+        <div className={classes.container}>
+          <h4 className={classnames(classes.title)}>Incident Report</h4>
+          <ul>{incident}</ul>
+        </div>
         <span className={classnames(classes.link)}><Link link='/' text='Current Incidents' /></span>
       </div>
     )

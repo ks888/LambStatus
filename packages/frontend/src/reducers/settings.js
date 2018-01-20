@@ -14,8 +14,8 @@ function listSettingsHandler (state = { }, action) {
 function editSettingsHandler (state = { }, action) {
   return Object.assign({}, state, {
     settings: {
-      ...action.settings,
-      apiKeys: state.settings.apiKeys
+      ...state.settings,
+      ...action.settings
     }
   })
 }

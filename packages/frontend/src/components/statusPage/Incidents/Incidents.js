@@ -50,7 +50,11 @@ export default class Incidents extends React.Component {
 
     let container = null
     if (dateItems.length > 0) {
-      container = (<ul className={classes.container}>{dateItems}</ul>)
+      container = (
+        <div className={classes['incidents-container']}>
+          <ul>{dateItems}</ul>
+        </div>
+      )
     } else {
       container = (<span className={classes['no-incidents']}>No incidents reported.</span>)
     }
@@ -87,7 +91,7 @@ export default class Incidents extends React.Component {
     Object.keys(dates).map(date => dates[date].sort((a, b) => { return a.createdAt < b.createdAt }))
 
     return (
-      <ul className={classes.container}>
+      <ul className={classes['dates-container']}>
         <h4 className={classnames(classes.title)}>Incidents</h4>
         {Object.keys(dates).map(date =>
           this.renderDateItem(date, dates[date])

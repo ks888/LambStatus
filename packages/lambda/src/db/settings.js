@@ -9,7 +9,8 @@ import { buildUpdateExpression } from './utils'
 export const settingKeys = {
   serviceName: 'ServiceName',
   cognitoPoolID: 'CognitoPoolID',
-  logoID: 'logoID'
+  logoID: 'LogoID',
+  backgroundColor: 'BackgroundColor'
 }
 
 export default class SettingsStore {
@@ -43,6 +44,14 @@ export default class SettingsStore {
 
   async deleteLogoID () {
     return await this.store.delete(settingKeys.logoID)
+  }
+
+  async getBackgroundColor () {
+    return await this.store.get(settingKeys.backgroundColor)
+  }
+
+  async setBackgroundColor (color) {
+    return await this.store.set(settingKeys.backgroundColor, color)
   }
 }
 

@@ -1,6 +1,11 @@
 .container {
-  list-style: none;
   padding: 8px;
+
+  > ul {
+    background-color: #FFFFFF;
+    list-style: none;
+    padding-left: 0;
+  }
 }
 
 .title {
