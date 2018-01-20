@@ -45,4 +45,8 @@ export class Settings {
   async getLogoID () {
     return this.logoID
   }
+
+  async deleteLogoID () {
+    return delete this.logoID
+  }
 }

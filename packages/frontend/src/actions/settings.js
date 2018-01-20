@@ -5,6 +5,7 @@ import { apiURL } from 'utils/settings'
 export const LIST_SETTINGS = 'LIST_SETTINGS'
 export const EDIT_SETTINGS = 'EDIT_SETTINGS'
 export const EDIT_LOGO = 'EDIT_LOGO'
+export const REMOVE_LOGO = 'REMOVE_LOGO'
 export const ADD_API_KEY = 'ADD_API_KEY'
 export const REMOVE_API_KEY = 'REMOVE_API_KEY'
 
@@ -26,6 +27,13 @@ export function editLogo (json) {
   return {
     type: EDIT_LOGO,
     logo: json
+  }
+}
+
+export function removeLogo (logoID) {
+  return {
+    type: REMOVE_LOGO,
+    logoID
   }
 }
 
@@ -134,6 +142,21 @@ export const uploadLogo = (file, callbacks = {}) => {
       }, callbacks)
 
       dispatch(editLogo(json))
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
+export const deleteLogo = (logoID, callbacks = {}) => {
+  return async dispatch => {
+    try {
+      await sendRequest(apiURL + '/api/settings/logos/' + logoID, {
+        headers: await buildHeaders(),
+        method: 'DELETE'
+      }, callbacks)
+      dispatch(removeLogo(logoID))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

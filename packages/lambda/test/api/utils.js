@@ -8,7 +8,7 @@ import MetricsStore from 'db/metrics'
 import ComponentsStore from 'db/components'
 import { Metric } from 'model/metrics'
 import { metricStatusVisible } from 'utils/const'
-import { MutexLockedError } from 'utils/errors'
+import { NotFoundError, MutexLockedError } from 'utils/errors'
 
 describe('updateComponentStatus', () => {
   it('should call updateStatus', () => {
@@ -60,6 +60,14 @@ describe('SettingsProxy', () => {
       const actual = await proxy.getServiceName()
       assert(serviceName === actual)
       assert(proxy.store.getServiceName.notCalled)
+    })
+
+    it('should return the empty service name if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getServiceName = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getServiceName()
+      assert(actual === '')
     })
   })
 
@@ -148,6 +156,14 @@ describe('SettingsProxy', () => {
       assert(cognitoPoolID === actual)
       assert(proxy.store.getCognitoPoolID.notCalled)
     })
+
+    it('should return the empty value if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getCognitoPoolID = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getCognitoPoolID()
+      assert(actual === '')
+    })
   })
 
   describe('setLogoID', () => {
@@ -184,6 +200,14 @@ describe('SettingsProxy', () => {
       const actual = await proxy.getLogoID()
       assert(logoID === actual)
       assert(proxy.store.getLogoID.notCalled)
+    })
+
+    it('should return the empty value if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getLogoID = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getLogoID()
+      assert(actual === '')
     })
   })
 

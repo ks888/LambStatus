@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { uploadLogo } from 'actions/settings'
+import { uploadLogo, deleteLogo } from 'actions/settings'
 import LogoUploader from './LogoUploader'
 
 const mapStateToProps = (state) => {
@@ -11,7 +11,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({uploadLogo}, dispatch)
+  return bindActionCreators({uploadLogo, deleteLogo}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LogoUploader)

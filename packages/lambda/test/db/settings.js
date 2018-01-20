@@ -1,7 +1,6 @@
 import assert from 'assert'
 import AWS from 'aws-sdk-mock'
 import SettingsStore, { settingKeys, RawSettingsStore } from 'db/settings'
-import { NotFoundError } from 'utils/errors'
 
 describe('SettingsStore', () => {
   describe('getServiceName', () => {
@@ -28,14 +27,6 @@ describe('SettingsStore', () => {
         error = err
       }
       assert(error !== undefined)
-    })
-
-    it('should return empty string if not found', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new NotFoundError() }
-
-      const actual = await store.getServiceName()
-      assert(actual === '')
     })
   })
 
@@ -92,14 +83,6 @@ describe('SettingsStore', () => {
       }
       assert(error !== undefined)
     })
-
-    it('should return empty string if not found', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new NotFoundError() }
-
-      const actual = await store.getCognitoPoolID()
-      assert(actual === '')
-    })
   })
 
   describe('setCognitoPoolID', () => {
@@ -155,14 +138,6 @@ describe('SettingsStore', () => {
       }
       assert(error !== undefined)
     })
-
-    it('should return empty string if not found', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new NotFoundError() }
-
-      const actual = await store.getLogoID()
-      assert(actual === '')
-    })
   })
 
   describe('setLogoID', () => {
@@ -186,6 +161,31 @@ describe('SettingsStore', () => {
       let error
       try {
         await store.setLogoID()
+      } catch (err) {
+        error = err
+      }
+      assert(error !== undefined)
+    })
+  })
+
+  describe('deleteLogoID', () => {
+    it('should delete the Logo ID', async () => {
+      const id = 'test'
+      const store = new SettingsStore()
+      store.store.delete = (key) => {
+        assert(key === settingKeys.logoID)
+      }
+
+      await store.deleteLogoID(id)
+    })
+
+    it('should pass through throwed error', async () => {
+      const store = new SettingsStore()
+      store.store.delete = () => { throw new Error() }
+
+      let error
+      try {
+        await store.deleteLogoID()
       } catch (err) {
         error = err
       }
@@ -262,6 +262,34 @@ describe('RawSettingsStore', () => {
       let error
       try {
         await new RawSettingsStore().set('', '')
+      } catch (e) {
+        error = e
+      }
+      assert(error.message.match(/Error/))
+    })
+  })
+
+  describe('delete', () => {
+    afterEach(() => {
+      AWS.restore('DynamoDB.DocumentClient')
+    })
+
+    it('should delete the logo id', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+        assert(params.Key.key === '1')
+        callback(null)
+      })
+      await new RawSettingsStore().delete('1')
+    })
+
+    it('should return error on exception thrown', async () => {
+      AWS.mock('DynamoDB.DocumentClient', 'delete', (params, callback) => {
+        callback('Error')
+      })
+
+      let error
+      try {
+        await new RawSettingsStore().delete('1')
       } catch (e) {
         error = e
       }

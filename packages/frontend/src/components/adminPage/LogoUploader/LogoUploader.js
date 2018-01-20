@@ -8,7 +8,8 @@ export default class LogoUploader extends React.Component {
   static propTypes = {
     logoID: PropTypes.string,
     statusPageURL: PropTypes.string,
-    uploadLogo: PropTypes.func.isRequired
+    uploadLogo: PropTypes.func.isRequired,
+    deleteLogo: PropTypes.func.isRequired
   }
 
   constructor (props) {
@@ -20,7 +21,7 @@ export default class LogoUploader extends React.Component {
   }
 
   callbacks = {
-    onLoad: () => { this.setState({isUploading: true}) },
+    onLoad: () => { this.setState({isUploading: true, message: ''}) },
     onSuccess: () => { this.setState({isUploading: false, message: ''}) },
     onFailure: (msg) => {
       this.setState({isUploading: false, message: msg})
@@ -33,6 +34,13 @@ export default class LogoUploader extends React.Component {
 
   upload = (input) => {
     this.props.uploadLogo(input.target.files[0], this.callbacks)
+  }
+
+  handleClickDeleteButton = () => {
+    this.props.deleteLogo(this.props.logoID, {
+      ...this.callbacks,
+      onSuccess: () => { this.setState({isUploading: false, message: 'Deleted!'}) }
+    })
   }
 
   getLogo () {
@@ -57,9 +65,9 @@ export default class LogoUploader extends React.Component {
     const logo = this.getLogo()
     let deleteIcon
     if (this.state.isUploading || this.props.logoID === undefined) {
-      deleteIcon = <IconButton onClick='' iconName='delete' name='Delete' disabled />
+      deleteIcon = <IconButton onClick={this.handleClickDeleteButton} iconName='delete' name='Delete' disabled />
     } else {
-      deleteIcon = <IconButton onClick='' iconName='delete' name='Delete' />
+      deleteIcon = <IconButton onClick={this.handleClickDeleteButton} iconName='delete' name='Delete' />
     }
 
     let errMsg

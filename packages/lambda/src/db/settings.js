@@ -18,14 +18,7 @@ export default class SettingsStore {
   }
 
   async getServiceName () {
-    try {
-      return await this.store.get(settingKeys.serviceName)
-    } catch (err) {
-      if (err.name === NotFoundError.name) {
-        return ''
-      }
-      throw err
-    }
+    return await this.store.get(settingKeys.serviceName)
   }
 
   async setServiceName (name) {
@@ -33,14 +26,7 @@ export default class SettingsStore {
   }
 
   async getCognitoPoolID () {
-    try {
-      return await this.store.get(settingKeys.cognitoPoolID)
-    } catch (err) {
-      if (err.name === NotFoundError.name) {
-        return ''
-      }
-      throw err
-    }
+    return await this.store.get(settingKeys.cognitoPoolID)
   }
 
   async setCognitoPoolID (id) {
@@ -48,18 +34,15 @@ export default class SettingsStore {
   }
 
   async getLogoID () {
-    try {
-      return await this.store.get(settingKeys.logoID)
-    } catch (err) {
-      if (err.name === NotFoundError.name) {
-        return ''
-      }
-      throw err
-    }
+    return await this.store.get(settingKeys.logoID)
   }
 
   async setLogoID (id) {
     return await this.store.set(settingKeys.logoID, id)
+  }
+
+  async deleteLogoID () {
+    return await this.store.delete(settingKeys.logoID)
   }
 }
 
@@ -105,6 +88,22 @@ export class RawSettingsStore {
           return reject(new VError(err, 'DynamoDB'))
         }
         resolve(data.Attributes.value)
+      })
+    })
+  }
+
+  delete (key) {
+    return new Promise((resolve, reject) => {
+      const params = {
+        Key: { key },
+        TableName: SettingsTable,
+        ReturnValues: 'NONE'
+      }
+      this.awsDynamoDb.delete(params, (err) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+        resolve()
       })
     })
   }

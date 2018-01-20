@@ -1,4 +1,5 @@
-import { listSettings, editSettings, editLogo, addApiKey, removeApiKey } from 'actions/settings'
+import { listSettings, editSettings, editLogo, removeLogo, addApiKey,
+         removeApiKey } from 'actions/settings'
 import settingsReducer from 'reducers/settings'
 
 describe('Reducers/Settings', () => {
@@ -6,6 +7,7 @@ describe('Reducers/Settings', () => {
     adminPageURL: 'admin',
     statusPageURL: 'status',
     serviceName: 'service',
+    logoID: 'logo',
     apiKeys: [{id: '1', value: '1'}, {id: '2', value: '2'}]
   }
 
@@ -50,6 +52,14 @@ describe('Reducers/Settings', () => {
       assert(state.settings.logoID === resp.id)
       assert(state.settings.serviceName === settings.serviceName)
       assert.deepEqual(state.settings.apiKeys, settings.apiKeys)
+    })
+  })
+
+  context('removeLogoHandler', () => {
+    it('should remove the logo id keeping other props.', () => {
+      const state = settingsReducer({settings}, removeLogo(settings.logoID))
+      assert(state.settings.logoID === undefined)
+      assert(state.settings.serviceName === settings.serviceName)
     })
   })
 

@@ -3,6 +3,7 @@ import {
   LIST_SETTINGS,
   EDIT_SETTINGS,
   EDIT_LOGO,
+  REMOVE_LOGO,
   ADD_API_KEY,
   REMOVE_API_KEY,
   fetchSettings,
@@ -11,6 +12,7 @@ import {
   postApiKey,
   deleteApiKey,
   uploadLogo,
+  deleteLogo,
   readImageFile
 } from 'actions/settings'
 
@@ -231,6 +233,24 @@ describe('Actions/Settings', () => {
       assert(callbacks.onFailure.calledOnce)
 
       assert(!dispatchSpy.called)
+    })
+  })
+
+  describe('deleteLogo', () => {
+    it('should return a function.', () => {
+      assert(typeof deleteLogo() === 'function')
+    })
+
+    it('should delete the logo file.', async () => {
+      fetchMock.delete(/.*\/settings\/logos\/.*/, 204)
+
+      await deleteLogo('1', callbacks)(dispatchSpy)
+      assert(callbacks.onLoad.calledOnce)
+      assert(callbacks.onSuccess.calledOnce)
+      assert(!callbacks.onFailure.called)
+
+      assert(dispatchSpy.firstCall.args[0].type === REMOVE_LOGO)
+      assert(settings, dispatchSpy.firstCall.args[0].id === '1')
     })
   })
 
