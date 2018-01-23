@@ -1,10 +1,11 @@
 .dates-container {
   list-style: none;
+  margin-top: 0;
   padding: 8px;
 }
 
 .title {
-  margin-bottom: 16px;
+  margin-bottom: 4px;
   margin-top: 16px;
 }
 
@@ -13,10 +14,6 @@
   font-size: 16px;
   letter-spacing: .04em;
   padding: 12px;
-
-  @media screen and (max-width: 768px) {
-    padding: 12px;
-  }
 }
 
 .border {

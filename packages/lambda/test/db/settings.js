@@ -224,6 +224,16 @@ describe('RawSettingsStore', () => {
       assert(error.name === 'NotFoundError')
     })
 
+    it('should return empty value if associated key is empty', async () => {
+      const key = 'key'
+      AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
+        callback(null, {Item: {key}})  // value is undefined when the actual value is empty
+      })
+
+      const setting = await new RawSettingsStore().get(key)
+      assert(setting === '')
+    })
+
     it('should call reject on error', async () => {
       AWS.mock('DynamoDB.DocumentClient', 'get', (params, callback) => {
         callback('Error')

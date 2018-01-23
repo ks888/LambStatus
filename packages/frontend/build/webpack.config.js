@@ -90,7 +90,7 @@ const generateWebpackConfig = (config) => {
       scripts: scriptsServedFromCDN
     }),
     new CopyWebpackPlugin([
-      { from: 'config/settings.js' }
+      { from: config.settings_js_path, to: 'settings.js' }
     ])
   ]
 

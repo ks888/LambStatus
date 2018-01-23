@@ -16,7 +16,7 @@ export default class StatusPageLayout extends React.Component {
   }
 
   componentWillUpdate (nextProps) {
-    if (nextProps.settings.serviceName) {
+    if (nextProps.settings.serviceName !== undefined) {
       document.title = `${nextProps.settings.serviceName} Status`
     }
   }

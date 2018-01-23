@@ -73,7 +73,12 @@ export class RawSettingsStore {
         }
 
         if (data.Item === undefined) {
+          // no matched item
           return reject(new NotFoundError('no matched item'))
+        }
+        if (data.Item.value === undefined) {
+          // matched, but its value is empty
+          resolve('')
         }
 
         resolve(data.Item.value)
