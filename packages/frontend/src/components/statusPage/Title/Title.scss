@@ -6,5 +6,8 @@
 .logo {
   padding-bottom: 10px;
   padding-top: 30px;
-  width: 300px;
+
+  > img {
+    max-width: 340px;
+  }
 }
