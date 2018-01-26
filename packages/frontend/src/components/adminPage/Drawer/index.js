@@ -47,11 +47,18 @@ const Drawer = () => {
     )
   })
 
-  return (<div className={classes.drawer}>
-    <nav className={classes.navi}>
-      {drawerItems}
-    </nav>
-  </div>)
+  return (
+    <div className={classes.drawer}>
+      <nav className={classes.navi}>
+        {drawerItems}
+      </nav>
+      <div className={classes.logo}>
+        <a href='https://github.com/ks888/LambStatus'>
+           Powered by LambStatus<br />Feedbacks are welcome!
+        </a>
+      </div>
+    </div>
+  )
 }
 
 export default Drawer
