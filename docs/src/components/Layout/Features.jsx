@@ -28,7 +28,7 @@ class Features extends React.Component {
     const incidentFeature = (
       <Feature title='Incidents and Maintenance' description='If a issue happens, create a new incident to tell the situations immediately to your users. When a maintenance is planned, publish a schedule so that your users know the unavailability in advance.' />
     )
-    const desc = 'Show the metrics like the API response time to numerically represent your service\'s status. LambStatus can be easily integrated with your monitoring services via API or built-in integration.'
+    const desc = 'Show the metrics like the response time to numerically represent your service\'s status. It can be easily integrated with your monitoring services via built-in integration.'
     const metricsFeature = (
       <Feature title='Metrics' description={desc} />
     )
@@ -39,7 +39,7 @@ class Features extends React.Component {
       <Feature title='API' description='Integrate with your existing systems by our simple REST API! It enables you to create and update an incident, submit the metrics data, and so on.' />
     )
     const designFeature = (
-      <Feature title='Responsive & Customizable Design' description='Its status page is fully responsive since your status page will have a considerable number of accesses from the mobile phone.' />
+      <Feature title='Responsive & Customizable' description='The status page is displayed well on both desktop and mobile devices. Further, you can customize it to show off your brand!' />
     )
 
     return (
