@@ -17,16 +17,13 @@ export default class Header extends React.Component {
 
   componentDidMount () {
     this.props.fetchUser()
+    this.props.fetchSettings()
 
     let jsElem = ReactDOM.findDOMNode(this.refs.menu)
     componentHandler.upgradeElement(jsElem)
   }
 
   componentWillUpdate (nextProps) {
-    if (nextProps.username !== this.props.username) {
-      this.props.fetchSettings()
-    }
-
     if (nextProps.settings.serviceName !== this.props.settings.serviceName) {
       document.title = `${nextProps.settings.serviceName} Status Admin (read-only demo)`
     }
