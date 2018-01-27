@@ -38,6 +38,9 @@ class Features extends React.Component {
     const apiFeature = (
       <Feature title='API' description='Integrate with your existing systems by our simple REST API! It enables you to create and update an incident, submit the metrics data, and so on.' />
     )
+    const designFeature = (
+      <Feature title='Responsive & Customizable Design' description='Its status page is fully responsive since your status page will have a considerable number of accesses from the mobile phone.' />
+    )
 
     return (
       <Container>
@@ -50,6 +53,7 @@ class Features extends React.Component {
             {metricsFeature}
             {notificationsFeature}
             {apiFeature}
+            {designFeature}
           </Items>
         </InnerContainer>
       </Container>
