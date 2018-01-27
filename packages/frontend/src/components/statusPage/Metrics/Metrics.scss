@@ -1,6 +1,12 @@
 .container {
   padding: 8px;
 
+  > ul {
+    background-color: #FFFFFF;
+    list-style: none;
+    padding-left: 0;
+  }
+
   @media screen and (max-width: 768px) {
     display: none;
   }
@@ -19,7 +25,7 @@
   color: rgba(0,0,0,.54);
   border-left-width: 1px;
   border-left-style: solid;
-  border-left-color: rgb(240, 240, 240);
+  border-left-color: #CCCCCC;
 }
 
 .timeframe-left {

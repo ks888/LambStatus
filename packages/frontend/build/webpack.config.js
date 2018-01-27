@@ -1,10 +1,10 @@
-import webpack from 'webpack'
-import cssnano from 'cssnano'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import CopyWebpackPlugin from 'copy-webpack-plugin'
-import _debug from 'debug'
-import { buildScriptURL, buildCSSURL } from './cdn'
+const webpack = require('webpack')
+const cssnano = require('cssnano')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const _debug = require('debug')
+const { buildScriptURL, buildCSSURL } = require('./cdn')
 
 const debug = _debug('app:webpack:config')
 
@@ -34,7 +34,7 @@ const scriptsServedFromCDN = modulesServedFromCDN.reduce(function (prev, curr) {
   return prev
 }, [])
 
-export default function (config) {
+const generateWebpackConfig = (config) => {
   const paths = config.utils_paths
   const {__DEV__, __PROD__, __TEST__, __COVERAGE__} = config.globals
 
@@ -49,35 +49,22 @@ export default function (config) {
       alias: config.compiler_alias
     },
     module: {},
-    devMiddlewareOptions: {
-      publicPath: config.compiler_public_path,
-      quiet: config.compiler_quiet,
-      noInfo: config.compiler_quiet,
-      stats: config.compiler_stats
+    devServer: {
+      contentBase: paths.dist(),
+      historyApiFallback: true,
+      inline: true,
+      port: config.server_port
     },
-    devPort: config.server_port
-  }
-  // ------------------------------------
-  // Entry Points
-  // ------------------------------------
-  const APP_ENTRY_PATHS = [
-    paths.entry_point
-  ]
-
-  webpackConfig.entry = {
-    app: __DEV__
-      ? APP_ENTRY_PATHS.concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
-      : APP_ENTRY_PATHS
+    entry: {
+      app: [paths.entry_point]
+    },
+    output: {
+      filename: `[name].[${config.compiler_hash_type}].js`,
+      path: paths.dist(),
+      publicPath: '/'
+    }
   }
 
-  // ------------------------------------
-  // Bundle Output
-  // ------------------------------------
-  webpackConfig.output = {
-    filename: `[name].[${config.compiler_hash_type}].js`,
-    path: paths.dist(),
-    publicPath: config.compiler_public_path
-  }
   if (!__TEST__) {
     webpackConfig.externals = modulesServedFromCDN.reduce(function (prev, curr) {
       if (curr.external !== undefined) prev[curr.moduleName] = curr.external
@@ -103,17 +90,11 @@ export default function (config) {
       scripts: scriptsServedFromCDN
     }),
     new CopyWebpackPlugin([
-      { from: 'config/settings.js' }
+      { from: config.settings_js_path, to: 'settings.js' }
     ])
   ]
 
-  if (__DEV__) {
-    debug('Enable plugins for live development (HMR, NoErrors).')
-    webpackConfig.plugins.push(
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin()
-    )
-  } else if (__PROD__) {
+  if (__PROD__) {
     debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
     webpackConfig.plugins.push(
       new webpack.optimize.OccurrenceOrderPlugin(),
@@ -193,12 +174,9 @@ export default function (config) {
   const PATHS_TO_TREAT_AS_CSS_MODULES = [
   ]
 
-  // If config has CSS modules enabled, treat this project's styles as CSS modules.
-  if (config.compiler_css_modules) {
-    PATHS_TO_TREAT_AS_CSS_MODULES.push(
-      paths.client().replace(/[\^\$\.\*\+\-\?\=\!\:\|\\\/\(\)\[\]\{\}\,]/g, '\\$&') // eslint-disable-line
-    )
-  }
+  PATHS_TO_TREAT_AS_CSS_MODULES.push(
+    paths.client().replace(/[\^\$\.\*\+\-\?\=\!\:\|\\\/\(\)\[\]\{\}\,]/g, '\\$&') // eslint-disable-line
+  )
 
   const isUsingCSSModules = !!PATHS_TO_TREAT_AS_CSS_MODULES.length
   const cssModulesRegex = new RegExp(`(${PATHS_TO_TREAT_AS_CSS_MODULES.join('|')})`)
@@ -340,3 +318,6 @@ export default function (config) {
 
   return webpackConfig
 }
+
+const settings = require('../config')
+module.exports = generateWebpackConfig(settings)

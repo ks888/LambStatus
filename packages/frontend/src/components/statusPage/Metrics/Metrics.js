@@ -56,12 +56,14 @@ export default class Metrics extends React.Component {
 
     const timeframeSelector = this.renderTimeframeSelector()
     return (
-      <ul className={classes.container} >
+      <div className={classes.container}>
         <h4 className={classnames(classes.title)}>
           Metrics<span className={classnames(classes.timeframes)}>{timeframeSelector}</span>
         </h4>
-        {this.props.metrics.map(this.renderMetrics)}
-      </ul>
+        <ul>
+          {this.props.metrics.map(this.renderMetrics)}
+        </ul>
+      </div>
     )
   }
 }

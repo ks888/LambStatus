@@ -35,9 +35,11 @@ export default class Components extends React.Component {
     })
 
     return (
-      <ul className={classes.container} >
-        {components}
-      </ul>
+      <div className={classes.container}>
+        <ul>
+          {components}
+        </ul>
+      </div>
     )
   }
 }

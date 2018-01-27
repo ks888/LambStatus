@@ -60,16 +60,13 @@ export default class IncidentUpdateItem extends React.Component {
     }
 
     return (
-      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.incident_update_item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.incident_update_item_content)}>
-          <span>
-            {incidentUpdate.incidentStatus} - updated at {getFormattedDateTime(incidentUpdate.createdAt)}
-            <i className={classnames(classes.icon, 'material-icons')} onClick={this.startEdit}>edit</i>
-          </span>
-          <span className='mdl-list__item-sub-title'>
-            {message}
-          </span>
+      <li key={incidentUpdate.incidentUpdateID} className={classnames('mdl-shadow--2dp', classes.container)}>
+        <span>
+          {incidentUpdate.incidentStatus} - updated at {getFormattedDateTime(incidentUpdate.createdAt)}
+          <i className={classnames(classes.icon, 'material-icons')} onClick={this.startEdit}>edit</i>
+        </span>
+        <span className={classes.message}>
+          {message}
         </span>
       </li>
     )

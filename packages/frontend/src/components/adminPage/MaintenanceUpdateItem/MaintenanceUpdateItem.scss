@@ -1,14 +1,23 @@
-.maintenance_update_item {
-  height: 100%;
-}
-
-.maintenance_update_item_content {
-  height: 100% !important;
+.container {
+  color: rgba(0,0,0,.87);
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  letter-spacing: .04em;
+  line-height: 20px;
+  padding: 16px;
 }
 
 .icon {
   color: rgba(0,0,0,.54);
-  font-size: 19px;
   float: right;
+  font-size: 19px;
   cursor: pointer;
+}
+
+.message {
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 18px;
 }

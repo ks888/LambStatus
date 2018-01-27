@@ -1,14 +1,21 @@
-import React, { PropTypes } from 'react'
-import classes from './Title.scss'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { getComponentColor } from 'utils/status'
 
-export const Title = (props) => (
-  <h4>
-    <span className={classes.service_name}>{props.service_name}</span>
-    <span className={classes.status}> Status</span>
-  </h4>
-)
+import Title from './Title'
 
-Title.propTypes = {
-  service_name: PropTypes.string
+const anyMajorOutage = (components) => !!components.filter(component => component.status === 'Major Outage').length
+
+const mapStateToProps = (state) => {
+  return {
+    serviceName: state.settings.settings.serviceName,
+    logoID: state.settings.settings.logoID,
+    statusColor: getComponentColor(anyMajorOutage(state.components.components) ? 'Major Outage' : 'Operational')
+  }
 }
-export default Title
+
+function mapDispatchToProps (dispatch) {
+  return bindActionCreators({}, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Title)

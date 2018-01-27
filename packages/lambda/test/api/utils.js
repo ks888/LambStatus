@@ -8,7 +8,7 @@ import MetricsStore from 'db/metrics'
 import ComponentsStore from 'db/components'
 import { Metric } from 'model/metrics'
 import { metricStatusVisible } from 'utils/const'
-import { MutexLockedError } from 'utils/errors'
+import { NotFoundError, MutexLockedError } from 'utils/errors'
 
 describe('updateComponentStatus', () => {
   it('should call updateStatus', () => {
@@ -61,6 +61,14 @@ describe('SettingsProxy', () => {
       assert(serviceName === actual)
       assert(proxy.store.getServiceName.notCalled)
     })
+
+    it('should return the empty service name if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getServiceName = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getServiceName()
+      assert(actual === '')
+    })
   })
 
   describe('getAdminPageURL', () => {
@@ -110,7 +118,7 @@ describe('SettingsProxy', () => {
   })
 
   describe('setCognitoPoolID', () => {
-    it('should update the CognitoPoolID and user pool and publish notification', async () => {
+    it('should update the CognitoPoolID', async () => {
       const proxy = new SettingsProxy()
       proxy.store.setCognitoPoolID = sinon.spy()
       proxy.updateUserPool = sinon.spy()
@@ -147,6 +155,59 @@ describe('SettingsProxy', () => {
       const actual = await proxy.getCognitoPoolID()
       assert(cognitoPoolID === actual)
       assert(proxy.store.getCognitoPoolID.notCalled)
+    })
+
+    it('should return the empty value if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getCognitoPoolID = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getCognitoPoolID()
+      assert(actual === '')
+    })
+  })
+
+  describe('setLogoID', () => {
+    it('should update the LogoID', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.setLogoID = sinon.spy()
+
+      const logoID = 'id'
+      await proxy.setLogoID(logoID)
+
+      assert(proxy.settings.logoID === logoID)
+      assert(proxy.store.setLogoID.calledOnce)
+      assert(proxy.store.setLogoID.firstCall.args[0] === logoID)
+    })
+  })
+
+  describe('getLogoID', () => {
+    it('should get the LogoID from store if not cached', async () => {
+      const logoID = 'id'
+      const proxy = new SettingsProxy()
+      proxy.store.getLogoID = async () => logoID
+
+      const actual = await proxy.getLogoID()
+      assert(logoID === actual)
+      assert(logoID === proxy.settings.logoID)
+    })
+
+    it('should get the LogoID from cache if available', async () => {
+      const logoID = 'id'
+      const proxy = new SettingsProxy()
+      proxy.settings.setLogoID(logoID)
+      proxy.store.getLogoID = sinon.spy()
+
+      const actual = await proxy.getLogoID()
+      assert(logoID === actual)
+      assert(proxy.store.getLogoID.notCalled)
+    })
+
+    it('should return the empty value if not found', async () => {
+      const proxy = new SettingsProxy()
+      proxy.store.getLogoID = async () => { throw new NotFoundError('') }
+
+      const actual = await proxy.getLogoID()
+      assert(actual === '')
     })
   })
 

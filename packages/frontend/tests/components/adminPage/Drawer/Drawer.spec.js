@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { shallow } from 'enzyme'
 import Drawer from 'components/adminPage/Drawer'
 
-describe('(Component) Drawer', () => {
+describe('Drawer', () => {
   let _wrapper
 
   beforeEach(() => {
@@ -11,9 +11,8 @@ describe('(Component) Drawer', () => {
   })
 
   it('Should render a Link to Components route', () => {
-    const incidentNode = _wrapper.find(Link).at(0)
-    assert(incidentNode.key() === 'components')
-    assert(incidentNode.childAt(0).text() === 'Components')
-    assert(incidentNode.prop('to') === '/components')
+    const node = _wrapper.find(Link).at(0)
+    assert(node.key() === 'components')
+    assert(node.prop('to') === '/components')
   })
 })

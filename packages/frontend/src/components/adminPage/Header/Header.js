@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Link } from 'react-router'
 import ReactDOM from 'react-dom'
-import classnames from 'classnames'
 import classes from './Header.scss'
 
 export default class Header extends React.Component {
@@ -35,15 +34,14 @@ export default class Header extends React.Component {
 
   renderUserMenu = () => {
     return (
-      <div>
-        <button id='header-user-menu'
-          className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}>
-          {this.props.username}
+      <div className={classes['header-menu-item']}>
+        <span id='username' className={classes['username']}>
+          <span>{this.props.username}</span>
           <i className='material-icons'>keyboard_arrow_down</i>
-        </button>
+        </span>
 
         <ul className='mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect'
-          htmlFor='header-user-menu' ref='menu'>
+          htmlFor='username' ref='menu'>
           <li className='mdl-menu__item mdl-menu__item--full-bleed-divider' onClick={this.props.signout}>Sign out</li>
         </ul>
       </div>
@@ -59,10 +57,9 @@ export default class Header extends React.Component {
           <Link to='/' className={classes.title}>{settings.serviceName} Status Admin (read-only demo)</Link>
         </span>
         <div className='mdl-layout-spacer' />
-        <div className={classnames(classes['header-menu'])}>
-          <div>
-            <a className={classnames('mdl-button', 'mdl-js-button', classes['header-menu-item'])}
-              href={settings.statusPageURL} target='_blank'>
+        <div className={classes['header-menu']}>
+          <div className={classes['header-menu-item']}>
+            <a href={settings.statusPageURL} target='_blank'>
               View Status Page
             </a>
           </div>

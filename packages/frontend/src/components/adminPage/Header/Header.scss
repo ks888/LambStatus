@@ -1,8 +1,8 @@
 .header {
   align-items: center;
-  background-color: rgb(96,125,139);
+  background-color: #388E3C;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
-  color: rgb(255,255,255);
+  color: #FFFFFF;
   display: flex;
   height: 64px;
   min-height: 64px;
@@ -12,12 +12,13 @@
 }
 
 .title {
-  text-decoration: none;
   color: #FFFFFF;
   font-weight: 400;
+  text-decoration: none;
 }
 
 .header-menu {
+  align-items: center;
   display: flex;
 
   @media screen and (max-width: 480px) {
@@ -26,13 +27,19 @@
 }
 
 .header-menu-item {
-  color: #FFFFFF;
-  font-weight: 400;
-  text-transform: none;
-  opacity: 0.87;
-  &:hover {
-    background-color: rgb(96,125,139);
-  }
   padding-left: 32px;
-  padding-right: 0px;
+  padding-right: 0;
+
+  > a,
+  > span {
+    color: #FFFFFF;
+    font-weight: 300;
+    text-decoration: none;
+  }
+}
+
+.username {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
 }

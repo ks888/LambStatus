@@ -1,7 +1,13 @@
-.service_name {
-  font-weight: 500;
+.title {
+  margin-bottom: 10px;
+  margin-top: 30px;
 }
 
-.status {
-  color: rgb(56, 142, 60);
+.logo {
+  padding-bottom: 10px;
+  padding-top: 30px;
+
+  > img {
+    max-width: 340px;
+  }
 }

@@ -6,8 +6,44 @@ import GetStarted from '../../components/GetStarted'
 
 const Logo = styled.img`
   width: 500px;
-  @media screen and (max-width: 768px) {
-    display: none;
+  @media screen and (max-width: 600px) {
+    width: 400px;
+  }
+
+  @media screen and (max-width: 500px) {
+    width: 350px;
+  }
+
+  @media screen and (max-width: 400px) {
+    width: 300px;
+  }
+`
+
+const Title = styled.h2`
+  @media screen and (max-width: 600px) {
+    font-size: 3.0rem;
+  }
+
+  @media screen and (max-width: 500px) {
+    font-size: 2.6rem;
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: 2.3rem;
+  }
+`
+
+const Description = styled.h4`
+  @media screen and (max-width: 600px) {
+    font-size: 2.2rem;
+  }
+
+  @media screen and (max-width: 500px) {
+    font-size: 2.0rem;
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: 1.8rem;
   }
 `
 
@@ -19,9 +55,9 @@ class MainHeader extends React.Component {
           <IndexHeadContainer>
             <Navigation />
             <Hero>
-              <Logo src={this.props.logo} alt='' />
-              <h1>{this.props.siteTitle}</h1>
-              <h4>{this.props.siteDescription}</h4>
+              <Logo src='/logos/logo-large-normal.png' alt='' />
+              <Title>{this.props.siteTitle}</Title>
+              <Description>{this.props.siteDescription}</Description>
               <GetStarted />
             </Hero>
           </IndexHeadContainer>

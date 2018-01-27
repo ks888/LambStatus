@@ -37,4 +37,24 @@ export class Settings {
   async getCognitoPoolID () {
     return this.cognitoPoolID
   }
+
+  async setLogoID (logoID) {
+    this.logoID = logoID
+  }
+
+  async getLogoID () {
+    return this.logoID
+  }
+
+  async deleteLogoID () {
+    return delete this.logoID
+  }
+
+  async setBackgroundColor (backgroundColor) {
+    this.backgroundColor = backgroundColor
+  }
+
+  async getBackgroundColor () {
+    return this.backgroundColor
+  }
 }

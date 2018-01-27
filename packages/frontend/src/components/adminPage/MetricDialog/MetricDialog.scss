@@ -21,6 +21,7 @@
   cursor: pointer;
 }
 
+// Using !important is the canonical way to change the appearance of the tooltip
 .tooltip {
   background-color: #777 !important;
   padding: 3px 10px !important;

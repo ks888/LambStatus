@@ -4,7 +4,8 @@ import classes from './StatusPageLayout.scss'
 export default class StatusPageLayout extends React.Component {
   static propTypes = {
     settings: PropTypes.shape({
-      serviceName: PropTypes.string
+      serviceName: PropTypes.string,
+      backgroundColor: PropTypes.string
     }).isRequired,
     fetchSettings: PropTypes.func.isRequired,
     children: React.PropTypes.element.isRequired
@@ -15,16 +16,19 @@ export default class StatusPageLayout extends React.Component {
   }
 
   componentWillUpdate (nextProps) {
-    if (nextProps.settings.serviceName) {
+    if (nextProps.settings.serviceName !== undefined) {
       document.title = `${nextProps.settings.serviceName} Status`
     }
   }
 
   render () {
+    let bgColor = this.props.settings.backgroundColor || undefined
     return (
-      <main className={classes.main}>
-        {this.props.children}
-      </main>
+      <div className={classes.background} style={{backgroundColor: bgColor}}>
+        <main className={classes.main}>
+          {this.props.children}
+        </main>
+      </div>
     )
   }
 }

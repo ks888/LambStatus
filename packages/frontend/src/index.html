@@ -11,8 +11,8 @@
   <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.stylesheets[i] %>" />
   <% } %>
 </head>
-<body style="height: 100%">
-  <div id="root" style="height: 100%"></div>
+<body>
+  <div id="root"></div>
   <% for (var i in htmlWebpackPlugin.options.scripts) { %>
   <script src="<%= htmlWebpackPlugin.options.scripts[i] %>"></script>
   <% } %>

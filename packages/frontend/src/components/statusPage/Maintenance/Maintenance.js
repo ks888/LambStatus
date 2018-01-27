@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import Link from 'components/common/Link'
 import ErrorMessage from 'components/common/ErrorMessage'
+import Header from 'components/statusPage/Header'
 import MaintenanceItem from 'components/statusPage/MaintenanceItem'
 import classes from './Maintenance.scss'
 
@@ -16,9 +17,6 @@ export default class Maintenance extends React.Component {
       startAt: PropTypes.string.isRequired,
       endAt: PropTypes.string.isRequired
     }),
-    settings: PropTypes.shape({
-      serviceName: PropTypes.string
-    }).isRequired,
     fetchMaintenances: PropTypes.func.isRequired
   }
 
@@ -40,7 +38,7 @@ export default class Maintenance extends React.Component {
   }
 
   render () {
-    const { maintenanceID: id, settings } = this.props
+    const { maintenanceID: id } = this.props
 
     let maintenance = ''
     if (this.props.maintenance) {
@@ -51,10 +49,11 @@ export default class Maintenance extends React.Component {
 
     return (
       <div>
-        <h4>Scheduled Maintenance Report for {settings.serviceName}</h4>
-        <ul className={classes.container} >
-          {maintenance}
-        </ul>
+        <Header />
+        <div className={classes.container}>
+          <h4 className={classnames(classes.title)}>Scheduled Maintenance Report</h4>
+          <ul>{maintenance}</ul>
+        </div>
         <span className={classnames(classes.link)}><Link link='/' text='Current Incidents' /></span>
       </div>
     )

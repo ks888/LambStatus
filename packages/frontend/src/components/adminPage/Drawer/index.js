@@ -37,20 +37,28 @@ const components = {
 
 const Drawer = () => {
   const drawerItems = Object.keys(components).map((key) => {
+    const icon = <i className='material-icons'>{ components[key].icon }</i>
     return (
       <Link key={key} to={components[key].path} className={classes['navi-link']}
         activeClassName={classes.active} onlyActiveOnIndex>
-        <span className={classes['large-window']}>{ components[key].name }</span>
-        <span className={classes['small-window']}><i className='material-icons'>{ components[key].icon }</i></span>
+        <span className={classes['large-window']}>{icon}{ components[key].name }</span>
+        <span className={classes['small-window']}>{icon}</span>
       </Link>
     )
   })
 
-  return (<div className={classes.drawer}>
-    <nav className={classes.navi}>
-      {drawerItems}
-    </nav>
-  </div>)
+  return (
+    <div className={classes.drawer}>
+      <nav className={classes.navi}>
+        {drawerItems}
+      </nav>
+      <div className={classes.logo}>
+        <a href='https://github.com/ks888/LambStatus'>
+           Powered by LambStatus<br />Feedbacks are welcome!
+        </a>
+      </div>
+    </div>
+  )
 }
 
 export default Drawer

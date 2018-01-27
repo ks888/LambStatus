@@ -1,4 +1,5 @@
-import { LIST_SETTINGS, EDIT_SETTINGS, ADD_API_KEY, REMOVE_API_KEY } from 'actions/settings'
+import { LIST_SETTINGS, EDIT_SETTINGS, EDIT_LOGO, REMOVE_LOGO, ADD_API_KEY,
+         REMOVE_API_KEY } from 'actions/settings'
 
 function listSettingsHandler (state = { }, action) {
   if (action.settings.apiKeys) {
@@ -13,8 +14,26 @@ function listSettingsHandler (state = { }, action) {
 function editSettingsHandler (state = { }, action) {
   return Object.assign({}, state, {
     settings: {
-      ...action.settings,
-      apiKeys: state.settings.apiKeys
+      ...state.settings,
+      ...action.settings
+    }
+  })
+}
+
+function editLogoHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    settings: {
+      ...state.settings,
+      logoID: action.logo.id
+    }
+  })
+}
+
+function removeLogoHandler (state = { }, action) {
+  return Object.assign({}, state, {
+    settings: {
+      ...state.settings,
+      logoID: ''
     }
   })
 }
@@ -40,6 +59,8 @@ function removeApiKeyHandler (state = { }, action) {
 const ACTION_HANDLERS = {
   [LIST_SETTINGS]: listSettingsHandler,
   [EDIT_SETTINGS]: editSettingsHandler,
+  [EDIT_LOGO]: editLogoHandler,
+  [REMOVE_LOGO]: removeLogoHandler,
   [ADD_API_KEY]: addApiKeyHandler,
   [REMOVE_API_KEY]: removeApiKeyHandler
 }

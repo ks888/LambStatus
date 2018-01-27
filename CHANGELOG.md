@@ -1,5 +1,18 @@
 # Change Log
 
+## [v0.5.1](https://github.com/ks888/LambStatus/tree/v0.5.1) (2018-01-27)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.5.1...v0.5.1)
+
+### Added
+
+- [\#89](https://github.com/ks888/LambStatus/pull/89): Enable admins to upload a brand logo and show it on their status page
+- [\#87](https://github.com/ks888/LambStatus/issues/87): Change the background color of the status page
+
+### Fixed
+
+- [\#85](https://github.com/ks888/LambStatus/issues/85): Git ignore .env (thanks [@kbariotis](https://github.com/kbariotis))
+- [\#61](https://github.com/ks888/LambStatus/issues/61): Change the color of the header according to the service status (thanks [@kbariotis](https://github.com/kbariotis))
+
 ## [v0.5.0](https://github.com/ks888/LambStatus/tree/v0.5.0) (2018-01-06)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.4.3...v0.5.0)
 

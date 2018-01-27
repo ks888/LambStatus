@@ -2,7 +2,10 @@
   background: #fafafa;
   border-right: 1px solid #e0e0e0;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+  display: flex;
+  flex-direction: column;
   height: calc(100% - 64px);
+  justify-content: space-between;
   left: 0;
   margin-top: 64px;
   position: absolute;
@@ -23,7 +26,7 @@
 .navi-link {
   color: #757575;
   opacity: .87;
-  padding: 16px 40px;
+  padding: 16px 24px;
   text-decoration: none;
 
   @media screen and (max-width: 768px) {
@@ -39,6 +42,13 @@
   @media screen and (max-width: 768px) {
     display: none;
   }
+
+  align-items: center;
+  display: inline-flex;
+
+  i {
+    padding-right: 5px;
+  }
 }
 
 .small-window {
@@ -49,4 +59,24 @@
 
 .active {
   background: #E0E0E0;
+}
+
+.logo {
+  padding-bottom: 6px;
+  text-align: center;
+
+  > a {
+    color: rgba(0,0,0,.5);
+    font-size: 12px;
+    line-height: 14px;
+    text-decoration: none;
+  }
+
+  > a:hover {
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 }

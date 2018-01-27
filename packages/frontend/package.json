@@ -1,6 +1,6 @@
 {
   "name": "lamb-status-frontend",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Frontend for LambStatus",
   "main": "index.js",
   "engines": {
@@ -10,10 +10,10 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint src",
-    "build": "npm run clean && better-npm-run build",
+    "build": "npm run clean && better-npm-run build:admin && better-npm-run build:status",
     "start": "npm run start:admin",
-    "start:admin": "better-npm-run start admin",
-    "start:status": "better-npm-run start status",
+    "start:admin": "better-npm-run start:admin",
+    "start:status": "better-npm-run start:status",
     "test": "better-npm-run test",
     "test:dev": "npm run test -- --watch",
     "codecov": "cat coverage/lcov.info | codecov",
@@ -22,17 +22,35 @@
     "release:force": "npm run release -- --force"
   },
   "betterScripts": {
-    "build": {
-      "command": "babel-node bin/compile",
+    "build:admin": {
+      "command": "babel-node bin/generateSettings && babel-node bin/compile",
       "env": {
         "NODE_ENV": "production",
+        "PAGE_TYPE": "admin",
         "DEBUG": "app:*"
       }
     },
-    "start": {
-      "command": "babel-node bin/server",
+    "build:status": {
+      "command": "babel-node bin/generateSettings && babel-node bin/compile",
+      "env": {
+        "NODE_ENV": "production",
+        "PAGE_TYPE": "status",
+        "DEBUG": "app:*"
+      }
+    },
+    "start:admin": {
+      "command": "babel-node bin/generateSettings && webpack-dev-server --config ./build/webpack.config",
       "env": {
         "NODE_ENV": "development",
+        "PAGE_TYPE": "admin",
+        "DEBUG": "app:*"
+      }
+    },
+    "start:status": {
+      "command": "babel-node bin/generateSettings && webpack-dev-server --config ./build/webpack.config",
+      "env": {
+        "NODE_ENV": "development",
+        "PAGE_TYPE": "status",
         "DEBUG": "app:*"
       }
     },
@@ -125,12 +143,12 @@
     "babel-eslint": "^6.0.0-beta.6",
     "babel-plugin-empower-assert": "^1.3.0",
     "babel-plugin-espower": "^2.3.2",
-    "browser-sync": "^2.18.5",
     "codecov": "^1.0.1",
     "connect-history-api-fallback": "^1.3.0",
     "electron": "^1.4.6",
     "empty-module": "0.0.2",
-    "enzyme": "^2.0.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-15": "^1.0.5",
     "eslint": "^3.0.1",
     "eslint-config-standard": "^5.1.0",
     "eslint-config-standard-jsx": "^3.3.0",
@@ -150,9 +168,10 @@
     "mocha": "^3.0.1",
     "power-assert": "^1.4.2",
     "react-addons-test-utils": "^15.0.0",
+    "react-test-renderer": "^15.0.0",
     "redbox-react": "^1.2.10",
     "sinon": "^1.17.3",
-    "webpack-dev-middleware": "^1.6.1",
-    "webpack-hot-middleware": "^2.6.0"
+    "webpack-dev-middleware": "^1.6.0",
+    "webpack-dev-server": "^1.16.0"
   }
 }

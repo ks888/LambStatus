@@ -1,19 +1,15 @@
-.top {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.container {
+.months-container {
   list-style: none;
   margin-top: 0;
   padding-bottom: 8px;
   padding-left: 8px;
   padding-right: 8px;
+  padding-top: 2px;
 }
 
 .title {
-  margin-bottom: 16px;
+  font-size: 20px;
+  margin-bottom: 0;
   margin-top: 8px;
 }
 
@@ -28,10 +24,6 @@
   }
 }
 
-.date_item_primary {
-  height: auto !important;
-}
-
 .border {
   border: 0;
   border-bottom-style: solid;
@@ -39,6 +31,21 @@
   padding-bottom: 3px;
   margin-bottom: 10px;
   border-color: #D0D0D0;
+}
+
+.events-container {
+  list-style: none;
+  margin-top: 0;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+
+  > ul {
+    background-color: #FFFFFF;
+    list-style: none;
+    padding-left: 0;
+  }
 }
 
 .link {

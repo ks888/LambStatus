@@ -331,18 +331,15 @@ export default class MetricsGraph extends React.Component {
     }
 
     return (
-      <li key={this.props.metricID} className={classnames('mdl-list__item',
-        'mdl-list__item--two-line', 'mdl-shadow--2dp', classes.item)}>
-        <span className={classnames('mdl-list__item-primary-content', classes.item_primary)}>
-          <div className={classnames(classes.title)}>
-            {this.props.metric.title}
-            <span className={classnames(classes.average)}>
-              {`${average}${this.props.metric.unit}`}
-            </span>
-          </div>
-          {message}
-          <div id={this.graphNodeID} />
-        </span>
+      <li key={this.props.metricID} className={classnames('mdl-shadow--2dp', classes.container)}>
+        <div className={classnames(classes.title)}>
+          {this.props.metric.title}
+          <span className={classnames(classes.average)}>
+            {`${average}${this.props.metric.unit}`}
+          </span>
+        </div>
+        {message}
+        <div id={this.graphNodeID} />
       </li>
     )
   }

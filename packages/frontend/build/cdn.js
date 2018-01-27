@@ -1,4 +1,4 @@
-import { spawnSync } from 'child_process'
+const {spawnSync} = require('child_process')
 
 let depsCache
 
@@ -18,12 +18,14 @@ const getVersion = function (cdnModule) {
   return curr.dependencies[cdnModule.moduleName].version
 }
 
-export const buildScriptURL = function (cdnModule) {
+const buildScriptURL = function (cdnModule) {
   const version = getVersion(cdnModule)
   return `https://cdnjs.cloudflare.com/ajax/libs/${cdnModule.libraryName}/${version}/${cdnModule.scriptPath}`
 }
 
-export const buildCSSURL = function (cdnModule) {
+const buildCSSURL = function (cdnModule) {
   const version = getVersion(cdnModule)
   return `https://cdnjs.cloudflare.com/ajax/libs/${cdnModule.libraryName}/${version}/${cdnModule.cssPath}`
 }
+
+module.exports = {buildScriptURL, buildCSSURL}

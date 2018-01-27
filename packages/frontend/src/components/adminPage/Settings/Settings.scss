@@ -13,10 +13,36 @@
   }
 }
 
-.item {
-  color: rgba(0, 0, 0, .54);
-  margin-bottom: 0;
-  margin-top: 0;
-  padding-bottom: 0;
-  padding-top: 0;
+.tabs {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.tab {
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  cursor: pointer;
+  font-size: 16px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  text-align: center;
+  width: 100px;
+}
+
+.selected-tab {
+  border-bottom: none;
+  border-left: 1px solid rgba(0,0,0,.12);
+  border-right: 1px solid rgba(0,0,0,.12);
+  border-top: 1px solid rgba(0,0,0,.12);
+  color: rgba(0,0,0,.54);
+}
+
+.unselected-tab {
+  color: rgba(0,0,0,.3);
+}
+
+.padding {
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  width: 100%;
 }
