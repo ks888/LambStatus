@@ -1266,49 +1266,32 @@ Resources:
     DependsOn:
       - "GetComponentsApiMethod"
       - "PostComponentsApiMethod"
-      - "OptionsComponentsApiMethod"
       - "PatchComponentApiMethod"
       - "DeleteComponentApiMethod"
-      - "OptionsComponentApiMethod"
       - "GetIncidentsApiMethod"
       - "PostIncidentsApiMethod"
-      - "OptionsIncidentsApiMethod"
       - "PatchIncidentApiMethod"
       - "DeleteIncidentApiMethod"
-      - "OptionsIncidentApiMethod"
       - "PatchIncidentUpdateApiMethod"
-      - "OptionsIncidentUpdateApiMethod"
       - "GetMaintenancesApiMethod"
       - "PostMaintenancesApiMethod"
-      - "OptionsMaintenancesApiMethod"
       - "PatchMaintenanceApiMethod"
       - "DeleteMaintenanceApiMethod"
-      - "OptionsMaintenanceApiMethod"
       - "GetMaintenanceUpdatesApiMethod"
-      - "OptionsMaintenanceUpdatesApiMethod"
       - "PatchMaintenanceUpdateApiMethod"
-      - "OptionsMaintenanceUpdateApiMethod"
       - "GetExternalMetricsApiMethod"
-      - "OptionsExternalMetricsApiMethod"
       - "GetPublicMetricsApiMethod"
-      - "OptionsPublicMetricsApiMethod"
       - "GetMetricsApiMethod"
       - "PostMetricsApiMethod"
-      - "OptionsMetricsApiMethod"
       - "PatchMetricApiMethod"
       - "DeleteMetricApiMethod"
-      - "OptionsMetricApiMethod"
       - "GetPublicSettingsApiMethod"
-      - "OptionsPublicSettingsApiMethod"
       - "GetSettingsApiMethod"
       - "PatchSettingsApiMethod"
       - "PostLogosApiMethod"
       - "DeleteLogoApiMethod"
-      - "OptionsSettingsApiMethod"
       - "PostApiKeysApiMethod"
-      - "OptionsApiKeysApiMethod"
       - "DeleteApiKeyApiMethod"
-      - "OptionsApiKeyApiMethod"
       - "PostMetricsDataApiMethod"
   RestApi:
     Type: "AWS::ApiGateway::RestApi"
@@ -1423,34 +1406,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsComponentsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "ComponentsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   PatchComponentApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -1546,34 +1501,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsComponentApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "ComponentApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   IncidentsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -1652,34 +1579,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsIncidentsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "IncidentsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   IncidentApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -1828,34 +1727,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsIncidentApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "IncidentApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   IncidentUpdatesApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -1920,34 +1791,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsIncidentUpdateApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "IncidentUpdateApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   MaintenancesApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2026,34 +1869,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMaintenancesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenancesApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   MaintenanceApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2157,34 +1972,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMaintenanceApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenanceApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   MaintenanceUpdatesApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2238,34 +2025,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMaintenanceUpdatesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenanceUpdatesApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   MaintenanceUpdateApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2322,34 +2081,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMaintenanceUpdateApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenanceUpdateApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   ExternalMetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2406,34 +2137,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsExternalMetricsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "ExternalMetricsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   PublicMetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2476,34 +2179,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsPublicMetricsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "PublicMetricsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   MetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2592,34 +2267,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMetricsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MetricsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   PatchMetricApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -2715,34 +2362,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsMetricApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MetricApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   PublicSettingsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2785,34 +2404,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsPublicSettingsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "PublicSettingsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   SettingsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2905,34 +2496,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsSettingsApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "SettingsApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,PATCH,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   LogosApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -2985,34 +2548,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsLogosApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "LogosApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   DeleteLogoApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -3060,34 +2595,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsLogoApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "LogoApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   ApiKeysApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -3140,34 +2647,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsApiKeysApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "ApiKeysApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   DeleteApiKeyApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -3215,34 +2694,6 @@ Resources:
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
-  OptionsApiKeyApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "ApiKeyApiResource"
-      HttpMethod: "OPTIONS"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "MOCK"
-        RequestTemplates:
-          application/json: "{ \"statusCode\": 200 }"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Requested-With,X-Requested-By,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods: "'PATCH,DELETE,OPTIONS'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-              method.response.header.Access-Control-Max-Age: "'600'"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Headers: true
-            method.response.header.Access-Control-Allow-Methods: true
-            method.response.header.Access-Control-Allow-Origin: true
-            method.response.header.Access-Control-Max-Age: true
   V0ApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
