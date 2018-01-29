@@ -1,3 +1,4 @@
+const fs = require('fs')
 const webpack = require('webpack')
 const cssnano = require('cssnano')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -38,6 +39,12 @@ const generateWebpackConfig = (config) => {
   const paths = config.utils_paths
   const {__DEV__, __PROD__, __TEST__, __COVERAGE__} = config.globals
 
+  let __LAMBSTATUS_API_URL__ = ''
+  if (__DEV__) {
+    // eslint-disable-next-line no-eval
+    eval(fs.readFileSync(config.settings_js_path) + '')
+  }
+
   debug('Create configuration.')
   const webpackConfig = {
     name: 'client',
@@ -53,7 +60,13 @@ const generateWebpackConfig = (config) => {
       contentBase: paths.dist(),
       historyApiFallback: true,
       inline: true,
-      port: config.server_port
+      port: config.server_port,
+      proxy: {
+        '/api': {
+          target: __LAMBSTATUS_API_URL__,
+          changeOrigin: true
+        }
+      }
     },
     entry: {
       app: [paths.entry_point]
@@ -90,7 +103,19 @@ const generateWebpackConfig = (config) => {
       scripts: scriptsServedFromCDN
     }),
     new CopyWebpackPlugin([
-      { from: config.settings_js_path, to: 'settings.js' }
+      { from: config.settings_js_path, to: 'settings.js', transform: (content, path) => {
+        if (__DEV__) {
+          const substr = __LAMBSTATUS_API_URL__
+          const idx = content.indexOf(substr)
+          const before = content.slice(0, idx)
+          const after = content.slice(idx + substr.length)
+
+          const newSubstr = Buffer.from(`http://localhost:${config.server_port}`)
+          const len = before.length + newSubstr.length + after.length
+          return Buffer.concat([before, newSubstr, after], len)
+        }
+        return content
+      }}
     ])
   ]
 
