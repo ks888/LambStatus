@@ -2,7 +2,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import { updateComponentStatus, SettingsProxy, MetricProxy } from 'api/utils'
 import CloudFormation from 'aws/cloudFormation'
-import Cognito, { UserPool } from 'aws/cognito'
+import { AdminUserPool } from 'aws/cognito'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import ComponentsStore from 'db/components'
@@ -214,21 +214,23 @@ describe('SettingsProxy', () => {
   describe('updateUserPool', () => {
     it('should update the user pool with valid params', async () => {
       const cognitoPoolID = 'id'
-      sinon.stub(Cognito.prototype, 'getUserPool').returns(new UserPool({userPoolID: cognitoPoolID, snsCallerArn: ''}))
-      const updatePoolStub = sinon.stub(Cognito.prototype, 'updateUserPool').returns()
-
       const serviceName = 'test'
       const adminPageURL = 'admin'
+
       const proxy = new SettingsProxy({serviceName, adminPageURL, cognitoPoolID})
+      sinon.stub(AdminUserPool, 'get', (poolID, params) => {
+        assert(poolID === cognitoPoolID)
+        assert(params.serviceName === serviceName)
+        assert(params.adminPageURL === adminPageURL)
+        return new AdminUserPool({})
+      })
+      const updatePoolStub = sinon.stub(AdminUserPool.prototype, 'update')
       await proxy.updateUserPool()
 
       assert(updatePoolStub.calledOnce)
-      assert(updatePoolStub.firstCall.args[0].userPoolID === cognitoPoolID)
-      assert(updatePoolStub.firstCall.args[0].serviceName === serviceName)
-      assert(updatePoolStub.firstCall.args[0].adminPageURL === adminPageURL)
-      assert(updatePoolStub.firstCall.args[0].snsCallerArn === '')
 
-      Cognito.prototype.getUserPool.restore()
+      AdminUserPool.get.restore()
+      AdminUserPool.prototype.update.restore()
     })
   })
 })

@@ -1,5 +1,5 @@
 import CloudFormation from 'aws/cloudFormation'
-import Cognito from 'aws/cognito'
+import {AdminUserPool} from 'aws/cognito'
 import S3 from 'aws/s3'
 import SNS from 'aws/sns'
 import ComponentsStore from 'db/components'
@@ -161,12 +161,12 @@ export class SettingsProxy {
       return
     }
 
-    const cognito = new Cognito()
-    const userPool = await cognito.getUserPool(poolID)
-
-    userPool.serviceName = await this.getServiceName()
-    userPool.adminPageURL = await this.getAdminPageURL()
-    await cognito.updateUserPool(userPool)
+    const params = {
+      serviceName: await this.getServiceName(),
+      adminPageURL: await this.getAdminPageURL()
+    }
+    const cognito = AdminUserPool.get(poolID, params)
+    await cognito.update()
   }
 }
 

@@ -1,17 +1,134 @@
 import assert from 'assert'
+import sinon from 'sinon'
 import AWS from 'aws-sdk-mock'
-import Cognito, { UserPool } from 'aws/cognito'
+import Cognito, { AdminUserPool } from 'aws/cognito'
+import { Subscriber } from 'model/subscription'
 
 describe('UserPool', () => {
-  context('buildCommonUserPoolParameters', () => {
+  afterEach(() => {
+    AWS.restore('CognitoIdentityServiceProvider')
+  })
+
+  context('get', () => {
+    it('should build the pool object from the fetched user pool info', async () => {
+      const id = 'id'
+      const serviceName = 'test'
+      const adminPageURL = 'url'
+      const userPoolName = 'name'
+      const snsCallerArn = 'arn'
+
+      sinon.stub(Cognito.prototype, 'getUserPool', (poolID) => {
+        assert(poolID === id)
+        return {Id: poolID, Name: userPoolName, SmsConfiguration: {SnsCallerArn: snsCallerArn}}
+      })
+
+      const actual = await AdminUserPool.get(id, {serviceName, adminPageURL})
+      assert(actual.userPoolID === id)
+      assert(actual.userPoolName === userPoolName)
+      assert(actual.serviceName === serviceName)
+      assert(actual.snsCallerArn === snsCallerArn)
+      assert(actual.adminPageURL === adminPageURL)
+    })
+  })
+
+  context('create', () => {
+    it('should create the admin page pool from the given args', async () => {
+      const id = 'id'
+      const userPoolName = 'name'
+
+      const stub = sinon.stub(Cognito.prototype, 'createUserPool', (params) => {
+        assert(params.PoolName === userPoolName)
+        return id
+      })
+
+      const pool = new AdminUserPool({userPoolName})
+      await pool.create()
+      assert(pool.userPoolID === id)
+      assert(stub.calledOnce)
+    })
+  })
+
+  context('update', () => {
+    it('should update the admin page pool', async () => {
+      const id = 'id'
+
+      const stub = sinon.stub(Cognito.prototype, 'updateUserPool', (params) => {
+        assert(params.UserPoolId === id)
+      })
+
+      let err
+      try {
+        const pool = new AdminUserPool({})
+        pool.userPoolID = id
+        await pool.update()
+      } catch (error) {
+        err = error
+      }
+      assert(err === undefined)
+      assert(stub.calledOnce)
+    })
+
+    it('should throw error if id is not defined', async () => {
+      let err
+      try {
+        const pool = new AdminUserPool({})
+        await pool.update()
+      } catch (error) {
+        err = error
+      }
+      assert(err !== undefined)
+    })
+  })
+
+  context('delete', () => {
+    it('should delete the admin page pool', async () => {
+      const id = 'id'
+
+      const stub = sinon.stub(Cognito.prototype, 'deleteUserPool', (params) => {
+        assert(params.UserPoolId === id)
+      })
+
+      let err
+      try {
+        const pool = new AdminUserPool({})
+        pool.userPoolID = id
+        await pool.delete()
+      } catch (error) {
+        err = error
+      }
+      assert(err === undefined)
+      assert(stub.calledOnce)
+    })
+
+    it('should throw error if id is not defined', async () => {
+      let err
+      try {
+        const pool = new AdminUserPool({})
+        await pool.delete()
+      } catch (error) {
+        err = error
+      }
+      assert(err !== undefined)
+    })
+  })
+
+  context('buildCommonParameters', () => {
     it('should build user pool params', async () => {
       const params = {serviceName: 'name', adminPageURL: 'url', snsCallerArn: 'arn'}
-      const userPool = new UserPool(params)
-      const actual = userPool.buildCommonUserPoolParameters()
+      const userPool = new AdminUserPool(params)
+      const actual = userPool.buildCommonParameters()
 
       assert(actual.EmailVerificationSubject.match(new RegExp(params.serviceName)))
       assert(actual.AdminCreateUserConfig.InviteMessageTemplate.EmailMessage.match(new RegExp(params.adminPageURL)))
       assert(actual.SmsConfiguration.SnsCallerArn === params.snsCallerArn)
+    })
+
+    it('should set LambStatus as the title if service name is empty', async () => {
+      const params = {serviceName: '', adminPageURL: 'url', snsCallerArn: 'arn'}
+      const userPool = new AdminUserPool(params)
+      const actual = userPool.buildCommonParameters()
+
+      assert(actual.EmailVerificationSubject.match(new RegExp('LambStatus')))
     })
   })
 })
@@ -23,59 +140,57 @@ describe('Cognito', () => {
 
   context('getUserPool', () => {
     it('should call describeUserPool', async () => {
-      const rawOutput = {UserPool: {Id: 'id', Name: 'name', SmsConfiguration: {SnsCallerArn: 'arn'}}}
-      const input = 'id'
-      AWS.mock('CognitoIdentityServiceProvider', 'describeUserPool', (params, callback) => {
-        assert(params.UserPoolId === input)
-        callback(null, rawOutput)
-      })
-
-      const cognito = new Cognito()
-      const userPool = await cognito.getUserPool(input)
-      assert(userPool.userPoolID === rawOutput.UserPool.Id)
-      assert(userPool.userPoolName === rawOutput.UserPool.Name)
-      assert(userPool.snsCallerArn === rawOutput.UserPool.SmsConfiguration.SnsCallerArn)
-    })
-  })
-
-  context('createUserPool', () => {
-    it('should call createUserPool', async () => {
-      const input = {userPoolName: 'name', serviceName: 'test', adminPageURL: 'url', snsCallerArn: 'arn'}
       const id = 'id'
-      AWS.mock('CognitoIdentityServiceProvider', 'createUserPool', (params, callback) => {
-        assert(params.PoolName === input.userPoolName)
-        callback(null, {UserPool: {Id: id, Name: params.PoolName}})
+      AWS.mock('CognitoIdentityServiceProvider', 'describeUserPool', (params, callback) => {
+        assert(params.UserPoolId === id)
+        callback(null, {UserPool: {Id: id}})
       })
 
       let err, actual
       try {
-        const cognito = new Cognito()
-        const userPool = new UserPool(input)
-        actual = await cognito.createUserPool(userPool)
+        actual = await new Cognito().getUserPool(id)
       } catch (error) {
         err = error
       }
 
       assert(err === undefined)
-      assert(actual instanceof UserPool)
-      assert(actual.userPoolID === id)
+      assert(actual.Id === id)
+    })
+  })
+
+  context('createUserPool', () => {
+    it('should call createUserPool', async () => {
+      const userPoolName = 'name'
+      const id = 'id'
+      AWS.mock('CognitoIdentityServiceProvider', 'createUserPool', (params, callback) => {
+        assert(params.PoolName === userPoolName)
+        callback(null, {UserPool: {Id: id}})
+      })
+
+      let err, actual
+      try {
+        actual = await new Cognito().createUserPool({PoolName: userPoolName})
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual === id)
     })
   })
 
   context('updateUserPool', () => {
     it('should call updateUserPool', async () => {
-      const input = {userPoolId: 'id', serviceName: 'test', adminPageURL: 'url', snsCallerArn: 'arn'}
-
+      const id = 'id'
       AWS.mock('CognitoIdentityServiceProvider', 'updateUserPool', (params, callback) => {
-        assert(params.UserPoolId === input.userPoolId)
+        assert(params.UserPoolId === id)
         callback(null)
       })
 
       let err
       try {
         const cognito = new Cognito()
-        const userPool = new UserPool(input)
-        await cognito.updateUserPool(userPool)
+        await cognito.updateUserPool({UserPoolId: id})
       } catch (error) {
         err = error
       }
@@ -95,7 +210,7 @@ describe('Cognito', () => {
       const cognito = new Cognito()
       let err
       try {
-        await cognito.deleteUserPool(input)
+        await cognito.deleteUserPool({UserPoolId: input})
       } catch (error) {
         err = error
       }
@@ -140,6 +255,30 @@ describe('Cognito', () => {
       let err
       try {
         await cognito.createUser(userPoolID, userName, email)
+      } catch (error) {
+        err = error
+      }
+      assert(err === undefined)
+    })
+  })
+
+  context('signUp', () => {
+    it('should call signUp', async () => {
+      const clientID = 'id'
+      const username = 'name'
+      AWS.mock('CognitoIdentityServiceProvider', 'signUp', (params, callback) => {
+        assert(params.ClientId === clientID)
+        assert(params.Username === username)
+        assert(params.Password !== undefined)
+        assert(params.UserAttributes[0].Value !== undefined)
+        callback(null, {User: {}})
+      })
+
+      const cognito = new Cognito()
+      let err
+      try {
+        const subscriber = new Subscriber(username)
+        await cognito.signUp(clientID, subscriber)
       } catch (error) {
         err = error
       }
