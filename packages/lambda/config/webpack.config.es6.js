@@ -160,6 +160,14 @@ export default {
     UpdateFeeds: [
       'babel-polyfill',
       './src/api/updateFeeds/index.js'
+    ],
+    Subscribe: [
+      'babel-polyfill',
+      './src/api/subscribe/index.js'
+    ],
+    GenerateVerificationMessage: [
+      'babel-polyfill',
+      './src/api/generateVerificationMessage/index.js'
     ]
   },
   output: {

@@ -3590,6 +3590,39 @@ Resources:
           - Arn
       Runtime: "nodejs6.10"
       Timeout: 30
+  GenerateVerificationMessageFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/GenerateVerificationMessage.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "generate a verification message"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-GenerateVerificationMessage
+      Handler: "index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - LambdaRole
+          - Arn
+      Runtime: "nodejs6.10"
+      Timeout: 30
+  GenerateVerificationMessagePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "GenerateVerificationMessageFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "cognito-idp.amazonaws.com"
+      SourceArn: !Sub |-
+        ${SubscribersPool.Arn}
   StatusPageApiInfo:
     Type: Custom::S3PutObject
     Properties:
@@ -3633,8 +3666,6 @@ Resources:
         Fn::GetAtt:
           - DBCreateItemsLambdaFunction
           - Arn
-      CognitoPoolID: !Sub |-
-        ${CognitoUserPool.UserPoolID}
       IncidentNotificationTopic:
         Ref: "IncidentNotificationTopic"
       UsagePlanID:
@@ -3728,6 +3759,42 @@ Resources:
         ${UserEmail}
       UserName: !Sub |-
         ${UserName}
+  SubscribersPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      AliasAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      EmailVerificationSubject: "Your verification link"
+      LambdaConfig:
+        CustomMessage: !Sub |-
+          ${GenerateVerificationMessageFunction.Arn}
+      MfaConfiguration: "OFF"
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 32
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+      UserPoolName: !Sub |-
+        ${AWS::StackName}-Subscribers
+      Schema:
+        - AttributeDataType: String
+          Name: token
+          StringAttributeConstraints:
+            MaxLength: "64"
+            MinLength: "64"
+          Mutable: true
+  SubscribersPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: server
+      UserPoolId:
+        Ref: SubscribersPool
   APIGatewayDeploy:
     Type: Custom::APIGatewayDeploy
     Properties:
@@ -3788,6 +3855,12 @@ Outputs:
   UserPoolClientID:
     Value: !Sub |-
       ${CognitoUserPoolClient.UserPoolClientID}
+  SubscribersPoolID:
+    Value:
+      Ref: SubscribersPool
+  SubscribersPoolClientID:
+    Value:
+      Ref: SubscribersPoolClient
   Version:
     Value:
       Fn::FindInMap: [ Constants, LambStatus, Version ]

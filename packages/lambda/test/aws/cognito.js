@@ -266,11 +266,9 @@ describe('Cognito', () => {
     it('should call signUp', async () => {
       const clientID = 'id'
       const username = 'name'
+      let actual
       AWS.mock('CognitoIdentityServiceProvider', 'signUp', (params, callback) => {
-        assert(params.ClientId === clientID)
-        assert(params.Username === username)
-        assert(params.Password !== undefined)
-        assert(params.UserAttributes[0].Value !== undefined)
+        actual = params
         callback(null, {User: {}})
       })
 
@@ -282,7 +280,12 @@ describe('Cognito', () => {
       } catch (error) {
         err = error
       }
+
       assert(err === undefined)
+      assert(actual.ClientId === clientID)
+      assert(actual.Username.length === 12)
+      assert(actual.Password !== undefined)
+      assert(actual.UserAttributes.length === 2)
     })
   })
 })

@@ -117,29 +117,11 @@ describe('SettingsProxy', () => {
     })
   })
 
-  describe('setCognitoPoolID', () => {
-    it('should update the CognitoPoolID', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.setCognitoPoolID = sinon.spy()
-      proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
-
-      const cognitoPoolID = 'id'
-      await proxy.setCognitoPoolID(cognitoPoolID)
-
-      assert(proxy.settings.cognitoPoolID === cognitoPoolID)
-      assert(proxy.store.setCognitoPoolID.calledOnce)
-      assert(proxy.store.setCognitoPoolID.firstCall.args[0] === cognitoPoolID)
-      assert(proxy.updateUserPool.notCalled)
-      assert(proxy.sns.notifyIncident.notCalled)
-    })
-  })
-
   describe('getCognitoPoolID', () => {
-    it('should get the CognitoPoolID from store if not cached', async () => {
+    it('should get the CognitoPoolID from CloudFormation if not cached', async () => {
       const cognitoPoolID = 'id'
       const proxy = new SettingsProxy()
-      proxy.store.getCognitoPoolID = async () => cognitoPoolID
+      proxy.cloudFormation.getUserPoolID = async () => cognitoPoolID
 
       const actual = await proxy.getCognitoPoolID()
       assert(cognitoPoolID === actual)
@@ -150,19 +132,11 @@ describe('SettingsProxy', () => {
       const cognitoPoolID = 'id'
       const proxy = new SettingsProxy()
       proxy.settings.setCognitoPoolID(cognitoPoolID)
-      proxy.store.getCognitoPoolID = sinon.spy()
+      proxy.cloudFormation.getUserPoolID = sinon.spy()
 
       const actual = await proxy.getCognitoPoolID()
       assert(cognitoPoolID === actual)
-      assert(proxy.store.getCognitoPoolID.notCalled)
-    })
-
-    it('should return the empty value if not found', async () => {
-      const proxy = new SettingsProxy()
-      proxy.store.getCognitoPoolID = async () => { throw new NotFoundError('') }
-
-      const actual = await proxy.getCognitoPoolID()
-      assert(actual === '')
+      assert(proxy.cloudFormation.getUserPoolID.notCalled)
     })
   })
 
@@ -222,7 +196,7 @@ describe('SettingsProxy', () => {
         assert(poolID === cognitoPoolID)
         assert(params.serviceName === serviceName)
         assert(params.adminPageURL === adminPageURL)
-        return new AdminUserPool({})
+        return new Promise((resolve) => { resolve(new AdminUserPool({})) })
       })
       const updatePoolStub = sinon.stub(AdminUserPool.prototype, 'update')
       await proxy.updateUserPool()

@@ -58,61 +58,6 @@ describe('SettingsStore', () => {
     })
   })
 
-  describe('getCognitoPoolID', () => {
-    it('should return the CognitoPool ID', async () => {
-      const id = 'test'
-      const store = new SettingsStore()
-      store.store.get = (key) => {
-        assert(key === settingKeys.cognitoPoolID)
-        return id
-      }
-
-      const actual = await store.getCognitoPoolID()
-      assert(id === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new Error() }
-
-      let error
-      try {
-        await store.getCognitoPoolID()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
-  describe('setCognitoPoolID', () => {
-    it('should set the CognitoPool ID', async () => {
-      const id = 'test'
-      const store = new SettingsStore()
-      store.store.set = (key, value) => {
-        assert(key === settingKeys.cognitoPoolID)
-        assert(value === id)
-        return value
-      }
-
-      const actual = await store.setCognitoPoolID(id)
-      assert(id === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.set = () => { throw new Error() }
-
-      let error
-      try {
-        await store.setCognitoPoolID()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
   describe('getLogoID', () => {
     it('should return the logo ID', async () => {
       const id = 'test'

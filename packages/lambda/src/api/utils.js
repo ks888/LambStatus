@@ -54,6 +54,10 @@ export class SettingsProxy {
     return storedServiceName
   }
 
+  async setAdminPageURL (adminPageURL) {
+    throw new Error('use the cloudformation parameter to change the url')
+  }
+
   async getAdminPageURL () {
     const adminPageURL = await this.settings.getAdminPageURL()
     if (adminPageURL !== undefined) {
@@ -63,6 +67,10 @@ export class SettingsProxy {
     const storedAdminPageURL = await this.cloudFormation.getAdminPageCloudFrontURL()
     await this.settings.setAdminPageURL(storedAdminPageURL)
     return storedAdminPageURL
+  }
+
+  async setStatusPageURL (statusPageURL) {
+    throw new Error('use the cloudformation parameter to change the url')
   }
 
   async getStatusPageURL () {
@@ -77,9 +85,7 @@ export class SettingsProxy {
   }
 
   async setCognitoPoolID (cognitoPoolID) {
-    await this.settings.setCognitoPoolID(cognitoPoolID)
-
-    await this.store.setCognitoPoolID(await this.settings.getCognitoPoolID())
+    throw new Error('can\'t change the user pool id')
   }
 
   async getCognitoPoolID () {
@@ -88,14 +94,7 @@ export class SettingsProxy {
       return cognitoPoolID
     }
 
-    let storedCognitoPoolID
-    try {
-      storedCognitoPoolID = await this.store.getCognitoPoolID()
-    } catch (err) {
-      if (err.name !== NotFoundError.name) throw err
-      storedCognitoPoolID = ''
-    }
-
+    const storedCognitoPoolID = await this.cloudFormation.getUserPoolID()
     await this.settings.setCognitoPoolID(storedCognitoPoolID)
     return storedCognitoPoolID
   }
@@ -165,7 +164,7 @@ export class SettingsProxy {
       serviceName: await this.getServiceName(),
       adminPageURL: await this.getAdminPageURL()
     }
-    const cognito = AdminUserPool.get(poolID, params)
+    const cognito = await AdminUserPool.get(poolID, params)
     await cognito.update()
   }
 }

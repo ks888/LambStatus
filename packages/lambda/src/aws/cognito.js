@@ -69,7 +69,7 @@ export class AdminUserPool {
     const {serviceName, adminPageURL, snsCallerArn} = this
     let title = `LambStatus`
     if (serviceName !== undefined && serviceName !== '') {
-      title = `${serviceName} Status`
+      title = `${serviceName} status`
     }
     const params = {
       AdminCreateUserConfig: {
@@ -189,9 +189,10 @@ export default class Cognito {
   signUp (clientId, subscriber) {
     const params = {
       ClientId: clientId,
-      Username: subscriber.email,
+      Username: subscriber.username,
       Password: subscriber.password,
       UserAttributes: [
+        {Name: 'email', Value: subscriber.email},
         {Name: 'custom:token', Value: subscriber.token}
       ]
     }
