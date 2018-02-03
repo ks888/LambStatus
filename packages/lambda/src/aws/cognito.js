@@ -239,4 +239,20 @@ export default class Cognito {
       })
     })
   }
+
+  deleteUser (userPoolId, username) {
+    const params = {
+      UserPoolId: userPoolId,
+      Username: username
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsCognito.adminDeleteUser(params, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
+      })
+    })
+  }
 }

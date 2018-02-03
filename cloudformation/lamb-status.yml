@@ -2865,7 +2865,6 @@ Resources:
       AuthorizationType: "NONE"
       ApiKeyRequired: false
       RequestParameters:
-        method.request.querystring.clientID: false
         method.request.querystring.username: false
         method.request.querystring.code: false
       Integration:
@@ -2881,7 +2880,6 @@ Resources:
         RequestTemplates:
           application/json: !Sub |-
             {
-              "clientID":"$input.params('clientID')",
               "username":"$input.params('username')",
               "code":"$input.params('code')"
             }
@@ -2920,9 +2918,12 @@ Resources:
         Ref: "RestApi"
       ResourceId:
         Ref: "UnsubscribeApiResource"
-      HttpMethod: "POST"
+      HttpMethod: "GET"
       AuthorizationType: "NONE"
       ApiKeyRequired: false
+      RequestParameters:
+        method.request.querystring.username: false
+        method.request.querystring.token: false
       Integration:
         Type: "AWS"
         IntegrationHttpMethod: "POST"
@@ -2932,10 +2933,20 @@ Resources:
               Fn::GetAtt:
                 - "UnsubscribeLambdaFunction"
                 - "Arn"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "username":"$input.params('username')",
+              "token":"$input.params('token')"
+            }
         IntegrationResponses:
           - StatusCode: "200"
             ResponseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Content-Type: "'text/html'"
+            ResponseTemplates:
+              text/html: !Sub |-
+                <html><body>$input.path('$.message')<script>$input.path('$.script')</script></body></html>
           - StatusCode: "400"
             ResponseParameters:
               method.response.header.Access-Control-Allow-Origin: "'*'"
@@ -2944,6 +2955,7 @@ Resources:
         - StatusCode: "200"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Content-Type: true
         - StatusCode: "400"
           ResponseParameters:
             method.response.header.Access-Control-Allow-Origin: true

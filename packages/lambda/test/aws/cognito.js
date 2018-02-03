@@ -340,4 +340,28 @@ describe('Cognito', () => {
       assert(actual.Username === username)
     })
   })
+
+  context('deleteUser', () => {
+    it('should call adminDeleteUser', async () => {
+      const userPoolID = 'id'
+      const username = 'name'
+      let actual
+      AWS.mock('CognitoIdentityServiceProvider', 'adminDeleteUser', (params, callback) => {
+        actual = params
+        callback()
+      })
+
+      const cognito = new Cognito()
+      let err
+      try {
+        await cognito.deleteUser(userPoolID, username)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual.UserPoolId === userPoolID)
+      assert(actual.Username === username)
+    })
+  })
 })

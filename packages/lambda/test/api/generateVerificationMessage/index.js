@@ -23,11 +23,10 @@ describe('generateVerificationMessage', () => {
   describe('buildConfirmURL', () => {
     it('should append the query parameter', async () => {
       const url = 'https://example.com'
-      const clientID = '100'
       const code = '200'
       const username = '300'
-      const expect = `${url}/api/subscribers/confirm?clientID=${clientID}&username=${username}&code=${code}`
-      const actual = buildConfirmURL(url, clientID, code, username)
+      const expect = `${url}/api/subscribers/confirm?username=${username}&code=${code}`
+      const actual = buildConfirmURL(url, code, username)
       assert(actual === expect)
     })
   })

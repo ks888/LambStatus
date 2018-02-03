@@ -169,6 +169,10 @@ export default {
       'babel-polyfill',
       './src/api/confirmSubscription/index.js'
     ],
+    Unsubscribe: [
+      'babel-polyfill',
+      './src/api/unsubscribe/index.js'
+    ],
     GenerateVerificationMessage: [
       'babel-polyfill',
       './src/api/generateVerificationMessage/index.js'

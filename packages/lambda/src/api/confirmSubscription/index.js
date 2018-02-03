@@ -4,22 +4,29 @@ import { SettingsProxy } from 'api/utils'
 import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
-  const {clientID, username, code} = event
+  const {username, code} = event
+  const cloudFormation = new CloudFormation(stackName)
+  const clientID = await cloudFormation.getSubscribersPoolClientID()
   const statusPageURL = await new SettingsProxy().getStatusPageURL()
   const script = `setTimeout(function(){ window.location.href = '${statusPageURL}'; }, 3*1000);`
-  const message = 'confirmed!'
   try {
     await new Cognito().confirm(clientID, username, code)
-    callback(null, {message, script})
+    callback(null, {message: 'confirmed!', script})
     return
   } catch (error) {
+    if (error.name === 'AliasExistsException') {
+      callback(null, {message: 'confirmed!', script})
+      return
+    }
+
     console.log(error.message)
     console.log(error.stack)
   }
 
+  const poolID = await cloudFormation.getSubscribersPoolID()
   try {
-    if (await isAlreadyConfirmed(username)) {
-      callback(null, {message, script})
+    if (await isAlreadyConfirmed(poolID, username)) {
+      callback(null, {message: 'already confirmed.', script})
       return
     }
   } catch (error) {
@@ -30,9 +37,8 @@ export async function handle (event, context, callback) {
   callback('Error: failed to confirm the code')
 }
 
-const isAlreadyConfirmed = async (username) => {
+const isAlreadyConfirmed = async (poolID, username) => {
   try {
-    const poolID = await new CloudFormation(stackName).getSubscribersPoolID()
     const user = await new Cognito().getUser(poolID, username)
     return user.UserStatus === 'CONFIRMED'
   } catch (error) {

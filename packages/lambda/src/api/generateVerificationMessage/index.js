@@ -1,18 +1,15 @@
-import CloudFormation from 'aws/cloudFormation'
 import querystring from 'querystring'
 import { SettingsProxy } from 'api/utils'
-import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   try {
     const settings = new SettingsProxy()
     const serviceName = await settings.getServiceName()
     const statusPageURL = await settings.getStatusPageURL()
-    const clientID = await new CloudFormation(stackName).getSubscribersPoolClientID()
     const code = event.request.codeParameter
     const username = event.userName
 
-    const confirmationURL = buildConfirmURL(statusPageURL, clientID, code, username)
+    const confirmationURL = buildConfirmURL(statusPageURL, code, username)
 
     const smsMessage = `Confirmation by SMS is not supported yet (${code})`
     const emailMessage = generateEmailMessage(serviceName, confirmationURL)
@@ -37,8 +34,8 @@ export const generateEmailSubject = (serviceName) => {
   return `${serviceName} status - confirm your subscription`
 }
 
-export const buildConfirmURL = (statusPageURL, clientID, code, username) => {
+export const buildConfirmURL = (statusPageURL, code, username) => {
   // do not encode code value since cognito will replace it later.
-  const query = `clientID=${querystring.escape(clientID)}&username=${querystring.escape(username)}&code=${code}`
+  const query = `username=${querystring.escape(username)}&code=${code}`
   return `${statusPageURL}/api/subscribers/confirm?${query}`
 }
