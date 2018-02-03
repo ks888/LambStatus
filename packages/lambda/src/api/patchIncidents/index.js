@@ -1,4 +1,4 @@
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 import { Incident, IncidentUpdate } from 'model/incidents'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
@@ -37,7 +37,7 @@ export async function handle (event, context, callback) {
       incidentWithIncidentUpdate.components = event.components
     }
 
-    await new SNS().notifyIncident(incidentWithIncidentUpdate)
+    await new SNS().notifyIncident(incidentWithIncidentUpdate, messageType.incidentUpdated)
 
     callback(null, incidentWithIncidentUpdate)
   } catch (error) {

@@ -1,4 +1,4 @@
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 import MaintenancesStore from 'db/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 
@@ -12,7 +12,7 @@ export async function handle (event, context, callback) {
     const maintenanceUpdates = await updateStore.query(maintenance.maintenanceID)
     await updateStore.delete(event.params.maintenanceid, maintenanceUpdates.map(upd => upd.maintenanceUpdateID))
 
-    await new SNS().notifyIncident(maintenance)
+    await new SNS().notifyIncident(maintenance, messageType.maintenanceDeleted)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

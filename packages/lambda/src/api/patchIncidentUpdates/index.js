@@ -1,6 +1,6 @@
 import { IncidentUpdate } from 'model/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
@@ -14,7 +14,7 @@ export async function handle (event, context, callback) {
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.update(incidentUpdate)
 
-    await new SNS().notifyIncident(incidentUpdate)
+    await new SNS().notifyIncident(incidentUpdate, messageType.incidentPatched)
 
     callback(null, incidentUpdate.objectify())
   } catch (error) {

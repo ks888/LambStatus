@@ -1,6 +1,6 @@
 import response from 'cfn-response'
 import APIGateway from 'aws/apiGateway'
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
@@ -15,7 +15,7 @@ export async function handle (event, context, callback) {
   } = event.ResourceProperties
 
   try {
-    await new SNS().notifyIncidentToTopic(incidentNotificationTopic)
+    await new SNS().notifyIncidentToTopic(incidentNotificationTopic, messageType.metadataChanged)
     await new APIGateway().createApiKeyWithUsagePlan(stackName, usagePlanID)
 
     response.send(event, context, response.SUCCESS)

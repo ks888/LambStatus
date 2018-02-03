@@ -1,7 +1,7 @@
 import CloudFormation from 'aws/cloudFormation'
 import {AdminUserPool} from 'aws/cognito'
 import S3 from 'aws/s3'
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 import ComponentsStore from 'db/components'
 import MetricsStore from 'db/metrics'
 import SettingsStore from 'db/settings'
@@ -33,7 +33,7 @@ export class SettingsProxy {
 
     await this.store.setServiceName(await this.settings.getServiceName())
     await this.updateUserPool()
-    await this.sns.notifyIncident()
+    await this.sns.notifyIncident('', messageType.metadataChanged)
   }
 
   async getServiceName () {

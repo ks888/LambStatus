@@ -1,6 +1,6 @@
 import { MaintenanceUpdate } from 'model/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
@@ -14,7 +14,7 @@ export async function handle (event, context, callback) {
     const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
     await maintenanceUpdatesStore.update(maintenanceUpdate)
 
-    await new SNS().notifyIncident(maintenanceUpdate)
+    await new SNS().notifyIncident(maintenanceUpdate, messageType.maintenancePatched)
 
     callback(null, maintenanceUpdate.objectify())
   } catch (error) {
