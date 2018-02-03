@@ -11,6 +11,8 @@ export async function handle (event, context, callback) {
     subscriber.validate()
 
     await new Cognito().signUp(clientID, subscriber)
+
+    callback(null, {username: subscriber.username})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

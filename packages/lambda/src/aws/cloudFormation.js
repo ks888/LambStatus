@@ -80,6 +80,11 @@ export default class CloudFormation {
     return await this.getOutputValue(key)
   }
 
+  async getSubscribersPoolID () {
+    const key = 'SubscribersPoolID'
+    return await this.getOutputValue(key)
+  }
+
   async getSubscribersPoolClientID () {
     const key = 'SubscribersPoolClientID'
     return await this.getOutputValue(key)

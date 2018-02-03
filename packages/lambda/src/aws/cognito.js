@@ -202,9 +202,40 @@ export default class Cognito {
         if (err) {
           return reject(err)
         }
-        console.log(data)
-        console.log(data.CodeDeliveryDetails)
         resolve()
+      })
+    })
+  }
+
+  confirm (clientId, username, code) {
+    const params = {
+      ClientId: clientId,
+      ConfirmationCode: code,
+      Username: username
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsCognito.confirmSignUp(params, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
+      })
+    })
+  }
+
+  getUser (userPoolId, username) {
+    const params = {
+      UserPoolId: userPoolId,
+      Username: username
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsCognito.adminGetUser(params, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(data)
       })
     })
   }

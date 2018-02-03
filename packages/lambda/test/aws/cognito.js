@@ -288,4 +288,56 @@ describe('Cognito', () => {
       assert(actual.UserAttributes.length === 2)
     })
   })
+
+  context('confirm', () => {
+    it('should call confirmSignUp', async () => {
+      const clientID = 'id'
+      const code = 'code'
+      const username = 'name'
+      let actual
+      AWS.mock('CognitoIdentityServiceProvider', 'confirmSignUp', (params, callback) => {
+        actual = params
+        callback(null, {})
+      })
+
+      const cognito = new Cognito()
+      let err
+      try {
+        await cognito.confirm(clientID, username, code)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actual.ClientId === clientID)
+      assert(actual.Username === username)
+      assert(actual.ConfirmationCode === code)
+    })
+  })
+
+  context('getUser', () => {
+    it('should call adminGetUser', async () => {
+      const userPoolID = 'id'
+      const username = 'name'
+      let actualParams
+      AWS.mock('CognitoIdentityServiceProvider', 'adminGetUser', (params, callback) => {
+        actualParams = params
+        callback(null, {Username: username})
+      })
+
+      const cognito = new Cognito()
+      let actual
+      let err
+      try {
+        actual = await cognito.getUser(userPoolID, username)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actualParams.UserPoolId === userPoolID)
+      assert(actualParams.Username === username)
+      assert(actual.Username === username)
+    })
+  })
 })

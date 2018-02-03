@@ -15,12 +15,15 @@ describe('subscribe', () => {
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolClientID')
 
     const event = {emailAddress: 'test@example.com'}
+    let actual
     let err
     await handle(event, null, (error, result) => {
+      actual = result
       err = error
     })
 
-    assert(err === undefined)
+    assert(err === null)
+    assert(actual.username.length === 12)
     assert(signUpStub.calledOnce)
   })
 
