@@ -6,14 +6,15 @@ import { updateComponentStatus } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
-    const params = {maintenanceID: event.params.maintenanceid, ...event.body}
+    const maintenanceID = event.params.maintenanceid
+    const params = {maintenanceID, ...event.body}
     const maintenance = new Maintenance(params)
     maintenance.validate()
     const maintenancesStore = new MaintenancesStore()
     await maintenancesStore.update(maintenance)
 
     let maintenanceUpdate = new MaintenanceUpdate({
-      maintenanceID: event.params.maintenanceid,
+      maintenanceID,
       maintenanceStatus: event.body.status,
       message: event.body.message
     })
@@ -28,7 +29,7 @@ export async function handle (event, context, callback) {
     }
 
     const maintenanceWithMaintenanceUpdate = Object.assign(maintenanceUpdate.objectify(), maintenance.objectify())
-    await new SNS().notifyIncident(maintenanceWithMaintenanceUpdate, messageType.maintenanceUpdated)
+    await new SNS().notifyIncident(maintenanceID, messageType.maintenanceUpdated)
 
     callback(null, {
       maintenance: maintenanceWithMaintenanceUpdate,

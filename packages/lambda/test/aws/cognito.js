@@ -341,6 +341,62 @@ describe('Cognito', () => {
     })
   })
 
+  context('listUsers', () => {
+    it('should return a list of confirmed users', async () => {
+      const userPoolID = 'id'
+      const users = [{Username: '1', Enabled: true}, {Username: '2', Enabled: true}]
+      let actualParams
+      AWS.mock('CognitoIdentityServiceProvider', 'listUsers', (params, callback) => {
+        actualParams = params
+        callback(null, {Users: users})
+      })
+
+      const cognito = new Cognito()
+      let actual
+      let err
+      try {
+        actual = await cognito.listUsers(userPoolID)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actualParams.Filter === 'cognito:user_status = "CONFIRMED"')
+      assert(actual.length === users.length)
+    })
+
+    it('should do the pagination', async () => {
+      const userPoolID = 'id'
+      const usersOnFirstCall = [{Username: '1', Enabled: true}]
+      const usersOnSecondCall = [{Username: '2', Enabled: true}]
+      let numCalled = 0
+      AWS.mock('CognitoIdentityServiceProvider', 'listUsers', (params, callback) => {
+        numCalled++
+        if (numCalled === 1) {
+          callback(null, {Users: usersOnFirstCall, PaginationToken: '1'})
+        } else if (numCalled === 2) {
+          callback(null, {Users: usersOnSecondCall})
+        } else {
+          throw new Error('called too many')
+        }
+      })
+
+      const actual = await new Cognito().listUsers(userPoolID)
+      assert(actual.length === usersOnFirstCall.length + usersOnSecondCall.length)
+      assert(numCalled === 2)
+    })
+
+    it('should remove disabled users', async () => {
+      const users = [{Username: '1', Enabled: true}, {Username: '2', Enabled: false}]
+      AWS.mock('CognitoIdentityServiceProvider', 'listUsers', (params, callback) => {
+        callback(null, {Users: users})
+      })
+
+      let actual = await new Cognito().listUsers('id')
+      assert(actual.length === 1)
+    })
+  })
+
   context('deleteUser', () => {
     it('should call adminDeleteUser', async () => {
       const userPoolID = 'id'

@@ -23,7 +23,7 @@ export async function handle (event, context, callback) {
     const incidentUpdates = await updateStore.query(incident.incidentID)
     await updateStore.delete(event.params.incidentid, incidentUpdates.map(upd => upd.incidentUpdateID))
 
-    await new SNS().notifyIncident(incident, messageType.incidentDeleted)
+    await new SNS().notifyIncident(incident.incidentID, messageType.incidentDeleted)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

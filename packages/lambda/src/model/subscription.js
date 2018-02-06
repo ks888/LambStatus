@@ -12,11 +12,14 @@ const validEmailAddress = (email) => {
 }
 
 export class Subscriber {
-  constructor (email, password = generateID(defaultPasswordLength)) {
-    this.username = generateID()
+  constructor ({email,
+                username = generateID(),
+                password = generateID(defaultPasswordLength),
+                token = generateID(tokenLength)}) {
+    this.username = username
     this.email = email
     this.password = password
-    this.token = generateID(tokenLength)
+    this.token = token
   }
 
   validate () {
@@ -24,8 +27,16 @@ export class Subscriber {
       throw new ValidationError('invalid email address')
     }
 
+    if (this.username === undefined) {
+      throw new ValidationError('invalid username')
+    }
+
     if (this.password === undefined) {
       throw new ValidationError('invalid password')
+    }
+
+    if (this.token === undefined) {
+      throw new ValidationError('invalid token')
     }
   }
 }

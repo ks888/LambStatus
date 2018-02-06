@@ -4,8 +4,9 @@ import SNS, {messageType} from 'aws/sns'
 
 export async function handle (event, context, callback) {
   try {
+    const incidentID = event.params.incidentid
     const incidentUpdate = new IncidentUpdate({
-      incidentID: event.params.incidentid,
+      incidentID,
       incidentUpdateID: event.params.incidentupdateid,
       ...event.body
     })
@@ -14,7 +15,7 @@ export async function handle (event, context, callback) {
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.update(incidentUpdate)
 
-    await new SNS().notifyIncident(incidentUpdate, messageType.incidentPatched)
+    await new SNS().notifyIncident(incidentID, messageType.incidentPatched)
 
     callback(null, incidentUpdate.objectify())
   } catch (error) {

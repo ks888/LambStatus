@@ -161,6 +161,10 @@ export default {
       'babel-polyfill',
       './src/api/updateFeeds/index.js'
     ],
+    SendEmails: [
+      'babel-polyfill',
+      './src/api/sendEmails/index.js'
+    ],
     Subscribe: [
       'babel-polyfill',
       './src/api/subscribe/index.js'

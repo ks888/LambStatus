@@ -33,7 +33,7 @@ export async function handle (event, context, callback) {
       incidentWithIncidentUpdate.components = event.components
     }
 
-    await new SNS().notifyIncident(incidentWithIncidentUpdate, messageType.incidentCreated)
+    await new SNS().notifyIncident(incident.incidentID, messageType.incidentCreated)
 
     callback(null, incidentWithIncidentUpdate)
   } catch (error) {

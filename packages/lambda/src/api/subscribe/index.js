@@ -7,7 +7,7 @@ export async function handle (event, context, callback) {
   try {
     const clientID = await new CloudFormation(stackName).getSubscribersPoolClientID()
     const email = event.emailAddress
-    const subscriber = new Subscriber(email)
+    const subscriber = new Subscriber({email})
     subscriber.validate()
 
     await new Cognito().signUp(clientID, subscriber)

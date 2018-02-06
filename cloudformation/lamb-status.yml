@@ -172,6 +172,13 @@ Resources:
                 Action: sns:publish
                 Resource:
                   Ref: IncidentNotificationTopic
+        - PolicyName: SES
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: ses:SendEmail
+                Resource: !Sub |-
+                  arn:aws:ses:*:${AWS::AccountId}:*/*
   GetComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1251,6 +1258,47 @@ Resources:
     Properties:
       Endpoint: !Sub |-
         ${UpdateFeedsLambdaFunction.Arn}
+      Protocol: "lambda"
+      TopicArn:
+        Ref: "IncidentNotificationTopic"
+  SendEmailsLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: !Sub |-
+          lambstatus-${AWS::Region}
+        S3Key: !Sub
+          - fn/${Version}/SendEmails.zip
+          - Version:
+              Fn::FindInMap: [ Constants, LambStatus, Version ]
+      Description: "Send emails to subscribers"
+      # The prefix of function name must be stack name
+      FunctionName: !Sub |-
+        ${AWS::StackName}-SendEmails
+      Handler: "index.handle"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "LambdaRole"
+          - "Arn"
+      Runtime: "nodejs6.10"
+      Timeout: 300
+  SendEmailsLambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName:
+        Fn::GetAtt:
+          - "SendEmailsLambdaFunction"
+          - "Arn"
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn:
+        Ref: "IncidentNotificationTopic"
+  IncidentSubscriptionBySendEmails:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Sub |-
+        ${SendEmailsLambdaFunction.Arn}
       Protocol: "lambda"
       TopicArn:
         Ref: "IncidentNotificationTopic"

@@ -4,14 +4,23 @@ import { stackName } from 'utils/const'
 
 export const messageType = {
   unknown: 0,
-  incidentCraeted: 1,
+  // incidentCreated means a new incident is just created. Message has its id.
+  incidentCreated: 1,
+  // incidentUpdated means the existing incident has a update. Message has its id.
   incidentUpdated: 2,
+  // incidentPatched means one of the incident updates is changed. Message has its id.
   incidentPatched: 3,
+  // incidentDeleted means the incident is deleted. Message has its id.
   incidentDeleted: 4,
-  maintenanceCraeted: 5,
+  // maintenanceCreated means a new maintenance is just created. Message has its id.
+  maintenanceCreated: 5,
+  // maintenanceUpdated means the existing maintenance has a update. Message has its id.
   maintenanceUpdated: 6,
+  // maintenancePatched means one of the maintenance updates is changed. Message has its id.
   maintenancePatched: 7,
+  // maintenanceDeleted means the maintenance is deleted. Message has its id.
   maintenanceDeleted: 8,
+  // metadataChanged means some metadata like service name is change. No message rule so far.
   metadataChanged: 9
 }
 

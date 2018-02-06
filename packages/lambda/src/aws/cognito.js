@@ -240,6 +240,41 @@ export default class Cognito {
     })
   }
 
+  async listUsers (userPoolId) {
+    let paginationToken
+    let users = []
+    while (true) {
+      const data = await this.listUsersWithPagination(userPoolId, paginationToken)
+      users = users.concat(data.Users)
+
+      if (data.PaginationToken === undefined) {
+        break
+      }
+      paginationToken = data.PaginationToken
+    }
+    return users.filter(user => user.Enabled)
+  }
+
+  listUsersWithPagination (userPoolId, paginationToken) {
+    const maxUsersPerRequest = 60
+    const params = {
+      UserPoolId: userPoolId,
+      AttributesToGet: ['email', 'custom:token'],
+      Filter: 'cognito:user_status = "CONFIRMED"',
+      Limit: maxUsersPerRequest,
+      PaginationToken: paginationToken
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsCognito.listUsers(params, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(data)
+      })
+    })
+  }
+
   deleteUser (userPoolId, username) {
     const params = {
       UserPoolId: userPoolId,

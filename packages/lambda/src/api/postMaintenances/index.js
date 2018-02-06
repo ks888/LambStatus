@@ -27,7 +27,7 @@ export async function handle (event, context, callback) {
     }
 
     const maintenanceWithMaintenanceUpdate = Object.assign(maintenanceUpdate.objectify(), maintenance.objectify())
-    await new SNS().notifyIncident(maintenanceWithMaintenanceUpdate, messageType.maintenanceCreated)
+    await new SNS().notifyIncident(maintenance.maintenanceID, messageType.maintenanceCreated)
 
     callback(null, {
       maintenance: maintenanceWithMaintenanceUpdate,
