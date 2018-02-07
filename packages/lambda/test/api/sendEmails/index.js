@@ -20,7 +20,7 @@ describe('sendEmails', () => {
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolID')
     sinon.stub(SettingsProxy.prototype, 'getStatusPageURL')
     getServiceNameStub = sinon.stub(SettingsProxy.prototype, 'getServiceName')
-    sendEmailStub = sinon.stub(SES.prototype, 'sendEmail')
+    sendEmailStub = sinon.stub(SES.prototype, 'sendEmailWithRetry')
     getIncidentStub = sinon.stub(IncidentsStore.prototype, 'get').returns({})
     queryIncidentUpdatesStub = sinon.stub(IncidentUpdatesStore.prototype, 'query')
       .returns([{message: 'test', incidentStatus: 'Resolved', createdAt: '1'}])
@@ -31,7 +31,7 @@ describe('sendEmails', () => {
     CloudFormation.prototype.getSubscribersPoolID.restore()
     SettingsProxy.prototype.getStatusPageURL.restore()
     SettingsProxy.prototype.getServiceName.restore()
-    SES.prototype.sendEmail.restore()
+    SES.prototype.sendEmailWithRetry.restore()
     IncidentsStore.prototype.get.restore()
     IncidentUpdatesStore.prototype.query.restore()
     Cognito.prototype.listUsers.restore()
@@ -101,6 +101,20 @@ describe('sendEmails', () => {
     })
 
     assert(sendEmailStub.callCount === users.length)
+  })
+
+  it('should print the error on failed to send email', async () => {
+    sendEmailStub.throws(new Error('test'))
+    sinon.spy(console, 'log')
+
+    const event = `{"message": "", "type": ${messageType.incidentCreated}}`
+    const rawEvent = {Records: [{Sns: {Message: event}}]}
+    await handle(rawEvent, null, (err, data) => {
+      assert(err === null)
+    })
+    assert(console.log.calledOnce)
+
+    console.log.restore()
   })
 
   it('should not send email if uninterested message types', async () => {

@@ -21,4 +21,23 @@ describe('SES', () => {
       assert(actual.Destination.CcAddresses === undefined)
     })
   })
+
+  describe('sendEmailWithRetry', () => {
+    it('should retry if failed', async () => {
+      let numCalled = 0
+      AWS.mock('SES', 'sendEmail', (params, callback) => {
+        numCalled++
+        callback(new Error('test'))
+      })
+
+      let err
+      try {
+        await new SES('us-west-2', 'test@example.com').sendEmailWithRetry('test@example.com', 'title', 'body')
+      } catch (error) {
+        err = error
+      }
+      assert(err !== undefined)
+      assert(numCalled === 3)
+    })
+  })
 })

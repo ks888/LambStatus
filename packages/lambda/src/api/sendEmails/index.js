@@ -47,7 +47,12 @@ const handleIncident = async (type, id) => {
   // TODO: parallelize
   for (let user of users) {
     const body = await generateBody(statusPageURL, latestUpdate, user)
-    await new SES('us-west-2', 'no-reply@demo-status.lambstatus.org').sendEmail(user.email, title, body)
+    const ses = new SES('us-west-2', 'no-reply@demo-status.lambstatus.org')
+    try {
+      await ses.sendEmailWithRetry(user.email, title, body)
+    } catch (err) {
+      console.log(`failed to send the email to ${user.email}`, err)
+    }
   }
 }
 
