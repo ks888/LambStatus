@@ -341,6 +341,47 @@ describe('Cognito', () => {
     })
   })
 
+  context('getUserByEmailAddress', () => {
+    it('should return a user who has the given email address', async () => {
+      const email = 'test@example.com'
+      const users = [{Username: '1', Enabled: true}]
+      let actualParams
+      AWS.mock('CognitoIdentityServiceProvider', 'listUsers', (params, callback) => {
+        actualParams = params
+        callback(null, {Users: users})
+      })
+
+      const cognito = new Cognito()
+      let actual
+      let err
+      try {
+        actual = await cognito.getUserByEmailAddress('id', email)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err === undefined)
+      assert(actualParams.Filter === `email = "${email}"`)
+      assert(actual === users[0])
+    })
+
+    it('should call reject if no users have the given email address', async () => {
+      AWS.mock('CognitoIdentityServiceProvider', 'listUsers', (params, callback) => {
+        callback(new Error('test'))
+      })
+
+      const cognito = new Cognito()
+      let err
+      try {
+        await cognito.getUserByEmailAddress('id', 'test@example.com')
+      } catch (error) {
+        err = error
+      }
+
+      assert(err !== undefined)
+    })
+  })
+
   context('listUsers', () => {
     it('should return a list of confirmed users', async () => {
       const userPoolID = 'id'

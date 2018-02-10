@@ -240,6 +240,27 @@ export default class Cognito {
     })
   }
 
+  getUserByEmailAddress (userPoolId, emailAddress) {
+    const params = {
+      UserPoolId: userPoolId,
+      AttributesToGet: [],
+      Filter: `email = "${emailAddress}"`,
+      Limit: 1
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsCognito.listUsers(params, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        if (data.Users.length !== 1) {
+          return reject(new Error('matched unexpected number of users:', emailAddress))
+        }
+        resolve(data.Users[0])
+      })
+    })
+  }
+
   async listUsers (userPoolId) {
     let paginationToken
     let users = []

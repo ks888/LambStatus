@@ -180,6 +180,10 @@ export default {
     GenerateVerificationMessage: [
       'babel-polyfill',
       './src/api/generateVerificationMessage/index.js'
+    ],
+    HandleBouncesAndComplaints: [
+      'babel-polyfill',
+      './src/api/handleBouncesAndComplaints/index.js'
     ]
   },
   output: {
