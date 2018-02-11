@@ -1,7 +1,6 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/unsubscribe'
-import { SettingsProxy } from 'api/utils'
 import CloudFormation from 'aws/cloudFormation'
 import Cognito from 'aws/cognito'
 
@@ -11,14 +10,14 @@ describe('unsubscribe', () => {
   beforeEach(() => {
     deleteUserStub = sinon.stub(Cognito.prototype, 'deleteUser').returns()
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolID')
-    sinon.stub(SettingsProxy.prototype, 'getStatusPageURL')
+    sinon.stub(CloudFormation.prototype, 'getStatusPageCloudFrontURL')
   })
 
   afterEach(() => {
     Cognito.prototype.getUser.restore()
     Cognito.prototype.deleteUser.restore()
     CloudFormation.prototype.getSubscribersPoolID.restore()
-    SettingsProxy.prototype.getStatusPageURL.restore()
+    CloudFormation.prototype.getStatusPageCloudFrontURL.restore()
   })
 
   it('should delete the user if the token is valid', async () => {

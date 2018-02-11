@@ -1,13 +1,12 @@
 import CloudFormation from 'aws/cloudFormation'
 import Cognito from 'aws/cognito'
-import { SettingsProxy } from 'api/utils'
 import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   const {username, code} = event
   const cloudFormation = new CloudFormation(stackName)
   const clientID = await cloudFormation.getSubscribersPoolClientID()
-  const statusPageURL = await new SettingsProxy().getStatusPageURL()
+  const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
   const script = `setTimeout(function(){ window.location.href = '${statusPageURL}'; }, 3*1000);`
   try {
     await new Cognito().confirm(clientID, username, code)

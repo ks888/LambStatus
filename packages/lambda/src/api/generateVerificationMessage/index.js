@@ -1,11 +1,14 @@
 import querystring from 'querystring'
+import CloudFormation from 'aws/cloudFormation'
 import { SettingsProxy } from 'api/utils'
+import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   try {
     const settings = new SettingsProxy()
     const serviceName = await settings.getServiceName()
-    const statusPageURL = await settings.getStatusPageURL()
+    const cloudFormation = new CloudFormation(stackName)
+    const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
     const code = event.request.codeParameter
     const username = event.userName
 

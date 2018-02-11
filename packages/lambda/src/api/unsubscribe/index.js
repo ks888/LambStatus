@@ -1,6 +1,5 @@
 import CloudFormation from 'aws/cloudFormation'
 import Cognito from 'aws/cognito'
-import { SettingsProxy } from 'api/utils'
 import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
@@ -9,9 +8,10 @@ export async function handle (event, context, callback) {
   const message = 'unsubscribed.'
   let script
   try {
-    const statusPageURL = await new SettingsProxy().getStatusPageURL()
+    const cloudFormation = new CloudFormation(stackName)
+    const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
     script = `setTimeout(function(){ window.location.href = '${statusPageURL}'; }, 3*1000);`
-    const poolID = await new CloudFormation(stackName).getSubscribersPoolID()
+    const poolID = await cloudFormation.getSubscribersPoolID()
 
     if (!await isValidUser(poolID, username, token)) {
       throw new Error('invalid user token')

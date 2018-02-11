@@ -32,7 +32,8 @@ export async function handle (rawEvent, context, callback) {
 const handleIncident = async (type, id) => {
   const settings = new SettingsProxy()
   const serviceName = await settings.getServiceName()
-  const statusPageURL = await settings.getStatusPageURL()
+  const cloudFormation = new CloudFormation(stackName)
+  const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
 
   const incident = await new IncidentsStore().get(id)
   const incidentUpdates = await new IncidentUpdatesStore().query(id)
@@ -53,7 +54,8 @@ const handleIncident = async (type, id) => {
 const handleMaintenance = async (type, id) => {
   const settings = new SettingsProxy()
   const serviceName = await settings.getServiceName()
-  const statusPageURL = await settings.getStatusPageURL()
+  const cloudFormation = new CloudFormation(stackName)
+  const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
 
   const maintenance = await new MaintenancesStore().get(id)
   const maintenanceUpdates = await new MaintenanceUpdatesStore().query(id)

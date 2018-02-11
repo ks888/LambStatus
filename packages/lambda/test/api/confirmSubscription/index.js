@@ -3,20 +3,19 @@ import sinon from 'sinon'
 import { handle } from 'api/confirmSubscription'
 import CloudFormation from 'aws/cloudFormation'
 import Cognito from 'aws/cognito'
-import { SettingsProxy } from 'api/utils'
 
 describe('confirmSubscription', () => {
   beforeEach(() => {
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolID')
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolClientID')
-    sinon.stub(SettingsProxy.prototype, 'getStatusPageURL')
+    sinon.stub(CloudFormation.prototype, 'getStatusPageCloudFrontURL')
   })
 
   afterEach(() => {
     Cognito.prototype.confirm.restore()
     CloudFormation.prototype.getSubscribersPoolID.restore()
     CloudFormation.prototype.getSubscribersPoolClientID.restore()
-    SettingsProxy.prototype.getStatusPageURL.restore()
+    CloudFormation.prototype.getStatusPageCloudFrontURL.restore()
     Cognito.prototype.getUser.restore()
   })
 

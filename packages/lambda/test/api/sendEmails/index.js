@@ -16,7 +16,7 @@ describe('sendEmails', () => {
 
   beforeEach(() => {
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolID')
-    sinon.stub(SettingsProxy.prototype, 'getStatusPageURL')
+    sinon.stub(CloudFormation.prototype, 'getStatusPageCloudFrontURL')
     sinon.stub(SettingsProxy.prototype, 'getServiceName')
     sendEmailStub = sinon.stub(SES.prototype, 'sendEmailWithRetry').returns(new Promise(resolve => { resolve() }))
     sinon.stub(IncidentsStore.prototype, 'get').returns({})
@@ -28,7 +28,7 @@ describe('sendEmails', () => {
 
   afterEach(() => {
     CloudFormation.prototype.getSubscribersPoolID.restore()
-    SettingsProxy.prototype.getStatusPageURL.restore()
+    CloudFormation.prototype.getStatusPageCloudFrontURL.restore()
     SettingsProxy.prototype.getServiceName.restore()
     SES.prototype.sendEmailWithRetry.restore()
     IncidentsStore.prototype.get.restore()

@@ -6,7 +6,6 @@ import ComponentsStore from 'db/components'
 import MetricsStore from 'db/metrics'
 import SettingsStore from 'db/settings'
 import { Component } from 'model/components'
-import { Settings } from 'model/settings'
 import { Metric } from 'model/metrics'
 import { region, stackName } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
@@ -21,25 +20,23 @@ export const updateComponentStatus = async (componentObj) => {
 }
 
 export class SettingsProxy {
-  constructor (params) {
-    this.settings = new Settings(params)
+  constructor () {
     this.store = new SettingsStore()
     this.cloudFormation = new CloudFormation(stackName)
     this.sns = new SNS()
   }
 
   async setServiceName (serviceName) {
-    await this.settings.setServiceName(serviceName)
+    this.serviceName = serviceName
 
-    await this.store.setServiceName(await this.settings.getServiceName())
+    await this.store.setServiceName(serviceName)
     await this.updateUserPool()
     await this.sns.notifyIncident('', messageType.metadataChanged)
   }
 
   async getServiceName () {
-    const serviceName = await this.settings.getServiceName()
-    if (serviceName !== undefined) {
-      return serviceName
+    if (this.serviceName !== undefined) {
+      return this.serviceName
     }
 
     let storedServiceName
@@ -50,65 +47,19 @@ export class SettingsProxy {
       storedServiceName = ''
     }
 
-    await this.settings.setServiceName(storedServiceName)
+    this.serviceName = storedServiceName
     return storedServiceName
   }
 
-  async setAdminPageURL (adminPageURL) {
-    throw new Error('use the cloudformation parameter to change the url')
-  }
-
-  async getAdminPageURL () {
-    const adminPageURL = await this.settings.getAdminPageURL()
-    if (adminPageURL !== undefined) {
-      return adminPageURL
-    }
-
-    const storedAdminPageURL = await this.cloudFormation.getAdminPageCloudFrontURL()
-    await this.settings.setAdminPageURL(storedAdminPageURL)
-    return storedAdminPageURL
-  }
-
-  async setStatusPageURL (statusPageURL) {
-    throw new Error('use the cloudformation parameter to change the url')
-  }
-
-  async getStatusPageURL () {
-    const statusPageURL = await this.settings.getStatusPageURL()
-    if (statusPageURL !== undefined) {
-      return statusPageURL
-    }
-
-    const storedStatusPageURL = await this.cloudFormation.getStatusPageCloudFrontURL()
-    await this.settings.setStatusPageURL(storedStatusPageURL)
-    return storedStatusPageURL
-  }
-
-  async setCognitoPoolID (cognitoPoolID) {
-    throw new Error('can\'t change the user pool id')
-  }
-
-  async getCognitoPoolID () {
-    const cognitoPoolID = await this.settings.getCognitoPoolID()
-    if (cognitoPoolID !== undefined) {
-      return cognitoPoolID
-    }
-
-    const storedCognitoPoolID = await this.cloudFormation.getUserPoolID()
-    await this.settings.setCognitoPoolID(storedCognitoPoolID)
-    return storedCognitoPoolID
-  }
-
   async setLogoID (logoID) {
-    await this.settings.setLogoID(logoID)
+    this.logoID = logoID
 
-    await this.store.setLogoID(await this.settings.getLogoID())
+    await this.store.setLogoID(logoID)
   }
 
   async getLogoID () {
-    const logoID = await this.settings.getLogoID()
-    if (logoID !== undefined) {
-      return logoID
+    if (this.logoID !== undefined) {
+      return this.logoID
     }
 
     let storedLogoID
@@ -119,26 +70,25 @@ export class SettingsProxy {
       storedLogoID = ''
     }
 
-    await this.settings.setLogoID(storedLogoID)
+    this.logoID = storedLogoID
     return storedLogoID
   }
 
   async deleteLogoID () {
-    await this.settings.deleteLogoID()
+    delete this.logoID
 
     await this.store.deleteLogoID()
   }
 
   async setBackgroundColor (color) {
-    await this.settings.setBackgroundColor(color)
+    this.backgroundColor = color
 
-    await this.store.setBackgroundColor(await this.settings.getBackgroundColor())
+    await this.store.setBackgroundColor(color)
   }
 
   async getBackgroundColor () {
-    const color = await this.settings.getBackgroundColor()
-    if (color !== undefined) {
-      return color
+    if (this.backgroundColor !== undefined) {
+      return this.backgroundColor
     }
 
     let storedColor
@@ -149,20 +99,20 @@ export class SettingsProxy {
       storedColor = ''
     }
 
-    await this.settings.setBackgroundColor(storedColor)
+    this.backgroundColor = storedColor
     return storedColor
   }
 
   async updateUserPool () {
-    const poolID = await this.getCognitoPoolID()
+    const poolID = await this.cloudFormation.getUserPoolID()
     if (poolID === '') {
-      console.warn('CognitoPoolID not found')
+      console.warn('UserPoolID not found')
       return
     }
 
     const params = {
       serviceName: await this.getServiceName(),
-      adminPageURL: await this.getAdminPageURL()
+      adminPageURL: await this.cloudFormation.getAdminPageCloudFrontURL()
     }
     const cognito = await AdminUserPool.get(poolID, params)
     await cognito.update()
