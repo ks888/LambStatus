@@ -4,22 +4,29 @@ import { stackName } from 'utils/const'
 
 export async function handle (rawEvent, context, callback) {
   try {
-    const sesMessage = JSON.parse(rawEvent.Records[0].Sns.Message)
-    if (sesMessage.notificationType === 'Bounce') {
-      const bounce = sesMessage.bounce
-      if (bounce.bounceType !== 'Transient') {
-        await deleteUsers(bounce.bouncedRecipients.map(r => r.emailAddress))
-      } else {
-        console.log('unsupported bounce type', bounce)
-      }
-    } else if (sesMessage.notificationType === 'Complaint') {
-      const complaint = sesMessage.complaint
-      await deleteUsers(complaint.complainedRecipients.map(r => r.emailAddress))
+    for (let record of rawEvent.Records) {
+      const sesMessage = JSON.parse(record.Sns.Message)
+      await handleMessageFromSES(sesMessage)
     }
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
+    console.log(rawEvent)
     callback('Error: failed to handle bounces and complaints')
+  }
+}
+
+const handleMessageFromSES = async (sesMessage) => {
+  if (sesMessage.notificationType === 'Bounce') {
+    const bounce = sesMessage.bounce
+    if (bounce.bounceType !== 'Transient') {
+      await deleteUsers(bounce.bouncedRecipients.map(r => r.emailAddress))
+    } else {
+      console.log('transient bounce type', bounce)
+    }
+  } else if (sesMessage.notificationType === 'Complaint') {
+    const complaint = sesMessage.complaint
+    await deleteUsers(complaint.complainedRecipients.map(r => r.emailAddress))
   }
 }
 
@@ -32,6 +39,8 @@ const deleteUsers = async (emailAddresses) => {
   }))
 
   await Promise.all(users.map(async user => {
-    return await new Cognito().deleteUser(poolID, user.username)
+    await new Cognito().deleteUser(poolID, user.Username)
   }))
+
+  console.log('deleted:', emailAddresses)
 }

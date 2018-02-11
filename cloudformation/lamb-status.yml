@@ -1401,19 +1401,6 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
-  BouncesAndComplaintsNotificationTopic:
-    Type: "AWS::SNS::Topic"
-    Properties:
-      TopicName: !Sub |-
-        ${AWS::StackName}-BouncesAndComplaintsNotification
-  BouncesAndComplaintsSubscription:
-    Type: "AWS::SNS::Subscription"
-    Properties:
-      Endpoint: !Sub |-
-        ${HandleBouncesAndComplaintsLambdaFunction.Arn}
-      Protocol: "lambda"
-      TopicArn:
-        Ref: "BouncesAndComplaintsNotificationTopic"
   HandleBouncesAndComplaintsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:

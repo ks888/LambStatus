@@ -61,4 +61,16 @@ describe('handleBouncesAndComplaints', () => {
 
     assert(deleteUserStub.callCount === complaintEmails.length)
   })
+
+  it('should handle multiple records', async () => {
+    const bounceEmails = ['test1@example.com']
+    const bounceMessage = {bouncedRecipients: bounceEmails.map(email => { return {emailAddress: email} })}
+    const message = JSON.stringify({notificationType: 'Bounce', bounce: bounceMessage})
+    const snsEvent = {Sns: {Message: message}}
+    await handle({Records: [snsEvent, snsEvent]}, null, (err, data) => {
+      assert(err === null)
+    })
+
+    assert(deleteUserStub.callCount === 2)
+  })
 })
