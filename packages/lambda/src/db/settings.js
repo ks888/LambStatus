@@ -77,6 +77,36 @@ export class RawSettingsStore {
     })
   }
 
+  batchGet (keys) {
+    const params = {
+      RequestItems: {
+        [SettingsTable]: {
+          Keys: keys.map(key => { return {key} })
+        }
+      }
+    }
+    return new Promise((resolve, reject) => {
+      this.awsDynamoDb.batchGet(params, (err, data) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+
+        if (Object.keys(data.UnprocessedKeys).length > 0) {
+          // TODO: retry
+          return reject(new Error('some keys are unprocessed', data.UnprocessedKeys))
+        }
+
+        resolve(keys.map(key => {
+          const matched = data.Responses[SettingsTable].find(kv => kv.key === key)
+          if (matched === undefined || matched.value === undefined) {
+            return ''
+          }
+          return matched.value
+        }))
+      })
+    })
+  }
+
   set (key, value) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({ value })
     return new Promise((resolve, reject) => {
@@ -93,6 +123,28 @@ export class RawSettingsStore {
           return reject(new VError(err, 'DynamoDB'))
         }
         resolve(data.Attributes.value)
+      })
+    })
+  }
+
+  batchSet (items) {
+    const params = {
+      RequestItems: {
+        [SettingsTable]: items.map(item => { return { PutRequest: { Item: item } } })
+      }
+    }
+    return new Promise((resolve, reject) => {
+      this.awsDynamoDb.batchWrite(params, (err, data) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+
+        if (Object.keys(data.UnprocessedItems).length > 0) {
+          // TODO: retry
+          return reject(new Error('some items are unprocessed', data.UnprocessedItems))
+        }
+
+        resolve()
       })
     })
   }
