@@ -1,5 +1,6 @@
 import CloudFormation from 'aws/cloudFormation'
 import {AdminUserPool} from 'aws/cognito'
+import SES from 'aws/ses'
 import S3 from 'aws/s3'
 import SNS, {messageType} from 'aws/sns'
 import ComponentsStore from 'db/components'
@@ -8,6 +9,7 @@ import SettingsStore from 'db/settings'
 import { Component } from 'model/components'
 import { Metric } from 'model/metrics'
 import { region, stackName } from 'utils/const'
+import { ValidationError } from 'utils/errors'
 import { NotFoundError } from 'utils/errors'
 
 export const updateComponentStatus = async (componentObj) => {
@@ -119,9 +121,23 @@ export class SettingsProxy {
   }
 
   async setEmailNotification (emailNotification) {
-    this.emailNotification = emailNotification
+    if (emailNotification.enable) {
+      await this.testEmailAddress(emailNotification)
+    }
 
+    this.emailNotification = emailNotification
     await this.store.setEmailNotification(emailNotification)
+  }
+
+  async testEmailAddress (emailNotification) {
+    const ses = new SES(emailNotification.sourceRegion, emailNotification.sourceEmailAddress)
+    try {
+      // testing address: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/mailbox-simulator.html
+      await ses.sendEmailWithRetry('success@simulator.amazonses.com', '', '')
+    } catch (err) {
+      console.log(err)
+      throw new ValidationError(`failed to send the test email. ${err.message}`)
+    }
   }
 
   async getEmailNotification () {

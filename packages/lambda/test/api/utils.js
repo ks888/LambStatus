@@ -3,6 +3,7 @@ import sinon from 'sinon'
 import { updateComponentStatus, SettingsProxy, MetricProxy } from 'api/utils'
 import CloudFormation from 'aws/cloudFormation'
 import { AdminUserPool } from 'aws/cognito'
+import SES from 'aws/ses'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import ComponentsStore from 'db/components'
@@ -139,6 +140,40 @@ describe('SettingsProxy', () => {
 
       AdminUserPool.get.restore()
       AdminUserPool.prototype.update.restore()
+    })
+  })
+
+  describe('testEmailAddress', () => {
+    let sendEmailStub
+
+    beforeEach(() => {
+      sendEmailStub = sinon.stub(SES.prototype, 'sendEmailWithRetry').returns(new Promise(resolve => { resolve() }))
+    })
+
+    afterEach(() => {
+      SES.prototype.sendEmailWithRetry.restore()
+    })
+
+    it('should send test email', async () => {
+      const settings = {sourceRegion: 'us-west-1', sourceEmailAddress: 'test@example.com'}
+
+      await new SettingsProxy().testEmailAddress(settings)
+      assert(sendEmailStub.calledOnce)
+    })
+
+    it('should throw validation error if the email address is invalid', async () => {
+      sendEmailStub.throws()
+
+      const settings = {sourceRegion: 'us-west-1', sourceEmailAddress: 'test@example.com'}
+      const proxy = new SettingsProxy()
+      let err
+      try {
+        await proxy.testEmailAddress(settings)
+      } catch (error) {
+        err = error
+      }
+
+      assert(err.name === 'ValidationError')
     })
   })
 })

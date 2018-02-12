@@ -10,6 +10,7 @@ import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 describe('sendEmails', () => {
+  let getEmailNotificationStub
   let sendEmailStub
   let queryIncidentUpdatesStub
   let listUsersStub
@@ -18,6 +19,7 @@ describe('sendEmails', () => {
     sinon.stub(CloudFormation.prototype, 'getSubscribersPoolID')
     sinon.stub(CloudFormation.prototype, 'getStatusPageCloudFrontURL')
     sinon.stub(SettingsProxy.prototype, 'getServiceName')
+    getEmailNotificationStub = sinon.stub(SettingsProxy.prototype, 'getEmailNotification').returns({enable: true})
     sendEmailStub = sinon.stub(SES.prototype, 'sendEmailWithRetry').returns(new Promise(resolve => { resolve() }))
     sinon.stub(IncidentsStore.prototype, 'get').returns({})
     queryIncidentUpdatesStub = sinon.stub(IncidentUpdatesStore.prototype, 'query')
@@ -29,12 +31,24 @@ describe('sendEmails', () => {
   afterEach(() => {
     CloudFormation.prototype.getSubscribersPoolID.restore()
     CloudFormation.prototype.getStatusPageCloudFrontURL.restore()
+    SettingsProxy.prototype.getEmailNotification.restore()
     SettingsProxy.prototype.getServiceName.restore()
     SES.prototype.sendEmailWithRetry.restore()
     IncidentsStore.prototype.get.restore()
     IncidentUpdatesStore.prototype.query.restore()
     Cognito.prototype.listUsers.restore()
     console.log.restore()
+  })
+
+  it('should not send the emails if disabled', async () => {
+    getEmailNotificationStub.returns({enable: false})
+
+    const event = `{"message": "", "type": ${messageType.incidentCreated}}`
+    await handle({Records: [{Sns: {Message: event}}]}, null, (err, data) => {
+      assert(err === null)
+    })
+
+    assert(sendEmailStub.notCalled)
   })
 
   it('should sort the updates by createdAt', async () => {

@@ -18,7 +18,7 @@ export async function handle (event, context, callback) {
       await settings.setEmailNotification(emailNotification)
     }
 
-    callback(null, {serviceName, backgroundColor})
+    callback(null, {serviceName, backgroundColor, emailNotification})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

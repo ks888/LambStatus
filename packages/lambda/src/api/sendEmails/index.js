@@ -14,6 +14,10 @@ import { getDateTimeInPST } from 'utils/datetime'
 
 export async function handle (rawEvent, context, callback) {
   try {
+    const settings = new SettingsProxy()
+    const emailNotification = await settings.getEmailNotification()
+    if (!emailNotification.enable) return
+
     const event = JSON.parse(rawEvent.Records[0].Sns.Message)
     if (event.type === messageType.incidentCreated || event.type === messageType.incidentUpdated) {
       await handleIncident(event.type, event.message)
@@ -76,6 +80,8 @@ const handleMaintenance = async (type, id) => {
 const sendEmails = async (email) => {
   const title = email.getTitle()
 
+  const settings = new SettingsProxy()
+  const emailNotification = await settings.getEmailNotification()
   const cloudFormation = new CloudFormation(stackName)
   const poolID = await cloudFormation.getSubscribersPoolID()
   const users = await listUsers(poolID)
@@ -84,7 +90,7 @@ const sendEmails = async (email) => {
   const sendEmailToUser = async user => {
     const body = email.getBody(user)
 
-    const ses = new SES('us-west-2', 'no-reply@demo-status.lambstatus.org')
+    const ses = new SES(emailNotification.sourceRegion, emailNotification.sourceEmailAddress)
     try {
       await ses.sendEmailWithRetry(user.email, title, body)
     } catch (err) {

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import ErrorMessage from 'components/common/ErrorMessage'
 import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
 import LabeledDropdownList from 'components/common/LabeledDropdownList'
@@ -67,8 +68,14 @@ export default class NotificationsSettings extends React.Component {
 
   render () {
     const regionName = sesRegions.find(r => r.id === this.state.sourceRegion).name
+    let errMsg
+    if (this.state.message) {
+      errMsg = (<ErrorMessage message={this.state.message} />)
+    }
+
     return (
       <div className={classes.layout}>
+        {errMsg}
         <RadioButtonGroup
           title='Email Notifications' candidates={['Enable', 'Disable']} onClicked={this.handleEnableEmailNotification}
           checkedCandidate={(this.state.enable ? 'Enable' : 'Disable')} className={classes.item} />
