@@ -77,11 +77,10 @@ export const fetchPublicSettings = (callbacks = {}) => {
   }
 }
 
-export const updateSettings = ({serviceName, backgroundColor, enableEmailNotification,
-                                sesRegion, emailAddress} = {}, callbacks = {}) => {
+export const updateSettings = ({serviceName, backgroundColor, emailNotification} = {}, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { serviceName, backgroundColor, enableEmailNotification, sesRegion, emailAddress }
+      const body = { serviceName, backgroundColor, emailNotification }
       const json = await sendRequest(apiURL + '/api/settings', {
         headers: await buildHeaders(),
         method: 'PATCH',

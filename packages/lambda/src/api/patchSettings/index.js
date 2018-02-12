@@ -3,7 +3,8 @@ import { SettingsProxy } from 'api/utils'
 export async function handle (event, context, callback) {
   const {
     serviceName,
-    backgroundColor
+    backgroundColor,
+    emailNotification
   } = event.body
   try {
     const settings = new SettingsProxy()
@@ -12,6 +13,9 @@ export async function handle (event, context, callback) {
     }
     if (backgroundColor !== undefined) {
       await settings.setBackgroundColor(backgroundColor)
+    }
+    if (emailNotification !== undefined) {
+      await settings.setEmailNotification(emailNotification)
     }
 
     callback(null, {serviceName, backgroundColor})

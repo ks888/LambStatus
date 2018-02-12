@@ -1,144 +1,7 @@
 import assert from 'assert'
 import AWS from 'aws-sdk-mock'
-import SettingsStore, { settingKeys, RawSettingsStore } from 'db/settings'
+import { RawSettingsStore } from 'db/settings'
 import { SettingsTable } from 'utils/const'
-
-describe('SettingsStore', () => {
-  describe('getServiceName', () => {
-    it('should return the service name', async () => {
-      const serviceName = 'test'
-      const store = new SettingsStore()
-      store.store.get = (key) => {
-        assert(key === settingKeys.serviceName)
-        return serviceName
-      }
-
-      const actual = await store.getServiceName()
-      assert(serviceName === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new Error() }
-
-      let error
-      try {
-        await store.getServiceName()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
-  describe('setServiceName', () => {
-    it('should set the service name', async () => {
-      const serviceName = 'test'
-      const store = new SettingsStore()
-      store.store.set = (key, value) => {
-        assert(key === settingKeys.serviceName)
-        assert(value === serviceName)
-        return value
-      }
-
-      const actual = await store.setServiceName(serviceName)
-      assert(serviceName === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.set = () => { throw new Error() }
-
-      let error
-      try {
-        await store.setServiceName()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
-  describe('getLogoID', () => {
-    it('should return the logo ID', async () => {
-      const id = 'test'
-      const store = new SettingsStore()
-      store.store.get = (key) => {
-        assert(key === settingKeys.logoID)
-        return id
-      }
-
-      const actual = await store.getLogoID()
-      assert(id === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.get = () => { throw new Error() }
-
-      let error
-      try {
-        await store.getLogoID()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
-  describe('setLogoID', () => {
-    it('should set the Logo ID', async () => {
-      const id = 'test'
-      const store = new SettingsStore()
-      store.store.set = (key, value) => {
-        assert(key === settingKeys.logoID)
-        assert(value === id)
-        return value
-      }
-
-      const actual = await store.setLogoID(id)
-      assert(id === actual)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.set = () => { throw new Error() }
-
-      let error
-      try {
-        await store.setLogoID()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-
-  describe('deleteLogoID', () => {
-    it('should delete the Logo ID', async () => {
-      const id = 'test'
-      const store = new SettingsStore()
-      store.store.delete = (key) => {
-        assert(key === settingKeys.logoID)
-      }
-
-      await store.deleteLogoID(id)
-    })
-
-    it('should pass through throwed error', async () => {
-      const store = new SettingsStore()
-      store.store.delete = () => { throw new Error() }
-
-      let error
-      try {
-        await store.deleteLogoID()
-      } catch (err) {
-        error = err
-      }
-      assert(error !== undefined)
-    })
-  })
-})
 
 describe('RawSettingsStore', () => {
   describe('get', () => {
@@ -300,7 +163,7 @@ describe('RawSettingsStore', () => {
     })
 
     it('should return the values associated with the given keys', async () => {
-      const items = [{key: 'key1', value: 'v1'}, {key: 'key2', value: 'v2'}]
+      const items = {key1: 'v1', key2: 'v2'}
       let actualParams
       AWS.mock('DynamoDB.DocumentClient', 'batchWrite', (params, callback) => {
         actualParams = params
@@ -309,7 +172,9 @@ describe('RawSettingsStore', () => {
 
       await new RawSettingsStore().batchSet(items)
       const requestedItems = actualParams.RequestItems[SettingsTable].map(r => r.PutRequest.Item)
-      assert.deepEqual(items, requestedItems)
+      assert(Object.keys(items).length === requestedItems.length)
+      assert(requestedItems[0].key === 'key1')
+      assert(requestedItems[0].value === 'v1')
     })
 
     it('should return error if there are unprocessed items', async () => {

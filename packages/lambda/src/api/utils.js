@@ -117,6 +117,21 @@ export class SettingsProxy {
     const cognito = await AdminUserPool.get(poolID, params)
     await cognito.update()
   }
+
+  async setEmailNotification (emailNotification) {
+    this.emailNotification = emailNotification
+
+    await this.store.setEmailNotification(emailNotification)
+  }
+
+  async getEmailNotification () {
+    if (this.emailNotification !== undefined) {
+      return this.emailNotification
+    }
+
+    this.emailNotification = await this.store.getEmailNotification()
+    return this.emailNotification
+  }
 }
 
 // MetricProxy is a wrapper of Metric class. It's nicely load and save datapoints to/from S3.

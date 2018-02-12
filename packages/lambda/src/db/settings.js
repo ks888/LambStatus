@@ -9,7 +9,10 @@ import { buildUpdateExpression } from './utils'
 export const settingKeys = {
   serviceName: 'ServiceName',
   logoID: 'LogoID',
-  backgroundColor: 'BackgroundColor'
+  backgroundColor: 'BackgroundColor',
+  enableEmailNotification: 'EnableEmailNotification',
+  sourceEmailRegion: 'SourceEmailRegion',
+  sourceEmailAddress: 'SourceEmailAddress'
 }
 
 export default class SettingsStore {
@@ -43,6 +46,25 @@ export default class SettingsStore {
 
   async setBackgroundColor (color) {
     return await this.store.set(settingKeys.backgroundColor, color)
+  }
+
+  async getEmailNotification () {
+    const rawResult = await this.store.batchGet([
+      settingKeys.enableEmailNotification, settingKeys.sourceEmailRegion, settingKeys.sourceEmailAddress
+    ])
+    return {
+      enable: rawResult[0],
+      sourceRegion: rawResult[1],
+      sourceEmailAddress: rawResult[2]
+    }
+  }
+
+  async setEmailNotification ({enable, sourceRegion, sourceEmailAddress}) {
+    return await this.store.batchSet({
+      [settingKeys.enableEmailNotification]: enable,
+      [settingKeys.sourceEmailRegion]: sourceRegion,
+      [settingKeys.sourceEmailAddress]: sourceEmailAddress
+    })
   }
 }
 
@@ -130,9 +152,12 @@ export class RawSettingsStore {
   batchSet (items) {
     const params = {
       RequestItems: {
-        [SettingsTable]: items.map(item => { return { PutRequest: { Item: item } } })
+        [SettingsTable]: Object.keys(items).map(key => {
+          return { PutRequest: { Item: {key, value: items[key]} } }
+        })
       }
     }
+
     return new Promise((resolve, reject) => {
       this.awsDynamoDb.batchWrite(params, (err, data) => {
         if (err) {

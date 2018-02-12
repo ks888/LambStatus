@@ -5,7 +5,7 @@ import NotificationsSettings from './NotificationsSettings'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    settings: state.settings.settings
+    settings: state.settings.settings.emailNotification
   }
 }
 

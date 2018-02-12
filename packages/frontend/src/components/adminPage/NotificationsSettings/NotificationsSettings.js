@@ -14,9 +14,9 @@ const sesRegions = [
 export default class NotificationsSettings extends React.Component {
   static propTypes = {
     settings: PropTypes.shape({
-      enableEmailNotification: PropTypes.bool,
-      sesRegion: PropTypes.string,
-      emailAddress: PropTypes.string
+      enable: PropTypes.bool,
+      sourceRegion: PropTypes.string,
+      sourceEmailAddress: PropTypes.string
     }),
     updateSettings: PropTypes.func.isRequired
   }
@@ -24,9 +24,9 @@ export default class NotificationsSettings extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      regionID: props.settings.sesRegion || sesRegions[0].id,
-      enableEmailNotification: props.settings.enableEmailNotification || false,
-      emailAddress: props.settings.emailAddress || '',
+      sourceRegion: props.settings.sourceRegion || sesRegions[0].id,
+      enable: props.settings.enable || false,
+      sourceEmailAddress: props.settings.sourceEmailAddress || '',
       isUpdating: false,
       message: ''
     }
@@ -41,41 +41,44 @@ export default class NotificationsSettings extends React.Component {
   }
 
   handleEnableEmailNotification = (value) => {
-    this.setState({enableEmailNotification: (value === 'Enable')})
+    this.setState({enable: (value === 'Enable')})
   }
 
   handleChangeRegion = (value) => {
-    const regionID = sesRegions.find(r => r.name === value).id
-    this.setState({regionID})
+    const sourceRegion = sesRegions.find(r => r.name === value).id
+    this.setState({sourceRegion})
   }
 
   handleChangeEmailAddress = (value) => {
-    this.setState({emailAddress: value})
+    this.setState({sourceEmailAddress: value})
   }
 
   handleClickSaveButton = () => {
     const newSettings = {
-      enableEmailNotification: this.state.enableEmailNotification,
-      sesRegion: this.state.regionID,
-      emailAddress: this.state.emailAddress
+      emailNotification: {
+        enable: this.state.enable,
+        sourceRegion: this.state.sourceRegion,
+        sourceEmailAddress: this.state.sourceEmailAddress
+      }
     }
+
     this.props.updateSettings(newSettings, this.callbacks)
   }
 
   render () {
-    const regionName = sesRegions.find(r => r.id === this.state.regionID).name
+    const regionName = sesRegions.find(r => r.id === this.state.sourceRegion).name
     return (
       <div className={classes.layout}>
         <RadioButtonGroup
           title='Email Notifications' candidates={['Enable', 'Disable']} onClicked={this.handleEnableEmailNotification}
-          checkedCandidate={(this.state.enableEmailNotification ? 'Enable' : 'Disable')} className={classes.item} />
+          checkedCandidate={(this.state.enable ? 'Enable' : 'Disable')} className={classes.item} />
         <div className={classes.item}>
           <LabeledDropdownList
             id='region' label='Simple Email Service (SES) Region' onChange={this.handleChangeRegion}
             list={sesRegions.map(r => r.name)} initialValue={regionName} />
         </div>
         <TextField
-          label='Source Email Address' text={this.state.emailAddress} rows={1}
+          label='Source Email Address' text={this.state.sourceEmailAddress} rows={1}
           onChange={this.handleChangeEmailAddress} />
         <div className={classes.item}>
           <IconButton
