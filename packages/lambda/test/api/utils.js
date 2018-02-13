@@ -4,11 +4,12 @@ import { updateComponentStatus, SettingsProxy, MetricProxy } from 'api/utils'
 import CloudFormation from 'aws/cloudFormation'
 import { AdminUserPool } from 'aws/cognito'
 import SES from 'aws/ses'
+import SNS from 'aws/sns'
 import S3 from 'aws/s3'
 import MetricsStore from 'db/metrics'
 import ComponentsStore from 'db/components'
 import { Metric } from 'model/metrics'
-import { metricStatusVisible } from 'utils/const'
+import { metricStatusVisible, stackName } from 'utils/const'
 import { NotFoundError, MutexLockedError } from 'utils/errors'
 
 describe('updateComponentStatus', () => {
@@ -174,6 +175,32 @@ describe('SettingsProxy', () => {
       }
 
       assert(err.name === 'ValidationError')
+    })
+  })
+
+  describe('existsNotificationHandler', () => {
+    let listTopicsStub
+
+    beforeEach(() => {
+      listTopicsStub = sinon.stub(SNS.prototype, 'listTopics')
+    })
+
+    afterEach(() => {
+      SNS.prototype.listTopics.restore()
+    })
+
+    it('should return true if the topic exists', async () => {
+      const topic = `arn:aws:sns:us-west-2:account:${stackName}-BouncesAndComplaintsNotification`
+      listTopicsStub.returns([topic])
+
+      assert(await new SettingsProxy().existsNotificationHandler('us-west-1'))
+    })
+
+    it('should return false if the topic doesn\'t exist', async () => {
+      const topic = `arn:aws:sns:us-west-2:account:${stackName}-NotExist`
+      listTopicsStub.returns([topic])
+
+      assert(!await new SettingsProxy().existsNotificationHandler('us-west-1'))
     })
   })
 })

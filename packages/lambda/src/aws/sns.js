@@ -25,8 +25,10 @@ export const messageType = {
 }
 
 export default class SNS {
-  constructor () {
-    const { AWS_REGION: region } = process.env
+  constructor (region) {
+    if (region === undefined) {
+      region = process.env.AWS_REGION
+    }
     this.sns = new AWS.SNS({ apiVersion: '2010-03-31', region })
   }
 
@@ -50,6 +52,56 @@ export default class SNS {
           return reject(error)
         }
         resolve(data)
+      })
+    })
+  }
+
+  async listTopics () {
+    let nextToken
+    let topics = []
+    while (true) {
+      const data = await this.listTopicsWithPagination(nextToken)
+      topics = topics.concat(data.Topics.map(topic => topic.TopicArn))
+
+      if (data.NextToken === undefined) {
+        return topics
+      }
+      nextToken = data.NextToken
+    }
+  }
+
+  listTopicsWithPagination (nextToken) {
+    const params = {NextToken: nextToken}
+    return new Promise((resolve, reject) => {
+      this.sns.listTopics(params, (error, data) => {
+        if (error) {
+          return reject(error)
+        }
+        resolve(data)
+      })
+    })
+  }
+
+  createTopic (topicName) {
+    const params = {Name: topicName}
+    return new Promise((resolve, reject) => {
+      this.sns.createTopic(params, (error, data) => {
+        if (error) {
+          return reject(error)
+        }
+        resolve(data.TopicArn)
+      })
+    })
+  }
+
+  subscribeWithLambda (topicARN, lambdaARN) {
+    const params = {TopicArn: topicARN, Protocol: 'lambda', Endpoint: lambdaARN}
+    return new Promise((resolve, reject) => {
+      this.sns.subscribe(params, (error, data) => {
+        if (error) {
+          return reject(error)
+        }
+        resolve(data.SubscriptionArn)
       })
     })
   }

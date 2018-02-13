@@ -3,14 +3,14 @@ import {AdminUserPool} from 'aws/cognito'
 import SES from 'aws/ses'
 import S3 from 'aws/s3'
 import SNS, {messageType} from 'aws/sns'
+import Lambda from 'aws/lambda'
 import ComponentsStore from 'db/components'
 import MetricsStore from 'db/metrics'
 import SettingsStore from 'db/settings'
 import { Component } from 'model/components'
 import { Metric } from 'model/metrics'
 import { region, stackName } from 'utils/const'
-import { ValidationError } from 'utils/errors'
-import { NotFoundError } from 'utils/errors'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export const updateComponentStatus = async (componentObj) => {
   const component = new Component(componentObj)
@@ -123,6 +123,7 @@ export class SettingsProxy {
   async setEmailNotification (emailNotification) {
     if (emailNotification.enable) {
       await this.testEmailAddress(emailNotification)
+      await this.setUpNotificationHandler(emailNotification.sourceRegion)
     }
 
     this.emailNotification = emailNotification
@@ -138,6 +139,31 @@ export class SettingsProxy {
       console.log(err)
       throw new ValidationError(`failed to send the test email. ${err.message}`)
     }
+  }
+
+  // setSESNotificationHandler creates SNS topic and subscription.
+  // We can't do it in the CloudFormation since there is no way to create the topic
+  // different from the CF region. Also, ses region is unknown until a user selects it.
+  async setUpNotificationHandler (sesRegion) {
+    if (await this.existsNotificationHandler(sesRegion)) return
+
+    const snsForSESNotification = new SNS(sesRegion)
+    const topicName = `${stackName}-BouncesAndComplaintsNotification`
+    const topicARN = await snsForSESNotification.createTopic(topicName)
+
+    const lambdaARN = await this.cloudFormation.getBouncesAndComplaintsHandlerArn()
+    await snsForSESNotification.subscribeWithLambda(topicARN, lambdaARN)
+
+    const lambda = new Lambda()
+    await lambda.addPermission(lambdaARN, 'sns.amazonaws.com', topicARN)
+  }
+
+  async existsNotificationHandler (sesRegion) {
+    const snsForSESNotification = new SNS(sesRegion)
+    const topics = await snsForSESNotification.listTopics()
+
+    const topicName = `${stackName}-BouncesAndComplaintsNotification`
+    return topics.find(topic => topic.endsWith(topicName)) !== undefined
   }
 
   async getEmailNotification () {

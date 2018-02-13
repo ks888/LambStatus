@@ -89,4 +89,9 @@ export default class CloudFormation {
     const key = 'SubscribersPoolClientID'
     return await this.getOutputValue(key)
   }
+
+  async getBouncesAndComplaintsHandlerArn () {
+    const key = 'BouncesAndComplaintsHandlerArn'
+    return await this.getOutputValue(key)
+  }
 }

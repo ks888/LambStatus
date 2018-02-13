@@ -172,6 +172,15 @@ Resources:
                 Action: sns:publish
                 Resource:
                   Ref: IncidentNotificationTopic
+              - Effect: Allow
+                Action:
+                  - sns:CreateTopic
+                  - sns:Subscribe
+                Resource: !Sub |-
+                  arn:aws:sns:*:${AWS::AccountId}:*
+              - Effect: Allow
+                Action: sns:ListTopics
+                Resource: "*"
         - PolicyName: SES
           PolicyDocument:
             Statement:
@@ -179,6 +188,13 @@ Resources:
                 Action: ses:SendEmail
                 Resource: !Sub |-
                   arn:aws:ses:*:${AWS::AccountId}:*/*
+        - PolicyName: Lambda
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: lambda:AddPermission
+                Resource: !Sub |-
+                  arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-HandleBouncesAndComplaints
   GetComponentsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1423,17 +1439,6 @@ Resources:
           - "Arn"
       Runtime: "nodejs6.10"
       Timeout: 300
-  HandleBouncesAndComplaintsLambdaInvokePermission:
-    Type: "AWS::Lambda::Permission"
-    Properties:
-      FunctionName:
-        Fn::GetAtt:
-          - "HandleBouncesAndComplaintsLambdaFunction"
-          - "Arn"
-      Action: "lambda:InvokeFunction"
-      Principal: "sns.amazonaws.com"
-      SourceArn:
-        Ref: "BouncesAndComplaintsNotificationTopic"
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
@@ -4216,3 +4221,6 @@ Outputs:
   UsagePlanID:
     Value:
       Ref: "UsagePlan"
+  BouncesAndComplaintsHandlerArn:
+    Value:
+      !GetAtt HandleBouncesAndComplaintsLambdaFunction.Arn
