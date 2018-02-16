@@ -30,11 +30,11 @@ export async function handle (event, context, callback) {
 }
 
 export const generateEmailMessage = (serviceName, confirmationURL) => {
-  return `Thank you for subscribing to ${serviceName} status updates. Click the following link to start your subscription: ${confirmationURL}`
+  return `Thank you for subscribing to ${serviceName} incident updates. Please click the following link to confirm your subscription: ${confirmationURL}`
 }
 
 export const generateEmailSubject = (serviceName) => {
-  return `${serviceName} status - confirm your subscription`
+  return `[${serviceName} status] confirm your subscription`
 }
 
 export const buildConfirmURL = (statusPageURL, code, username) => {

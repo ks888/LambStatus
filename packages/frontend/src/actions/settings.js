@@ -94,6 +94,21 @@ export const updateSettings = ({serviceName, backgroundColor, emailNotification}
   }
 }
 
+export const subscribe = (emailAddress, callbacks = {}) => {
+  return async dispatch => {
+    try {
+      const body = { emailAddress }
+      await sendRequest(apiURL + '/api/subscribers/subscribe', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      }, callbacks)
+    } catch (error) {
+      console.error(error.message)
+      console.error(error.stack)
+    }
+  }
+}
+
 export const postApiKey = (callbacks = {}) => {
   return async dispatch => {
     try {

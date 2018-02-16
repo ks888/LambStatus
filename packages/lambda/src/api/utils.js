@@ -166,6 +166,14 @@ export class SettingsProxy {
     return topics.find(topic => topic.endsWith(topicName)) !== undefined
   }
 
+  async getEmailEnabled () {
+    if (this.emailNotification !== undefined) {
+      return this.emailNotification.enabled
+    }
+
+    return await this.store.getEmailEnabled()
+  }
+
   async getEmailNotification () {
     if (this.emailNotification !== undefined) {
       return this.emailNotification

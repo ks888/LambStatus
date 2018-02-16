@@ -21,7 +21,7 @@ export async function handle (event, context, callback) {
         callback('Error: ' + error.message)
         break
       default:
-        callback('Error: failed to subscribe the status updates')
+        callback('Error: failed to subscribe to the status updates')
     }
   }
 }

@@ -48,6 +48,10 @@ export default class SettingsStore {
     return await this.store.set(settingKeys.backgroundColor, color)
   }
 
+  async getEmailEnabled () {
+    return await this.store.get(settingKeys.enableEmailNotification)
+  }
+
   async getEmailNotification () {
     const rawResult = await this.store.batchGet([
       settingKeys.enableEmailNotification, settingKeys.sourceEmailRegion, settingKeys.sourceEmailAddress
