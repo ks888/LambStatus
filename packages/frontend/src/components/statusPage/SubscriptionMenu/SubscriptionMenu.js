@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
-import Dropdown from './Dropdown'
+import Dropdown from './dropdown'
 import classes from './SubscriptionMenu.scss'
 
 export default class SubscriptionMenu extends React.Component {

@@ -42,4 +42,4 @@ By the integration with the Amazon Simple Email Service (SES), you can send the 
 
 ![EmailNotification6](EmailNotification6.png)
 
-That's it! The existing lambda function subscribes the topic above and handles the bounces and complaints.
+That's it! Check the email icon at the header of your status page!
