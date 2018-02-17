@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react'
+import ReactTooltip from 'react-tooltip'
+import classnames from 'classnames'
 import ErrorMessage from 'components/common/ErrorMessage'
 import RadioButtonGroup from 'components/common/RadioButtonGroup'
 import TextField from 'components/common/TextField'
@@ -73,11 +75,22 @@ export default class NotificationsSettings extends React.Component {
       errMsg = (<ErrorMessage message={this.state.message} />)
     }
 
+    const linkToDoc = 'https://lambstatus.github.io/set-up-email-notification'
+
+    const enableItemLabel = (
+      <span>
+        Email Notifications
+        <i
+          className={classnames(classes.icon, 'material-icons')} data-tip
+          data-for='sesRegion'>info_outline</i>
+      </span>
+    )
+
     return (
       <div className={classes.layout}>
         {errMsg}
         <RadioButtonGroup
-          title='Email Notifications' candidates={['Enable', 'Disable']} onClicked={this.handleEnableEmailNotification}
+          title={enableItemLabel} candidates={['Enable', 'Disable']} onClicked={this.handleEnableEmailNotification}
           checkedCandidate={(this.state.enable ? 'Enable' : 'Disable')} className={classes.item} />
         <div className={classes.item}>
           <LabeledDropdownList
@@ -92,6 +105,15 @@ export default class NotificationsSettings extends React.Component {
             onClick={this.handleClickSaveButton} iconName='save' name='Save'
             disabled={this.state.isUpdating} />
         </div>
+        <ReactTooltip id='sesRegion' effect='solid' place='right' delayHide={5000} className={classes.tooltip}>
+          <div>
+            Check out
+            <a href={linkToDoc} className={classes.link} target='_blank'>
+              the documentation
+            </a>
+            to set up the email notification.
+          </div>
+        </ReactTooltip>
       </div>
     )
   }
