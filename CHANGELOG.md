@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.6.0](https://github.com/ks888/LambStatus/tree/v0.6.0) (2018-02-18)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.5.1...v0.6.0)
+
+### Added
+
+- [\#17](https://github.com/ks888/LambStatus/issues/17): Support email notification
+
 ## [v0.5.1](https://github.com/ks888/LambStatus/tree/v0.5.1) (2018-01-27)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.5.0...v0.5.1)
 

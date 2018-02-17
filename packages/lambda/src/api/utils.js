@@ -171,7 +171,15 @@ export class SettingsProxy {
       return this.emailNotification.enabled
     }
 
-    return await this.store.getEmailEnabled()
+    let emailEnabled
+    try {
+      emailEnabled = await this.store.getEmailEnabled()
+    } catch (err) {
+      if (err.name !== NotFoundError.name) throw err
+      emailEnabled = ''
+    }
+
+    return emailEnabled
   }
 
   async getEmailNotification () {
