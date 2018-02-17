@@ -11,13 +11,14 @@ import { getDateTimeFormat } from 'utils/datetime'
 
 export async function handle (event, context, callback) {
   try {
+    const cloudFormation = new CloudFormation(stackName)
+    const statusPageURL = await cloudFormation.getStatusPageCloudFrontURL()
     const settings = new SettingsProxy()
-    const statusPageURL = await settings.getStatusPageURL()
     const serviceName = await settings.getServiceName()
     const feed = new Feed({
       id: `tag:${statusPageURL},2017:/history`,
       link: statusPageURL,
-      title: `${serviceName} Status - Incident History`,
+      title: `[${serviceName} Status] Incident History`,
       author: {
         name: serviceName
       }
@@ -31,7 +32,7 @@ export async function handle (event, context, callback) {
     }
 
     const { AWS_REGION: region } = process.env
-    const bucket = await new CloudFormation(stackName).getStatusPageBucketName()
+    const bucket = await cloudFormation.getStatusPageBucketName()
     const s3 = new S3()
     await s3.putObject(region, bucket, 'history.atom', feed.atom1())
     await s3.putObject(region, bucket, 'history.rss', feed.rss2())

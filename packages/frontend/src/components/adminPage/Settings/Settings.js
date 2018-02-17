@@ -3,11 +3,13 @@ import classnames from 'classnames'
 import ErrorMessage from 'components/common/ErrorMessage'
 import DesignSettings from 'components/adminPage/DesignSettings'
 import GeneralSettings from 'components/adminPage/GeneralSettings'
+import NotificationsSettings from 'components/adminPage/NotificationsSettings'
 import classes from './Settings.scss'
 
 const tabs = [
   { name: 'General', component: GeneralSettings },
-  { name: 'Design', component: DesignSettings }
+  { name: 'Design', component: DesignSettings },
+  { name: 'Notifications', component: NotificationsSettings }
 ]
 
 export default class Settings extends React.Component {

@@ -21,3 +21,7 @@ export const getDateObject = (dateString) => {
 export const getDateTimeFormat = (datetime, fmt = 'MMM D, YYYY, HH:mm UTC') => {
   return moment(datetime).format(fmt)
 }
+
+export const getDateTimeInPST = (datetime, fmt = 'MMM D, HH:mm [PST]') => {
+  return moment(datetime).subtract(7, 'hours').format(fmt)
+}

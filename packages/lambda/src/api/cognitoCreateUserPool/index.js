@@ -1,10 +1,10 @@
 import response from 'cfn-response'
-import Cognito, { UserPool } from 'aws/cognito'
+import { AdminUserPool } from 'aws/cognito'
 import { SettingsProxy } from 'api/utils'
 
 const createUserPool = async (event, context, poolID) => {
   const {
-    PoolName: poolName,
+    PoolName: userPoolName,
     AdminPageURL: adminPageURL,
     SnsCallerArn: snsCallerArn
   } = event.ResourceProperties
@@ -13,10 +13,9 @@ const createUserPool = async (event, context, poolID) => {
     const settings = new SettingsProxy()
     const serviceName = await settings.getServiceName()
 
-    const userPool = new UserPool({userPoolName: poolName, serviceName, adminPageURL, snsCallerArn})
-    const createdUserPool = await new Cognito().createUserPool(userPool)
+    const adminUserPool = new AdminUserPool({userPoolName, serviceName, adminPageURL, snsCallerArn})
+    const poolID = await adminUserPool.create()
 
-    const poolID = createdUserPool.userPoolID
     response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
@@ -31,22 +30,28 @@ const updateUserPool = async (event, context) => {
   } = event.ResourceProperties
   const poolID = event.PhysicalResourceId
 
-  const cognito = new Cognito()
-  const userPool = await cognito.getUserPool(poolID)
-  userPool.serviceName = await new SettingsProxy().getServiceName()
-  userPool.adminPageURL = adminPageURL
+  try {
+    const serviceName = await new SettingsProxy().getServiceName()
 
-  await cognito.updateUserPool(userPool)
+    const adminUserPool = await AdminUserPool.get(poolID, {adminPageURL, serviceName})
+    await adminUserPool.update()
 
-  // Note: If `physicalResourceId` is changed, the custom resource will be deleted.
-  response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
+    // Note: If `physicalResourceId` is changed, the custom resource will be deleted.
+    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
+  } catch (error) {
+    console.log(error.message)
+    console.log(error.stack)
+    response.send(event, context, response.FAILED)
+  }
 }
 
 const deleteUserPool = async (event, context) => {
   const poolID = event.PhysicalResourceId
 
   try {
-    await new Cognito().deleteUserPool(poolID)
+    const adminUserPool = await AdminUserPool.get(poolID)
+    await adminUserPool.delete()
+
     response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)

@@ -160,6 +160,30 @@ export default {
     UpdateFeeds: [
       'babel-polyfill',
       './src/api/updateFeeds/index.js'
+    ],
+    SendEmails: [
+      'babel-polyfill',
+      './src/api/sendEmails/index.js'
+    ],
+    Subscribe: [
+      'babel-polyfill',
+      './src/api/subscribe/index.js'
+    ],
+    ConfirmSubscription: [
+      'babel-polyfill',
+      './src/api/confirmSubscription/index.js'
+    ],
+    Unsubscribe: [
+      'babel-polyfill',
+      './src/api/unsubscribe/index.js'
+    ],
+    GenerateVerificationMessage: [
+      'babel-polyfill',
+      './src/api/generateVerificationMessage/index.js'
+    ],
+    HandleBouncesAndComplaints: [
+      'babel-polyfill',
+      './src/api/handleBouncesAndComplaints/index.js'
     ]
   },
   output: {

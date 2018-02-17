@@ -1,15 +1,16 @@
 import CloudFormation from 'aws/cloudFormation'
-import Cognito from 'aws/cognito'
+import {AdminUserPool} from 'aws/cognito'
+import SES from 'aws/ses'
 import S3 from 'aws/s3'
-import SNS from 'aws/sns'
+import SNS, {messageType} from 'aws/sns'
+import Lambda from 'aws/lambda'
 import ComponentsStore from 'db/components'
 import MetricsStore from 'db/metrics'
 import SettingsStore from 'db/settings'
 import { Component } from 'model/components'
-import { Settings } from 'model/settings'
 import { Metric } from 'model/metrics'
 import { region, stackName } from 'utils/const'
-import { NotFoundError } from 'utils/errors'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export const updateComponentStatus = async (componentObj) => {
   const component = new Component(componentObj)
@@ -21,25 +22,23 @@ export const updateComponentStatus = async (componentObj) => {
 }
 
 export class SettingsProxy {
-  constructor (params) {
-    this.settings = new Settings(params)
+  constructor () {
     this.store = new SettingsStore()
     this.cloudFormation = new CloudFormation(stackName)
     this.sns = new SNS()
   }
 
   async setServiceName (serviceName) {
-    await this.settings.setServiceName(serviceName)
+    this.serviceName = serviceName
 
-    await this.store.setServiceName(await this.settings.getServiceName())
+    await this.store.setServiceName(serviceName)
     await this.updateUserPool()
-    await this.sns.notifyIncident()
+    await this.sns.notifyIncident('', messageType.metadataChanged)
   }
 
   async getServiceName () {
-    const serviceName = await this.settings.getServiceName()
-    if (serviceName !== undefined) {
-      return serviceName
+    if (this.serviceName !== undefined) {
+      return this.serviceName
     }
 
     let storedServiceName
@@ -50,66 +49,19 @@ export class SettingsProxy {
       storedServiceName = ''
     }
 
-    await this.settings.setServiceName(storedServiceName)
+    this.serviceName = storedServiceName
     return storedServiceName
   }
 
-  async getAdminPageURL () {
-    const adminPageURL = await this.settings.getAdminPageURL()
-    if (adminPageURL !== undefined) {
-      return adminPageURL
-    }
-
-    const storedAdminPageURL = await this.cloudFormation.getAdminPageCloudFrontURL()
-    await this.settings.setAdminPageURL(storedAdminPageURL)
-    return storedAdminPageURL
-  }
-
-  async getStatusPageURL () {
-    const statusPageURL = await this.settings.getStatusPageURL()
-    if (statusPageURL !== undefined) {
-      return statusPageURL
-    }
-
-    const storedStatusPageURL = await this.cloudFormation.getStatusPageCloudFrontURL()
-    await this.settings.setStatusPageURL(storedStatusPageURL)
-    return storedStatusPageURL
-  }
-
-  async setCognitoPoolID (cognitoPoolID) {
-    await this.settings.setCognitoPoolID(cognitoPoolID)
-
-    await this.store.setCognitoPoolID(await this.settings.getCognitoPoolID())
-  }
-
-  async getCognitoPoolID () {
-    const cognitoPoolID = await this.settings.getCognitoPoolID()
-    if (cognitoPoolID !== undefined) {
-      return cognitoPoolID
-    }
-
-    let storedCognitoPoolID
-    try {
-      storedCognitoPoolID = await this.store.getCognitoPoolID()
-    } catch (err) {
-      if (err.name !== NotFoundError.name) throw err
-      storedCognitoPoolID = ''
-    }
-
-    await this.settings.setCognitoPoolID(storedCognitoPoolID)
-    return storedCognitoPoolID
-  }
-
   async setLogoID (logoID) {
-    await this.settings.setLogoID(logoID)
+    this.logoID = logoID
 
-    await this.store.setLogoID(await this.settings.getLogoID())
+    await this.store.setLogoID(logoID)
   }
 
   async getLogoID () {
-    const logoID = await this.settings.getLogoID()
-    if (logoID !== undefined) {
-      return logoID
+    if (this.logoID !== undefined) {
+      return this.logoID
     }
 
     let storedLogoID
@@ -120,26 +72,25 @@ export class SettingsProxy {
       storedLogoID = ''
     }
 
-    await this.settings.setLogoID(storedLogoID)
+    this.logoID = storedLogoID
     return storedLogoID
   }
 
   async deleteLogoID () {
-    await this.settings.deleteLogoID()
+    delete this.logoID
 
     await this.store.deleteLogoID()
   }
 
   async setBackgroundColor (color) {
-    await this.settings.setBackgroundColor(color)
+    this.backgroundColor = color
 
-    await this.store.setBackgroundColor(await this.settings.getBackgroundColor())
+    await this.store.setBackgroundColor(color)
   }
 
   async getBackgroundColor () {
-    const color = await this.settings.getBackgroundColor()
-    if (color !== undefined) {
-      return color
+    if (this.backgroundColor !== undefined) {
+      return this.backgroundColor
     }
 
     let storedColor
@@ -150,23 +101,86 @@ export class SettingsProxy {
       storedColor = ''
     }
 
-    await this.settings.setBackgroundColor(storedColor)
+    this.backgroundColor = storedColor
     return storedColor
   }
 
   async updateUserPool () {
-    const poolID = await this.getCognitoPoolID()
+    const poolID = await this.cloudFormation.getUserPoolID()
     if (poolID === '') {
-      console.warn('CognitoPoolID not found')
+      console.warn('UserPoolID not found')
       return
     }
 
-    const cognito = new Cognito()
-    const userPool = await cognito.getUserPool(poolID)
+    const params = {
+      serviceName: await this.getServiceName(),
+      adminPageURL: await this.cloudFormation.getAdminPageCloudFrontURL()
+    }
+    const cognito = await AdminUserPool.get(poolID, params)
+    await cognito.update()
+  }
 
-    userPool.serviceName = await this.getServiceName()
-    userPool.adminPageURL = await this.getAdminPageURL()
-    await cognito.updateUserPool(userPool)
+  async setEmailNotification (emailNotification) {
+    if (emailNotification.enable) {
+      await this.testEmailAddress(emailNotification)
+      await this.setUpNotificationHandler(emailNotification.sourceRegion)
+    }
+
+    this.emailNotification = emailNotification
+    await this.store.setEmailNotification(emailNotification)
+  }
+
+  async testEmailAddress (emailNotification) {
+    const ses = new SES(emailNotification.sourceRegion, emailNotification.sourceEmailAddress)
+    try {
+      // testing address: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/mailbox-simulator.html
+      await ses.sendEmailWithRetry('success@simulator.amazonses.com', '', '')
+    } catch (err) {
+      console.log(err)
+      throw new ValidationError(`failed to send the test email. ${err.message}`)
+    }
+  }
+
+  // setSESNotificationHandler creates SNS topic and subscription.
+  // We can't do it in the CloudFormation since there is no way to create the topic
+  // different from the CF region. Also, ses region is unknown until a user selects it.
+  async setUpNotificationHandler (sesRegion) {
+    if (await this.existsNotificationHandler(sesRegion)) return
+
+    const snsForSESNotification = new SNS(sesRegion)
+    const topicName = `${stackName}-BouncesAndComplaintsNotification`
+    const topicARN = await snsForSESNotification.createTopic(topicName)
+
+    const lambdaARN = await this.cloudFormation.getBouncesAndComplaintsHandlerArn()
+    await snsForSESNotification.subscribeWithLambda(topicARN, lambdaARN)
+
+    const lambda = new Lambda()
+    await lambda.addPermission(lambdaARN, 'sns.amazonaws.com', topicARN)
+  }
+
+  async existsNotificationHandler (sesRegion) {
+    const snsForSESNotification = new SNS(sesRegion)
+    const topics = await snsForSESNotification.listTopics()
+
+    const topicName = `${stackName}-BouncesAndComplaintsNotification`
+    return topics.find(topic => topic.endsWith(topicName)) !== undefined
+  }
+
+  async getEmailEnabled () {
+    if (this.emailNotification !== undefined) {
+      return this.emailNotification.enabled
+    }
+
+    return await this.store.getEmailEnabled()
+  }
+
+  async getEmailNotification () {
+    if (this.emailNotification !== undefined) {
+      return this.emailNotification
+    }
+
+    this.emailNotification = await this.store.getEmailNotification()
+    return this.emailNotification
   }
 }
 

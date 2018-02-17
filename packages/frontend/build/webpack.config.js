@@ -61,12 +61,11 @@ const generateWebpackConfig = (config) => {
       historyApiFallback: true,
       inline: true,
       port: config.server_port,
-      proxy: {
-        '/api': {
-          target: __LAMBSTATUS_API_URL__,
-          changeOrigin: true
-        }
-      }
+      proxy: [{
+        context: ['/api', '/metrics', '/history.rss'],
+        target: __LAMBSTATUS_API_URL__,
+        changeOrigin: true
+      }]
     },
     entry: {
       app: [paths.entry_point]
