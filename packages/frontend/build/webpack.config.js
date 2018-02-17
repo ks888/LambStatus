@@ -62,7 +62,7 @@ const generateWebpackConfig = (config) => {
       inline: true,
       port: config.server_port,
       proxy: [{
-        context: ['/api', '/metrics'],
+        context: ['/api', '/metrics', '/history.rss'],
         target: __LAMBSTATUS_API_URL__,
         changeOrigin: true
       }]
