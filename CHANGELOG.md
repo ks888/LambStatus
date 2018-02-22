@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.6.1](https://github.com/ks888/LambStatus/tree/v0.6.1) (2018-02-22)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.0...v0.6.1)
+
+### Fixed
+
+- [\#98](https://github.com/ks888/LambStatus/issues/98): Shorten the cache lifetime of `settings.js` (thanks [@chris-scentregroup](https://github.com/chris-scentregroup))
+
 ## [v0.6.0](https://github.com/ks888/LambStatus/tree/v0.6.0) (2018-02-18)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.5.1...v0.6.0)
 

@@ -33,7 +33,15 @@ export default class LogoUploader extends React.Component {
   }
 
   upload = (input) => {
-    this.props.uploadLogo(input.target.files[0], this.callbacks)
+    if (input.target.files.length === 1) {
+      this.props.uploadLogo(input.target.files[0], {
+        ...this.callbacks,
+        onLoad: () => {
+          this.setState({isUploading: true, message: ''})
+          this.fileSelector.value = ''
+        }
+      })
+    }
   }
 
   handleClickDeleteButton = () => {
