@@ -19,13 +19,15 @@ export default class S3 {
     })
   }
 
-  putObject (region, bucketName, objectName, body, mimeType = undefined) {
+  putObject (region, bucketName, objectName, body, mimeType = undefined, cacheControl = undefined) {
     const awsS3 = new AWS.S3({ region })
     return new Promise((resolve, reject) => {
       if (mimeType === undefined) {
         mimeType = mime.lookup(objectName)
       }
-      const cacheControl = getCacheControl(mimeType)
+      if (cacheControl === undefined) {
+        cacheControl = getCacheControl(mimeType)
+      }
       const params = {
         Bucket: bucketName,
         Body: body,
