@@ -1,7 +1,6 @@
 // ---------------------------------------
 // Test Environment Setup
 // ---------------------------------------
-import 'babel-polyfill'
 import sinon from 'sinon'
 import assert from 'assert'
 import * as settings from 'utils/settings'

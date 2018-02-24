@@ -163,23 +163,10 @@ const generateWebpackConfig = (config) => {
   // Loaders
   // ------------------------------------
   // JavaScript / JSON
-  const babelPresets = ['es2015', 'react', 'stage-0']
-  const babelPlugins = ['transform-runtime']
-  if (__TEST__ && !__COVERAGE__) {
-    // not work well with coverage setting
-    babelPlugins.push('empower-assert')
-    babelPlugins.push('espower')
-  }
-
   webpackConfig.module.loaders = [{
     test: /\.(js|jsx)$/,
     exclude: /node_modules/,
-    loader: 'babel',
-    query: {
-      cacheDirectory: true,
-      plugins: babelPlugins,
-      presets: babelPresets
-    }
+    loader: 'babel'
   },
   {
     test: /\.json$/,

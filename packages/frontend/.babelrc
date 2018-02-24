@@ -5,8 +5,15 @@
 // module.hot is disabled), so keeping it and related plugins contained
 // within webpack helps prevent unexpected errors.
 {
-  "presets": ["es2015", "react", "stage-0"],
-  "plugins": ["transform-runtime"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["> 0.5%", "last 2 versions", "not ie <= 10"]
+      }
+    }],
+    "react"
+  ],
+  "plugins": ["transform-object-rest-spread", "transform-class-properties", "transform-runtime"],
   "env": {
     "development": {
       "plugins": [
