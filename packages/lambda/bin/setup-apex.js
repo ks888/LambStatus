@@ -1,7 +1,7 @@
-import path from 'path'
-import fs from 'fs'
-import dotenv from 'dotenv'
-import mkdirp from 'mkdirp'
+const path = require('path')
+const fs = require('fs')
+const dotenv = require('dotenv')
+const mkdirp = require('mkdirp')
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 

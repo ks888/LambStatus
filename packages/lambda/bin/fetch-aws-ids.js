@@ -1,12 +1,12 @@
-import path from 'path'
-import fs from 'fs'
-import dotenv from 'dotenv'
-import mkdirp from 'mkdirp'
-import AWS from 'aws-sdk'
+const path = require('path')
+const fs = require('fs')
+const dotenv = require('dotenv')
+const mkdirp = require('mkdirp')
+const AWS = require('aws-sdk')
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
-function describeStack (cloudFormation, stackName) {
+const describeStack = (cloudFormation, stackName) => {
   return new Promise((resolve, reject) => {
     const params = {
       StackName: stackName
@@ -28,20 +28,11 @@ function describeStack (cloudFormation, stackName) {
   })
 }
 
-async function getStackOutput () {
-  try {
-    const { STACK_NAME: stackName, AWS_REGION: region } = process.env
-    const cloudFormation = new AWS.CloudFormation({ region })
-    const stack = await describeStack(cloudFormation, stackName)
-    return stack.Outputs
-  } catch (error) {
-    console.error(error, error.stack)
-    throw error
-  }
-}
+const { STACK_NAME: stackName, AWS_REGION: region } = process.env
+const cloudFormation = new AWS.CloudFormation({ region })
 
-getStackOutput().then((output) => {
-  return JSON.stringify(output, null, 2)
+describeStack(cloudFormation, stackName).then((stack) => {
+  return JSON.stringify(stack.Outputs, null, 2)
 }).then((json) => {
   const buildDir = path.normalize(`${__dirname}/../build`)
   mkdirp.sync(buildDir)

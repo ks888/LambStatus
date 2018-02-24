@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rimraf build",
     "lint": "eslint src",
-    "build": "npm run clean && babel-node ./bin/fetch-aws-ids.js && babel-node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-error-details --bail",
+    "build": "npm run clean && node ./bin/fetch-aws-ids.js && node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-error-details --bail",
     "deploy": "npm run build && babel-node ./bin/deploy.js",
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
     "test:coverage": "nyc --reporter=lcov --reporter=text --include src/ --all npm run test",
