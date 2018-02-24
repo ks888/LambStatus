@@ -1,6 +1,12 @@
 {
-  "presets": ["es2015", "stage-0"],
-  "plugins": ["transform-runtime"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "current"
+      }
+    }]
+  ],
+  "plugins": ["transform-object-rest-spread", "transform-es2015-classes"],
   "env": {
     "development": {
       "plugins": [
