@@ -25,3 +25,7 @@ export const getDateTimeFormat = (datetime, fmt = 'MMM D, YYYY, HH:mm UTC') => {
 export const getDateTimeInPST = (datetime, fmt = 'MMM D, HH:mm [PST]') => {
   return moment(datetime).subtract(7, 'hours').format(fmt)
 }
+
+export const changeTimezoneToUTC = datetime => {
+  return moment(datetime).utc().format()
+}

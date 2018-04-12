@@ -1,7 +1,7 @@
 import { monitoringServiceManager } from 'model/monitoringService'
 import { ValidationError } from 'utils/errors'
 import { metricStatuses } from 'utils/const'
-import { getDateObject } from 'utils/datetime'
+import { getDateObject, changeTimezoneToUTC } from 'utils/datetime'
 
 export class Metric {
   constructor ({metricID, type, title, status, unit = '', description = '', decimalPlaces = 0,
@@ -74,7 +74,8 @@ export class Metric {
 
   normalizeDatapoints (datapoints) {
     datapoints.forEach(datapoint => {
-      datapoint.timestamp = datapoint.timestamp.substr(0, 16) + ':00.000Z'
+      let timestamp = changeTimezoneToUTC(datapoint.timestamp)
+      datapoint.timestamp = timestamp.substr(0, 16) + ':00.000Z'
     })
     datapoints = datapoints.filter((datapoint, i, arr) => {
       if (i === 0) return true
