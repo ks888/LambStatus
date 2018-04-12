@@ -18,11 +18,11 @@ export const getDateObject = (dateString) => {
   return date
 }
 
-export const getDateTimeFormat = (datetime, fmt = 'MMM D, YYYY, HH:mm UTC') => {
+export const formatDateTime = (datetime, fmt = 'MMM D, YYYY, HH:mm UTC') => {
   return moment(datetime).format(fmt)
 }
 
-export const getDateTimeInPST = (datetime, fmt = 'MMM D, HH:mm [PST]') => {
+export const formatDateTimeInPST = (datetime, fmt = 'MMM D, HH:mm [PST]') => {
   return moment(datetime).subtract(7, 'hours').format(fmt)
 }
 

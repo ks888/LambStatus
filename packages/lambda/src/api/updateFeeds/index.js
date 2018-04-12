@@ -7,7 +7,7 @@ import { SettingsProxy } from 'api/utils'
 import S3 from 'aws/s3'
 import CloudFormation from 'aws/cloudFormation'
 import { stackName } from 'utils/const'
-import { getDateTimeFormat } from 'utils/datetime'
+import { formatDateTime } from 'utils/datetime'
 
 export async function handle (event, context, callback) {
   try {
@@ -82,7 +82,7 @@ const buildItem = async (event, statusPageURL) => {
   }
 
   const content = eventUpdates.map(update => {
-    return `<p><small>${getDateTimeFormat(update.createdAt)}</small><br><strong>${update.status}</strong> - ${update.message}</p>`
+    return `<p><small>${formatDateTime(update.createdAt)}</small><br><strong>${update.status}</strong> - ${update.message}</p>`
   }).join('')
   return {
     id,
