@@ -4,13 +4,15 @@ import { formatDateTime, formatDateTimeInPST, changeTimezoneToUTC } from 'utils/
 describe('datetime', () => {
   describe('formatDateTime', () => {
     it('should format datetime', async () => {
-      assert(formatDateTime(new Date(2017, 0, 1, 0, 0)) === 'Jan 1, 2017, 00:00 UTC')
+      assert(formatDateTime('2018-04-09T01:00:00Z') === 'Apr 9, 2018, 01:00 UTC')
+      assert(formatDateTime('2018-04-09T01:00:00+09:00') === 'Apr 8, 2018, 16:00 UTC')
     })
   })
 
   describe('formatDateTimeInPST', () => {
     it('should format datetime in PST', async () => {
-      assert(formatDateTimeInPST(new Date(2017, 0, 1, 0, 0)) === 'Dec 31, 17:00 PST')
+      assert(formatDateTimeInPST('2018-04-09T01:00:00Z') === 'Apr 8, 18:00 PST')
+      assert(formatDateTimeInPST('2018-04-09T01:00:00+09:00') === 'Apr 8, 09:00 PST')
     })
   })
 
