@@ -10,7 +10,7 @@ import MaintenancesStore from 'db/maintenances'
 import MaintenanceUpdatesStore from 'db/maintenanceUpdates'
 import { Subscriber } from 'model/subscription'
 import { stackName } from 'utils/const'
-import { getDateTimeInPST } from 'utils/datetime'
+import { formatDateTimeInPST } from 'utils/datetime'
 
 export async function handle (rawEvent, context, callback) {
   try {
@@ -218,7 +218,7 @@ export class IncidentEmailContent extends EmailContent {
   generateContentForNewEvent () {
     const latestUpdate = this.eventUpdates[0]
     return `
-## ${latestUpdate.status} - ${getDateTimeInPST(latestUpdate.createdAt)}
+## ${latestUpdate.status} - ${formatDateTimeInPST(latestUpdate.createdAt)}
 
 ${latestUpdate.message}
 `
@@ -227,7 +227,7 @@ ${latestUpdate.message}
   generateContentForUpdatedEvent () {
     const latestUpdate = this.eventUpdates[0]
     let text = `
-## New Incident Status: ${latestUpdate.status} - ${getDateTimeInPST(latestUpdate.createdAt)}
+## New Incident Status: ${latestUpdate.status} - ${formatDateTimeInPST(latestUpdate.createdAt)}
 
 ${latestUpdate.message}
 
@@ -237,7 +237,7 @@ ${latestUpdate.message}
     for (let i = 1; i < this.eventUpdates.length; i++) {
       const update = this.eventUpdates[i]
       text += `
-### ${update.status} - ${getDateTimeInPST(update.createdAt)}
+### ${update.status} - ${formatDateTimeInPST(update.createdAt)}
 
 ${update.message}
 `
@@ -266,7 +266,7 @@ export class MaintenanceEmailContent extends EmailContent {
     return `
 # ${this.maintenance.name}
 
-*${getDateTimeInPST(this.maintenance.startAt)} - ${getDateTimeInPST(this.maintenance.endAt)}*
+*${formatDateTimeInPST(this.maintenance.startAt)} - ${formatDateTimeInPST(this.maintenance.endAt)}*
 `
   }
 
@@ -281,7 +281,7 @@ export class MaintenanceEmailContent extends EmailContent {
   generateContentForNewEvent () {
     const latestUpdate = this.eventUpdates[0]
     return `
-## Maintenance Details - ${getDateTimeInPST(latestUpdate.createdAt)}
+## Maintenance Details - ${formatDateTimeInPST(latestUpdate.createdAt)}
 
 ${latestUpdate.message}
 `
@@ -290,7 +290,7 @@ ${latestUpdate.message}
   generateContentForUpdatedEvent () {
     const latestUpdate = this.eventUpdates[0]
     let text = `
-## New Maintenance Status: ${latestUpdate.status} - ${getDateTimeInPST(latestUpdate.createdAt)}
+## New Maintenance Status: ${latestUpdate.status} - ${formatDateTimeInPST(latestUpdate.createdAt)}
 
 ${latestUpdate.message}
 
@@ -300,7 +300,7 @@ ${latestUpdate.message}
     for (let i = 1; i < this.eventUpdates.length; i++) {
       const update = this.eventUpdates[i]
       text += `
-### ${update.status} - ${getDateTimeInPST(update.createdAt)}
+### ${update.status} - ${formatDateTimeInPST(update.createdAt)}
 
 ${update.message}
 `
