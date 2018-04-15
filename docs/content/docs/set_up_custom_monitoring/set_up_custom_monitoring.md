@@ -14,16 +14,18 @@ LambStatus doesn’t support custom HTTP(S) endpoint monitoring out-of-the box. 
 Before setting up monitoring, an IAM Role with the permissions to store CloudWatch metrics needs to be set up.
 
 1. Open the [IAM service](https://console.aws.amazon.com/iam/) dashboard, select *Policies* from the left-hand menu. Create the following policy and give it a suitable name (e. g. CloudWatch-putMetricDataPermission”):
-```
+
+```json
+
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "cloudwatch:PutMetricData",
-            "Resource": "*"
-        }
-    ]
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": "cloudwatch:PutMetricData",
+			"Resource": "*"
+		}
+	]
 }
 ```
 2. Select *Roles* from the left-hand menu. Create a new role  (e. g. named “watchtower-role”) with Lambda as the target service and attach the policy created in the previous step.
@@ -46,17 +48,18 @@ Finally, CloudWatch needs to be configured to call the Watchtower Lambda functio
 3. Click on “Add target” and select the Lambda function created earlier.
 4. Click on “Configure input” and select “Constant (JSON text)”. Now insert the options with the Watchtower script should be executed. Here is an example configuration:
 
-```(json)
+```json
+
 {
-  "targets": [
-    {
-      "url": "https://www.example.com",
-      "name": "example.com"
-    }
-  ],
-  "timings": ["readable", "total"],
-  "timeout": 5000,
-  "namespace": "Watchtower"
+	"targets": [
+		{
+			"url": "https://www.example.com",
+			"name": "example.com"
+		}
+	],
+	"timings": ["readable", "total"],
+	"timeout": 5000,
+	"namespace": "Watchtower"
 }
 ```
 All available options are listed in the [Watchtower README](https://github.com/wmnnd/lambda-watchtower/blob/master/README.md).
