@@ -4,7 +4,7 @@ group: "Advanced Usage"
 type: "doc"
 ---
 
-LambStatus doesn’t support custom HTTP(S) endpoint monitoring out-of-the box. This guide describes how to set up serverless HTTP(S) monitoring with AWS Lambda and AWS CloudWatch. Monitoring data collected this way can be displayed in LambWatch. The guide uses the [lambda-watchtower](https://github.com/wmnnd/lambda-watchtower) script but can easily be adapted to any custom monitoring script.
+LambStatus doesn’t support custom HTTP(S) endpoint monitoring out-of-the box. This guide describes how to set up serverless HTTP(S) monitoring with AWS Lambda and AWS CloudWatch. Monitoring data collected this way can be displayed in LambStatus. The guide uses the [lambda-watchtower](https://github.com/wmnnd/lambda-watchtower) script but can easily be adapted to any custom monitoring script.
 
 ![Cloud Watch Metrics](CloudWatchMetrics.png)
 
