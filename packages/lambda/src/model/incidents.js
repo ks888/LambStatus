@@ -1,9 +1,11 @@
+import { Event } from 'model/events'
 import { incidentStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
-export class Incident {
+export class Incident extends Event {
   constructor ({incidentID, name, status, createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
+    super()
     this.incidentID = incidentID
     this.name = name
     this.status = status
@@ -36,7 +38,7 @@ export class Incident {
     }
   }
 
-  setIncidentID (incidentID) {
+  setID (incidentID) {
     this.incidentID = incidentID
   }
 
@@ -46,9 +48,10 @@ export class Incident {
   }
 }
 
-export class IncidentUpdate {
+export class IncidentUpdate extends Event {
   constructor ({incidentID, incidentUpdateID, incidentStatus, message = '', createdAt = new Date().toISOString(),
                 updatedAt = new Date().toISOString()}) {
+    super()
     this.incidentID = incidentID
     this.incidentUpdateID = incidentUpdateID
     this.incidentStatus = incidentStatus
@@ -86,7 +89,7 @@ export class IncidentUpdate {
     }
   }
 
-  setIncidentUpdateID (incidentUpdateID) {
+  setID (incidentUpdateID) {
     this.incidentUpdateID = incidentUpdateID
   }
 

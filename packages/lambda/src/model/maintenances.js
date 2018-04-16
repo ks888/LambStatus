@@ -1,10 +1,12 @@
+import { Event } from 'model/events'
 import { maintenanceStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
-export class Maintenance {
+export class Maintenance extends Event {
   constructor ({maintenanceID, name, status, startAt, endAt, createdAt = new Date().toISOString(),
                 updatedAt = new Date().toISOString()}) {
+    super()
     this.maintenanceID = maintenanceID
     this.name = name
     this.status = status
@@ -51,7 +53,7 @@ export class Maintenance {
     }
   }
 
-  setMaintenanceID (maintenanceID) {
+  setID (maintenanceID) {
     this.maintenanceID = maintenanceID
   }
 
@@ -61,9 +63,10 @@ export class Maintenance {
   }
 }
 
-export class MaintenanceUpdate {
+export class MaintenanceUpdate extends Event {
   constructor ({maintenanceID, maintenanceUpdateID, maintenanceStatus, message = '',
                 createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
+    super()
     this.maintenanceID = maintenanceID
     this.maintenanceUpdateID = maintenanceUpdateID
     this.maintenanceStatus = maintenanceStatus
@@ -101,7 +104,7 @@ export class MaintenanceUpdate {
     }
   }
 
-  setMaintenanceUpdateID (maintenanceUpdateID) {
+  setID (maintenanceUpdateID) {
     this.maintenanceUpdateID = maintenanceUpdateID
   }
 
