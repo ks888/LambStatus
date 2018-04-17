@@ -8,6 +8,10 @@ export class Event {
     throw new Error('not implemented')
   }
 
+  getEventID () {
+    throw new Error('not implemented')
+  }
+
   setEventID (id) {
     throw new Error('not implemented')
   }

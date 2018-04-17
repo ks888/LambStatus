@@ -53,6 +53,10 @@ export class Maintenance extends Event {
     }
   }
 
+  getEventID () {
+    return this.maintenanceID
+  }
+
   setEventID (maintenanceID) {
     this.maintenanceID = maintenanceID
   }

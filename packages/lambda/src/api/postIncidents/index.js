@@ -1,50 +1,33 @@
-import SNS, {messageType} from 'aws/sns'
+import { messageType } from 'aws/sns'
 import { Incident, IncidentUpdate } from 'model/incidents'
+import { Component } from 'model/components'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import { updateComponentStatus } from 'api/utils'
+import postEvents from 'api/postEvents'
 
 export async function handle (event, context, callback) {
   try {
     const incident = new Incident(event)
-    incident.validateExceptEventID()
-    const incidentsStore = new IncidentsStore()
-    await incidentsStore.create(incident)
-
-    let incidentUpdate = new IncidentUpdate({
-      incidentID: incident.incidentID,
+    const incidentUpdate = new IncidentUpdate({
       incidentStatus: event.status,
       ...event
     })
-    incidentUpdate.validateExceptEventUpdateID()
-    const incidentUpdatesStore = new IncidentUpdatesStore()
-    await incidentUpdatesStore.create(incidentUpdate)
+    const components = event.components === undefined ? [] : event.components.map(comp => new Component(comp))
+    const eventsStore = new IncidentsStore()
+    const eventUpdatesStore = new IncidentUpdatesStore()
+    await postEvents(incident, incidentUpdate, messageType.incidentCreated, components, eventsStore, eventUpdatesStore)
 
-    const incidentWithIncidentUpdate = {
+    const resp = {
       ...incident.objectify(),
       incidentUpdates: [incidentUpdate.objectify()]
     }
-
     if (event.components !== undefined) {
-      await Promise.all(event.components.map(async (component) => {
-        await updateComponentStatus(component)
-      }))
-
-      incidentWithIncidentUpdate.components = event.components
+      resp.components = event.components
     }
-
-    await new SNS().notifyIncident(incident.incidentID, messageType.incidentCreated)
-
-    callback(null, incidentWithIncidentUpdate)
+    callback(null, resp)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    switch (error.name) {
-      case 'ValidationError':
-        callback('Error: ' + error.message)
-        break
-      default:
-        callback('Error: failed to create a new incident')
-    }
+    callback('Error: ' + error.message)
   }
 }

@@ -38,6 +38,10 @@ export class Incident extends Event {
     }
   }
 
+  getEventID () {
+    return this.incidentID
+  }
+
   setEventID (incidentID) {
     this.incidentID = incidentID
   }

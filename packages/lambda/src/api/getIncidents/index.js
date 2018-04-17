@@ -7,6 +7,6 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: failed to get incidents list')
+    callback('Error: ' + error.message)
   }
 }

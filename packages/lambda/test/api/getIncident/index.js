@@ -27,14 +27,6 @@ describe('getIncident', () => {
     })
   })
 
-  it('should return not found error on NotFoundError thrown', async () => {
-    sinon.stub(IncidentsStore.prototype, 'get').throws(new NotFoundError('no matched item'))
-    sinon.stub(IncidentUpdatesStore.prototype, 'query').throws()
-    return await handle({ params: { incidentid: '1' } }, null, (error, result) => {
-      assert(error.match(/not found/))
-    })
-  })
-
   it('should return error on exception thrown', async () => {
     sinon.stub(IncidentsStore.prototype, 'get').throws()
     sinon.stub(IncidentUpdatesStore.prototype, 'query').throws()

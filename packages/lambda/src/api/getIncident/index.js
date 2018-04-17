@@ -1,21 +1,18 @@
+import getEvent from 'api/getEvent'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
   try {
-    const incident = await new IncidentsStore().get(event.params.incidentid)
-    const incidentUpdates = await new IncidentUpdatesStore().query(event.params.incidentid)
+    const incidentID = event.params.incidentid
+    const incidentStore = new IncidentsStore()
+    const incidentUpdateStore = new IncidentUpdatesStore()
+    const [incident, incidentUpdates] = await getEvent(incidentID, incidentStore, incidentUpdateStore)
 
     callback(null, {...incident.objectify(), incidentUpdates: incidentUpdates.map(upd => upd.objectify())})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    switch (error.name) {
-      case 'NotFoundError':
-        callback('Error: an item not found')
-        break
-      default:
-        callback('Error: failed to get an incident')
-    }
+    callback('Error: ' + error.message)
   }
 }

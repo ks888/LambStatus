@@ -2,6 +2,8 @@ import AWS from 'aws-sdk'
 import CloudFormation from 'aws/cloudFormation'
 import { stackName } from 'utils/const'
 
+// TODO: consider using event classes in model.
+// Implicit dependency like this makes adding new event type difficult.
 export const messageType = {
   unknown: 0,
   // incidentCreated means a new incident is just created. Message has its id.
