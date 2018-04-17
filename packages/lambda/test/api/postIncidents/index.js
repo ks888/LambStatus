@@ -15,12 +15,12 @@ describe('postIncidents', () => {
   })
 
   const createIncidentMock = incident => {
-    incident.setIncidentID('1')
+    incident.setEventID('1')
     return incident
   }
 
   const createIncidentUpdateMock = incidentUpdate => {
-    incidentUpdate.setIncidentUpdateID('1')
+    incidentUpdate.setEventUpdateID('1')
     return incidentUpdate
   }
 

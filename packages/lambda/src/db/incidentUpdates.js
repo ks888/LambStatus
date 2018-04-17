@@ -28,6 +28,6 @@ export default class IncidentUpdatesStore extends EventUpdatesStore {
   }
 
   setUpdateID (item) {
-    item.setID(generateID())
+    item.setEventUpdateID(generateID())
   }
 }

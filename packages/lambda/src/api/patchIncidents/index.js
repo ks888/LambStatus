@@ -20,7 +20,7 @@ export async function handle (event, context, callback) {
       incidentStatus: (event.body.status === undefined ? newIncident.status : event.body.status),
       message: event.body.message
     })
-    incidentUpdate.validateExceptUpdateID()
+    incidentUpdate.validateExceptEventUpdateID()
     const incidentUpdatesStore = new IncidentUpdatesStore()
     await incidentUpdatesStore.create(incidentUpdate)
 

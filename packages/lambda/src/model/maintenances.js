@@ -1,4 +1,4 @@
-import { Event } from 'model/events'
+import { Event, EventUpdate } from 'model/events'
 import { maintenanceStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
@@ -20,10 +20,10 @@ export class Maintenance extends Event {
     if (this.maintenanceID === undefined || this.maintenanceID === '') {
       throw new ValidationError('invalid maintenanceID parameter')
     }
-    this.validateExceptID()
+    this.validateExceptEventID()
   }
 
-  validateExceptID () {
+  validateExceptEventID () {
     if (this.name === undefined || this.name === '') {
       throw new ValidationError('invalid name parameter')
     }
@@ -53,7 +53,7 @@ export class Maintenance extends Event {
     }
   }
 
-  setID (maintenanceID) {
+  setEventID (maintenanceID) {
     this.maintenanceID = maintenanceID
   }
 
@@ -63,7 +63,7 @@ export class Maintenance extends Event {
   }
 }
 
-export class MaintenanceUpdate extends Event {
+export class MaintenanceUpdate extends EventUpdate {
   constructor ({maintenanceID, maintenanceUpdateID, maintenanceStatus, message = '',
                 createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
     super()
@@ -79,10 +79,10 @@ export class MaintenanceUpdate extends Event {
     if (this.maintenanceUpdateID === undefined || this.maintenanceUpdateID === '') {
       throw new ValidationError('invalid maintenanceUpdateID parameter')
     }
-    this.validateExceptUpdateID()
+    this.validateExceptEventUpdateID()
   }
 
-  validateExceptUpdateID () {
+  validateExceptEventUpdateID () {
     if (this.maintenanceID === undefined || this.maintenanceID === '') {
       throw new ValidationError('invalid maintenanceID parameter')
     }
@@ -104,7 +104,11 @@ export class MaintenanceUpdate extends Event {
     }
   }
 
-  setID (maintenanceUpdateID) {
+  setEventID (maintenanceID) {
+    this.maintenanceID = maintenanceID
+  }
+
+  setEventUpdateID (maintenanceUpdateID) {
     this.maintenanceUpdateID = maintenanceUpdateID
   }
 

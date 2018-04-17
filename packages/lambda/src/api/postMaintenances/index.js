@@ -7,7 +7,7 @@ import { updateComponentStatus } from 'api/utils'
 export async function handle (event, context, callback) {
   try {
     const maintenance = new Maintenance(event)
-    maintenance.validateExceptID()
+    maintenance.validateExceptEventID()
     const maintenancesStore = new MaintenancesStore()
     await maintenancesStore.create(maintenance)
 
@@ -16,7 +16,7 @@ export async function handle (event, context, callback) {
       maintenanceStatus: event.status,
       ...event
     })
-    maintenanceUpdate.validateExceptUpdateID()
+    maintenanceUpdate.validateExceptEventUpdateID()
     const maintenanceUpdatesStore = new MaintenanceUpdatesStore()
     await maintenanceUpdatesStore.create(maintenanceUpdate)
 

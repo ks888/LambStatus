@@ -15,7 +15,7 @@ describe('patchMaintenances', () => {
   })
 
   const createMaintenanceUpdateMock = maintenanceUpdate => {
-    maintenanceUpdate.setMaintenanceUpdateID('1')
+    maintenanceUpdate.setEventUpdateID('1')
     return maintenanceUpdate
   }
 

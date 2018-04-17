@@ -1,4 +1,4 @@
-import { Event } from 'model/events'
+import { Event, EventUpdate } from 'model/events'
 import { incidentStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
@@ -17,10 +17,10 @@ export class Incident extends Event {
     if (this.incidentID === undefined || this.incidentID === '') {
       throw new ValidationError('invalid incidentID parameter')
     }
-    this.validateExceptID()
+    this.validateExceptEventID()
   }
 
-  validateExceptID () {
+  validateExceptEventID () {
     if (this.name === undefined || this.name === '') {
       throw new ValidationError('invalid name parameter')
     }
@@ -38,7 +38,7 @@ export class Incident extends Event {
     }
   }
 
-  setID (incidentID) {
+  setEventID (incidentID) {
     this.incidentID = incidentID
   }
 
@@ -48,7 +48,7 @@ export class Incident extends Event {
   }
 }
 
-export class IncidentUpdate extends Event {
+export class IncidentUpdate extends EventUpdate {
   constructor ({incidentID, incidentUpdateID, incidentStatus, message = '', createdAt = new Date().toISOString(),
                 updatedAt = new Date().toISOString()}) {
     super()
@@ -64,10 +64,10 @@ export class IncidentUpdate extends Event {
     if (this.incidentUpdateID === undefined || this.incidentUpdateID === '') {
       throw new ValidationError('invalid incidentUpdateID parameter')
     }
-    this.validateExceptUpdateID()
+    this.validateExceptEventUpdateID()
   }
 
-  validateExceptUpdateID () {
+  validateExceptEventUpdateID () {
     if (this.incidentID === undefined || this.incidentID === '') {
       throw new ValidationError('invalid incidentID parameter')
     }
@@ -89,7 +89,11 @@ export class IncidentUpdate extends Event {
     }
   }
 
-  setID (incidentUpdateID) {
+  setEventID (incidentID) {
+    this.incidentID = incidentID
+  }
+
+  setEventUpdateID (incidentUpdateID) {
     this.incidentUpdateID = incidentUpdateID
   }
 

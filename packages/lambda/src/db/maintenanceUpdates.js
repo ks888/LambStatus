@@ -28,6 +28,6 @@ export default class MaintenanceUpdatesStore extends EventUpdatesStore {
   }
 
   setUpdateID (item) {
-    item.setID(generateID())
+    item.setEventUpdateID(generateID())
   }
 }

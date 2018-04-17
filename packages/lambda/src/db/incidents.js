@@ -24,6 +24,6 @@ export default class IncidentsStore extends EventsStore {
   }
 
   setID (item) {
-    item.setID(generateID())
+    item.setEventID(generateID())
   }
 }

@@ -15,12 +15,12 @@ describe('postMaintenances', () => {
   })
 
   const createMaintenanceMock = maintenance => {
-    maintenance.setMaintenanceID('1')
+    maintenance.setEventID('1')
     return maintenance
   }
 
   const createMaintenanceUpdateMock = maintenanceUpdate => {
-    maintenanceUpdate.setMaintenanceUpdateID('1')
+    maintenanceUpdate.setEventUpdateID('1')
     return maintenanceUpdate
   }
 
