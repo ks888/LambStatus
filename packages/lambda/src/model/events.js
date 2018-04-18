@@ -16,6 +16,10 @@ export class Event {
     throw new Error('not implemented')
   }
 
+  beforeUpdate () {
+    throw new Error('not implemented')
+  }
+
   objectify () {
     throw new Error('not implemented')
   }

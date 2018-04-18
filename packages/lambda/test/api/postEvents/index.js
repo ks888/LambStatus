@@ -66,6 +66,15 @@ describe('postEvents', () => {
     assert(snsStub.calledOnce)
   })
 
+  it('should return event and event update', async () => {
+    const [
+      incident,
+      incidentUpdate
+    ] = await postEvents(event, eventUpd, eventType, components, eventsStore, eventUpdatesStore)
+    assert(incident === event)
+    assert(incidentUpdate === eventUpd)
+  })
+
   it('should handle ValidationError', async () => {
     event.validateExceptEventID = () => { throw new ValidationError() }
     let err

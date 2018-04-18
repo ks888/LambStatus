@@ -4,10 +4,9 @@ import { ValidationError } from 'utils/errors'
 
 export default async (event, eventUpdate, eventType, components, eventsStore, eventUpdatesStore) => {
   try {
-    event.validateExceptEventID()
-    await eventsStore.create(event)
+    event.validate()
+    await eventsStore.update(event)
 
-    eventUpdate.setEventID(event.getEventID())
     eventUpdate.validateExceptEventUpdateID()
     await eventUpdatesStore.create(eventUpdate)
 
@@ -19,11 +18,12 @@ export default async (event, eventUpdate, eventType, components, eventsStore, ev
 
     await new SNS().notifyIncident(event.getEventID(), eventType)
 
-    return [event, eventUpdate]
+    const eventUpdates = await eventUpdatesStore.query(event.getEventID())
+    return [event, eventUpdates]
   } catch (error) {
     if (error.name === ValidationError.name) {
       throw new Error(error.message)
     }
-    throw new Error('failed to create a new event')
+    throw new Error('failed to update the event')
   }
 }

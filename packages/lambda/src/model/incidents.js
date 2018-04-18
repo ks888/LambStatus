@@ -38,6 +38,10 @@ export class Incident extends Event {
     }
   }
 
+  beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
+  }
+
   getEventID () {
     return this.incidentID
   }

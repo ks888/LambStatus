@@ -15,11 +15,18 @@ export async function handle (event, context, callback) {
     const components = event.components === undefined ? [] : event.components.map(comp => new Component(comp))
     const eventsStore = new IncidentsStore()
     const eventUpdatesStore = new IncidentUpdatesStore()
-    await postEvents(incident, incidentUpdate, messageType.incidentCreated, components, eventsStore, eventUpdatesStore)
+    const [respIncident, respIncidentUpdate] = await postEvents(
+      incident,
+      incidentUpdate,
+      messageType.incidentCreated,
+      components,
+      eventsStore,
+      eventUpdatesStore
+    )
 
     const resp = {
-      ...incident.objectify(),
-      incidentUpdates: [incidentUpdate.objectify()]
+      ...respIncident.objectify(),
+      incidentUpdates: [respIncidentUpdate.objectify()]
     }
     if (event.components !== undefined) {
       resp.components = event.components

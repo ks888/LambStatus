@@ -53,6 +53,10 @@ export class Maintenance extends Event {
     }
   }
 
+  beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
+  }
+
   getEventID () {
     return this.maintenanceID
   }
