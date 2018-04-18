@@ -112,8 +112,16 @@ export class MaintenanceUpdate extends EventUpdate {
     }
   }
 
+  getEventID () {
+    return this.maintenanceID
+  }
+
   setEventID (maintenanceID) {
     this.maintenanceID = maintenanceID
+  }
+
+  getEventUpdateID () {
+    return this.maintenanceUpdateID
   }
 
   setEventUpdateID (maintenanceUpdateID) {

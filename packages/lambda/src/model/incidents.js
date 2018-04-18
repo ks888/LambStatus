@@ -97,8 +97,16 @@ export class IncidentUpdate extends EventUpdate {
     }
   }
 
+  getEventID () {
+    return this.incidentID
+  }
+
   setEventID (incidentID) {
     this.incidentID = incidentID
+  }
+
+  getEventUpdateID () {
+    return this.incidentUpdateID
   }
 
   setEventUpdateID (incidentUpdateID) {

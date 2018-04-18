@@ -1,32 +1,17 @@
-import SNS, {messageType} from 'aws/sns'
+import deleteEvents from 'api/deleteEvents'
+import { messageType } from 'aws/sns'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
-  const store = new IncidentsStore()
-  let incident
   try {
-    incident = await store.get(event.params.incidentid)
+    const eventsStore = new IncidentsStore()
+    const eventUpdatesStore = new IncidentUpdatesStore()
+    const incidentID = event.params.incidentid
+    await deleteEvents(incidentID, messageType.incidentDeleted, eventsStore, eventUpdatesStore)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    if (error.name !== 'NotFoundError') {
-      callback('Error: failed to delete the incident')
-    }
-    return
-  }
-
-  try {
-    await store.delete(incident.incidentID)
-
-    const updateStore = new IncidentUpdatesStore()
-    const incidentUpdates = await updateStore.query(incident.incidentID)
-    await updateStore.delete(event.params.incidentid, incidentUpdates.map(upd => upd.incidentUpdateID))
-
-    await new SNS().notifyIncident(incident.incidentID, messageType.incidentDeleted)
-  } catch (error) {
-    console.log(error.message)
-    console.log(error.stack)
-    callback('Error: failed to delete the incident')
+    callback('Error: ' + error.message)
   }
 }

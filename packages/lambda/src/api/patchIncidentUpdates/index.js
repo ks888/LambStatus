@@ -1,6 +1,7 @@
 import { IncidentUpdate } from 'model/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import SNS, {messageType} from 'aws/sns'
+import { messageType } from 'aws/sns'
+import patchEventUpdates from 'api/patchEventUpdates'
 
 export async function handle (event, context, callback) {
   try {
@@ -10,23 +11,13 @@ export async function handle (event, context, callback) {
       incidentUpdateID: event.params.incidentupdateid,
       ...event.body
     })
-    incidentUpdate.validate()
-
-    const incidentUpdatesStore = new IncidentUpdatesStore()
-    await incidentUpdatesStore.update(incidentUpdate)
-
-    await new SNS().notifyIncident(incidentID, messageType.incidentPatched)
+    const eventUpdatesStore = new IncidentUpdatesStore()
+    await patchEventUpdates(incidentUpdate, messageType.incidentPatched, eventUpdatesStore)
 
     callback(null, incidentUpdate.objectify())
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    switch (error.name) {
-      case 'ValidationError':
-        callback('Error: ' + error.message)
-        break
-      default:
-        callback('Error: failed to update the incident update')
-    }
+    callback('Error: ' + error.message)
   }
 }
