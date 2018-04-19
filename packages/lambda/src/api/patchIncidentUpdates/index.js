@@ -1,7 +1,8 @@
+import EventsHandler from 'api/eventsHandler'
 import { IncidentUpdate } from 'model/incidents'
+import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 import { messageType } from 'aws/sns'
-import patchEventUpdates from 'api/patchEventUpdates'
 
 export async function handle (event, context, callback) {
   try {
@@ -11,8 +12,8 @@ export async function handle (event, context, callback) {
       incidentUpdateID: event.params.incidentupdateid,
       ...event.body
     })
-    const eventUpdatesStore = new IncidentUpdatesStore()
-    await patchEventUpdates(incidentUpdate, messageType.incidentPatched, eventUpdatesStore)
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
+    await handler.updateEventUpdate(incidentUpdate, messageType.incidentPatched)
 
     callback(null, incidentUpdate.objectify())
   } catch (error) {

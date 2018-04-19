@@ -1,14 +1,13 @@
-import deleteEvents from 'api/deleteEvents'
+import EventsHandler from 'api/eventsHandler'
 import { messageType } from 'aws/sns'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
   try {
-    const eventsStore = new IncidentsStore()
-    const eventUpdatesStore = new IncidentUpdatesStore()
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
     const incidentID = event.params.incidentid
-    await deleteEvents(incidentID, messageType.incidentDeleted, eventsStore, eventUpdatesStore)
+    await handler.deleteEvent(incidentID, messageType.incidentDeleted)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

@@ -1,9 +1,9 @@
+import EventsHandler from 'api/eventsHandler'
 import { messageType } from 'aws/sns'
 import { Incident, IncidentUpdate } from 'model/incidents'
 import { Component } from 'model/components'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import postEvents from 'api/postEvents'
 
 export async function handle (event, context, callback) {
   try {
@@ -13,16 +13,9 @@ export async function handle (event, context, callback) {
       ...event
     })
     const components = event.components === undefined ? [] : event.components.map(comp => new Component(comp))
-    const eventsStore = new IncidentsStore()
-    const eventUpdatesStore = new IncidentUpdatesStore()
-    const [respIncident, respIncidentUpdate] = await postEvents(
-      incident,
-      incidentUpdate,
-      messageType.incidentCreated,
-      components,
-      eventsStore,
-      eventUpdatesStore
-    )
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
+    const msgType = messageType.incidentCreated
+    const [respIncident, respIncidentUpdate] = await handler.createEvent(incident, incidentUpdate, msgType, components)
 
     const resp = {
       ...respIncident.objectify(),
