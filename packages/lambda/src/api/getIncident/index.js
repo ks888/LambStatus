@@ -1,6 +1,7 @@
 import EventsHandler from 'api/eventsHandler'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
+import { NotFoundError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   try {
@@ -12,6 +13,12 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: ' + error.message)
+    switch (error.name) {
+      case NotFoundError.name:
+        callback('Error: an item not found')
+        break
+      default:
+        callback('Error: failed to get an incident')
+    }
   }
 }

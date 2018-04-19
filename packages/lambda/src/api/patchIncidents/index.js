@@ -1,9 +1,10 @@
 import EventsHandler from 'api/eventsHandler'
 import { messageType } from 'aws/sns'
-import { Component } from 'model/components'
-import { Incident, IncidentUpdate } from 'model/incidents'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
+import { Component } from 'model/components'
+import { Incident, IncidentUpdate } from 'model/incidents'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   try {
@@ -34,6 +35,15 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: ' + error.message)
+    switch (error.name) {
+      case ValidationError.name:
+        callback('Error: ' + error.message)
+        break
+      case NotFoundError.name:
+        callback('Error: an item not found')
+        break
+      default:
+        callback('Error: failed to update the incident')
+    }
   }
 }

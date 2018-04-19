@@ -11,6 +11,6 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: ' + error.message)
+    callback('Error: failed to delete the incident')
   }
 }

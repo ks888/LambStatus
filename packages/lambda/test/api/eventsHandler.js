@@ -7,7 +7,7 @@ import EventsStore from 'db/events'
 import EventUpdatesStore from 'db/eventUpdates'
 import { Component } from 'model/components'
 import { Event, EventUpdate } from 'model/events'
-import { NotFoundError, ValidationError } from 'utils/errors'
+import { NotFoundError } from 'utils/errors'
 
 describe('EventsHandler', () => {
   let eventID, eventUpdateID, event, eventUpd, eventUpds, components, handler
@@ -77,18 +77,6 @@ describe('EventsHandler', () => {
       assert(actual[1].length === eventUpds.length)
       assert(actual[1][0].getEventUpdateID() === eventUpdateID)
     })
-
-    it('should handle NotFoundError', async () => {
-      eventsStore.get = () => { throw new NotFoundError() }
-
-      let err
-      try {
-        await handler.getEvent(null)
-      } catch (e) {
-        err = e
-      }
-      assert(err.name !== NotFoundError.name)
-    })
   })
 
   describe('createEvent', () => {
@@ -128,17 +116,6 @@ describe('EventsHandler', () => {
       assert(incident === event)
       assert(incidentUpdate === eventUpd)
     })
-
-    it('should handle ValidationError', async () => {
-      event.validateExceptEventID = () => { throw new ValidationError() }
-      let err
-      try {
-        await handler.createEvent(event, eventUpd, eventType, components)
-      } catch (e) {
-        err = e
-      }
-      assert(ValidationError.name !== err.name)
-    })
   })
 
   describe('updateEvent', () => {
@@ -177,17 +154,6 @@ describe('EventsHandler', () => {
       assert(incident === event)
       assert(incidentUpdates === eventUpds)
     })
-
-    it('should handle ValidationError', async () => {
-      eventUpd.validateExceptEventUpdateID = () => { throw new ValidationError() }
-      let err
-      try {
-        await handler.updateEvent(event, eventUpd, eventType, components)
-      } catch (e) {
-        err = e
-      }
-      assert(ValidationError.name !== err.name)
-    })
   })
 
   describe('updateEventUpdate', () => {
@@ -202,17 +168,6 @@ describe('EventsHandler', () => {
     it('should notify the update', async () => {
       await handler.updateEventUpdate(eventUpd, eventType)
       assert(snsStub.calledOnce)
-    })
-
-    it('should handle ValidationError', async () => {
-      eventUpd.validate = () => { throw new ValidationError() }
-      let err
-      try {
-        await handler.updateEventUpdate(eventUpd, eventType)
-      } catch (e) {
-        err = e
-      }
-      assert(ValidationError.name !== err.name)
     })
   })
 

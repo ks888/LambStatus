@@ -45,6 +45,16 @@ describe('postIncidents', () => {
     assert(snsStub.calledOnce)
   })
 
+  it('should return validation error if event is invalid', async () => {
+    sinon.stub(IncidentsStore.prototype, 'create').returns()
+    sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
+    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+
+    return await handle({}, null, (error, result) => {
+      assert(error.match(/invalid/))
+    })
+  })
+
   it('should return error on exception thrown', async () => {
     sinon.stub(IncidentsStore.prototype, 'create').throws()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()

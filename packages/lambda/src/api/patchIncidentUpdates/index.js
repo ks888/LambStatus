@@ -1,8 +1,9 @@
 import EventsHandler from 'api/eventsHandler'
-import { IncidentUpdate } from 'model/incidents'
+import { messageType } from 'aws/sns'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import { messageType } from 'aws/sns'
+import { IncidentUpdate } from 'model/incidents'
+import { ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   try {
@@ -19,6 +20,12 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: ' + error.message)
+    switch (error.name) {
+      case ValidationError.name:
+        callback('Error: ' + error.message)
+        break
+      default:
+        callback('Error: failed to update the incident update')
+    }
   }
 }

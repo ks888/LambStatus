@@ -33,6 +33,17 @@ describe('patchIncidentUpdates', () => {
     assert(snsStub.calledOnce)
   })
 
+  it('should return validation error if event is invalid', async () => {
+    sinon.stub(IncidentUpdatesStore.prototype, 'update').returns()
+    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+
+    const params = generateParams()
+    params.body.incidentStatus = undefined
+    return await handle(params, null, (error, result) => {
+      assert(error.match(/invalid/))
+    })
+  })
+
   it('should return error on exception thrown', async () => {
     sinon.stub(IncidentUpdatesStore.prototype, 'update').throws()
     sinon.stub(SNS.prototype, 'notifyIncident').returns()

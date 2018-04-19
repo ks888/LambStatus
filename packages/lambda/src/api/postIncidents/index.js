@@ -28,6 +28,12 @@ export async function handle (event, context, callback) {
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    callback('Error: ' + error.message)
+    switch (error.name) {
+      case 'ValidationError':
+        callback('Error: ' + error.message)
+        break
+      default:
+        callback('Error: failed to create a new incident')
+    }
   }
 }

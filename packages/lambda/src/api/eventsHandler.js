@@ -1,5 +1,5 @@
 import SNS from 'aws/sns'
-import { NotFoundError, ValidationError } from 'utils/errors'
+import { NotFoundError } from 'utils/errors'
 import ComponentsStore from 'db/components'
 
 export default class EventsHandler {
@@ -9,104 +9,68 @@ export default class EventsHandler {
   }
 
   async listEvents () {
-    try {
-      return await this.eventsStore.query()
-    } catch (error) {
-      throw new Error('failed to get events list')
-    }
+    return await this.eventsStore.query()
   }
 
   async getEvent (eventID) {
-    try {
-      const event = await this.eventsStore.get(eventID)
-      const eventUpdate = await this.eventUpdatesStore.query(eventID)
-      return [event, eventUpdate]
-    } catch (error) {
-      if (error.name === NotFoundError.name) {
-        throw new Error(error.message)
-      }
-      throw new Error('failed to get an event')
-    }
+    const event = await this.eventsStore.get(eventID)
+    const eventUpdate = await this.eventUpdatesStore.query(eventID)
+    return [event, eventUpdate]
   }
 
   async createEvent (event, eventUpdate, eventType, components) {
-    try {
-      event.validateExceptEventID()
-      await this.eventsStore.create(event)
+    event.validateExceptEventID()
+    await this.eventsStore.create(event)
 
-      eventUpdate.setEventID(event.getEventID())
-      eventUpdate.validateExceptEventUpdateID()
-      await this.eventUpdatesStore.create(eventUpdate)
+    eventUpdate.setEventID(event.getEventID())
+    eventUpdate.validateExceptEventUpdateID()
+    await this.eventUpdatesStore.create(eventUpdate)
 
-      const componentsStore = new ComponentsStore()
-      await Promise.all(components.map(async (component) => {
-        // TODO: validate
-        await componentsStore.updateStatus(component.componentID, component.status)
-      }))
+    const componentsStore = new ComponentsStore()
+    await Promise.all(components.map(async (component) => {
+      // TODO: validate
+      await componentsStore.updateStatus(component.componentID, component.status)
+    }))
 
-      await new SNS().notifyIncident(event.getEventID(), eventType)
+    await new SNS().notifyIncident(event.getEventID(), eventType)
 
-      return [event, eventUpdate]
-    } catch (error) {
-      if (error.name === ValidationError.name) {
-        throw new Error(error.message)
-      }
-      throw new Error('failed to create a new event')
-    }
+    return [event, eventUpdate]
   }
 
   async updateEvent (event, eventUpdate, eventType, components) {
-    try {
-      event.validate()
-      await this.eventsStore.update(event)
+    event.validate()
+    await this.eventsStore.update(event)
 
-      eventUpdate.validateExceptEventUpdateID()
-      await this.eventUpdatesStore.create(eventUpdate)
+    eventUpdate.validateExceptEventUpdateID()
+    await this.eventUpdatesStore.create(eventUpdate)
 
-      const componentsStore = new ComponentsStore()
-      await Promise.all(components.map(async (component) => {
-        // TODO: validate
-        await componentsStore.updateStatus(component.componentID, component.status)
-      }))
+    const componentsStore = new ComponentsStore()
+    await Promise.all(components.map(async (component) => {
+      // TODO: validate
+      await componentsStore.updateStatus(component.componentID, component.status)
+    }))
 
-      await new SNS().notifyIncident(event.getEventID(), eventType)
+    await new SNS().notifyIncident(event.getEventID(), eventType)
 
-      const eventUpdates = await this.eventUpdatesStore.query(event.getEventID())
-      return [event, eventUpdates]
-    } catch (error) {
-      if (error.name === ValidationError.name) {
-        throw new Error(error.message)
-      }
-      throw new Error('failed to update the event')
-    }
+    const eventUpdates = await this.eventUpdatesStore.query(event.getEventID())
+    return [event, eventUpdates]
   }
 
   async updateEventUpdate (eventUpdate, eventType) {
-    try {
-      eventUpdate.validate()
-      await this.eventUpdatesStore.update(eventUpdate)
+    eventUpdate.validate()
+    await this.eventUpdatesStore.update(eventUpdate)
 
-      await new SNS().notifyIncident(eventUpdate.getEventID(), eventType)
-    } catch (error) {
-      if (error.name === ValidationError.name) {
-        throw new Error(error.message)
-      }
-      throw new Error('failed to patch the event update')
-    }
+    await new SNS().notifyIncident(eventUpdate.getEventID(), eventType)
   }
 
   async deleteEvent (eventID, eventType) {
-    try {
-      if (!await this.exists(eventID)) return
+    if (!await this.exists(eventID)) return
 
-      await this.eventsStore.delete(eventID)
-      const eventUpdates = await this.eventUpdatesStore.query(eventID)
-      await this.eventUpdatesStore.delete(eventID, eventUpdates.map(upd => upd.getEventUpdateID()))
+    await this.eventsStore.delete(eventID)
+    const eventUpdates = await this.eventUpdatesStore.query(eventID)
+    await this.eventUpdatesStore.delete(eventID, eventUpdates.map(upd => upd.getEventUpdateID()))
 
-      await new SNS().notifyIncident(eventID, eventType)
-    } catch (error) {
-      throw new Error('failed to delete the event')
-    }
+    await new SNS().notifyIncident(eventID, eventType)
   }
 
   async exists (eventID) {
