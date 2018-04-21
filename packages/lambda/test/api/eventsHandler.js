@@ -51,12 +51,12 @@ describe('EventsHandler', () => {
 
     handler = new EventsHandler(eventsStore, eventUpdatesStore)
 
-    snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    snsStub = sinon.stub(SNS.prototype, 'notifyEvent').returns()
   })
 
   afterEach(() => {
     ComponentsStore.prototype.updateStatus.restore()
-    SNS.prototype.notifyIncident.restore()
+    SNS.prototype.notifyEvent.restore()
   })
 
   describe('listEvents', () => {

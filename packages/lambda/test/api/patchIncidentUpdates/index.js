@@ -13,12 +13,12 @@ describe('patchIncidentUpdates', () => {
 
   afterEach(() => {
     IncidentUpdatesStore.prototype.update.restore()
-    SNS.prototype.notifyIncident.restore()
+    SNS.prototype.notifyEvent.restore()
   })
 
   it('should patch the incident update', async () => {
     const updateIncidentUpdateStub = sinon.stub(IncidentUpdatesStore.prototype, 'update')
-    const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    const snsStub = sinon.stub(SNS.prototype, 'notifyEvent').returns()
 
     const params = generateParams()
     await handle(params, null, (error, result) => {
@@ -35,7 +35,7 @@ describe('patchIncidentUpdates', () => {
 
   it('should return validation error if event is invalid', async () => {
     sinon.stub(IncidentUpdatesStore.prototype, 'update').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    sinon.stub(SNS.prototype, 'notifyEvent').returns()
 
     const params = generateParams()
     params.body.incidentStatus = undefined
@@ -46,7 +46,7 @@ describe('patchIncidentUpdates', () => {
 
   it('should return error on exception thrown', async () => {
     sinon.stub(IncidentUpdatesStore.prototype, 'update').throws()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    sinon.stub(SNS.prototype, 'notifyEvent').returns()
 
     const params = generateParams()
     return await handle(params, null, (error, result) => {

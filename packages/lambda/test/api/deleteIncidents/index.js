@@ -5,7 +5,6 @@ import { handle } from 'api/deleteIncidents'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
 import { Incident, IncidentUpdate } from 'model/incidents'
-import { NotFoundError } from 'utils/errors'
 
 describe('deleteIncidents', () => {
   afterEach(() => {
@@ -13,7 +12,7 @@ describe('deleteIncidents', () => {
     IncidentsStore.prototype.delete.restore()
     IncidentUpdatesStore.prototype.query.restore()
     IncidentUpdatesStore.prototype.delete.restore()
-    SNS.prototype.notifyIncident.restore()
+    SNS.prototype.notifyEvent.restore()
   })
 
   it('should delete the incident', async () => {
@@ -25,7 +24,7 @@ describe('deleteIncidents', () => {
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns(incidentUpdates)
     const deleteIncidentUpdateStub = sinon.stub(IncidentUpdatesStore.prototype, 'delete').returns()
 
-    const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    const snsStub = sinon.stub(SNS.prototype, 'notifyEvent').returns()
 
     let err
     await handle({ params: { incidentid: '1' } }, null, (error) => {
@@ -42,7 +41,7 @@ describe('deleteIncidents', () => {
     sinon.stub(IncidentsStore.prototype, 'delete').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'delete').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
+    sinon.stub(SNS.prototype, 'notifyEvent').returns()
 
     let err
     await handle({params: {incidentid: '1'}}, null, (error, result) => {

@@ -8,10 +8,16 @@ import { Incident, IncidentUpdate } from 'model/incidents'
 import { incidentStatuses } from 'utils/const'
 
 describe('postIncidents', () => {
+  beforeEach(() => {
+    sinon.stub(SNS.prototype, 'notifyEvent')
+    sinon.stub(Incident.prototype, 'validateExceptEventID')
+  })
+
   afterEach(() => {
     IncidentsStore.prototype.create.restore()
     IncidentUpdatesStore.prototype.create.restore()
-    SNS.prototype.notifyIncident.restore()
+    SNS.prototype.notifyEvent.restore()
+    Incident.prototype.validateExceptEventID.restore()
   })
 
   const createIncidentMock = incident => {
@@ -27,7 +33,6 @@ describe('postIncidents', () => {
   it('should create the incident', async () => {
     const createIncidentStub = sinon.stub(IncidentsStore.prototype, 'create', createIncidentMock)
     const createIncidentUpdateStub = sinon.stub(IncidentUpdatesStore.prototype, 'create', createIncidentUpdateMock)
-    const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     await handle({ name: 'test', status: incidentStatuses[0] }, null, (error, result) => {
       assert(error === null)
@@ -41,14 +46,11 @@ describe('postIncidents', () => {
 
     assert(createIncidentUpdateStub.calledOnce)
     assert(createIncidentUpdateStub.firstCall.args[0] instanceof IncidentUpdate)
-
-    assert(snsStub.calledOnce)
   })
 
   it('should return validation error if event is invalid', async () => {
     sinon.stub(IncidentsStore.prototype, 'create').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({}, null, (error, result) => {
       assert(error.match(/invalid/))
@@ -58,7 +60,6 @@ describe('postIncidents', () => {
   it('should return error on exception thrown', async () => {
     sinon.stub(IncidentsStore.prototype, 'create').throws()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({}, null, (error, result) => {
       assert(error.match(/Error/))

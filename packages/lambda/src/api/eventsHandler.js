@@ -32,7 +32,7 @@ export default class EventsHandler {
       await componentsStore.updateStatus(component.componentID, component.status)
     }))
 
-    await new SNS().notifyIncident(event.getEventID(), eventType)
+    await new SNS().notifyEvent(event.getEventID(), eventType)
 
     return [event, eventUpdate]
   }
@@ -50,7 +50,7 @@ export default class EventsHandler {
       await componentsStore.updateStatus(component.componentID, component.status)
     }))
 
-    await new SNS().notifyIncident(event.getEventID(), eventType)
+    await new SNS().notifyEvent(event.getEventID(), eventType)
 
     const eventUpdates = await this.eventUpdatesStore.query(event.getEventID())
     return [event, eventUpdates]
@@ -60,7 +60,7 @@ export default class EventsHandler {
     eventUpdate.validate()
     await this.eventUpdatesStore.update(eventUpdate)
 
-    await new SNS().notifyIncident(eventUpdate.getEventID(), eventType)
+    await new SNS().notifyEvent(eventUpdate.getEventID(), eventType)
   }
 
   async deleteEvent (eventID, eventType) {
@@ -70,7 +70,7 @@ export default class EventsHandler {
     const eventUpdates = await this.eventUpdatesStore.query(eventID)
     await this.eventUpdatesStore.delete(eventID, eventUpdates.map(upd => upd.getEventUpdateID()))
 
-    await new SNS().notifyIncident(eventID, eventType)
+    await new SNS().notifyEvent(eventID, eventType)
   }
 
   async exists (eventID) {
