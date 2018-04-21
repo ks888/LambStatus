@@ -38,6 +38,7 @@ export default class EventsHandler {
   }
 
   async updateEvent (event, eventUpdate, eventType, components) {
+    event.beforeUpdate()
     event.validate()
     await this.eventsStore.update(event)
 

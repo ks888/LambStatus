@@ -19,6 +19,7 @@ describe('EventsHandler', () => {
     event = new Event()
     event.validateExceptEventID = sinon.spy()
     event.validate = sinon.spy()
+    event.beforeUpdate = sinon.spy()
     event.getEventID = () => eventID
 
     eventUpdateID = 2
@@ -126,6 +127,7 @@ describe('EventsHandler', () => {
 
       await handler.updateEvent(event, eventUpd, eventType, components)
       assert(event.validate.calledOnce)
+      assert(event.beforeUpdate.calledOnce)
       assert(eventsStore.update.calledOnce)
     })
 

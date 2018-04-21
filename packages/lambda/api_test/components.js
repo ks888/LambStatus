@@ -1,5 +1,35 @@
 import assert from 'assert'
-import { v0GetComponents, v0PostComponents, v0PatchComponents, v0DeleteComponent } from './apis'
+import fetch from 'node-fetch'
+import { componentStatuses } from 'utils/const'
+import { urlPrefix, headers } from './utils'
+
+export const v0GetComponents = async () => {
+  const url = `${urlPrefix}/api/v0/components`
+  const response = await fetch(url, {headers})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0PostComponents = async ({name = 'C1', description = '', status = componentStatuses[0]} = {}) => {
+  const url = `${urlPrefix}/api/v0/components`
+  const reqbody = {name, description, status}
+  const response = await fetch(url, {method: 'POST', headers, body: JSON.stringify(reqbody)})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0PatchComponents = async (componentID, component) => {
+  const url = `${urlPrefix}/api/v0/components/${componentID}`
+  const response = await fetch(url, {method: 'PATCH', headers, body: JSON.stringify(component)})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0DeleteComponent = async (componentID) => {
+  const url = `${urlPrefix}/api/v0/components/${componentID}`
+  const response = await fetch(url, {method: 'DELETE', headers})
+  return {response}
+}
 
 describe('V0Components', () => {
   before(async () => {
