@@ -1,10 +1,12 @@
+import { Event, EventUpdate } from 'model/events'
 import { maintenanceStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
-export class Maintenance {
+export class Maintenance extends Event {
   constructor ({maintenanceID, name, status, startAt, endAt, createdAt = new Date().toISOString(),
                 updatedAt = new Date().toISOString()}) {
+    super()
     this.maintenanceID = maintenanceID
     this.name = name
     this.status = status
@@ -18,10 +20,10 @@ export class Maintenance {
     if (this.maintenanceID === undefined || this.maintenanceID === '') {
       throw new ValidationError('invalid maintenanceID parameter')
     }
-    this.validateExceptID()
+    this.validateExceptEventID()
   }
 
-  validateExceptID () {
+  validateExceptEventID () {
     if (this.name === undefined || this.name === '') {
       throw new ValidationError('invalid name parameter')
     }
@@ -51,7 +53,15 @@ export class Maintenance {
     }
   }
 
-  setMaintenanceID (maintenanceID) {
+  beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
+  }
+
+  getEventID () {
+    return this.maintenanceID
+  }
+
+  setEventID (maintenanceID) {
     this.maintenanceID = maintenanceID
   }
 
@@ -61,9 +71,10 @@ export class Maintenance {
   }
 }
 
-export class MaintenanceUpdate {
+export class MaintenanceUpdate extends EventUpdate {
   constructor ({maintenanceID, maintenanceUpdateID, maintenanceStatus, message = '',
                 createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
+    super()
     this.maintenanceID = maintenanceID
     this.maintenanceUpdateID = maintenanceUpdateID
     this.maintenanceStatus = maintenanceStatus
@@ -76,10 +87,10 @@ export class MaintenanceUpdate {
     if (this.maintenanceUpdateID === undefined || this.maintenanceUpdateID === '') {
       throw new ValidationError('invalid maintenanceUpdateID parameter')
     }
-    this.validateExceptUpdateID()
+    this.validateExceptEventUpdateID()
   }
 
-  validateExceptUpdateID () {
+  validateExceptEventUpdateID () {
     if (this.maintenanceID === undefined || this.maintenanceID === '') {
       throw new ValidationError('invalid maintenanceID parameter')
     }
@@ -101,7 +112,19 @@ export class MaintenanceUpdate {
     }
   }
 
-  setMaintenanceUpdateID (maintenanceUpdateID) {
+  getEventID () {
+    return this.maintenanceID
+  }
+
+  setEventID (maintenanceID) {
+    this.maintenanceID = maintenanceID
+  }
+
+  getEventUpdateID () {
+    return this.maintenanceUpdateID
+  }
+
+  setEventUpdateID (maintenanceUpdateID) {
     this.maintenanceUpdateID = maintenanceUpdateID
   }
 

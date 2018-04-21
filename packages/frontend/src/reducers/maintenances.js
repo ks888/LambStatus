@@ -1,4 +1,4 @@
-import { LIST_MAINTENANCES, LIST_MAINTENANCE_UPDATES, ADD_MAINTENANCE, EDIT_MAINTENANCE,
+import { LIST_MAINTENANCES, LIST_MAINTENANCE, ADD_MAINTENANCE, EDIT_MAINTENANCE,
          EDIT_MAINTENANCE_UPDATE, REMOVE_MAINTENANCE } from 'actions/maintenances'
 
 function listMaintenancesHandler (state = { }, action) {
@@ -12,17 +12,14 @@ function listMaintenancesHandler (state = { }, action) {
   })
 }
 
-function listMaintenanceUpdatesHandler (state = { }, action) {
-  const maintenanceUpdates = action.maintenanceUpdates
-  maintenanceUpdates.sort((a, b) => {
+function listMaintenanceHandler (state = { }, action) {
+  action.maintenance.maintenanceUpdates.sort((a, b) => {
     return a.createdAt < b.createdAt
   })
 
   const newMaintenances = state.maintenances.map((maintenance) => {
     if (maintenance.maintenanceID === action.maintenanceID) {
-      return Object.assign({}, maintenance, {
-        maintenanceUpdates: maintenanceUpdates
-      })
+      return action.maintenance
     }
     return maintenance
   })
@@ -96,7 +93,7 @@ function removeMaintenanceHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LIST_MAINTENANCES]: listMaintenancesHandler,
-  [LIST_MAINTENANCE_UPDATES]: listMaintenanceUpdatesHandler,
+  [LIST_MAINTENANCE]: listMaintenanceHandler,
   [ADD_MAINTENANCE]: addMaintenanceHandler,
   [EDIT_MAINTENANCE]: editMaintenanceHandler,
   [EDIT_MAINTENANCE_UPDATE]: editMaintenanceUpdateHandler,

@@ -16,7 +16,7 @@ module.exports = {
     DeleteIncidents: './src/api/deleteIncidents/index.js',
     PatchIncidentUpdates: './src/api/patchIncidentUpdates/index.js',
     GetMaintenances: './src/api/getMaintenances/index.js',
-    GetMaintenanceUpdates: './src/api/getMaintenanceUpdates/index.js',
+    GetMaintenance: './src/api/getMaintenance/index.js',
     PostMaintenances: './src/api/postMaintenances/index.js',
     PatchMaintenances: './src/api/patchMaintenances/index.js',
     DeleteMaintenances: './src/api/deleteMaintenances/index.js',

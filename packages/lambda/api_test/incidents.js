@@ -1,5 +1,42 @@
 import assert from 'assert'
-import { v0GetIncidents, v0GetIncident, v0PostIncidents, v0PatchIncidents, v0DeleteIncident } from './apis'
+import fetch from 'node-fetch'
+import { incidentStatuses } from 'utils/const'
+import { urlPrefix, headers } from './utils'
+
+export const v0GetIncidents = async () => {
+  const url = `${urlPrefix}/api/v0/incidents`
+  const response = await fetch(url, {headers})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0PostIncidents = async ({name = 'I1', status = incidentStatuses[0], message = ''} = {}) => {
+  const url = `${urlPrefix}/api/v0/incidents`
+  const reqbody = {name, status, message}
+  const response = await fetch(url, {method: 'POST', headers, body: JSON.stringify(reqbody)})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0GetIncident = async (incidentID) => {
+  const url = `${urlPrefix}/api/v0/incidents/${incidentID}`
+  const response = await fetch(url, {headers})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0PatchIncidents = async (incidentID, incident) => {
+  const url = `${urlPrefix}/api/v0/incidents/${incidentID}`
+  const response = await fetch(url, {method: 'PATCH', headers, body: JSON.stringify(incident)})
+  const body = await response.json()
+  return {response, body}
+}
+
+export const v0DeleteIncident = async (incidentID) => {
+  const url = `${urlPrefix}/api/v0/incidents/${incidentID}`
+  const response = await fetch(url, {method: 'DELETE', headers})
+  return {response}
+}
 
 describe('V0Incidents', () => {
   before(async () => {

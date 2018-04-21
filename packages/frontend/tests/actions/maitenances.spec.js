@@ -1,13 +1,13 @@
 import fetchMock from 'fetch-mock'
 import {
   LIST_MAINTENANCES,
-  LIST_MAINTENANCE_UPDATES,
+  LIST_MAINTENANCE,
   ADD_MAINTENANCE,
   EDIT_MAINTENANCE,
   EDIT_MAINTENANCE_UPDATE,
   REMOVE_MAINTENANCE,
   fetchMaintenances,
-  fetchMaintenanceUpdates,
+  fetchMaintenance,
   postMaintenance,
   updateMaintenance,
   updateMaintenanceUpdate,
@@ -61,29 +61,29 @@ describe('Actions/Maintenances', () => {
     })
   })
 
-  describe('fetchMaintenanceUpdates', () => {
+  describe('fetchMaintenance', () => {
     it('should return a function.', () => {
-      assert(typeof fetchMaintenanceUpdates() === 'function')
+      assert(typeof fetchMaintenance() === 'function')
     })
 
     it('should fetch maintenances.', async () => {
-      fetchMock.get(/.*\/maintenances\/.*\/maintenanceupdates/,
-                    { body: [maintenanceUpdate], headers: {'Content-Type': 'application/json'} })
+      fetchMock.get(/.*\/maintenances\/.*/,
+                    { body: maintenance, headers: {'Content-Type': 'application/json'} })
 
-      await fetchMaintenanceUpdates('id', callbacks)(dispatchSpy)
+      await fetchMaintenance('id', callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(callbacks.onSuccess.calledOnce)
       assert(!callbacks.onFailure.called)
 
-      assert(dispatchSpy.firstCall.args[0].type === LIST_MAINTENANCE_UPDATES)
-      assert.deepEqual([maintenanceUpdate], dispatchSpy.firstCall.args[0].maintenanceUpdates)
+      assert(dispatchSpy.firstCall.args[0].type === LIST_MAINTENANCE)
+      assert.deepEqual(maintenance, dispatchSpy.firstCall.args[0].maintenance)
       assert(dispatchSpy.firstCall.args[0].maintenanceID === 'id')
     })
 
     it('should handle error properly.', async () => {
-      fetchMock.get(/.*\/maintenances\/.*\/maintenanceupdates/, { status: 400, body: {} })
+      fetchMock.get(/.*\/maintenances\/.*/, { status: 400, body: {} })
 
-      await fetchMaintenanceUpdates('id', callbacks)(dispatchSpy)
+      await fetchMaintenance('id', callbacks)(dispatchSpy)
       assert(callbacks.onLoad.calledOnce)
       assert(!callbacks.onSuccess.called)
       assert(callbacks.onFailure.calledOnce)

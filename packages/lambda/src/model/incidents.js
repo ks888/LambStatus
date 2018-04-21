@@ -1,9 +1,11 @@
+import { Event, EventUpdate } from 'model/events'
 import { incidentStatuses } from 'utils/const'
 import { isValidDate } from 'utils/datetime'
 import { ValidationError } from 'utils/errors'
 
-export class Incident {
+export class Incident extends Event {
   constructor ({incidentID, name, status, createdAt = new Date().toISOString(), updatedAt = new Date().toISOString()}) {
+    super()
     this.incidentID = incidentID
     this.name = name
     this.status = status
@@ -15,10 +17,10 @@ export class Incident {
     if (this.incidentID === undefined || this.incidentID === '') {
       throw new ValidationError('invalid incidentID parameter')
     }
-    this.validateExceptID()
+    this.validateExceptEventID()
   }
 
-  validateExceptID () {
+  validateExceptEventID () {
     if (this.name === undefined || this.name === '') {
       throw new ValidationError('invalid name parameter')
     }
@@ -36,7 +38,15 @@ export class Incident {
     }
   }
 
-  setIncidentID (incidentID) {
+  beforeUpdate () {
+    this.updatedAt = new Date().toISOString()
+  }
+
+  getEventID () {
+    return this.incidentID
+  }
+
+  setEventID (incidentID) {
     this.incidentID = incidentID
   }
 
@@ -46,9 +56,10 @@ export class Incident {
   }
 }
 
-export class IncidentUpdate {
+export class IncidentUpdate extends EventUpdate {
   constructor ({incidentID, incidentUpdateID, incidentStatus, message = '', createdAt = new Date().toISOString(),
                 updatedAt = new Date().toISOString()}) {
+    super()
     this.incidentID = incidentID
     this.incidentUpdateID = incidentUpdateID
     this.incidentStatus = incidentStatus
@@ -61,10 +72,10 @@ export class IncidentUpdate {
     if (this.incidentUpdateID === undefined || this.incidentUpdateID === '') {
       throw new ValidationError('invalid incidentUpdateID parameter')
     }
-    this.validateExceptUpdateID()
+    this.validateExceptEventUpdateID()
   }
 
-  validateExceptUpdateID () {
+  validateExceptEventUpdateID () {
     if (this.incidentID === undefined || this.incidentID === '') {
       throw new ValidationError('invalid incidentID parameter')
     }
@@ -86,7 +97,19 @@ export class IncidentUpdate {
     }
   }
 
-  setIncidentUpdateID (incidentUpdateID) {
+  getEventID () {
+    return this.incidentID
+  }
+
+  setEventID (incidentID) {
+    this.incidentID = incidentID
+  }
+
+  getEventUpdateID () {
+    return this.incidentUpdateID
+  }
+
+  setEventUpdateID (incidentUpdateID) {
     this.incidentUpdateID = incidentUpdateID
   }
 
