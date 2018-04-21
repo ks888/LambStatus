@@ -50,6 +50,14 @@ export class Incident extends Event {
     this.incidentID = incidentID
   }
 
+  getName () {
+    return this.name
+  }
+
+  getCreatedAt () {
+    return this.createdAt
+  }
+
   objectify () {
     const { incidentID, name, status, createdAt, updatedAt } = this
     return { incidentID, name, status, createdAt, updatedAt }
@@ -111,6 +119,18 @@ export class IncidentUpdate extends EventUpdate {
 
   setEventUpdateID (incidentUpdateID) {
     this.incidentUpdateID = incidentUpdateID
+  }
+
+  getStatus () {
+    return this.incidentStatus
+  }
+
+  getCreatedAt () {
+    return this.createdAt
+  }
+
+  getMessage () {
+    return this.message
   }
 
   objectify () {

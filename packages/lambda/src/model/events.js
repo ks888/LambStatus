@@ -16,6 +16,14 @@ export class Event {
     throw new Error('not implemented')
   }
 
+  getName () {
+    throw new Error('not implemented')
+  }
+
+  getCreatedAt () {
+    throw new Error('not implemented')
+  }
+
   beforeUpdate () {
     throw new Error('not implemented')
   }
@@ -48,6 +56,18 @@ export class EventUpdate {
   }
 
   setEventUpdateID (id) {
+    throw new Error('not implemented')
+  }
+
+  getStatus () {
+    throw new Error('not implemented')
+  }
+
+  getCreatedAt () {
+    throw new Error('not implemented')
+  }
+
+  getMessage () {
     throw new Error('not implemented')
   }
 

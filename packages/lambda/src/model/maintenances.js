@@ -65,6 +65,14 @@ export class Maintenance extends Event {
     this.maintenanceID = maintenanceID
   }
 
+  getName () {
+    return this.name
+  }
+
+  getCreatedAt () {
+    return this.createdAt
+  }
+
   objectify () {
     const { maintenanceID, name, status, startAt, endAt, createdAt, updatedAt } = this
     return { maintenanceID, name, status, startAt, endAt, createdAt, updatedAt }
@@ -126,6 +134,18 @@ export class MaintenanceUpdate extends EventUpdate {
 
   setEventUpdateID (maintenanceUpdateID) {
     this.maintenanceUpdateID = maintenanceUpdateID
+  }
+
+  getStatus () {
+    return this.maintenanceStatus
+  }
+
+  getCreatedAt () {
+    return this.createdAt
+  }
+
+  getMessage () {
+    return this.message
   }
 
   objectify () {
