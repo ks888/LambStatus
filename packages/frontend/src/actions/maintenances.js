@@ -3,7 +3,7 @@ import { sendRequest, buildHeaders } from 'utils/fetch'
 import { apiURL } from 'utils/settings'
 
 export const LIST_MAINTENANCES = 'LIST_MAINTENANCES'
-export const LIST_MAINTENANCE_UPDATES = 'LIST_MAINTENANCE_UPDATES'
+export const LIST_MAINTENANCE = 'LIST_MAINTENANCE'
 export const ADD_MAINTENANCE = 'ADD_MAINTENANCE'
 export const EDIT_MAINTENANCE = 'EDIT_MAINTENANCE'
 export const EDIT_MAINTENANCE_UPDATE = 'EDIT_MAINTENANCE_UPDATE'
@@ -16,10 +16,10 @@ export function listMaintenances (json) {
   }
 }
 
-export function listMaintenanceUpdates (json, maintenanceID) {
+export function listMaintenance (json, maintenanceID) {
   return {
-    type: LIST_MAINTENANCE_UPDATES,
-    maintenanceUpdates: json,
+    type: LIST_MAINTENANCE,
+    maintenance: json,
     maintenanceID: maintenanceID
   }
 }
@@ -64,12 +64,12 @@ export const fetchMaintenances = (callbacks = {}) => {
   }
 }
 
-export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
+export const fetchMaintenance = (maintenanceID, callbacks = {}) => {
   return async dispatch => {
     try {
-      const url = `${apiURL}/api/maintenances/${maintenanceID}/maintenanceupdates`
+      const url = `${apiURL}/api/maintenances/${maintenanceID}`
       const json = await sendRequest(url, {}, callbacks)
-      dispatch(listMaintenanceUpdates(json, maintenanceID))
+      dispatch(listMaintenance(json, maintenanceID))
     } catch (error) {
       console.error(error.message)
       console.error(error.stack)

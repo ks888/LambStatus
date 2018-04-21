@@ -657,20 +657,20 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
         arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/maintenances/{maintenanceid}
-  GetMaintenanceUpdatesLambdaFunction:
+  GetMaintenanceLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub
-          - fn/${Version}/GetMaintenanceUpdates.zip
+          - fn/${Version}/GetMaintenance.zip
           - Version:
               Fn::FindInMap: [ Constants, LambStatus, Version ]
-      Description: "Get maintenance updates"
+      Description: "Get a maintenance"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
-        ${AWS::StackName}-GetMaintenanceUpdates
+        ${AWS::StackName}-GetMaintenance
       Handler: "index.handle"
       MemorySize: 128
       Role:
@@ -679,17 +679,17 @@ Resources:
           - "Arn"
       Runtime: "nodejs6.10"
       Timeout: 30
-  GetMaintenanceUpdatesLambdaInvokePermission:
+  GetMaintenanceLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
       FunctionName:
         Fn::GetAtt:
-          - "GetMaintenanceUpdatesLambdaFunction"
+          - "GetMaintenanceLambdaFunction"
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/maintenances/{maintenanceid}/maintenanceupdates
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchMaintenanceUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1462,7 +1462,7 @@ Resources:
       - "PostMaintenancesApiMethod"
       - "PatchMaintenanceApiMethod"
       - "DeleteMaintenanceApiMethod"
-      - "GetMaintenanceUpdatesApiMethod"
+      - "GetMaintenanceApiMethod"
       - "PatchMaintenanceUpdateApiMethod"
       - "GetExternalMetricsApiMethod"
       - "GetPublicMetricsApiMethod"
@@ -2065,6 +2065,51 @@ Resources:
       ParentId:
         Ref: "MaintenancesApiResource"
       PathPart: "{maintenanceid}"
+  GetMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenanceLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
   PatchMaintenanceApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -2168,51 +2213,6 @@ Resources:
       ParentId:
         Ref: "MaintenanceApiResource"
       PathPart: "maintenanceupdates"
-  GetMaintenanceUpdatesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenanceUpdatesApiResource"
-      HttpMethod: "GET"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "AWS"
-        IntegrationHttpMethod: "POST"
-        PassthroughBehavior: "WHEN_NO_TEMPLATES"
-        RequestTemplates:
-          application/json: !Sub |-
-            {
-              "params":{
-                #foreach($param in $input.params().path.keySet())
-                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-                #if($foreach.hasNext),#end
-                #end
-              }
-            }
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function:
-              Fn::GetAtt:
-                - "GetMaintenanceUpdatesLambdaFunction"
-                - "Arn"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: "400"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: ".*Error.*"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: "400"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
   MaintenanceUpdateApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:

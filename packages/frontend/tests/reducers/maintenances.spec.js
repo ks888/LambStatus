@@ -1,4 +1,4 @@
-import { listMaintenances, listMaintenanceUpdates, addMaintenance, editMaintenance,
+import { listMaintenances, listMaintenance, addMaintenance, editMaintenance,
          editMaintenanceUpdate, removeMaintenance } from 'actions/maintenances'
 import maintenancesReducer from 'reducers/maintenances'
 
@@ -35,19 +35,26 @@ describe('Reducers/maintenances', () => {
     })
   })
 
-  describe('listMaintenanceUpdatesHandler', () => {
+  describe('listMaintenanceHandler', () => {
     it('should update the maintenance updates.', () => {
+      const maintenance = {
+        ...maintenance1,
+        maintenanceUpdates: [maintenanceUpdate1]
+      }
       const state = maintenancesReducer({maintenances: [maintenance1]},
-                                     listMaintenanceUpdates([maintenanceUpdate1], maintenance1.maintenanceID))
+                                        listMaintenance(maintenance, maintenance1.maintenanceID))
       assert(state.maintenances.length === 1)
       assert(state.maintenances[0].maintenanceUpdates.length === 1)
       assert.deepEqual(state.maintenances[0].maintenanceUpdates[0], maintenanceUpdate1)
     })
 
     it('should sort the maintenance updates.', () => {
-      const updates = [maintenanceUpdate1, {...maintenanceUpdate1, maintenanceUpdateID: '2', createdAt: '2'}]
+      const maintenance = {
+        ...maintenance1,
+        maintenanceUpdates: [maintenanceUpdate1, {...maintenanceUpdate1, maintenanceUpdateID: '2', createdAt: '2'}]
+      }
       const state = maintenancesReducer({maintenances: [maintenance1]},
-                                     listMaintenanceUpdates(updates, maintenance1.maintenanceID))
+                                        listMaintenance(maintenance, maintenance1.maintenanceID))
       assert(state.maintenances.length === 1)
       assert(state.maintenances[0].maintenanceUpdates.length === 2)
       assert(state.maintenances[0].maintenanceUpdates[0].maintenanceUpdateID === '2')
