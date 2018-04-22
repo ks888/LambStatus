@@ -15,6 +15,7 @@
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
     "test:coverage": "nyc --reporter=lcov --reporter=text --include src/ --all npm run test",
     "test:dev": "npm run test -- --watch",
+    "codecov": "cat coverage/lcov.info | codecov",
     "api-test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive api_test --no-timeouts",
     "release": "npm run build && NODE_PATH=./src babel-node ./bin/release.js",
     "release:force": "npm run release -- --force"
@@ -39,6 +40,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.11.6",
     "cfn-response": "^1.0.1",
+    "codecov": "^3.0.0",
     "dotenv": "^2.0.0",
     "eslint": "^3.3.1",
     "eslint-config-standard": "^6.0.0-beta.3",

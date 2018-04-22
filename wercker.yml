@@ -22,7 +22,7 @@ build:
         name: test lambda package
         cwd: packages/lambda
         code: |
-          npm run test
+          npm run test:coverage
     - script:
         name: test frontend package
         cwd: packages/frontend
