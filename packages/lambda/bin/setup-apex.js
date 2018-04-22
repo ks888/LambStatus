@@ -29,7 +29,7 @@ const apexProjectTemplate = {
   description: 'Lambda Functions for LambStatus',
   memory: 128,
   timeout: 30,
-  runtime: 'nodejs6.10',
+  runtime: 'nodejs8.10',
   shim: false,
   role: lambdaRoleArn,
   nameTemplate: '{{.Project.Name}}-{{.Function.Name}}'

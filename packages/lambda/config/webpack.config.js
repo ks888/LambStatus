@@ -52,27 +52,31 @@ module.exports = {
     HandleBouncesAndComplaints: './src/api/handleBouncesAndComplaints/index.js'
   },
   output: {
-    path: './build/functions',
+    path: path.resolve(__dirname, '../build/functions'),
     library: '[name]',
     libraryTarget: 'commonjs2',
     filename: '[name]/index.js'
   },
   target: 'node',
-  externals: { 'aws-sdk': 'commonjs aws-sdk' },
+  externals: {
+    'aws-sdk': 'commonjs aws-sdk',
+    'spawn-sync': 'spawn-sync'
+  },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel'
-      },
-      {
-        test: /\.json$/,
-        loader: 'json'
+        use: {
+          loader: 'babel-loader'
+        }
       }
     ]
   },
   resolve: {
-    root: path.resolve(__dirname, '../src')
+    modules: [
+      path.resolve(__dirname, '../src'),
+      'node_modules'
+    ]
   }
 }
