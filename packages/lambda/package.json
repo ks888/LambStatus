@@ -1,6 +1,6 @@
 {
   "name": "lamb-status-lambda",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "AWS Lambda functions for LambStatus",
   "engines": {
     "node": "^8.10.0",

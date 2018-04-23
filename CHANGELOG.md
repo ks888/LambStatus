@@ -1,5 +1,19 @@
 # Change Log
 
+## [v0.6.2](https://github.com/ks888/LambStatus/tree/v0.6.2) (2018-04-23)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.1...v0.6.2)
+
+### Added
+
+- [\#108](https://github.com/ks888/LambStatus/issues/108): Guide for custom uptime metrics (thanks [@wmnnd](https://github.com/wmnnd))
+- [\#109](https://github.com/ks888/LambStatus/issues/109): API for adding scheduled maintenance (thanks [@jaredsmith](https://github.com/jaredsmith))
+
+### Fixed
+
+- [\#117](https://github.com/ks888/LambStatus/issues/117): Upgrade to node.js 8.10
+- [\#112](https://github.com/ks888/LambStatus/issues/112): ISO 8601 formatted dates with timezone offsets are interpreted as being Z formatted (thanks [@poswald](https://github.com/poswald))
+- [\#102](https://github.com/ks888/LambStatus/issues/102): Force HTTPS (thanks [@nodomain](https://github.com/nodomain))
+
 ## [v0.6.1](https://github.com/ks888/LambStatus/tree/v0.6.1) (2018-02-22)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.0...v0.6.1)
 
