@@ -1,9 +1,9 @@
-import response from 'cfn-response'
+import Response from 'aws/cfnResponse'
 import Cognito from 'aws/cognito'
 
 export async function handle (event, context, callback) {
   if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
     return
   }
 
@@ -15,10 +15,10 @@ export async function handle (event, context, callback) {
 
   try {
     await new Cognito().createUser(userPoolId, userName, email)
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }

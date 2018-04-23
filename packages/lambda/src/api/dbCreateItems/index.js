@@ -1,11 +1,11 @@
-import response from 'cfn-response'
+import Response from 'aws/cfnResponse'
 import APIGateway from 'aws/apiGateway'
 import SNS, {messageType} from 'aws/sns'
 import { stackName } from 'utils/const'
 
 export async function handle (event, context, callback) {
   if (event.RequestType === 'Update' || event.RequestType === 'Delete') {
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
     return
   }
 
@@ -18,10 +18,10 @@ export async function handle (event, context, callback) {
     await new SNS().notifyIncidentToTopic(incidentNotificationTopic, '', messageType.metadataChanged)
     await new APIGateway().createApiKeyWithUsagePlan(stackName, usagePlanID)
 
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }
