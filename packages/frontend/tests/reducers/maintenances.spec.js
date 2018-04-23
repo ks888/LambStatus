@@ -63,7 +63,7 @@ describe('Reducers/maintenances', () => {
 
   describe('addMaintenanceHandler', () => {
     it('should add the new maintenance.', () => {
-      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance({maintenance: maintenance2}))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance(maintenance2))
       assert.deepEqual([maintenance2, maintenance1], state.maintenances)
     })
   })
@@ -72,7 +72,7 @@ describe('Reducers/maintenances', () => {
     it('should update the `maintenances` state.', () => {
       const newName = 'newName'
       const newMaintenance = { ...maintenance1, name: newName }
-      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance({maintenance: newMaintenance}))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance(newMaintenance))
       assert.deepEqual([newMaintenance], state.maintenances)
     })
   })

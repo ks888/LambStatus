@@ -30,26 +30,22 @@ function listMaintenanceHandler (state = { }, action) {
 }
 
 function addMaintenanceHandler (state = { }, action) {
-  const {
-    maintenance
-  } = action.response
+  delete action.response.components
 
   return Object.assign({}, state, {
     maintenances: [
-      maintenance,
+      action.response,
       ...state.maintenances
     ]
   })
 }
 
 function editMaintenanceHandler (state = { }, action) {
-  const {
-    maintenance: updatedMaintenance
-  } = action.response
+  delete action.response.components
 
   const newMaintenances = state.maintenances.map((maintenance) => {
-    if (maintenance.maintenanceID === updatedMaintenance.maintenanceID) {
-      return updatedMaintenance
+    if (maintenance.maintenanceID === action.response.maintenanceID) {
+      return action.response
     }
     return maintenance
   })
