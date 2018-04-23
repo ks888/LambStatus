@@ -15,7 +15,7 @@ export async function handle (event, context, callback) {
   } = event.ResourceProperties
 
   try {
-    await new SNS().notifyIncidentToTopic(incidentNotificationTopic, '', messageType.metadataChanged)
+    await new SNS().notifyEventToTopic(incidentNotificationTopic, '', messageType.metadataChanged)
     await new APIGateway().createApiKeyWithUsagePlan(stackName, usagePlanID)
 
     await Response.sendSuccess(event, context)
