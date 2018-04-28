@@ -47,6 +47,7 @@ describe('S3', () => {
       const body = 'data'
       const contentType = 'text/html'
       const cacheControl = 'max-age=10'
+      const acl = 'public-read'
       let actual
       AWS.mock('S3', 'putObject', (params, callback) => {
         actual = params
@@ -54,13 +55,14 @@ describe('S3', () => {
       })
 
       const s3 = new S3()
-      await s3.putObject(undefined, bucketName, objectName, body)
+      await s3.putObject(undefined, bucketName, objectName, body, undefined, undefined, acl)
 
       assert(actual.Bucket === bucketName)
       assert(actual.Key === objectName)
       assert(actual.Body === body)
       assert(actual.ContentType === contentType)
       assert(actual.CacheControl === cacheControl)
+      assert(actual.ACL === acl)
     })
 
     it('should throw error if putObject fails ', async () => {
@@ -120,6 +122,7 @@ describe('S3', () => {
       const destObjectName = 'test.html'
       const contentType = 'text/html'
       const cacheControl = 'max-age=10'
+      const acl = 'public-read'
       let actual
       AWS.mock('S3', 'copyObject', (params, callback) => {
         actual = params
@@ -127,13 +130,14 @@ describe('S3', () => {
       })
 
       const s3 = new S3()
-      await s3.copyObject(undefined, srcBucketName, srcObjectName, destBucketName, destObjectName)
+      await s3.copyObject(undefined, srcBucketName, srcObjectName, destBucketName, destObjectName, acl)
 
       assert(actual.Bucket === destBucketName)
       assert(actual.Key === destObjectName)
       assert(actual.CopySource === srcBucketName + '/' + srcObjectName)
       assert(actual.ContentType === contentType)
       assert(actual.CacheControl === cacheControl)
+      assert(actual.ACL === acl)
     })
 
     it('should throw error if copyObject fails ', async () => {

@@ -19,7 +19,7 @@ export default class S3 {
     })
   }
 
-  putObject (region, bucketName, objectName, body, mimeType = undefined, cacheControl = undefined) {
+  putObject (region, bucketName, objectName, body, mimeType = undefined, cacheControl = undefined, acl = undefined) {
     const awsS3 = new AWS.S3({ region })
     return new Promise((resolve, reject) => {
       if (mimeType === undefined) {
@@ -33,7 +33,8 @@ export default class S3 {
         Body: body,
         Key: objectName,
         ContentType: mimeType,
-        CacheControl: cacheControl
+        CacheControl: cacheControl,
+        ACL: acl
       }
       awsS3.putObject(params, (err, result) => {
         if (err) {
@@ -61,7 +62,7 @@ export default class S3 {
     })
   }
 
-  copyObject (region, srcBucketName, srcObjectName, destBucketName, destObjectName) {
+  copyObject (region, srcBucketName, srcObjectName, destBucketName, destObjectName, acl = undefined) {
     const awsS3 = new AWS.S3({ region })
     return new Promise((resolve, reject) => {
       const contentType = mime.lookup(destObjectName)
@@ -72,7 +73,8 @@ export default class S3 {
         ContentType: contentType,
         CacheControl: cacheControl,
         CopySource: srcBucketName + '/' + srcObjectName,
-        MetadataDirective: 'REPLACE'
+        MetadataDirective: 'REPLACE',
+        ACL: acl
       }
       awsS3.copyObject(params, (err, result) => {
         if (err) {
