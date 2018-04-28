@@ -3687,19 +3687,6 @@ Resources:
               - "*"
       WebsiteConfiguration:
         IndexDocument: "index.html"
-  StatusPageS3BucketPolicy:
-    Type: "AWS::S3::BucketPolicy"
-    Properties:
-      Bucket:
-        Ref: "StatusPageS3"
-      PolicyDocument:
-        Statement:
-          - Effect: "Allow"
-            Action:
-              - "s3:GetObject"
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${StatusPageS3}/*
   StatusPageDistribution:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -3785,19 +3772,6 @@ Resources:
     Properties:
       WebsiteConfiguration:
         IndexDocument: "index.html"
-  AdminPageS3BucketPolicy:
-    Type: "AWS::S3::BucketPolicy"
-    Properties:
-      Bucket:
-        Ref: "AdminPageS3"
-      PolicyDocument:
-        Statement:
-          - Effect: "Allow"
-            Action:
-              - "s3:GetObject"
-            Principal: "*"
-            Resource: !Sub |-
-              arn:aws:s3:::${AdminPageS3}/*
   AdminPageDistribution:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -4181,6 +4155,7 @@ Resources:
       Bucket:
         Ref: StatusPageS3
       Key: settings.js
+      Acl: public-read
       Body: !Sub
         - __LAMBSTATUS_API_URL__ = 'https://${Domain}';
         - Domain: !If
@@ -4200,6 +4175,7 @@ Resources:
       Bucket:
         Ref: AdminPageS3
       Key: settings.js
+      Acl: public-read
       Body: !Sub
         - __LAMBSTATUS_API_URL__ = 'https://${Domain}';__LAMBSTATUS_USER_POOL_ID__ = '${CognitoUserPool.UserPoolID}';__LAMBSTATUS_CLIENT_ID__ = '${CognitoUserPoolClient.UserPoolClientID}';
         - Domain: !If
@@ -4234,6 +4210,7 @@ Resources:
         ${AWS::Region}
       DestinationBucket:
         Ref: StatusPageS3
+      Acl: public-read
   AdminPageFrontend:
     Type: Custom::S3SyncObjects
     Properties:
@@ -4250,6 +4227,7 @@ Resources:
         ${AWS::Region}
       DestinationBucket:
         Ref: AdminPageS3
+      Acl: public-read
   CognitoSMSCallerRole:
     Type: AWS::IAM::Role
     Properties:
