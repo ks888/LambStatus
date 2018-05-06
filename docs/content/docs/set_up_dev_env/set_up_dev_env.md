@@ -15,7 +15,7 @@ This page describes how to set up the development environment. Also, the project
 
 #### Prerequisite
 
-* Node.js (v6.10.0)
+* Node.js (v8.10.0)
 
 #### Create a CloudFormation stack
 

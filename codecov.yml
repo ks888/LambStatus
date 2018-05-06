@@ -1,6 +1,4 @@
 coverage:
-  fixes:
-    - "::packages/frontend/"
   status:
     project: off
     patch: off

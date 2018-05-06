@@ -17,7 +17,7 @@ module.exports = {
     DeleteIncidents: './src/api/deleteIncidents/index.js',
     PatchIncidentUpdates: './src/api/patchIncidentUpdates/index.js',
     GetMaintenances: './src/api/getMaintenances/index.js',
-    GetMaintenanceUpdates: './src/api/getMaintenanceUpdates/index.js',
+    GetMaintenance: './src/api/getMaintenance/index.js',
     PostMaintenances: './src/api/postMaintenances/index.js',
     PatchMaintenances: './src/api/patchMaintenances/index.js',
     DeleteMaintenances: './src/api/deleteMaintenances/index.js',
@@ -53,27 +53,31 @@ module.exports = {
     HandleBouncesAndComplaints: './src/api/handleBouncesAndComplaints/index.js'
   },
   output: {
-    path: './build/functions',
+    path: path.resolve(__dirname, '../build/functions'),
     library: '[name]',
     libraryTarget: 'commonjs2',
     filename: '[name]/index.js'
   },
   target: 'node',
-  externals: { 'aws-sdk': 'commonjs aws-sdk' },
+  externals: {
+    'aws-sdk': 'commonjs aws-sdk',
+    'spawn-sync': 'spawn-sync'
+  },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel'
-      },
-      {
-        test: /\.json$/,
-        loader: 'json'
+        use: {
+          loader: 'babel-loader'
+        }
       }
     ]
   },
   resolve: {
-    root: path.resolve(__dirname, '../src')
+    modules: [
+      path.resolve(__dirname, '../src'),
+      'node_modules'
+    ]
   }
 }

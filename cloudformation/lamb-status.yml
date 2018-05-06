@@ -32,7 +32,7 @@ Parameters:
 Mappings:
   Constants:
     LambStatus:
-      Version: 0.6.1
+      Version: 0.6.2
 Conditions:
   UseDefaultStatusPageSSLCertificate:
     !Equals [ !Ref StatusPageSSLCertificate, "" ]
@@ -248,7 +248,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -281,7 +281,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -314,7 +314,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -347,7 +347,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -380,7 +380,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -413,7 +413,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -446,7 +446,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetIncidentLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -479,7 +479,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -512,7 +512,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -545,7 +545,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchIncidentUpdatesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -578,7 +578,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -590,7 +590,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/maintenances
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PostMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -611,7 +611,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -623,7 +623,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/POST/api/maintenances
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -644,7 +644,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -656,7 +656,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/maintenances/{maintenanceid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   DeleteMaintenancesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -677,7 +677,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -689,40 +689,40 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/DELETE/api/maintenances/{maintenanceid}
-  GetMaintenanceUpdatesLambdaFunction:
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
+  GetMaintenanceLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
         S3Bucket: !Sub |-
           lambstatus-${AWS::Region}
         S3Key: !Sub
-          - fn/${Version}/GetMaintenanceUpdates.zip
+          - fn/${Version}/GetMaintenance.zip
           - Version:
               Fn::FindInMap: [ Constants, LambStatus, Version ]
-      Description: "Get maintenance updates"
+      Description: "Get a maintenance"
       # The prefix of function name must be stack name
       FunctionName: !Sub |-
-        ${AWS::StackName}-GetMaintenanceUpdates
+        ${AWS::StackName}-GetMaintenance
       Handler: "index.handle"
       MemorySize: 128
       Role:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
-  GetMaintenanceUpdatesLambdaInvokePermission:
+  GetMaintenanceLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
     Properties:
       FunctionName:
         Fn::GetAtt:
-          - "GetMaintenanceUpdatesLambdaFunction"
+          - "GetMaintenanceLambdaFunction"
           - "Arn"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/GET/api/maintenances/{maintenanceid}/maintenanceupdates
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   PatchMaintenanceUpdatesLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -743,7 +743,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchMaintenanceUpdatesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -755,7 +755,7 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub |-
-        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/PATCH/api/maintenances/{maintenanceid}/maintenanceupdates/{maintenanceupdateid}
+        arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*/*/*
   GetSettingsLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -776,7 +776,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -809,7 +809,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetPublicSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -842,7 +842,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -875,7 +875,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostLogosLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -908,7 +908,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteLogosLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -941,7 +941,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostApiKeysLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -974,7 +974,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteApiKeysLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1007,7 +1007,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 60
   GetExternalMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1040,7 +1040,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetPublicMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1073,7 +1073,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GetMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1106,7 +1106,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PostMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1139,7 +1139,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   PatchMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1172,7 +1172,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   DeleteMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1205,7 +1205,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 60
   PostMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1238,7 +1238,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 60
   CollectMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1284,7 +1284,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   UpdateFeedsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1330,7 +1330,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 300
   SendEmailsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1371,7 +1371,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   SubscribeLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1404,7 +1404,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   ConfirmSubscriptionLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1437,7 +1437,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   UnsubscribeLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1470,7 +1470,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 300
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
@@ -1495,7 +1495,7 @@ Resources:
       - "PostMaintenancesApiMethod"
       - "PatchMaintenanceApiMethod"
       - "DeleteMaintenanceApiMethod"
-      - "GetMaintenanceUpdatesApiMethod"
+      - "GetMaintenanceApiMethod"
       - "PatchMaintenanceUpdateApiMethod"
       - "GetExternalMetricsApiMethod"
       - "GetPublicMetricsApiMethod"
@@ -2098,6 +2098,51 @@ Resources:
       ParentId:
         Ref: "MaintenancesApiResource"
       PathPart: "{maintenanceid}"
+  GetMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "MaintenanceApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: false
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenanceLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+          - StatusCode: "400"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            SelectionPattern: ".*Error.*"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+        - StatusCode: "400"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
   PatchMaintenanceApiMethod:
     Type: "AWS::ApiGateway::Method"
     Properties:
@@ -2201,51 +2246,6 @@ Resources:
       ParentId:
         Ref: "MaintenanceApiResource"
       PathPart: "maintenanceupdates"
-  GetMaintenanceUpdatesApiMethod:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      RestApiId:
-        Ref: "RestApi"
-      ResourceId:
-        Ref: "MaintenanceUpdatesApiResource"
-      HttpMethod: "GET"
-      AuthorizationType: "NONE"
-      ApiKeyRequired: false
-      Integration:
-        Type: "AWS"
-        IntegrationHttpMethod: "POST"
-        PassthroughBehavior: "WHEN_NO_TEMPLATES"
-        RequestTemplates:
-          application/json: !Sub |-
-            {
-              "params":{
-                #foreach($param in $input.params().path.keySet())
-                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
-                #if($foreach.hasNext),#end
-                #end
-              }
-            }
-        Uri: !Sub
-          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
-          - Function:
-              Fn::GetAtt:
-                - "GetMaintenanceUpdatesLambdaFunction"
-                - "Arn"
-        IntegrationResponses:
-          - StatusCode: "200"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-          - StatusCode: "400"
-            ResponseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-            SelectionPattern: ".*Error.*"
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
-        - StatusCode: "400"
-          ResponseParameters:
-            method.response.header.Access-Control-Allow-Origin: true
   MaintenanceUpdateApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -3473,6 +3473,201 @@ Resources:
       MethodResponses:
         - StatusCode: "204"
         - StatusCode: "400"
+  V0MaintenancesApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0ApiResource"
+      PathPart: "maintenances"
+  V0MaintenanceApiResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ParentId:
+        Ref: "V0MaintenancesApiResource"
+      PathPart: "{maintenanceid}"
+  V0GetMaintenancesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0MaintenancesApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PostMaintenancesApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0MaintenancesApiResource"
+      HttpMethod: "POST"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PostMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0GetMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0MaintenanceApiResource"
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "GetMaintenanceLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0PatchMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0MaintenanceApiResource"
+      HttpMethod: "PATCH"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "body":$input.json('$'),
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "PatchMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "200"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "200"
+        - StatusCode: "400"
+  V0DeleteMaintenanceApiMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId:
+        Ref: "RestApi"
+      ResourceId:
+        Ref: "V0MaintenanceApiResource"
+      HttpMethod: "DELETE"
+      AuthorizationType: "NONE"
+      ApiKeyRequired: true
+      Integration:
+        Type: "AWS"
+        IntegrationHttpMethod: "POST"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        RequestTemplates:
+          application/json: !Sub |-
+            {
+              "params":{
+                #foreach($param in $input.params().path.keySet())
+                "$param": "$util.escapeJavaScript($input.params().path.get($param))"
+                #if($foreach.hasNext),#end
+                #end
+              }
+            }
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function}/invocations
+          - Function:
+              Fn::GetAtt:
+                - "DeleteMaintenancesLambdaFunction"
+                - "Arn"
+        IntegrationResponses:
+          - StatusCode: "204"
+          - StatusCode: "400"
+            SelectionPattern: ".*Error.*"
+            ResponseTemplates:
+              application/json: !Sub |-
+                { "errors": [ { "message": "$input.path('$.errorMessage')" } ] }
+      MethodResponses:
+        - StatusCode: "204"
+        - StatusCode: "400"
   V0MetricsApiResource:
     Type: "AWS::ApiGateway::Resource"
     Properties:
@@ -3882,7 +4077,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   S3SyncObjectsFunction:
     Type: AWS::Lambda::Function
@@ -3903,7 +4098,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   CognitoCreateUserPoolFunction:
     Type: AWS::Lambda::Function
@@ -3924,7 +4119,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   CognitoCreateUserPoolClientFunction:
     Type: AWS::Lambda::Function
@@ -3945,7 +4140,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   CognitoCreateUserFunction:
     Type: AWS::Lambda::Function
@@ -3966,7 +4161,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   APIGatewayDeployFunction:
     Type: AWS::Lambda::Function
@@ -3987,7 +4182,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       Timeout: 30
   DBCreateItemsLambdaFunction:
     Type: "AWS::Lambda::Function"
@@ -4009,7 +4204,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GenerateVerificationMessageFunction:
     Type: "AWS::Lambda::Function"
@@ -4031,7 +4226,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs8.10"
       Timeout: 30
   GenerateVerificationMessagePermission:
     Type: "AWS::Lambda::Permission"

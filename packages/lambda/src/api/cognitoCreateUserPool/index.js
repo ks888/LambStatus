@@ -1,4 +1,4 @@
-import response from 'cfn-response'
+import Response from 'aws/cfnResponse'
 import { AdminUserPool } from 'aws/cognito'
 import { SettingsProxy } from 'api/utils'
 
@@ -16,11 +16,11 @@ const createUserPool = async (event, context, poolID) => {
     const adminUserPool = new AdminUserPool({userPoolName, serviceName, adminPageURL, snsCallerArn})
     const poolID = await adminUserPool.create()
 
-    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
+    await Response.sendSuccess(event, context, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }
 
@@ -37,11 +37,11 @@ const updateUserPool = async (event, context) => {
     await adminUserPool.update()
 
     // Note: If `physicalResourceId` is changed, the custom resource will be deleted.
-    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
+    await Response.sendSuccess(event, context, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }
 
@@ -52,11 +52,11 @@ const deleteUserPool = async (event, context) => {
     const adminUserPool = await AdminUserPool.get(poolID)
     await adminUserPool.delete()
 
-    response.send(event, context, response.SUCCESS, {UserPoolID: poolID}, poolID)
+    await Response.sendSuccess(event, context, {UserPoolID: poolID}, poolID)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }
 
@@ -73,6 +73,6 @@ export async function handle (event, context, callback) {
       break
     default:
       console.log('unknown request type:', event.RequestType)
-      response.send(event, context, response.FAILED)
+      await Response.sendFailed(event, context)
   }
 }

@@ -1,9 +1,9 @@
-import response from 'cfn-response'
 import APIGateway from 'aws/apiGateway'
+import Response from 'aws/cfnResponse'
 
 export async function handle (event, context, callback) {
   if (event.RequestType === 'Create' || event.RequestType === 'Delete') {
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
     return
   }
   const params = event.ResourceProperties
@@ -13,10 +13,10 @@ export async function handle (event, context, callback) {
   try {
     const apiGateway = new APIGateway()
     await apiGateway.deploy(params.RestApiId, params.StageName)
-    response.send(event, context, response.SUCCESS)
+    await Response.sendSuccess(event, context)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
-    response.send(event, context, response.FAILED)
+    await Response.sendFailed(event, context)
   }
 }

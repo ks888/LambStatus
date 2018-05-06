@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchMaintenances, fetchMaintenanceUpdates } from 'actions/maintenances'
+import { fetchMaintenances } from 'actions/maintenances'
 import ScheduledMaintenances from './ScheduledMaintenances'
 
 const mapStateToProps = (state) => {
@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchMaintenances, fetchMaintenanceUpdates}, dispatch)
+  return bindActionCreators({fetchMaintenances}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ScheduledMaintenances)

@@ -1,19 +1,21 @@
 {
   "name": "lamb-status-lambda",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "AWS Lambda functions for LambStatus",
   "engines": {
-    "node": "^6.10.0",
-    "npm": "^3.0.0"
+    "node": "^8.10.0",
+    "npm": "^5.6.0"
   },
   "scripts": {
     "clean": "rimraf build",
     "lint": "eslint src",
-    "build": "npm run clean && node ./bin/fetch-aws-ids.js && node ./bin/setup-apex.js && webpack --config config/webpack.config.js --display-error-details --bail",
+    "generate": "node ./bin/generate-maintenance-handler.js",
+    "build": "npm run clean && node ./bin/fetch-aws-ids.js && node ./bin/setup-apex.js && npm run generate && webpack --config config/webpack.config.js --display-error-details --bail",
     "deploy": "npm run build && babel-node ./bin/deploy.js",
     "test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive",
     "test:coverage": "nyc --reporter=lcov --reporter=text --include src/ --all npm run test",
     "test:dev": "npm run test -- --watch",
+    "codecov": "cat coverage/lcov.info | codecov",
     "api-test": "AWS_LAMBDA_FUNCTION_NAME=test AWS_DEFAULT_REGION=test NODE_PATH=src/ mocha --require babel-register --recursive api_test --no-timeouts",
     "release": "npm run build && NODE_PATH=./src babel-node ./bin/release.js",
     "release:force": "npm run release -- --force"
@@ -30,7 +32,7 @@
     "babel-cli": "^6.18.0",
     "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
-    "babel-loader": "^6.2.5",
+    "babel-loader": "^7.1.4",
     "babel-plugin-empower-assert": "^1.3.0",
     "babel-plugin-espower": "^2.3.2",
     "babel-plugin-transform-es2015-classes": "^6.24.1",
@@ -38,6 +40,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.11.6",
     "cfn-response": "^1.0.1",
+    "codecov": "^3.0.0",
     "dotenv": "^2.0.0",
     "eslint": "^3.3.1",
     "eslint-config-standard": "^6.0.0-beta.3",
@@ -60,6 +63,6 @@
     "showdown": "^1.8.6",
     "sinon": "^1.17.6",
     "verror": "^1.8.1",
-    "webpack": "^1.13.2"
+    "webpack": "^3.11.0"
   }
 }

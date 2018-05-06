@@ -29,7 +29,7 @@ describe('SettingsProxy', () => {
       const proxy = new SettingsProxy()
       proxy.store.setServiceName = sinon.spy()
       proxy.updateUserPool = sinon.spy()
-      proxy.sns.notifyIncident = sinon.spy()
+      proxy.sns.notifyEvent = sinon.spy()
 
       const serviceName = 'test'
       await proxy.setServiceName(serviceName)
@@ -38,7 +38,7 @@ describe('SettingsProxy', () => {
       assert(proxy.store.setServiceName.calledOnce)
       assert(proxy.store.setServiceName.firstCall.args[0] === serviceName)
       assert(proxy.updateUserPool.calledOnce)
-      assert(proxy.sns.notifyIncident.calledOnce)
+      assert(proxy.sns.notifyEvent.calledOnce)
     })
   })
 

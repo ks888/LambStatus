@@ -1,4 +1,5 @@
 import { SettingsProxy } from 'api/utils'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   const {
@@ -23,10 +24,10 @@ export async function handle (event, context, callback) {
     console.log(error.message)
     console.log(error.stack)
     switch (error.name) {
-      case 'ValidationError':
+      case ValidationError.name:
         callback('Error: ' + error.message)
         break
-      case 'NotFoundError':
+      case NotFoundError.name:
         callback('Error: an item not found')
         break
       default:

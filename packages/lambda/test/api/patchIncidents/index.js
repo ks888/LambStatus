@@ -9,12 +9,18 @@ import { incidentStatuses } from 'utils/const'
 import { NotFoundError } from 'utils/errors'
 
 describe('patchIncidents', () => {
+  beforeEach(() => {
+    sinon.stub(SNS.prototype, 'notifyEvent')
+    sinon.stub(Incident.prototype, 'validateExceptEventID')
+  })
+
   afterEach(() => {
     IncidentsStore.prototype.get.restore()
     IncidentsStore.prototype.update.restore()
     IncidentUpdatesStore.prototype.create.restore()
     IncidentUpdatesStore.prototype.query.restore()
-    SNS.prototype.notifyIncident.restore()
+    SNS.prototype.notifyEvent.restore()
+    Incident.prototype.validateExceptEventID.restore()
   })
 
   const generateIncident = (incidentID) => {
@@ -33,7 +39,6 @@ describe('patchIncidents', () => {
     const createIncidentUpdateStub = sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
     const incidentUpdates = generateIncidentUpdates(['1', '2'])
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns(incidentUpdates)
-    const snsStub = sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     const event = { params: { incidentid: '1' }, body: {name: 'test', status: incidentStatuses[0]} }
     await handle(event, null, (error, result) => {
@@ -48,8 +53,6 @@ describe('patchIncidents', () => {
 
     assert(createIncidentUpdateStub.calledOnce)
     assert(createIncidentUpdateStub.firstCall.args[0] instanceof IncidentUpdate)
-
-    assert(snsStub.calledOnce)
   })
 
   it('should return validation error if event body is invalid', async () => {
@@ -59,7 +62,6 @@ describe('patchIncidents', () => {
     sinon.stub(IncidentsStore.prototype, 'update').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({ params: { incidentid: '1' }, body: { status: '' } }, null, (error, result) => {
       assert(error.match(/invalid/))
@@ -71,7 +73,6 @@ describe('patchIncidents', () => {
     sinon.stub(IncidentsStore.prototype, 'update').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({ params: { incidentid: '1' }, body: { status: '' } }, null, (error, result) => {
       assert(error.match(/not found/))
@@ -83,7 +84,6 @@ describe('patchIncidents', () => {
     sinon.stub(IncidentsStore.prototype, 'update').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'create').returns()
     sinon.stub(IncidentUpdatesStore.prototype, 'query').returns()
-    sinon.stub(SNS.prototype, 'notifyIncident').returns()
 
     return await handle({ params: { incidentid: '1' } }, null, (error, result) => {
       assert(error.match(/Error/))

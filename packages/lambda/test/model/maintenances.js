@@ -66,14 +66,14 @@ describe('Maintenance', () => {
     })
   })
 
-  describe('validateExceptID', () => {
+  describe('validateExceptEventID', () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams()
       const maintenance = new Maintenance(params)
 
       let error
       try {
-        maintenance.validateExceptID()
+        maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -87,7 +87,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -101,7 +101,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -115,7 +115,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -129,7 +129,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -143,7 +143,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -158,7 +158,7 @@ describe('Maintenance', () => {
 
       let error
       try {
-        await maintenance.validateExceptID()
+        await maintenance.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -227,14 +227,14 @@ describe('MaintenanceUpdate', () => {
     })
   })
 
-  describe('validateExceptUpdateID', async () => {
+  describe('validateExceptEventUpdateID', async () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams('1')
       const maintenanceUpdate = new MaintenanceUpdate(params)
 
       let err
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         err = e
       }
@@ -247,7 +247,7 @@ describe('MaintenanceUpdate', () => {
 
       let error
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -261,7 +261,7 @@ describe('MaintenanceUpdate', () => {
 
       let error
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -275,7 +275,7 @@ describe('MaintenanceUpdate', () => {
 
       let error
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -289,7 +289,7 @@ describe('MaintenanceUpdate', () => {
 
       let error
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -303,7 +303,7 @@ describe('MaintenanceUpdate', () => {
 
       let error
       try {
-        maintenanceUpdate.validateExceptUpdateID()
+        maintenanceUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }

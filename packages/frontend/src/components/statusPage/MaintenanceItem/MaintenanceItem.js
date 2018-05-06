@@ -25,17 +25,17 @@ export default class MaintenanceItem extends React.Component {
       }).isRequired)
     }).isRequired,
     autoloadDetail: PropTypes.bool,
-    fetchMaintenanceUpdates: PropTypes.func.isRequired
+    fetchMaintenance: PropTypes.func.isRequired
   }
 
   componentDidMount () {
     if (this.props.autoloadDetail) {
-      this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID)
+      this.props.fetchMaintenance(this.props.maintenance.maintenanceID)
     }
   }
 
   handleClickDetailButton = () => {
-    this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID)
+    this.props.fetchMaintenance(this.props.maintenance.maintenanceID)
   }
 
   renderMaintenanceUpdateItem = (maintUpdate) => {

@@ -33,7 +33,7 @@ export class SettingsProxy {
 
     await this.store.setServiceName(serviceName)
     await this.updateUserPool()
-    await this.sns.notifyIncident('', messageType.metadataChanged)
+    await this.sns.notifyEvent('', messageType.metadataChanged)
   }
 
   async getServiceName () {

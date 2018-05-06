@@ -1,11 +1,11 @@
 {
   "name": "lamb-status-frontend",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Frontend for LambStatus",
   "main": "index.js",
   "engines": {
-    "node": "^6.10.0",
-    "npm": "^3.0.0"
+    "node": "^8.10.0",
+    "npm": "^5.6.0"
   },
   "scripts": {
     "clean": "rimraf dist",
