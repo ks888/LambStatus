@@ -17,7 +17,7 @@ export async function handle (event, context, callback) {
           stat = { 'status': 'Degraded Performance' }
         }
       }
-    })	
+    })
     callback(null, stat)
   } catch (error) {
     console.log(error.message)
