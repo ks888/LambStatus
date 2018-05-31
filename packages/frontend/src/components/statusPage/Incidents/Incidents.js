@@ -88,7 +88,7 @@ export default class Incidents extends React.Component {
       }
     })
 
-    Object.keys(dates).map(date => dates[date].sort((a, b) => { return a.createdAt < b.createdAt }))
+    Object.keys(dates).map(date => dates[date].sort((a, b) => { return a.updatedAt < b.updatedAt }))
 
     return (
       <ul className={classes['dates-container']}>

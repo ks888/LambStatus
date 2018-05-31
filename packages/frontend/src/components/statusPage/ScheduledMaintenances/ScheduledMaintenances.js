@@ -8,8 +8,8 @@ export default class ScheduledMaintenaces extends React.Component {
   static propTypes = {
     maintenances: PropTypes.arrayOf(PropTypes.shape({
       maintenanceID: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
       status: PropTypes.string.isRequired,
+      startAt: PropTypes.string.isRequired,
       updatedAt: PropTypes.string.isRequired
     }).isRequired).isRequired,
     classNames: PropTypes.string,
@@ -32,6 +32,8 @@ export default class ScheduledMaintenaces extends React.Component {
     if (filteredMaintenances.length === 0) {
       return null
     }
+
+    filteredMaintenances.sort((a, b) => { return a.startAt > b.startAt })
 
     return (
       <div className={classes.container}>
