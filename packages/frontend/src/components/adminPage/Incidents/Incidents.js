@@ -6,7 +6,6 @@ import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { innerDialogID } from 'utils/dialog'
-import { getIncidentColor } from 'utils/status'
 import classes from './Incidents.scss'
 
 const dialogType = {
