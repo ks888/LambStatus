@@ -102,10 +102,10 @@ export default class Incidents extends React.Component {
   render () {
     const { incidents } = this.props
     const incidentItems = incidents.map((incident) => {
+      const id = incident.incidentID
       return (
-        <IncidentItem key={incident.incidentID} onUpdateClicked={this.handleShowUpdateDialog(incident.incidentID)}
-          onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident}
-          getIncidentColor={getIncidentColor} />
+        <IncidentItem key={id} onUpdateClicked={this.handleShowUpdateDialog(id)}
+          onDeleteClicked={this.handleShowDeleteDialog(id)} incident={incident} />
       )
     })
     const dialog = this.renderDialog()
