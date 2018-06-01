@@ -21,8 +21,8 @@ export async function handle (event, context, callback) {
     const { AWS_REGION: region } = process.env
     const bucket = await cloudFormation.getStatusPageBucketName()
     const s3 = new S3()
-    await s3.putObject(region, bucket, 'history.atom', feed.atom1())
-    await s3.putObject(region, bucket, 'history.rss', feed.rss2())
+    await s3.putObject(region, bucket, 'history.atom', feed.atom1(), undefined, undefined, 'public-read')
+    await s3.putObject(region, bucket, 'history.rss', feed.rss2(), undefined, undefined, 'public-read')
     callback(null)
   } catch (error) {
     console.log(error.message)

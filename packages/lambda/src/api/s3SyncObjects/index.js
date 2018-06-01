@@ -18,14 +18,15 @@ export async function handle (event, context, callback) {
     SourceBucket,
     SourceKey,
     DestinationRegion: region,
-    DestinationBucket
+    DestinationBucket,
+    Acl: acl
   } = params
   try {
     const s3 = new S3()
     const objects = await s3.listObjects(region, SourceBucket, SourceKey)
     await Promise.all(objects.map(async (obj) => {
       const destKey = obj.Key.replace(SourceKey + '/', '')
-      await s3.copyObject(region, SourceBucket, obj.Key, DestinationBucket, destKey)
+      await s3.copyObject(region, SourceBucket, obj.Key, DestinationBucket, destKey, acl)
     }))
     await Response.sendSuccess(event, context)
   } catch (error) {

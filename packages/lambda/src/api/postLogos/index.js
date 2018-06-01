@@ -18,7 +18,7 @@ export async function handle (event, context, callback) {
       const body = await image.toBuffer()
 
       const objectName = `${imageID}${image.suffixForImageName()}`
-      await new S3().putObject(region, bucketName, objectName, body, image.mimeType)
+      await new S3().putObject(region, bucketName, objectName, body, image.mimeType, undefined, 'public-read')
     }
 
     await new SettingsProxy().setLogoID(imageID)

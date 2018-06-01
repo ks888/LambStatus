@@ -39,6 +39,7 @@ describe('postLogos', () => {
     assert(putObjectStub.firstCall.args[1] === bucketName)
     assert(putObjectStub.firstCall.args[2].endsWith('@2x'))
     assert(putObjectStub.firstCall.args[4] === 'image/png')
+    assert(putObjectStub.firstCall.args[6] === 'public-read')
   })
 
   it('should save logo ID in the DB', async () => {

@@ -9,12 +9,12 @@ export async function handle (event, context, callback) {
   }
 
   const params = event.ResourceProperties
-  const {Region: region, Bucket: bucket, Key: key, Body: body, CacheControl: cacheControl} = params
-  console.log(`received request (region: ${region}, bucket name: ${bucket}, key: ${key})`)
+  const {Region: region, Bucket: bucket, Key: key, Body: body, CacheControl: cacheControl, Acl: acl} = params
+  console.log(`received request (region: ${region}, bucket name: ${bucket}, key: ${key}, acl: ${acl})`)
 
   try {
     const s3 = new S3()
-    await s3.putObject(region, bucket, key, body, undefined, cacheControl)
+    await s3.putObject(region, bucket, key, body, undefined, cacheControl, acl)
     await Response.sendSuccess(event, context)
   } catch (error) {
     console.log(error.message)

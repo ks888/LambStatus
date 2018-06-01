@@ -58,9 +58,12 @@ describe('updateFeeds', () => {
 
     it('should put the feeds to s3 bucket', async () => {
       await handle(undefined, undefined, () => {})
+      console.log(putObjectStub.secondCall.args)
       assert(putObjectStub.callCount === 2)
       assert(putObjectStub.firstCall.args[2] === 'history.atom')
+      assert(putObjectStub.firstCall.args[6] === 'public-read')
       assert(putObjectStub.secondCall.args[2] === 'history.rss')
+      assert(putObjectStub.secondCall.args[6] === 'public-read')
     })
   })
 

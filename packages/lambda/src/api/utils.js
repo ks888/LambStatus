@@ -240,7 +240,7 @@ export class MetricProxy extends Metric {
 
     const objectName = this.buildObjectName(this.metricID, date)
     const bucketName = await this.getBucketName()
-    await this.s3.putObject(region, bucketName, objectName, JSON.stringify(datapoints))
+    await this.s3.putObject(region, bucketName, objectName, JSON.stringify(datapoints), 'public-read')
   }
 
   async insertDatapoints (datapoints) {
