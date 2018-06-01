@@ -1,0 +1,45 @@
+.item {
+  display: flex;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  padding: 16px;
+}
+
+.primary-content {
+  display: flex;
+  flex-grow: 2;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .subtitle {
+    color: rgba(0,0,0,.54);
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 18px;
+
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+}
+
+.icon {
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  font-size: 40px;
+  height: 40px;
+  margin-right: 16px;
+  width: 40px;
+}
+
+.secondary-content {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-left: 16px;
+}
