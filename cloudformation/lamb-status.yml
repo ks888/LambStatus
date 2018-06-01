@@ -13,6 +13,12 @@ Parameters:
     Type: String
     # The pattern is included in the error message, so the simpler pattern is preferable. Based on http://stackoverflow.com/a/8204716
     AllowedPattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+  CloudFrontAccessIdentity:
+    Description: >
+      This is an AWS identity that allows CloudFront to access other restricted AWS resources.
+      It cannot be created by CloudFormation. Visit the following page and provide a name.
+      https://console.aws.amazon.com/cloudfront/home?#oai
+    Type: "String"
   StatusPageSSLCertificate:
     Description: Optional. See lambstatus.github.io/set-up-custom-domain for usage
     ConstraintDescription: Certificate must be based in us-east-1 region
@@ -3678,28 +3684,21 @@ Resources:
       - ApiDeployment
   StatusPageS3:
     Type: "AWS::S3::Bucket"
-    Properties:
-      CorsConfiguration:
-        CorsRules:
-          - AllowedMethods:
-              - GET
-            AllowedOrigins:
-              - "*"
-      WebsiteConfiguration:
-        IndexDocument: "index.html"
   StatusPageS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
-      Bucket:
-        Ref: "StatusPageS3"
+      Bucket: !Ref StatusPageS3
       PolicyDocument:
         Statement:
-          - Effect: "Allow"
+          - Sid: "AllowCloudFrontAccessIdentity"
+            Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Principal: "*"
             Resource: !Sub |-
               arn:aws:s3:::${StatusPageS3}/*
+            Principal:
+              AWS: !Sub |-
+                arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontAccessIdentity}
   StatusPageDistribution:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -3780,24 +3779,27 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
   AdminPageS3:
     Type: "AWS::S3::Bucket"
-    Properties:
-      WebsiteConfiguration:
-        IndexDocument: "index.html"
   AdminPageS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
-      Bucket:
-        Ref: "AdminPageS3"
+      Bucket: !Ref AdminPageS3
       PolicyDocument:
         Statement:
-          - Effect: "Allow"
+          - Sid: "AllowCloudFrontAccessIdentity"
+            Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Principal: "*"
             Resource: !Sub |-
               arn:aws:s3:::${AdminPageS3}/*
+            Principal:
+              AWS: !Sub |-
+                arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontAccessIdentity}
   AdminPageDistribution:
     Type: "AWS::CloudFront::Distribution"
     Properties:
@@ -3873,6 +3875,10 @@ Resources:
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: "/index.html"
   ServiceComponentTable:
