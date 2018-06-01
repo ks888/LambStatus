@@ -1,12 +1,11 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import MaintenanceDialog, { maintenanceDialogType } from 'components/adminPage/MaintenanceDialog'
-import IncidentItem from 'components/adminPage/IncidentItem'
+import MaintenanceItem from 'components/adminPage/MaintenanceItem'
 import FoolproofDialog from 'components/adminPage/FoolproofDialog'
 import Button from 'components/common/Button'
 import ErrorMessage from 'components/common/ErrorMessage'
 import { innerDialogID } from 'utils/dialog'
-import { getMaintenanceColor } from 'utils/status'
 import classes from './Maintenances.scss'
 
 const dialogType = {
@@ -103,12 +102,11 @@ export default class Maintenances extends React.Component {
 
   render () {
     const { maintenances } = this.props
-    const maintenanceItems = maintenances.map((incident) => {
-      incident.incidentID = incident.maintenanceID
+    const maintenanceItems = maintenances.map((maintenance) => {
+      const id = maintenance.maintenanceID
       return (
-        <IncidentItem key={incident.incidentID} onUpdateClicked={this.handleShowUpdateDialog(incident.incidentID)}
-          onDeleteClicked={this.handleShowDeleteDialog(incident.incidentID)} incident={incident}
-          getIncidentColor={getMaintenanceColor} />
+        <MaintenanceItem key={id} onUpdateClicked={this.handleShowUpdateDialog(id)}
+          onDeleteClicked={this.handleShowDeleteDialog(id)} maintenance={maintenance} />
       )
     })
     const dialog = this.renderDialog()
