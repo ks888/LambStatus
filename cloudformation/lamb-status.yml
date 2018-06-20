@@ -3685,8 +3685,6 @@ Resources:
               - GET
             AllowedOrigins:
               - "*"
-      WebsiteConfiguration:
-        IndexDocument: "index.html"
   StatusPageS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
@@ -3793,9 +3791,6 @@ Resources:
         Comment: "LambStatus"
   AdminPageS3:
     Type: "AWS::S3::Bucket"
-    Properties:
-      WebsiteConfiguration:
-        IndexDocument: "index.html"
   AdminPageS3BucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
