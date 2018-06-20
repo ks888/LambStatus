@@ -3697,7 +3697,8 @@ Resources:
           - Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Principal: "*"
+            Principal:
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
             Resource: !Sub |-
               arn:aws:s3:::${StatusPageS3}/*
   StatusPageDistribution:
@@ -3705,12 +3706,11 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt StatusPageS3.WebsiteURL ] ]
+          - DomainName: !GetAtt StatusPageS3.DomainName
             Id:
               Ref: "StatusPageS3"
-            CustomOriginConfig:
-              OriginProtocolPolicy: "http-only"
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
           - DomainName: !Sub |-
               ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
             OriginPath: "/prod"
@@ -3780,6 +3780,17 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+    DependsOn:
+      - OriginAccessIdentity
+  OriginAccessIdentity:
+    Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: "LambStatus"
   AdminPageS3:
     Type: "AWS::S3::Bucket"
     Properties:
@@ -3795,7 +3806,8 @@ Resources:
           - Effect: "Allow"
             Action:
               - "s3:GetObject"
-            Principal: "*"
+            Principal:
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
             Resource: !Sub |-
               arn:aws:s3:::${AdminPageS3}/*
   AdminPageDistribution:
@@ -3803,12 +3815,11 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName:
-              !Select [ 2, !Split [ /, !GetAtt AdminPageS3.WebsiteURL ] ]
+          - DomainName: !GetAtt AdminPageS3.DomainName
             Id:
               Ref: "AdminPageS3"
-            CustomOriginConfig:
-              OriginProtocolPolicy: "http-only"
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
           - DomainName: !Sub |-
               ${RestApi}.execute-api.${AWS::Region}.amazonaws.com
             OriginPath: "/prod"
@@ -3875,6 +3886,12 @@ Resources:
             ErrorCode: 404
             ResponseCode: 200
             ResponsePagePath: "/index.html"
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+    DependsOn:
+      - OriginAccessIdentity
   ServiceComponentTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
