@@ -4,6 +4,8 @@ import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { Router, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
+// To support IE11. Fortunately this polyfill is very lightweight (<1KB, gzipped).
+import 'promise-polyfill/src/polyfill'
 
 import routes from 'components/statusPage/Routes'
 import { buildStore } from 'utils/store'
