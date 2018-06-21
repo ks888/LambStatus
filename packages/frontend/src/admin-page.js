@@ -4,6 +4,7 @@ import createBrowserHistory from 'history/lib/createBrowserHistory'
 import { Router, useRouterHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider } from 'react-redux'
+import 'babel-polyfill'
 
 import routes from 'components/adminPage/Routes'
 import { buildStore } from 'utils/store'
