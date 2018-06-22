@@ -33,7 +33,11 @@ export default class ScheduledMaintenaces extends React.Component {
       return null
     }
 
-    filteredMaintenances.sort((a, b) => { return a.startAt > b.startAt })
+    filteredMaintenances.sort((a, b) => {
+      if (a.startAt > b.startAt) return 1
+      if (a.startAt < b.startAt) return -1
+      return 0
+    })
 
     return (
       <div className={classes.container}>

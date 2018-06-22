@@ -76,7 +76,11 @@ export default class History extends React.Component {
       }
     })
 
-    Object.keys(months).map(month => months[month].sort((a, b) => { return a.updatedAt < b.updatedAt }))
+    Object.keys(months).map(month => months[month].sort((a, b) => {
+      if (a.updatedAt < b.updatedAt) return 1
+      if (a.updatedAt > b.updatedAt) return -1
+      return 0
+    }))
 
     return Object.keys(months).map(month =>
       this.renderEventItems(month, months[month])
