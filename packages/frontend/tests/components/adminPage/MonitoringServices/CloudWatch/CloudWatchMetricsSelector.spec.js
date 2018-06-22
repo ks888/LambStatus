@@ -62,6 +62,29 @@ describe('CloudWatchMetricsSelector', () => {
     })
   })
 
+  describe('parseMetricExpressionMount', () => {
+    it('should parse metric expression', () => {
+      const props = generateProps()
+      const selector = new CloudWatchMetricsSelector(props)
+
+      const input = 'IntegrationLatency - [ApiName: StatusPage20171126-01, Stage: prod]'
+      const {metricName, dimensions} = selector.parseMetricExpression(input)
+      assert(metricName === 'IntegrationLatency')
+      assert.deepEqual(dimensions, [{Name: 'ApiName', Value: 'StatusPage20171126-01'}, {Name: 'Stage', Value: 'prod'}])
+    })
+
+    it('should parse metric expression in IE11 style', () => {
+      const props = generateProps()
+      const selector = new CloudWatchMetricsSelector(props)
+
+      // somehow the space before and after '-' is omitted
+      const input = 'IntegrationLatency-[ApiName: StatusPage20171126-01, Stage: prod]'
+      const {metricName, dimensions} = selector.parseMetricExpression(input)
+      assert(metricName === 'IntegrationLatency')
+      assert.deepEqual(dimensions, [{Name: 'ApiName', Value: 'StatusPage20171126-01'}, {Name: 'Stage', Value: 'prod'}])
+    })
+  })
+
   describe('render', () => {
     it('should show namespaces and metrics if metrics are already fetched', () => {
       const props = generateProps()
