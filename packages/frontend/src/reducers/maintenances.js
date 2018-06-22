@@ -1,10 +1,12 @@
-import { LIST_MAINTENANCES, LIST_MAINTENANCE_UPDATES, ADD_MAINTENANCE, EDIT_MAINTENANCE,
+import { LIST_MAINTENANCES, LIST_MAINTENANCE, ADD_MAINTENANCE, EDIT_MAINTENANCE,
          EDIT_MAINTENANCE_UPDATE, REMOVE_MAINTENANCE } from 'actions/maintenances'
 
 function listMaintenancesHandler (state = { }, action) {
   const maintenances = action.maintenances
   maintenances.sort((a, b) => {
-    return a.createdAt < b.createdAt
+    if (a.createdAt < b.createdAt) return 1
+    if (a.createdAt > b.createdAt) return -1
+    return 0
   })
 
   return Object.assign({}, state, {
@@ -12,17 +14,16 @@ function listMaintenancesHandler (state = { }, action) {
   })
 }
 
-function listMaintenanceUpdatesHandler (state = { }, action) {
-  const maintenanceUpdates = action.maintenanceUpdates
-  maintenanceUpdates.sort((a, b) => {
-    return a.createdAt < b.createdAt
+function listMaintenanceHandler (state = { }, action) {
+  action.maintenance.maintenanceUpdates.sort((a, b) => {
+    if (a.createdAt < b.createdAt) return 1
+    if (a.createdAt > b.createdAt) return -1
+    return 0
   })
 
   const newMaintenances = state.maintenances.map((maintenance) => {
     if (maintenance.maintenanceID === action.maintenanceID) {
-      return Object.assign({}, maintenance, {
-        maintenanceUpdates: maintenanceUpdates
-      })
+      return action.maintenance
     }
     return maintenance
   })
@@ -33,26 +34,22 @@ function listMaintenanceUpdatesHandler (state = { }, action) {
 }
 
 function addMaintenanceHandler (state = { }, action) {
-  const {
-    maintenance
-  } = action.response
+  delete action.response.components
 
   return Object.assign({}, state, {
     maintenances: [
-      maintenance,
+      action.response,
       ...state.maintenances
     ]
   })
 }
 
 function editMaintenanceHandler (state = { }, action) {
-  const {
-    maintenance: updatedMaintenance
-  } = action.response
+  delete action.response.components
 
   const newMaintenances = state.maintenances.map((maintenance) => {
-    if (maintenance.maintenanceID === updatedMaintenance.maintenanceID) {
-      return updatedMaintenance
+    if (maintenance.maintenanceID === action.response.maintenanceID) {
+      return action.response
     }
     return maintenance
   })
@@ -96,7 +93,7 @@ function removeMaintenanceHandler (state = { }, action) {
 
 const ACTION_HANDLERS = {
   [LIST_MAINTENANCES]: listMaintenancesHandler,
-  [LIST_MAINTENANCE_UPDATES]: listMaintenanceUpdatesHandler,
+  [LIST_MAINTENANCE]: listMaintenanceHandler,
   [ADD_MAINTENANCE]: addMaintenanceHandler,
   [EDIT_MAINTENANCE]: editMaintenanceHandler,
   [EDIT_MAINTENANCE_UPDATE]: editMaintenanceUpdateHandler,

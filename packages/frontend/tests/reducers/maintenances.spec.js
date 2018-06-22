@@ -1,4 +1,4 @@
-import { listMaintenances, listMaintenanceUpdates, addMaintenance, editMaintenance,
+import { listMaintenances, listMaintenance, addMaintenance, editMaintenance,
          editMaintenanceUpdate, removeMaintenance } from 'actions/maintenances'
 import maintenancesReducer from 'reducers/maintenances'
 
@@ -35,19 +35,26 @@ describe('Reducers/maintenances', () => {
     })
   })
 
-  describe('listMaintenanceUpdatesHandler', () => {
+  describe('listMaintenanceHandler', () => {
     it('should update the maintenance updates.', () => {
+      const maintenance = {
+        ...maintenance1,
+        maintenanceUpdates: [maintenanceUpdate1]
+      }
       const state = maintenancesReducer({maintenances: [maintenance1]},
-                                     listMaintenanceUpdates([maintenanceUpdate1], maintenance1.maintenanceID))
+                                        listMaintenance(maintenance, maintenance1.maintenanceID))
       assert(state.maintenances.length === 1)
       assert(state.maintenances[0].maintenanceUpdates.length === 1)
       assert.deepEqual(state.maintenances[0].maintenanceUpdates[0], maintenanceUpdate1)
     })
 
     it('should sort the maintenance updates.', () => {
-      const updates = [maintenanceUpdate1, {...maintenanceUpdate1, maintenanceUpdateID: '2', createdAt: '2'}]
+      const maintenance = {
+        ...maintenance1,
+        maintenanceUpdates: [maintenanceUpdate1, {...maintenanceUpdate1, maintenanceUpdateID: '2', createdAt: '2'}]
+      }
       const state = maintenancesReducer({maintenances: [maintenance1]},
-                                     listMaintenanceUpdates(updates, maintenance1.maintenanceID))
+                                        listMaintenance(maintenance, maintenance1.maintenanceID))
       assert(state.maintenances.length === 1)
       assert(state.maintenances[0].maintenanceUpdates.length === 2)
       assert(state.maintenances[0].maintenanceUpdates[0].maintenanceUpdateID === '2')
@@ -56,7 +63,7 @@ describe('Reducers/maintenances', () => {
 
   describe('addMaintenanceHandler', () => {
     it('should add the new maintenance.', () => {
-      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance({maintenance: maintenance2}))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, addMaintenance(maintenance2))
       assert.deepEqual([maintenance2, maintenance1], state.maintenances)
     })
   })
@@ -65,7 +72,7 @@ describe('Reducers/maintenances', () => {
     it('should update the `maintenances` state.', () => {
       const newName = 'newName'
       const newMaintenance = { ...maintenance1, name: newName }
-      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance({maintenance: newMaintenance}))
+      const state = maintenancesReducer({maintenances: [maintenance1]}, editMaintenance(newMaintenance))
       assert.deepEqual([newMaintenance], state.maintenances)
     })
   })

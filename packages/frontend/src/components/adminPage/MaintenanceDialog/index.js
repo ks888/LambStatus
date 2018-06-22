@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchMaintenanceUpdates, postMaintenance, updateMaintenance } from 'actions/maintenances'
+import { fetchMaintenance, postMaintenance, updateMaintenance } from 'actions/maintenances'
 import { fetchComponents } from 'actions/components'
 import MaintenanceDialog, { dialogType } from './MaintenanceDialog'
 
@@ -18,7 +18,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchComponents, fetchMaintenanceUpdates, postMaintenance, updateMaintenance}, dispatch)
+  return bindActionCreators({fetchComponents, fetchMaintenance, postMaintenance, updateMaintenance}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MaintenanceDialog)

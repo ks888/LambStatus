@@ -33,13 +33,17 @@ class Features extends React.Component {
       <Feature title='Metrics' description={desc} />
     )
     const notificationsFeature = (
-      <Feature title='Notifications' description='Notifications enable your users to keep in touch with your service. LambStatus supports the notification by the email (coming soon) and the rss.' />
+      <Feature title='Notifications' description='Notifications enable your users to keep in touch with your service. LambStatus supports the notification by the email and the rss.' />
     )
     const apiFeature = (
       <Feature title='API' description='Integrate with your existing systems by our simple REST API! It enables you to create and update an incident, submit the metrics data, and so on.' />
     )
     const designFeature = (
       <Feature title='Responsive & Customizable' description='The status page is displayed well on both desktop and mobile devices. Further, you can customize it to show off your brand!' />
+    )
+    const regionDesc = 'Choose the region different from your service\'s region so that the region outage doesn\'t affect your status page!'
+    const regionFeature = (
+      <Feature title='Support 10+ Regions' description={regionDesc} />
     )
 
     return (
@@ -54,6 +58,7 @@ class Features extends React.Component {
             {notificationsFeature}
             {apiFeature}
             {designFeature}
+            {regionFeature}
           </Items>
         </InnerContainer>
       </Container>

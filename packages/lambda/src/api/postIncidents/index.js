@@ -1,41 +1,30 @@
-import SNS from 'aws/sns'
+import EventsHandler from 'api/eventsHandler'
+import { messageType } from 'aws/sns'
 import { Incident, IncidentUpdate } from 'model/incidents'
+import { Component } from 'model/components'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import { updateComponentStatus } from 'api/utils'
 
 export async function handle (event, context, callback) {
   try {
     const incident = new Incident(event)
-    incident.validateExceptID()
-    const incidentsStore = new IncidentsStore()
-    await incidentsStore.create(incident)
-
-    let incidentUpdate = new IncidentUpdate({
-      incidentID: incident.incidentID,
+    const incidentUpdate = new IncidentUpdate({
       incidentStatus: event.status,
       ...event
     })
-    incidentUpdate.validateExceptUpdateID()
-    const incidentUpdatesStore = new IncidentUpdatesStore()
-    await incidentUpdatesStore.create(incidentUpdate)
+    const components = event.components === undefined ? [] : event.components.map(comp => new Component(comp))
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
+    const msgType = messageType.incidentCreated
+    const [respIncident, respIncidentUpdate] = await handler.createEvent(incident, incidentUpdate, msgType, components)
 
-    const incidentWithIncidentUpdate = {
-      ...incident.objectify(),
-      incidentUpdates: [incidentUpdate.objectify()]
+    const resp = {
+      ...respIncident.objectify(),
+      incidentUpdates: [respIncidentUpdate.objectify()]
     }
-
     if (event.components !== undefined) {
-      await Promise.all(event.components.map(async (component) => {
-        await updateComponentStatus(component)
-      }))
-
-      incidentWithIncidentUpdate.components = event.components
+      resp.components = event.components
     }
-
-    await new SNS().notifyIncident(incidentWithIncidentUpdate)
-
-    callback(null, incidentWithIncidentUpdate)
+    callback(null, resp)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)

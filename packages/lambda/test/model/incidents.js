@@ -65,14 +65,14 @@ describe('Incident', () => {
     })
   })
 
-  describe('validateExceptID', () => {
+  describe('validateExceptEventID', () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams()
       const incident = new Incident(params)
 
       let error
       try {
-        incident.validateExceptID()
+        incident.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -86,7 +86,7 @@ describe('Incident', () => {
 
       let error
       try {
-        incident.validateExceptID()
+        incident.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -100,7 +100,7 @@ describe('Incident', () => {
 
       let error
       try {
-        incident.validateExceptID()
+        incident.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -114,7 +114,7 @@ describe('Incident', () => {
 
       let error
       try {
-        incident.validateExceptID()
+        incident.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -129,7 +129,7 @@ describe('Incident', () => {
 
       let error
       try {
-        incident.validateExceptID()
+        incident.validateExceptEventID()
       } catch (e) {
         error = e
       }
@@ -198,13 +198,13 @@ describe('IncidentUpdate', () => {
     })
   })
 
-  describe('validateExceptUpdateID', async () => {
+  describe('validateExceptEventUpdateID', async () => {
     it('should return no error when input is valid', async () => {
       const params = generateConstructorParams('1')
       const incidentUpdate = new IncidentUpdate(params)
       let err
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         err = e
       }
@@ -217,7 +217,7 @@ describe('IncidentUpdate', () => {
 
       let error
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -231,7 +231,7 @@ describe('IncidentUpdate', () => {
 
       let error
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -245,7 +245,7 @@ describe('IncidentUpdate', () => {
 
       let error
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -259,7 +259,7 @@ describe('IncidentUpdate', () => {
 
       let error
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }
@@ -273,7 +273,7 @@ describe('IncidentUpdate', () => {
 
       let error
       try {
-        incidentUpdate.validateExceptUpdateID()
+        incidentUpdate.validateExceptEventUpdateID()
       } catch (e) {
         error = e
       }

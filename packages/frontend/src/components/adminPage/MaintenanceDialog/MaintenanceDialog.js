@@ -44,7 +44,7 @@ export default class MaintenanceDialog extends React.Component {
       status: PropTypes.string.isRequired
     }).isRequired).isRequired,
     fetchComponents: PropTypes.func.isRequired,
-    fetchMaintenanceUpdates: PropTypes.func.isRequired,
+    fetchMaintenance: PropTypes.func.isRequired,
     postMaintenance: PropTypes.func.isRequired,
     updateMaintenance: PropTypes.func.isRequired
   }
@@ -82,7 +82,7 @@ export default class MaintenanceDialog extends React.Component {
     }
     this.props.fetchComponents(fetchCallbacks)
     if (this.props.maintenance) {
-      this.props.fetchMaintenanceUpdates(this.props.maintenance.maintenanceID, fetchCallbacks)
+      this.props.fetchMaintenance(this.props.maintenance.maintenanceID, fetchCallbacks)
     }
 
     mountDialog(ReactDOM.findDOMNode(this.refs.dialog))

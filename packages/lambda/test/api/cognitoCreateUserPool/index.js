@@ -1,16 +1,24 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import { handle } from 'api/cognitoCreateUserPool'
-import response from 'cfn-response'
-import Cognito from 'aws/cognito'
+import { AdminUserPool } from 'aws/cognito'
+import Response from 'aws/cfnResponse'
 import { SettingsProxy } from 'api/utils'
 
 describe('cognitoCreateUserPool', () => {
+  let sendStub
+  beforeEach(() => {
+    sendStub = sinon.stub(Response, 'sendSuccess')
+  })
+
+  afterEach(() => {
+    Response.sendSuccess.restore()
+  })
+
   describe('Create request type', () => {
     afterEach(() => {
       SettingsProxy.prototype.getServiceName.restore()
-      Cognito.prototype.createUserPool.restore()
-      response.send.restore()
+      AdminUserPool.prototype.create.restore()
     })
 
     it('should create a new user pool', async () => {
@@ -20,26 +28,26 @@ describe('cognitoCreateUserPool', () => {
           PoolName: 'poolName',
           AdminPageURL: 'example.com',
           SnsCallerArn: 'arn:...'
-        }
+        },
+        ResponseURL: 'example.com'
       }
+      const id = 'id'
       sinon.stub(SettingsProxy.prototype, 'getServiceName').returns('serviceName')
-      const createStub = sinon.stub(Cognito.prototype, 'createUserPool').returns({userPoolID: 'id'})
-      const sendStub = sinon.stub(response, 'send').returns()
+      const createStub = sinon.stub(AdminUserPool.prototype, 'create').returns('id')
 
-      await handle(event, null, null)
+      await handle(event, {done: () => {}}, null)
+
       assert(sendStub.calledOnce)
-      assert(sendStub.firstCall.args[2] === response.SUCCESS)
+      assert(sendStub.firstCall.args[3] === id)
       assert(createStub.calledOnce)
-      assert(createStub.firstCall.args[0].userPoolName === event.ResourceProperties.PoolName)
     })
   })
 
   describe('Update request type', () => {
     afterEach(() => {
       SettingsProxy.prototype.getServiceName.restore()
-      Cognito.prototype.getUserPool.restore()
-      Cognito.prototype.updateUserPool.restore()
-      response.send.restore()
+      AdminUserPool.get.restore()
+      AdminUserPool.prototype.update.restore()
     })
 
     it('should update the existing user pool', async () => {
@@ -48,43 +56,52 @@ describe('cognitoCreateUserPool', () => {
         PhysicalResourceId: 'id',
         ResourceProperties: {
           AdminPageURL: 'example.com'
-        }
+        },
+        ResponseURL: 'example.com'
       }
       const serviceName = 'serviceName'
       sinon.stub(SettingsProxy.prototype, 'getServiceName').returns(serviceName)
-      sinon.stub(Cognito.prototype, 'getUserPool').returns({})
-      const updateStub = sinon.stub(Cognito.prototype, 'updateUserPool').returns()
-      const sendStub = sinon.stub(response, 'send').returns()
+      sinon.stub(AdminUserPool, 'get', (poolID, params) => {
+        assert(poolID === event.PhysicalResourceId)
+        assert(serviceName === params.serviceName)
+        return new AdminUserPool({})
+      })
+      const updateStub = sinon.stub(AdminUserPool.prototype, 'update')
 
-      await handle(event, null, null)
-      assert(sendStub.calledOnce)
-      assert(sendStub.firstCall.args[2] === response.SUCCESS)
+      await handle(event, {done: () => {}}, null)
+
       assert(updateStub.calledOnce)
-      assert(updateStub.firstCall.args[0].adminPageURL === event.ResourceProperties.AdminPageURL)
-      assert(updateStub.firstCall.args[0].serviceName === serviceName)
+
+      assert(sendStub.calledOnce)
+      assert(sendStub.firstCall.args[3] === event.PhysicalResourceId)
     })
   })
 
   describe('Delete request type', () => {
     afterEach(() => {
-      Cognito.prototype.deleteUserPool.restore()
-      response.send.restore()
+      AdminUserPool.get.restore()
+      AdminUserPool.prototype.delete.restore()
     })
 
     it('should delete the user pool', async () => {
       const event = {
         RequestType: 'Delete',
         PhysicalResourceId: 'id',
-        ResourceProperties: {}
+        ResourceProperties: {},
+        ResponseURL: 'example.com'
       }
-      const deleteStub = sinon.stub(Cognito.prototype, 'deleteUserPool').returns()
-      const sendStub = sinon.stub(response, 'send').returns()
+      sinon.stub(AdminUserPool, 'get', (poolID, params) => {
+        assert(poolID === event.PhysicalResourceId)
+        return new AdminUserPool({})
+      })
+      const deleteStub = sinon.stub(AdminUserPool.prototype, 'delete')
 
-      await handle(event, null, null)
-      assert(sendStub.calledOnce)
-      assert(sendStub.firstCall.args[2] === response.SUCCESS)
+      await handle(event, {done: () => {}}, null)
+
       assert(deleteStub.calledOnce)
-      assert(deleteStub.firstCall.args[0] === event.PhysicalResourceId)
+
+      assert(sendStub.calledOnce)
+      assert(sendStub.firstCall.args[3] === event.PhysicalResourceId)
     })
   })
 })

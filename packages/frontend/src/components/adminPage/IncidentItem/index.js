@@ -3,13 +3,13 @@ import classnames from 'classnames'
 import Tooltip from 'components/common/Tooltip'
 import MenuIcon from 'components/adminPage/MenuIcon'
 import { getFormattedDateTime } from 'utils/datetime'
+import { getIncidentColor as getStatusColor } from 'utils/status'
 import classes from './IncidentItem.scss'
 
 export default class IncidentItem extends React.Component {
   static propTypes = {
     onUpdateClicked: PropTypes.func.isRequired,
     onDeleteClicked: PropTypes.func.isRequired,
-    getIncidentColor: PropTypes.func.isRequired,
     incident: PropTypes.shape({
       incidentID: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
@@ -27,8 +27,9 @@ export default class IncidentItem extends React.Component {
   }
 
   render () {
-    const { incident, getIncidentColor } = this.props
-    let statusColor = getIncidentColor(incident.status)
+    const { incident } = this.props
+    let statusColor = getStatusColor(incident.status)
+
     return (
       <li className={classnames(classes.item, 'mdl-shadow--2dp')}>
         <div className={classes['primary-content']}>

@@ -1,0 +1,31 @@
+.layout {
+  color: rgba(0,0,0,.54);
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.item {
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+// Using !important is the canonical way to change the appearance of the tooltip
+.tooltip {
+  background-color: #777 !important;
+  padding: 3px 10px !important;
+}
+
+.tooltip::after {
+  border-right-color: #777 !important;
+}
+
+.link {
+  margin: 0 0.25rem;
+  color: #e0e0e0;
+  pointer-events: auto;
+}
+
+.icon {
+  font-size: 13px;
+  font-weight: 700;
+}

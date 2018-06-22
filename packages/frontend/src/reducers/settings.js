@@ -3,7 +3,11 @@ import { LIST_SETTINGS, EDIT_SETTINGS, EDIT_LOGO, REMOVE_LOGO, ADD_API_KEY,
 
 function listSettingsHandler (state = { }, action) {
   if (action.settings.apiKeys) {
-    action.settings.apiKeys.sort((a, b) => a.createdDate > b.createdDate)
+    action.settings.apiKeys.sort((a, b) => {
+      if (a.createdDate < b.createdDate) return -1
+      if (a.createdDate > b.createdDate) return 1
+      return 0
+    })
   }
 
   return Object.assign({}, state, {

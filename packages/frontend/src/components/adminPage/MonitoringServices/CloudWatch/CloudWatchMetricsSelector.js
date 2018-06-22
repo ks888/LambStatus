@@ -131,8 +131,13 @@ export default class CloudWatchMetricsSelector extends React.Component {
   }
 
   parseMetricExpression = (value) => {
-    const splitStr = ' - ['
-    const splitIndex = value.indexOf(splitStr)
+    let splitStr = ' - ['
+    let splitIndex = value.indexOf(splitStr)
+    if (splitIndex === -1) {
+      // The spaces before and after '-' are somehow omitted in IE11.
+      splitStr = '-['
+      splitIndex = value.indexOf(splitStr)
+    }
     const metricName = value.substr(0, splitIndex)
 
     const rawDims = value.slice(splitIndex + splitStr.length, -1)

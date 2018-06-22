@@ -1,7 +1,7 @@
-import path from 'path'
-import fs from 'fs'
-import dotenv from 'dotenv'
-import mkdirp from 'mkdirp'
+const path = require('path')
+const fs = require('fs')
+const dotenv = require('dotenv')
+const mkdirp = require('mkdirp')
 
 dotenv.config({path: `${__dirname}/../../../.env`})
 
@@ -29,7 +29,7 @@ const apexProjectTemplate = {
   description: 'Lambda Functions for LambStatus',
   memory: 128,
   timeout: 30,
-  runtime: 'nodejs6.10',
+  runtime: 'nodejs8.10',
   shim: false,
   role: lambdaRoleArn,
   nameTemplate: '{{.Project.Name}}-{{.Function.Name}}'

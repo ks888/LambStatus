@@ -4,7 +4,7 @@ import styled from "styled-components"
 import ServerlessHighlight from '../../components/ServerlessHighlight'
 import PayasyougoHighlight from '../../components/PayasyougoHighlight'
 import ClickHighlight from '../../components/ClickHighlight'
-import RegionHighlight from '../../components/RegionHighlight'
+import UnlimitedHighlight from '../../components/UnlimitedHighlight'
 
 const HighlightContainer = styled.div`
   padding: ${props => props.theme.sitePadding};
@@ -27,7 +27,7 @@ class Highlights extends React.Component {
         <ServerlessHighlight />
         <PayasyougoHighlight />
         <ClickHighlight />
-        <RegionHighlight />
+        <UnlimitedHighlight />
       </HighlightContainer>
     )
   }

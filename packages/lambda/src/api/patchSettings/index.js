@@ -1,9 +1,11 @@
 import { SettingsProxy } from 'api/utils'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   const {
     serviceName,
-    backgroundColor
+    backgroundColor,
+    emailNotification
   } = event.body
   try {
     const settings = new SettingsProxy()
@@ -13,16 +15,19 @@ export async function handle (event, context, callback) {
     if (backgroundColor !== undefined) {
       await settings.setBackgroundColor(backgroundColor)
     }
+    if (emailNotification !== undefined) {
+      await settings.setEmailNotification(emailNotification)
+    }
 
-    callback(null, {serviceName, backgroundColor})
+    callback(null, {serviceName, backgroundColor, emailNotification})
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
     switch (error.name) {
-      case 'ValidationError':
+      case ValidationError.name:
         callback('Error: ' + error.message)
         break
-      case 'NotFoundError':
+      case NotFoundError.name:
         callback('Error: an item not found')
         break
       default:

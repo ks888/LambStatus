@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
-import {FaServer, FaCreditCard, FaMousePointer, FaGlobe} from 'react-icons/lib/fa'
+import {FaServer, FaCreditCard, FaMousePointer} from 'react-icons/lib/fa'
+import {TiInfinityOutline} from 'react-icons/lib/ti'
 
 const Container = styled.div`
   display: flex;
@@ -38,7 +39,7 @@ export const iconTypes = {
   server: 1,
   creditCard: 2,
   mousePointer: 3,
-  globe: 4
+  unlimited: 4
 };
 
 class Highlight extends React.Component {
@@ -56,8 +57,8 @@ class Highlight extends React.Component {
       case iconTypes.mousePointer:
         icon = <FaMousePointer size={iconSize} color={iconColor} />;
         break;
-      case iconTypes.globe:
-        icon = <FaGlobe size={iconSize} color={iconColor} />;
+      case iconTypes.unlimited:
+        icon = <TiInfinityOutline size={iconSize} color={iconColor} />;
         break;
       default:
         throw new Error('unknown icon type', this.props.iconType)

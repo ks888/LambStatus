@@ -1,8 +1,11 @@
+import EventsHandler from 'api/eventsHandler'
 import IncidentsStore from 'db/incidents'
+import IncidentUpdatesStore from 'db/incidentUpdates'
 
 export async function handle (event, context, callback) {
   try {
-    let incidents = await new IncidentsStore().query()
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
+    let incidents = await handler.listEvents()
 
     // Show the incidents as if the incident has happened yesterday.
     const yesterday = new Date()
@@ -13,6 +16,7 @@ export async function handle (event, context, callback) {
       incident.updatedAt = yesterdayDate + incident.updatedAt.replace(/^[0-9-]+/, '')
       return incident
     })
+
     callback(null, incidents.map(incident => incident.objectify()))
   } catch (error) {
     console.log(error.message)

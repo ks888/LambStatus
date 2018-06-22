@@ -252,14 +252,14 @@ export default class MetricsGraph extends React.Component {
   }
 
   componentDidMount () {
-    if (this.props.settings.statusPageURL) {
+    if (this.props.settings.statusPageURL !== undefined) {
       this.fetchMetricData(this.props.settings.statusPageURL, this.props.timeframe)
       return
     }
   }
 
   componentWillReceiveProps (nextProps) {
-    if (!this.props.settings.statusPageURL && nextProps.settings.statusPageURL) {
+    if (this.props.settings.statusPageURL === undefined && nextProps.settings.statusPageURL !== undefined) {
       // When componentDidMount was called, url was unknown. So fetch the data now.
       this.fetchMetricData(nextProps.settings.statusPageURL, nextProps.timeframe)
       return

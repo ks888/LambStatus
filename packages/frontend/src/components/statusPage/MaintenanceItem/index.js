@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { fetchMaintenanceUpdates } from 'actions/maintenances'
+import { fetchMaintenance } from 'actions/maintenances'
 import MaintenanceItem from './MaintenanceItem'
 
 const mapStateToProps = (state, ownProps) => {
@@ -16,7 +16,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 function mapDispatchToProps (dispatch) {
-  return bindActionCreators({fetchMaintenanceUpdates}, dispatch)
+  return bindActionCreators({fetchMaintenance}, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MaintenanceItem)

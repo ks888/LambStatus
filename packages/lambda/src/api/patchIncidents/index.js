@@ -1,53 +1,45 @@
-import SNS from 'aws/sns'
-import { Incident, IncidentUpdate } from 'model/incidents'
+import EventsHandler from 'api/eventsHandler'
+import { messageType } from 'aws/sns'
 import IncidentsStore from 'db/incidents'
 import IncidentUpdatesStore from 'db/incidentUpdates'
-import { updateComponentStatus } from 'api/utils'
+import { Component } from 'model/components'
+import { Incident, IncidentUpdate } from 'model/incidents'
+import { NotFoundError, ValidationError } from 'utils/errors'
 
 export async function handle (event, context, callback) {
   try {
-    const incidentsStore = new IncidentsStore()
-    const incident = await incidentsStore.get(event.params.incidentid)
-    delete incident.updatedAt
-
-    const newIncident = new Incident({...incident.objectify(), ...event.body})
-    newIncident.validate()
-    await incidentsStore.update(newIncident)
-
-    let incidentUpdate = new IncidentUpdate({
-      incidentID: event.params.incidentid,
+    const incidentID = event.params.incidentid
+    const eventsStore = new IncidentsStore()
+    const existingIncident = await eventsStore.get(incidentID)
+    const newIncident = new Incident({...existingIncident.objectify(), ...event.body})
+    const incidentUpdate = new IncidentUpdate({
+      incidentID,
       incidentStatus: (event.body.status === undefined ? newIncident.status : event.body.status),
       message: event.body.message
     })
-    incidentUpdate.validateExceptUpdateID()
-    const incidentUpdatesStore = new IncidentUpdatesStore()
-    await incidentUpdatesStore.create(incidentUpdate)
+    const components = event.body.components === undefined ? [] : event.body.components.map(comp => new Component(comp))
 
-    const incidentUpdates = await incidentUpdatesStore.query(event.params.incidentid)
-    const incidentWithIncidentUpdate = {
-      ...newIncident.objectify(),
-      incidentUpdates: incidentUpdates.map(upd => upd.objectify())
+    const handler = new EventsHandler(new IncidentsStore(), new IncidentUpdatesStore())
+    const msgType = messageType.incidentUpdated
+    const [respIncident, respIncidentUpds] = await handler.updateEvent(newIncident, incidentUpdate, msgType, components)
+
+    const resp = {
+      ...respIncident.objectify(),
+      incidentUpdates: respIncidentUpds.map(upd => upd.objectify())
     }
-
     if (event.body.components !== undefined) {
-      await Promise.all(event.body.components.map(async (component) => {
-        await updateComponentStatus(component)
-      }))
-
-      incidentWithIncidentUpdate.components = event.components
+      resp.components = components
     }
 
-    await new SNS().notifyIncident(incidentWithIncidentUpdate)
-
-    callback(null, incidentWithIncidentUpdate)
+    callback(null, resp)
   } catch (error) {
     console.log(error.message)
     console.log(error.stack)
     switch (error.name) {
-      case 'ValidationError':
+      case ValidationError.name:
         callback('Error: ' + error.message)
         break
-      case 'NotFoundError':
+      case NotFoundError.name:
         callback('Error: an item not found')
         break
       default:

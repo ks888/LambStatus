@@ -4,7 +4,9 @@ import { LIST_INCIDENTS, LIST_INCIDENT, ADD_INCIDENT, EDIT_INCIDENT, EDIT_INCIDE
 function listIncidentsHandler (state = { }, action) {
   const incidents = action.incidents
   incidents.sort((a, b) => {
-    return a.createdAt < b.createdAt
+    if (a.createdAt < b.createdAt) return 1
+    if (a.createdAt > b.createdAt) return -1
+    return 0
   })
 
   return Object.assign({}, state, {
@@ -14,7 +16,9 @@ function listIncidentsHandler (state = { }, action) {
 
 function listIncidentHandler (state = { }, action) {
   action.incident.incidentUpdates.sort((a, b) => {
-    return a.createdAt < b.createdAt
+    if (a.createdAt < b.createdAt) return 1
+    if (a.createdAt > b.createdAt) return -1
+    return 0
   })
 
   const newIncidents = state.incidents.map((incident) => {

@@ -8,9 +8,11 @@ import { buildUpdateExpression } from './utils'
 
 export const settingKeys = {
   serviceName: 'ServiceName',
-  cognitoPoolID: 'CognitoPoolID',
   logoID: 'LogoID',
-  backgroundColor: 'BackgroundColor'
+  backgroundColor: 'BackgroundColor',
+  enableEmailNotification: 'EnableEmailNotification',
+  sourceEmailRegion: 'SourceEmailRegion',
+  sourceEmailAddress: 'SourceEmailAddress'
 }
 
 export default class SettingsStore {
@@ -24,14 +26,6 @@ export default class SettingsStore {
 
   async setServiceName (name) {
     return await this.store.set(settingKeys.serviceName, name)
-  }
-
-  async getCognitoPoolID () {
-    return await this.store.get(settingKeys.cognitoPoolID)
-  }
-
-  async setCognitoPoolID (id) {
-    return await this.store.set(settingKeys.cognitoPoolID, id)
   }
 
   async getLogoID () {
@@ -52,6 +46,29 @@ export default class SettingsStore {
 
   async setBackgroundColor (color) {
     return await this.store.set(settingKeys.backgroundColor, color)
+  }
+
+  async getEmailEnabled () {
+    return await this.store.get(settingKeys.enableEmailNotification)
+  }
+
+  async getEmailNotification () {
+    const rawResult = await this.store.batchGet([
+      settingKeys.enableEmailNotification, settingKeys.sourceEmailRegion, settingKeys.sourceEmailAddress
+    ])
+    return {
+      enable: rawResult[0],
+      sourceRegion: rawResult[1],
+      sourceEmailAddress: rawResult[2]
+    }
+  }
+
+  async setEmailNotification ({enable, sourceRegion, sourceEmailAddress}) {
+    return await this.store.batchSet({
+      [settingKeys.enableEmailNotification]: enable,
+      [settingKeys.sourceEmailRegion]: sourceRegion,
+      [settingKeys.sourceEmailAddress]: sourceEmailAddress
+    })
   }
 }
 
@@ -86,6 +103,36 @@ export class RawSettingsStore {
     })
   }
 
+  batchGet (keys) {
+    const params = {
+      RequestItems: {
+        [SettingsTable]: {
+          Keys: keys.map(key => { return {key} })
+        }
+      }
+    }
+    return new Promise((resolve, reject) => {
+      this.awsDynamoDb.batchGet(params, (err, data) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+
+        if (Object.keys(data.UnprocessedKeys).length > 0) {
+          // TODO: retry
+          return reject(new Error('some keys are unprocessed', data.UnprocessedKeys))
+        }
+
+        resolve(keys.map(key => {
+          const matched = data.Responses[SettingsTable].find(kv => kv.key === key)
+          if (matched === undefined || matched.value === undefined) {
+            return ''
+          }
+          return matched.value
+        }))
+      })
+    })
+  }
+
   set (key, value) {
     const [updateExp, attrNames, attrValues] = buildUpdateExpression({ value })
     return new Promise((resolve, reject) => {
@@ -102,6 +149,31 @@ export class RawSettingsStore {
           return reject(new VError(err, 'DynamoDB'))
         }
         resolve(data.Attributes.value)
+      })
+    })
+  }
+
+  batchSet (items) {
+    const params = {
+      RequestItems: {
+        [SettingsTable]: Object.keys(items).map(key => {
+          return { PutRequest: { Item: {key, value: items[key]} } }
+        })
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      this.awsDynamoDb.batchWrite(params, (err, data) => {
+        if (err) {
+          return reject(new VError(err, 'DynamoDB'))
+        }
+
+        if (Object.keys(data.UnprocessedItems).length > 0) {
+          // TODO: retry
+          return reject(new Error('some items are unprocessed', data.UnprocessedItems))
+        }
+
+        resolve()
       })
     })
   }

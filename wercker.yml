@@ -1,5 +1,5 @@
 ---
-box: node:6.10.0
+box: node:8.10.0
 build:
   steps:
     - install-packages:
@@ -22,7 +22,7 @@ build:
         name: test lambda package
         cwd: packages/lambda
         code: |
-          npm run test
+          npm run test:coverage
     - script:
         name: test frontend package
         cwd: packages/frontend
@@ -30,6 +30,5 @@ build:
           xvfb-run -a --server-args="-screen 0 1024x768x24" npm run test
     - script:
         name: send test coverage to codecov
-        cwd: packages/frontend
         code: |
-          npm run codecov
+          npm install codecov && npm run codecov
