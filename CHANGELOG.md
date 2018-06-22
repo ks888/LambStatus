@@ -1,5 +1,14 @@
 # Change Log
 
+## [v0.6.3](https://github.com/ks888/LambStatus/tree/v0.6.3) (2018-06-22)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.2...v0.6.3)
+
+### Fixed
+
+- [\#115](https://github.com/ks888/LambStatus/issues/115): Restrict S3 bucket access to cloudfront via AOID (thanks [@iconara](https://github.com/iconara) and [@mijdavis2](https://github.com/mijdavis2))
+- [\#120](https://github.com/ks888/LambStatus/issues/120): Improve scheduled maintenance ordering (thanks [@stevenolen](https://github.com/stevenolen))
+- [\#125](https://github.com/ks888/LambStatus/issues/125): Improve IE11 support (thanks [@jhackett1](https://github.com/jhackett1))
+
 ## [v0.6.2](https://github.com/ks888/LambStatus/tree/v0.6.2) (2018-04-23)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.1...v0.6.2)
 
