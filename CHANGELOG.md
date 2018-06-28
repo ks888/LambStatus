@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.6.4](https://github.com/ks888/LambStatus/tree/v0.6.4) (2018-06-29)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.3...v0.6.4)
+
+### Fixed
+
+- [\#127](https://github.com/ks888/LambStatus/issues/127): Fix the wrong link to maintenance (thanks [@chenrui333](https://github.com/chenrui333))
+
 ## [v0.6.3](https://github.com/ks888/LambStatus/tree/v0.6.3) (2018-06-22)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.2...v0.6.3)
 
