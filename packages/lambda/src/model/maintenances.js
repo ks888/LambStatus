@@ -65,6 +65,10 @@ export class Maintenance extends Event {
     this.maintenanceID = maintenanceID
   }
 
+  getURLPath () {
+    return `/maintenances/${this.getEventID()}`
+  }
+
   getName () {
     return this.name
   }

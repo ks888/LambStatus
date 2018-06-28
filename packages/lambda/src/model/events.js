@@ -16,6 +16,10 @@ export class Event {
     throw new Error('not implemented')
   }
 
+  getURLPath () {
+    throw new Error('not implemented')
+  }
+
   getName () {
     throw new Error('not implemented')
   }

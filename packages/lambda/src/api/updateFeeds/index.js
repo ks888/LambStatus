@@ -33,7 +33,7 @@ export async function handle (event, context, callback) {
 
 export const buildFeed = async (serviceName, statusPageURL) => {
   const feed = new Feed({
-    id: `tag:${statusPageURL},2017:/history`,
+    id: `tag:${statusPageURL},2018:/history`,
     link: statusPageURL,
     title: `[${serviceName} Status] Incident History`,
     author: {
@@ -81,8 +81,8 @@ export const buildMaintenanceItems = async statusPageURL => {
 }
 
 export const buildItem = async (event, eventUpdatesStore, statusPageURL) => {
-  const id = `tag:${statusPageURL},2017:Incident/${event.getEventID()}`
-  const link = `${statusPageURL.replace(/\/$/, '')}/incidents/${event.getEventID()}`
+  const id = `tag:${statusPageURL},2018:${event.getEventID()}`
+  const link = `${statusPageURL.replace(/\/$/, '')}${event.getURLPath()}`
   const date = new Date(event.getCreatedAt())
   const title = event.getName()
 
