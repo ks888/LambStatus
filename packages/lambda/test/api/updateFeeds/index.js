@@ -67,7 +67,7 @@ describe('updateFeeds', () => {
   describe('buildFeed', () => {
     it('should build the feed', async () => {
       const feed = await buildFeed(serviceName, statusPageURL)
-      assert(feed.options.id === 'tag:https://xxx.cloudfront.net,2017:/history')
+      assert(feed.options.id === 'tag:https://xxx.cloudfront.net,2018:/history')
       assert(feed.options.link === statusPageURL)
       assert(feed.options.title === '[Test Status] Incident History')
       assert(feed.options.author.name === serviceName)
@@ -147,7 +147,7 @@ describe('updateFeeds', () => {
     it('should build the feed item which represents the one incident and its updates', async () => {
       const item = await buildItem(event, new IncidentUpdatesStore(), statusPageURL)
 
-      assert(item.id === `tag:https://xxx.cloudfront.net,2017:Incident/1`)
+      assert(item.id === `tag:https://xxx.cloudfront.net,2018:1`)
       assert(item.link === `https://xxx.cloudfront.net/incidents/1`)
       assert(item.content === `<p><small>Jan 1, 2018, 00:00 UTC</small><br><strong>Investigating</strong> - test</p>`)
       assert(item.published.toISOString() === eventUpds[0].createdAt)

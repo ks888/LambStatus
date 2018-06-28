@@ -33,7 +33,7 @@ export async function handle (event, context, callback) {
 
 export const buildFeed = async (serviceName, statusPageURL) => {
   const feed = new Feed({
-    id: `tag:${statusPageURL},2017:/history`,
+    id: `tag:${statusPageURL},2018:/history`,
     link: statusPageURL,
     title: `[${serviceName} Status] Incident History`,
     author: {
