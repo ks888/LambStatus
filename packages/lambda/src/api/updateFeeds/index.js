@@ -81,8 +81,8 @@ export const buildMaintenanceItems = async statusPageURL => {
 }
 
 export const buildItem = async (event, eventUpdatesStore, statusPageURL) => {
-  const id = `tag:${statusPageURL},2017:Incident/${event.getEventID()}`
-  const link = `${statusPageURL.replace(/\/$/, '')}/incidents/${event.getEventID()}`
+  const id = `tag:${statusPageURL},2018:${event.getEventID()}`
+  const link = `${statusPageURL.replace(/\/$/, '')}${event.getURLPath()}`
   const date = new Date(event.getCreatedAt())
   const title = event.getName()
 

@@ -50,6 +50,10 @@ export class Incident extends Event {
     this.incidentID = incidentID
   }
 
+  getURLPath () {
+    return `/incidents/${this.getEventID()}`
+  }
+
   getName () {
     return this.name
   }
