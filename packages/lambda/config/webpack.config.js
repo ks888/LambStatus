@@ -5,6 +5,7 @@ dotenv.config({path: `${__dirname}/../../../.env`})
 
 module.exports = {
   entry: {
+    GetStatus: './src/api/getStatus/index.js',
     GetComponents: './src/api/getComponents/index.js',
     PostComponents: './src/api/postComponents/index.js',
     PatchComponents: './src/api/patchComponents/index.js',
