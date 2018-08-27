@@ -47,3 +47,8 @@ AWS account
 * Failed to create the stack
 
 &nbsp;&nbsp;&nbsp;*-> Some AWS regions are not available mainly due to the lack of Amazon Cognito support. [Here](/supported-aws-regions) is the list of supported regions.* 
+
+* The link in the email returns an AccessDenied error
+
+&nbsp;&nbsp;&nbsp;*-> The CloudFormation may not complete the settings yet. Please try again in 10-20 minutes.*
+
