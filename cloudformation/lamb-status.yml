@@ -4390,6 +4390,9 @@ Outputs:
         - UseDefaultAdminPageURL
         - !Sub ${AdminPageDistribution.DomainName}
         - !Select ["0", !Ref AdminPageURL]
+  AdminPageCloudFrontDomainName:
+    Value: !Sub |-
+      ${AdminPageDistribution.DomainName}
   StatusPageS3BucketURL:
     Value:
       Fn::GetAtt:
@@ -4406,6 +4409,9 @@ Outputs:
         - UseDefaultStatusPageURL
         - !Sub ${StatusPageDistribution.DomainName}
         - !Select ["0", !Ref StatusPageURL]
+  StatusPageCloudFrontDomainName:
+    Value: !Sub |-
+      ${StatusPageDistribution.DomainName}
   InvocationURL:
     Value: !Sub |-
       https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/
