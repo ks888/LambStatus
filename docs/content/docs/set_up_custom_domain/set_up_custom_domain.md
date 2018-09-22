@@ -30,4 +30,4 @@ This update takes 10-20 minutes since it changes the CloudFront settings.
 
 2. Configure the DNS service
 
-If you're using Route53, [perform the procedures here](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html#routing-to-cloudfront-distribution-config). If not, use the method provided by your DNS service provider to add a CNAME resource record set to the hosted zone for your domain.
+If you're using Route53, [perform the procedures here](http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-cloudfront-distribution.html#routing-to-cloudfront-distribution-config). If not, add the CNAME record points to your CloudFront domain (e.g. 'abcdefghi.cloudfront.net') using the method provided by your DNS service provider.
