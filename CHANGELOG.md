@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.6.5](https://github.com/ks888/LambStatus/tree/v0.6.5) (2018-10-25)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.4...v0.6.5)
+
+### Added
+
+- [\#131](https://github.com/ks888/LambStatus/pull/131): Add AdminPageCloudFrontDomainName and StatusPageCloudFrontDomainName outputs (thanks [@salekseev](https://github.com/salekseev))
+
 ## [v0.6.4](https://github.com/ks888/LambStatus/tree/v0.6.4) (2018-06-29)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.3...v0.6.4)
 
