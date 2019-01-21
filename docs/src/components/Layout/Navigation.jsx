@@ -57,7 +57,7 @@ class Navigation extends React.Component {
           <Link className='nav-link' style={style} to='/get-started' > DOCS </Link>
           <Link className='nav-link' style={style} to='/get-started' > GET STARTED </Link>
           <a className='nav-link' style={style} target='_blank' href={config.userLinks.APIDoc} > API </a>
-          <a className='nav-link' style={style} href={config.userLinks.GitHub} > GITHUB </a>
+          <Link className='nav-link' style={style} to='/donate' > DONATE </Link>
         </section>
         <UserLinks />
       </NavContainer>

@@ -5,7 +5,7 @@
   "author": "Eric Windmill <eric@ericwindmill.com>",
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",
-    "gatsby": "^1.8.11",
+    "gatsby": "^1.9.279",
     "gatsby-link": "^1.6.7",
     "gatsby-plugin-catch-links": "^1.0.4",
     "gatsby-plugin-google-analytics": "^1.0.3",
@@ -16,6 +16,7 @@
     "gatsby-plugin-react-helmet": "^1.0.2",
     "gatsby-plugin-sharp": "^1.6.1",
     "gatsby-plugin-sitemap": "^1.2.1",
+    "gatsby-plugin-stripe": "^1.2.0",
     "gatsby-plugin-styled-components": "^2.0.2",
     "gatsby-remark-autolink-headers": "^1.4.3",
     "gatsby-remark-copy-linked-files": "^1.5.1",
