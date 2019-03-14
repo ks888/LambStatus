@@ -16,6 +16,7 @@ This page describes how to set up the development environment. Also, the project
 #### Prerequisite
 
 * Node.js (v8.10.0)
+* AWS CLI
 
 #### Create a CloudFormation stack
 
