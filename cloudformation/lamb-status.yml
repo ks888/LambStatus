@@ -215,7 +215,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -248,7 +248,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -281,7 +281,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -314,7 +314,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteComponentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -347,7 +347,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -380,7 +380,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -413,7 +413,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetIncidentLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -446,7 +446,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -479,7 +479,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteIncidentsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -512,7 +512,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchIncidentUpdatesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -545,7 +545,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -578,7 +578,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -611,7 +611,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -644,7 +644,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteMaintenancesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -677,7 +677,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetMaintenanceLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -710,7 +710,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchMaintenanceUpdatesLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -743,7 +743,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -776,7 +776,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetPublicSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -809,7 +809,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchSettingsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -842,7 +842,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostLogosLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -875,7 +875,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteLogosLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -908,7 +908,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostApiKeysLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -941,7 +941,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteApiKeysLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -974,7 +974,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 60
   GetExternalMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1007,7 +1007,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetPublicMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1040,7 +1040,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GetMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1073,7 +1073,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PostMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1106,7 +1106,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   PatchMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1139,7 +1139,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   DeleteMetricsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1172,7 +1172,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 60
   PostMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1205,7 +1205,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 60
   CollectMetricsDataLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1251,7 +1251,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   UpdateFeedsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1297,7 +1297,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 300
   SendEmailsLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1338,7 +1338,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   SubscribeLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1371,7 +1371,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   ConfirmSubscriptionLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1404,7 +1404,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   UnsubscribeLambdaInvokePermission:
     Type: "AWS::Lambda::Permission"
@@ -1437,7 +1437,7 @@ Resources:
         Fn::GetAtt:
           - "LambdaRole"
           - "Arn"
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 300
   ApiDeployment:
     Type: "AWS::ApiGateway::Deployment"
@@ -4019,7 +4019,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   S3SyncObjectsFunction:
     Type: AWS::Lambda::Function
@@ -4040,7 +4040,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   CognitoCreateUserPoolFunction:
     Type: AWS::Lambda::Function
@@ -4061,7 +4061,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   CognitoCreateUserPoolClientFunction:
     Type: AWS::Lambda::Function
@@ -4082,7 +4082,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   CognitoCreateUserFunction:
     Type: AWS::Lambda::Function
@@ -4103,7 +4103,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   APIGatewayDeployFunction:
     Type: AWS::Lambda::Function
@@ -4124,7 +4124,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
   DBCreateItemsLambdaFunction:
     Type: "AWS::Lambda::Function"
@@ -4146,7 +4146,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GenerateVerificationMessageFunction:
     Type: "AWS::Lambda::Function"
@@ -4168,7 +4168,7 @@ Resources:
         Fn::GetAtt:
           - LambdaRole
           - Arn
-      Runtime: "nodejs8.10"
+      Runtime: "nodejs10.x"
       Timeout: 30
   GenerateVerificationMessagePermission:
     Type: "AWS::Lambda::Permission"

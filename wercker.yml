@@ -1,5 +1,5 @@
 ---
-box: node:8.10.0
+box: node:10.16.3
 build:
   steps:
     - install-packages:
