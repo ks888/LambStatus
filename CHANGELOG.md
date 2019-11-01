@@ -1,5 +1,12 @@
 # Change Log
 
+## [v0.6.6](https://github.com/ks888/LambStatus/tree/v0.6.6) (2019-11-01)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.5...v0.6.6)
+
+### Fixed
+
+- [\#170](https://github.com/ks888/LambStatus/issues/170): Upgrade to node.js 10.x (thanks [@allcloud-ronen](https://github.com/allcloud-ronen))
+
 ## [v0.6.5](https://github.com/ks888/LambStatus/tree/v0.6.5) (2018-10-25)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.6.4...v0.6.5)
 
